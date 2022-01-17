@@ -138,7 +138,7 @@ class Settings extends Component {
     formData.append("subscription_status", this.state.subscription_status);
     console.log(formData.values());
     axios({
-      url: `http://localhost:4000/api/v1/users/update/${this.state.stng_id}`,
+      url: `https://backendapp.murmurcars.com/api/v1/users/update${this.state.stng_id}`,
       method: "PUT",
       data: formData,
     })
@@ -159,7 +159,7 @@ class Settings extends Component {
 
   componentDidMount() {
     this.setState({ ...this.state, loading: true });
-    queryForEmail("http://localhost:4000/api/v1/users/checkEmail", {
+    queryForEmail( "https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
       email: this.state.stng_email,
     })
       .then((res) => {

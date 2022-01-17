@@ -40,7 +40,7 @@ class AdEngagements extends Component {
           options={this.state.options}
           series={this.state.series}
           type="pie"
-          height={160}
+          height={170}
           width={500}
         />
       </div>

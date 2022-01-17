@@ -13,7 +13,7 @@ function* loginUser({ payload: { email, history } }) {
   try {
     const response = yield call(
       queryForEmail,
-      "http://localhost:4000/api/v1/users/checkEmail",
+      "https://backendapp.murmurcars.com/api/v1/users/checkEmail",
       {
         email: email,
       }

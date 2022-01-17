@@ -222,7 +222,7 @@ class CampaignAnalytics extends Component {
       firebase.app(); // if already initialized, use that one
     }
 
-    this.getAnbalyticsfromApi();
+    //this.getAnbalyticsfromApi();
 
     //this.handleConnectionToFirebaseRealTimeDatabase();
   }
