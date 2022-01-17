@@ -1,0 +1,20 @@
+.apexcharts-pie-label, .apexcharts-datalabels, .apexcharts-datalabel, .apexcharts-datalabel-label, .apexcharts-datalabel-value{
+    fill:white !important
+}
+
+
+.analitics_audience_chart__3eUgA{
+    fill: white !important;
+    font-size: 5px;
+}
+
+.apexcharts-legend-series {
+    cursor: pointer;
+    line-height: normal;
+
+
+}
+
+
+
+

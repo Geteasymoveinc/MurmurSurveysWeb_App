@@ -1,0 +1,308 @@
+.ads_details_section{
+  background: #fff;
+  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
+  border-radius: 16px;
+  margin-top:24px;
+  padding:32px;
+}
+.ads_back_icon,.crrnt_ads_title,.crrnt_edit,.detail_img_edit{
+  display: -webkit-box;
+  display: -webkit-inline-flex;
+  display: -ms-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.ads_back_icon{
+  text-decoration:none;
+}
+.ads_back_icon span{
+  color: #192038;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  margin-left:12px;
+}
+.cads_active_dot,.cads_deactive_dot{
+  height: 28px;
+  border-radius: 16px;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 14px;
+  padding-left: 12px;
+  padding-right: 12px;
+  line-height: 28px;
+  white-space: nowrap;
+  margin-left:24px;
+}
+.cads_active_dot{
+  background: #F3FCCF;
+  color: #54920B;
+}
+.cads_deactive_dot{
+  color: #AE1936;
+  background: #FEE2D6;
+}
+.cads_dot{
+  display: inline-block;
+  background: #54920B;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  position: relative;
+  top: -1px;
+}
+.cads_deactive_dot .cads_dot{
+  background:#AE1936;
+}
+.crrnt_ads_title p{
+  color: #3F2B89;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 28px;
+  margin:0;
+}
+.current_ads_name{
+  margin-top:24px;
+}
+.crrnt_edit{
+  text-decoration:none;
+  background-color: transparent;
+  border-color: transparent;
+}
+.crrnt_edit span{
+  color: #7356C0;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  margin-right:10px;
+}   
+.current_ads_name,.detail_img_title{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: space-between;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: space-between;
+  justify-content: space-between;
+}
+.ads_detail_col{
+  border: 1px solid #E4E9F2;  
+  border-radius: 6px;
+  background: #fff;
+}
+.ads_detail_row{
+  margin-top:40px;
+  margin-left:-8px;
+  margin-right:-8px;
+}
+.ads_detail_image,.ads_detail_audience,.ads_detail_quantity{
+  padding-left:8px;
+  padding-right:8px;
+}
+.ads_detail_row{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.ads_detail_image,.ads_detail_audience{
+  width:calc(39% - 16px);
+}
+.ads_detail_quantity{
+  width:calc(22% - 16px);
+}
+.detail_img{
+  position: relative;
+  height:112px;
+  overflow:hidden;
+  border-radius: 6px 6px 0px 0px;
+}
+.detail_img img, .delete_img iframe{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.detail_img_title{
+  padding:12px 16px;
+}
+.detail_img_title span{
+  color: #2E3A59;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+}
+.detail_img_edit{
+  width:24px;
+  height:24px;
+  cursor: pointer;
+  padding:0;
+  border:0;
+  background:transparent;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.ads_detail_top{
+  background: #F7F9FC;
+  border-bottom: 1px solid #E4E9F2;
+  padding:12px 16px;
+  border-radius:  6px 6px 0 0;
+}
+.detail_top_h5{
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #2E3A59;
+  margin:0;
+}
+.ads_details_content{
+  min-height:87px;
+  padding:12px  16px;
+  text-align:center;
+}
+.detail_content_p{
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 32px;
+  color: #2E3A59;
+  margin:0;
+}
+.ads_detail_quantity .ads_details_content,.ads_detail_audience .detail_content_p,.ads_detail_budget .ads_details_content,.ads_detail_category .ads_details_content{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.ads_detail_age{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.detail_map_title{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.ads_detail_age{
+  list-style-type:none;
+  padding-left:0;
+  margin:0;
+}
+.ads_detail_audience .detail_content_p{
+  margin-top:4px;
+  min-height:64px;
+}
+.age_gender_line{
+  display:block;
+  width: 1px;
+  height: 65px;
+  background: #E4E9F2;
+  margin-left:8px;
+  margin-right:8px;
+  position: relative;
+  top:14px;
+}
+.ads_detail_age li:first-child,.ads_detail_age li:last-child{
+  width:calc(50% - 17px);
+}
+.ads_detail_budget,.ads_detail_category,.ads_detail_area{
+  padding-left:8px;
+  padding-right:8px;
+}
+.ads_detail_budget{
+  width:calc(22% - 16px);
+}
+.ads_detail_category{
+  width:calc(34% - 16px);
+}
+.ads_detail_area{
+  width:calc(44% - 16px);
+}
+.detail_map_title{
+  padding:12px 16px;
+}
+.detail_map_title span{
+  color: #2E3A59;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  border-right:1px solid #E4E9F2;
+  padding-right:8px;
+}
+.detail_map_title small{
+  color:#8F9BB3;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  padding-left:8px;
+}
+.delete_ads{
+  margin-top:24px;
+  text-align:right;
+}
+.delete_ads_btn{
+  border: 1px solid #F13239;
+  border-radius: 4px;
+  height:48px;
+  min-width:150px;
+  padding-left:16px;
+  padding-right:16px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #F13239;
+  background:transparent;
+  cursor:pointer;
+  transition:all .4s ease;
+}
+.delete_ads_btn img{
+  position:relative;
+  top:-3px;
+  margin-left:4px;
+}
+.delete_ads_btn span{
+  position:relative;
+  top:-2px;
+}
+.delete_ads_btn:hover{
+  background:#FEE2D6;
+}
+.delete_ads_note{
+  display:block;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 12px;
+  color: #F13239;
+  margin-top:8px;
+  max-width:150px;
+  margin-left:auto;
+  text-align:left;
+}

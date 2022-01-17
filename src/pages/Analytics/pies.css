@@ -1,0 +1,26 @@
+/*.apexcharts-pie-label, .apexcharts-datalabels, .apexcharts-datalabel, .apexcharts-datalabel-label, .apexcharts-datalabel-value{
+    fill:wheat
+}
+
+
+.analitics_audience_chart__3eUgA{
+    fill: wheat;
+    font-size: 5px;
+}*/
+
+.apexcharts-legend-series {
+    cursor: pointer;
+    line-height: normal;
+
+
+}
+
+
+
+.apexcharts-slices .apexcharts-text .apexcharts-pie-label{
+   fill: white;
+   font-size: 10px;
+   font-family: 'Montserrat';
+
+}
+

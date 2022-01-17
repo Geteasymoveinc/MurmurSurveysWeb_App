@@ -1,0 +1,55 @@
+
+.ant-picker,.ant-picker-range {
+  outline:transparent !important;
+  border-radius: 8px !important;
+  background-color: #F7F9FC !important;
+  height: 44px !important;
+  border-color: #EDF1F7 !important;
+}
+
+
+
+.ant-picker-focused,.ant-picker-range-focused{
+    border-color: #3F2B89 !important;
+    border-right-width: 1px;
+    height: 44px !important;
+    outline: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow:  none !important
+
+}
+
+.ant-picker-suffix{
+    display: none !important;
+}
+
+.ant-picker-clear{
+    display: none !important;
+}
+
+.ant-picker-input > input:focus, .ant-picker-input > input-focused {
+
+    border-right-width: 1px !important;
+    outline: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow:  none !important;
+    height: 44px !important;
+    
+}
+
+
+.ant-picker-input-active{
+    border:none !important
+}
+
+
+.ant-picker-active-bar{
+    background-color: transparent !important;
+    outline: none !important;
+    display: none;
+}
+
+
+.ant-picker-range-separator{
+    display: none !important;
+}

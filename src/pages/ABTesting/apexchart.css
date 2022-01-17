@@ -1,0 +1,31 @@
+
+/*.apexcharts-legend.position-bottom.apexcharts-align-center{
+
+    justify-content: flex-end !important;
+    align-items: flex-start !important;
+}*/
+
+.apexcharts-canvas text {
+    fill: unset !important
+
+}
+
+.apexcharts-canvas  .apexcharts-subtitle-text{
+    fill: rgb(172, 164, 164) !important
+}
+
+
+/*.apexcharts-toolbar{
+    display: none;
+}
+
+*/
+/*.apexcharts-legend.position-bottom .apexcharts-legend-series, .apexcharts-legend.position-top .apexcharts-legend-series{
+    display: flex !important;
+    align-items: flex-start !important;
+}
+
+.apexcharts-legend{
+    position: unset !important;
+    margin-top: .8rem !important
+}*/
