@@ -138,7 +138,7 @@ class Settings extends Component {
     formData.append("subscription_status", this.state.subscription_status);
     console.log(formData.values());
     axios({
-      url: `https://backendapp.murmurcars.com/api/v1/users/update${this.state.stng_id}`,
+      url: `https://backendapp.murmurcars.com/api/v1/users/update/${this.state.stng_id}`,
       method: "PUT",
       data: formData,
     })
@@ -263,7 +263,7 @@ class Settings extends Component {
 
                   <div className={classes.stng_profil_detail}>
                     <p>{this.state.stng_fullName}</p>
-                    <span>Outdoor</span>
+                    <span>Active</span>
                   </div>
                 </div>
                 <form onSubmit={this.submitUpdateSettings}>
