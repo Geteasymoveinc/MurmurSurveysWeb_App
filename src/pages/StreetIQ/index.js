@@ -125,7 +125,24 @@ class StreetIQMain extends Component {
           const segments = [];
           return this.setState({
             ...this.state,
-            filterMethod,
+            filterMethod:{
+              display:  filterMethod.display,
+              Population: "",
+              Age: "",
+              Gender: "",
+              Marrige: "",
+              Ethnisity: "",
+              Birth: "",
+              Places: "",
+              Business: "",
+              Small_Business: "",
+              Retired: "",
+              Non_Retired: "",
+              Income: "",
+              Race: "",
+              Real_Estate: "",
+              Education:''
+            },
             statistic,
             google,
             segments,
@@ -136,7 +153,10 @@ class StreetIQMain extends Component {
     google.zoom = 10;
     google.places = [];
     const segments = [];
-    this.setState({ ...this.state, filterMethod, statistic, google, segments });
+    this.setState({ ...this.state,   filterMethod:{
+      ...this.state.filterMethod,
+      display: filterMethod.display,
+    }, statistic, google, segments });
   };
   //filter method
   searchDistricts = () => {
