@@ -5,7 +5,7 @@ import {
   } from "./actionTypes";
   
   export const subscribeFn = (subscriber, history) => {
-    console.log(history)
+    console.log(subscriber)
     return {
       type: SUBSCRIBE,
       payload: { subscriber, history },

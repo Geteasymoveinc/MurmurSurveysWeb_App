@@ -28,9 +28,8 @@ class Business extends React.Component {
     this.state = {
       advertise_options: "",
       alert_status: false,
-
       package: "",
-      error: false,
+      
     };
 
     // handleValidSubmit
@@ -108,7 +107,7 @@ class Business extends React.Component {
             </header>
             <div className={classes.ads_section}>
               <div className={classes.ads_cover}>
-                {this.state.error ? (
+                {this.state.alert_status ? (
                   <Alert
                     color="danger"
                     className="d-flex justify-content-between"
@@ -119,7 +118,7 @@ class Business extends React.Component {
                     <Button
                       color="link"
                       onClick={() =>
-                        this.setState({ ...this.state, error: false })
+                        this.setState({ ...this.state, alert_status: false })
                       }
                     >
                       Close

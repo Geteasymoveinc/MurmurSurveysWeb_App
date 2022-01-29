@@ -23,8 +23,6 @@ import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMe
 
 import Modal from "./settingsModal";
 
-import ImageUploader from "react-images-upload";
-
 import { Upload } from "antd";
 const { Dragger } = Upload;
 
@@ -61,6 +59,7 @@ class Settings extends Component {
       stng_phone: "",
       stng_password: "",
       stng_fullName: "",
+      stng_address: '',
       email: true,
       password: true,
       phone_number: true,
@@ -95,13 +94,14 @@ class Settings extends Component {
 
   handleFileChange = (info) => {
     const reader = new FileReader();
-    console.log(info);
+   
     reader.readAsDataURL(info.file);
-
+    console.log(info.file)
     reader.onload = (e) => {
       console.log(e.target.result.length);
 
-      this.setState({ ...this.state, image: e.target.result });
+      this.setState({ ...this.state, image: e.target.result, 
+    })
     };
   };
 
@@ -120,7 +120,9 @@ class Settings extends Component {
   };
 
   submitUpdateSettings = (event) => {
+    this.setState({ ...this.state, loading: true });
     event.preventDefault();
+
     const formData = new FormData();
     formData.append("email", this.state.stng_email);
     formData.append("phone_number", this.state.stng_phone);
@@ -128,7 +130,7 @@ class Settings extends Component {
     if (this.state.password.length > 0) {
       formData.append("password", this.state.stng_password);
     }
-    formData.append("profile_photo", this.state.image);
+    //formData.append("photo", this.state.image);
     formData.append("advertise_options", this.state.stng_advertise_options);
     formData.append(
       "subscribedToMurmurNewsettler",
@@ -136,16 +138,24 @@ class Settings extends Component {
     );
     formData.append("fullName", this.state.stng_fullName);
     formData.append("subscription_status", this.state.subscription_status);
-    console.log(formData.values());
+    formData.append('profilePhoto', this.state.image)
+    formData.append("companyAddress", this.state.stng_address);
+
     axios({
-      url: `https://backendapp.murmurcars.com/api/v1/users/update/${this.state.stng_id}`,
+      url: `http://localhost:4000/api/v1/users/update/${this.state.stng_id}`,
       method: "PUT",
       data: formData,
     })
       .then((res) => {
-        console.log(res);
+        console.log(res)
+        sessionStorage.removeItem('profileImage')
+        sessionStorage.setItem('profileImage', this.state.image)
+        this.setState({ ...this.state, loading: false });
       })
-      .catch((err) => alert(err));
+      .catch((err) => {
+        this.setState({ ...this.state, loading: false });
+        alert(err);
+      });
     /*   data: {
         email: this.state.stng_email,
         phone_number: this.state.stng_phone,
@@ -159,30 +169,40 @@ class Settings extends Component {
 
   componentDidMount() {
     this.setState({ ...this.state, loading: true });
-    queryForEmail( "https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
+    queryForEmail("https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
       email: this.state.stng_email,
     })
       .then((res) => {
         console.log(res);
         const data = res.resp.at(-1);
-        this.setState({
-          ...this.state,
-          stng_id: data._id,
-          stng_company: data.company,
-          stng_phone: data.phone_number,
-          stng_advertise_options: data.advertise_options,
-          stng_subscribedToMurmurNewsettler: data.subscribedToMurmurNewsettler,
-          stng_fullName: data.fullName,
-          subscription_status: data.subscription_status,
-          loading: false,
-        });
-      })
-      .catch((err) =>
+        let image = ''
+        if(data.profilePhoto.length>0){
+           image = data.profilePhoto.split("https://backendapi.murmurcars.com/advertisers/users/profilePhoto/")[1]
+        }
+        
+        console.log(image)
+           
+            this.setState({
+              ...this.state,
+              stng_id: data._id,
+              stng_company: data.company,
+              stng_phone: data.phone_number,
+              stng_advertise_options: data.advertise_options,
+              stng_subscribedToMurmurNewsettler: data.subscribedToMurmurNewsettler,
+              stng_fullName: data.fullName,
+              stng_address: data.companyAddress,
+              subscription_status: data.subscription_status,
+              loading: false,
+              image
+            });
+          
+          }).catch((err) =>
         this.setState({
           ...this.state,
           loading: false,
         })
       );
+      
   }
 
   render() {
@@ -258,13 +278,14 @@ class Settings extends Component {
                       />
                     </div>
                   </Dragger>
-   
+
                   {/*} <input type="file" className={classes.profil_img_edit}/>*/}
 
                   <div className={classes.stng_profil_detail}>
                     <p>{this.state.stng_fullName}</p>
                     <span>Active</span>
                   </div>
+                  
                 </div>
                 <form onSubmit={this.submitUpdateSettings}>
                   <div className={classes.stng_form}>
@@ -440,6 +461,8 @@ class Settings extends Component {
                           name="stng_address"
                           id="stng-address"
                           placeholder="Company address"
+                          value = {this.state.stng_address}
+                          onChange={this.settingInputsChange}
                         />
                         <img
                           src={Location}
@@ -459,6 +482,7 @@ class Settings extends Component {
                           name="stng_city"
                           id="stng-city"
                           placeholder="City"
+                          onChange={this.settingInputsChange}
                         />
                         <img
                           src={Location}
@@ -482,7 +506,8 @@ class Settings extends Component {
                               className={classes.stng_element}
                               name="stng_state"
                               id="stng-state"
-                              placeholder="City"
+                              placeholder="State"
+                              onChange={this.settingInputsChange}
                             />
                             <img
                               src={Location}
@@ -507,6 +532,7 @@ class Settings extends Component {
                               name="stng_zip"
                               id="stng-zip"
                               placeholder="Zip"
+                              onChange={this.settingInputsChange}
                             />
                             <img
                               src={Location}
@@ -530,9 +556,7 @@ class Settings extends Component {
                     <div className={classes.ads_subtype}>
                       <p>Walk Package</p>
                       <span>30 Days remaining</span>
-                      <span>
-                        Type {this.state.stng_advertise_options}
-                      </span>
+                      <span>Type {this.state.stng_advertise_options}</span>
                     </div>
                     <p className={classes.subc_price}>
                       56$<span>/month</span>

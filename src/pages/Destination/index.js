@@ -58,6 +58,7 @@ class Destination extends Component {
       destination: "Outdoor to Online",
       to_indoor: {
         center: "facebook",
+        murmur:true,
         items: [
           {
             item_img: Google,
@@ -81,6 +82,7 @@ class Destination extends Component {
       },
       to_outdoor: {
         center: "facebook",
+        murmur: true,
         items: [
           {
             item_img: Google,
@@ -137,6 +139,11 @@ class Destination extends Component {
       [type]: { ...this.state[type], items: updatedType },
     });
   };
+  toggleMurmur = (type,destination)=> {
+    const selectedType = this.state[type]
+    selectedType[destination] = !selectedType[destination]
+    this.setState({...this.state, [selectedType]: selectedType})
+  }
 
   deleteOnlineElement = (type, destination) => {
     let selectedType = this.state[type].items;
@@ -242,13 +249,26 @@ class Destination extends Component {
                         </p>
                         <div className={classes.source_item_right}>
                           <span className={classes.source_status}>
-                            Live
+                            {this.state.to_indoor.murmur
+                              ? "Active"
+                              : "Deactive"}
                             <small
-                              className={classes.active_status_dot}
+                              className={`${
+                                this.state.to_indoor.murmur
+                                  ? classes.active_status_dot
+                                  : classes.deactive_status_dot
+                              }`}
                             ></small>
                           </span>
                           <div className={classes.dot_dropdown}>
-                            <ToggleButtonDopDown />
+                            <ToggleButtonDopDown
+                              switchDestinationStatus={() =>
+                                this.toggleMurmur(
+                                  "to_indoor",
+                                  'murmur'
+                                )
+                              }
+                            />
                           </div>
                         </div>
                       </div>
@@ -665,11 +685,27 @@ class Destination extends Component {
                         </p>
                         <div className={classes.source_item_right}>
                           <span className={classes.source_status}>
-                            Live
+                            {this.state.to_outdoor.murmur
+                              ? "Active"
+                              : "Deactive"}
                             <small
-                              className={classes.active_status_dot}
+                              className={`${
+                                this.state.to_outdoor.murmur
+                                  ? classes.active_status_dot
+                                  : classes.deactive_status_dot
+                              }`}
                             ></small>
                           </span>
+                          <div className={classes.dot_dropdown}>
+                            <ToggleButtonDopDown
+                              switchDestinationStatus={() =>
+                                this.toggleMurmur(
+                                  "to_outdoor",
+                                  'murmur'
+                                )
+                              }
+                            />
+                          </div>
                         </div>
                       </div>
                     </li>

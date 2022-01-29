@@ -1,31 +1,30 @@
-
-/*.apexcharts-legend.position-bottom.apexcharts-align-center{
-
-    justify-content: flex-end !important;
-    align-items: flex-start !important;
-}*/
-
 .apexcharts-canvas text {
-    fill: unset !important
-
+  fill: unset !important;
 }
 
-.apexcharts-canvas  .apexcharts-subtitle-text{
-    fill: rgb(172, 164, 164) !important
+.apexcharts-canvas .apexcharts-subtitle-text {
+  fill: #8f9bb3 !important;
+  font-family: "Montserrat" !important;
+
+  font-size: 14px !important;
+  line-height: 20px !important;
 }
 
-
-/*.apexcharts-toolbar{
-    display: none;
+#chart-report {
+  padding-top: 20px;
+  position: relative;
+}
+#chart-report .apexcharts-toolbar {
+  display: none;
+}
+#chart-report .apexcharts-svg .apexcharts-legend {
+  justify-content: flex-end;
+  /* top: -58px !important;
+  right: 10px !important;*/
 }
 
-*/
-/*.apexcharts-legend.position-bottom .apexcharts-legend-series, .apexcharts-legend.position-top .apexcharts-legend-series{
-    display: flex !important;
-    align-items: flex-start !important;
+#chart-report .apexcharts-legend {
+  position: unset !important;
+  margin-top: 0.8rem;
+  /*padding: 0.1rem 0;*/
 }
-
-.apexcharts-legend{
-    position: unset !important;
-    margin-top: .8rem !important
-}*/

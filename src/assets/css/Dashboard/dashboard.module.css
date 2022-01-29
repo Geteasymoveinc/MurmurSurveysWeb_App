@@ -195,6 +195,8 @@
   padding-right:24px;
   overflow: hidden;
 }
+
+
 .choosen_item_p{
   color:#8F9BB3;
   font-size: 12px;
@@ -220,6 +222,8 @@
   fill: wheat;
   text-align:center;
   overflow: hidden;
+
+  
   font-size: 10px;
   font-family: 'Montserrat';
 }
@@ -318,6 +322,18 @@
 
 
 
-.dash_856px{
+/*.dash_856px{
   max-width:856px;
+}
+*/
+
+.choosen_item{
+  position: relative;
+  min-height:150px;
+}
+.choosen_place{
+  min-height:200px;
+}
+.choosen_place{
+  width:calc(100% - 32px);
 }

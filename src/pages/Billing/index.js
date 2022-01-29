@@ -20,13 +20,16 @@ import ArrowDown from "../../assets/css/Billing/arrow-down.svg";
 
 import classes from "../../assets/css/Billing/index.module.css";
 
+import UpdateModal from "./updateBilling";
+
 class Billing extends Component {
   constructor(props) {
     super(props);
     this.state = {
       haveInvoices: false,
       checked: false,
-      billing: "Walk",
+      billing: "plan-walk",
+      modal: false,
       invoices: [
         {
           id: "customCheck2",
@@ -79,15 +82,15 @@ class Billing extends Component {
 
   selectBillingPlan = (event) => {
     const name = event.target.id;
-    console.log(name);
-    if (name === "plan-walk") {
-      this.setState({ ...this.state, billing: "Walk" });
-    } else if (name === "plan-run") {
-      this.setState({ ...this.state, billing: "Run" });
-    } else {
-      this.setState({ ...this.state, billing: "Fly" });
-    }
+    
+    
+      this.setState({ ...this.state, billing: name, modal: true });
+      
   };
+
+  selectBilling = () => {
+        this.setState({...this.state, modal:false})
+  }
 
   componentDidMount() {
     const invoices = this.state.invoices.length;
@@ -97,6 +100,7 @@ class Billing extends Component {
       this.setState({ ...this.state, [name]: false, haveInvoices: true });
     }
   }
+
 
   render() {
     console.log(this.state);
@@ -146,7 +150,7 @@ class Billing extends Component {
                       type="radio"
                       name="billing-plan"
                       id="plan-walk"
-                      checked={this.state.billing === "Walk"}
+                      checked={this.state.billing === "plan-walk"}
                       onChange={this.selectBillingPlan}
                     />
                     <label htmlFor="plan-walk">
@@ -192,7 +196,7 @@ class Billing extends Component {
                       type="radio"
                       name="billing-plan"
                       id="plan-run"
-                      checked={this.state.billing === "Run"}
+                      checked={this.state.billing === "plan-run"}
                       onChange={this.selectBillingPlan}
                     />
                     <label htmlFor="plan-run">
@@ -239,7 +243,7 @@ class Billing extends Component {
                         type="radio"
                         name="billing-plan"
                         id="plan-fly"
-                        checked={this.state.billing === "Fly"}
+                        checked={this.state.billing === "plan-fly"}
                         onChange={this.selectBillingPlan}
                       />
                       <label htmlFor="plan-fly">
@@ -415,6 +419,11 @@ class Billing extends Component {
             </div>
           </div>
         </div>
+        <UpdateModal
+          toggleModal={this.selectBilling}
+          modal={this.state.modal}
+          billing={this.state.billing}
+        />
       </React.Fragment>
     );
   }

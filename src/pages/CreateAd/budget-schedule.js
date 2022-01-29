@@ -261,21 +261,14 @@ class BudgetAndSchedule extends React.Component {
                       <div
                         className={`${classes.step_relative} ${classes.duration_step}`}
                       >
+                        <form>
                         <DatePicker.RangePicker
-                          defaultValue={this.state.duration}
                           name="duration"
                           id="duration"
-                          className={`${classes.step_element}`}
-                          onChange={(date, dateString) =>
-                            this.handleDateChange({
-                              date,
-                              dateString,
-                            })
-                          }
                           picker="date"
                 
                         />
-
+                        </form>
                         <img
                           src={Calendar}
                           alt=""

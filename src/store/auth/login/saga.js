@@ -31,7 +31,17 @@ function* loginUser({ payload: { user, history } }) {
         }
       );
       console.log(response)
-      sessionStorage.setItem("authUser", response.resp[0].email);
+      const image = response.resp.at(-1).profilePhoto
+      let profilePhoto
+      if(image){
+       profilePhoto = image.split("https://backendapi.murmurcars.com/advertisers/users/profilePhoto/")[1]
+      }
+      
+      sessionStorage.setItem("authUser", response.resp.at(-1).email);
+
+      if(profilePhoto){
+      sessionStorage.setItem('profileImage', profilePhoto)
+      }
       yield put(loginSuccess(response));
     }
     history.push("/dashboard");

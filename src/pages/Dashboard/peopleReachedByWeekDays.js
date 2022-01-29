@@ -1,21 +1,38 @@
 import ReactApexChart from "react-apexcharts";
 import React, { Component } from "react";
-import './pies.css'
-
 
 class PeopleReachedByWeekDay extends Component {
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
-      district: '',
+      location: "",
       series: [
         {
-          name: "age",
-          data: [],
+          name: "reach",
+          data: [1,2,3,4,5,6],
         },
       ],
       options: {
-        colors: ["#3F2B89"],
+        dataLabels: {
+          enabled: true,
+        },
+        legend: {
+          show: true,
+          position: "right",
+          showForSingleSeries: true,
+          customLegendItems: ['0-19','20-29', '30-39','40-49','50-59'],
+          borderRadius: 12,
+          markers: {
+            fillColors: [
+              "#3F2B89",
+              "#573EA4",
+              "#7356C0",
+              "#997FD8",
+              "#B69EEA",
+              "#B69EEA",
+            ],
+          },
+        },
 
         chart: {
           type: "bar",
@@ -26,9 +43,8 @@ class PeopleReachedByWeekDay extends Component {
           zoom: {
             enabled: true,
           },
-          foreColor: "#ffffff",
+          foreColor: "blue",
         },
-
         responsive: [
           {
             breakpoint: 480,
@@ -43,78 +59,90 @@ class PeopleReachedByWeekDay extends Component {
         ],
         plotOptions: {
           bar: {
-            borderRadius: 8,
+            borderRadius: 2,
             horizontal: false,
           },
         },
         xaxis: {
-          type: "Array",
-          categories: [],
           labels: {
             show: false,
-            style: {
-              colors: ["#ffffff"],
-              fontSize: "12px",
-              fontWeight: 400,
-              cssClass: "apexcharts-yaxis-label",
-            },
           },
         },
-        legend: {
-          position: "right",
-          offsetY: 40,
+        yaxis: {
+          labels: {
+            show: false,
+          },
         },
         fill: {
           opacity: 1,
+          colors: ["#3F2B89", "#573EA4", "#7356C0", "#997FD8", "#B69EEA","#B69EEA"],
         },
-      },
+        
+        tooltip: {
+          followCursor: true,
+          onDatasetHover: {
+            highlightDataSeries: true,
+          },
+  
+        }
+      }
     }
   }
-  componentDidMount(){
+  componentDidMount() {
     this.setState({
-      district: this.props.district,
-      series:[{
-        name: 'age',
-        data: this.props.data
-      }],
-      options:{
-         ...this.state.options, 
-         xaxis: {
-           ...this.state.options.xaxis, categories: this.props.labels
-         }
-      }
-    })
+      ...this.state,
+      location: this.props.location,
+      series: [
+        {
+          data: this.props.data.slice(0,5),
+        },
+      ],
+      options: {
+        ...this.state.options,
+        labels: this.props.labels.slice(0,5),
+        colors: ["#3F2B89", "#573EA4", "#7356C0", "#997FD8", "#B69EEA","#B69EEA"],
+        legend: {
+          ...this.state.options.legend,
+          customLegendItems: this.props.labels.slice(0, 5)
+        }
+        }
+    });
   }
-  componentDidUpdate(prevProps, prevState){
-     
-     if(prevState.district!==this.props.district){
-       console.log('update')
-       this.setState({
-         district: this.props.district,
-         series:[{
-           name: 'age',
-           data: this.props.data
-         }],
-         options:{
-            ...this.state.options, 
-            xaxis: {
-              ...this.state.options.xaxis, categories: this.props.labels
-            }
-         }
-       })
-     }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.location !== this.props.location) {
+      console.log("update");
+
+      this.setState({
+        ...this.state,
+        location: this.props.location,
+        series: [
+          {
+            data: this.props.data.slice(0,5),
+          },
+        ],
+        options: {
+          ...this.state.options,
+          labels: this.props.labels.slice(0,5),
+          colors: ["#3F2B89", "#573EA4", "#7356C0", "#997FD8", "#B69EEA","#B69EEA"],
+          legend: {
+            ...this.state.options.legend,
+            customLegendItems: this.props.labels.slice(0, 5)
+          }
+          
+        }
+      });
+    }
   }
   render() {
-    console.log(this.state.series[0].data)
+    console.log(this.state.options.legend);
     return (
-      <div id="chart">
+      <div id="chart-dash2" className="chart-dash2">
         <ReactApexChart
           options={this.state.options}
           series={this.state.series}
           type="bar"
-          width='100%'
-          height= {120}
- 
+          width={250}
+          height={122}
         />
       </div>
     );

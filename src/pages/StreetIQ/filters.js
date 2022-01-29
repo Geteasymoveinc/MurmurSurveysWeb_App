@@ -22,33 +22,44 @@ class Filters extends React.Component {
       Retired,
       Business,
       Small_Business,
+      Income,
+      Race,
+      Real_Estate,
+      Education
     } = this.props.filterMethod;
-    const { searchDistricts,selectActiveRadio } = this.props;
-    
+    const { Country } = this.props;
+    const { searchDistricts, selectActiveRadio } = this.props;
+
     return (
       <div className={classes2.stc_drops}>
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
             <SearchModal
               statistic={"Population"}
-              labels={["Less than 100.000", "More than 100.000"]}
-              filters={["<100000", ">100000"]}
-              method={Population}
-              activeRadio={(option) =>
-                selectActiveRadio(option, "Population")
+              labels={
+                Country !== "US"
+                  ? ["Less than 100.000", "More than 100.000"]
+                  : ["Less than 50.000", "More than 50.000"]
               }
+              filters={
+                Country !== "US" ? ["<100000", ">100000"] : ["<50000", ">50000"]
+              }
+              method={Population}
+              activeRadio={(option) => selectActiveRadio(option, "Population")}
             />
           </div>
         </div>
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
-            <SearchModal
-              statistic={"Popular Places"}
-              labels={["high rated", "low rated"]}
-              filters={[">4", "<4"]}
-              method={Places}
-              activeRadio={(option) => selectActiveRadio(option, "Places")}
-            />
+            {Country !== "US" && (
+              <SearchModal
+                statistic={"Popular Places"}
+                labels={["high rated", "low rated"]}
+                filters={[">4", "<4"]}
+                method={Places}
+                activeRadio={(option) => selectActiveRadio(option, "Places")}
+              />
+            )}
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -56,8 +67,18 @@ class Filters extends React.Component {
             <SearchModal
               statistic={"Age"}
               method={Age}
-              labels={["20-34 less 30.000", "20-34 more 30.000"]}
-              filters={["20-34<30000", "20-34>30000"]}
+              labels={ Country !=='US' ?[
+                "20-34 less than 10.000",
+                "20-34 more than 10.000",
+                "35-44 less than 20.000",
+                "35-44 more than 20.000",
+              ] : ['20-39 less than 20.000', '20-39 more than 20.000']}
+              filters={Country !=='US' ? [
+                "20-34<10000",
+                "20-34>10000",
+                "35-44<20000",
+                "35-44>20000",
+              ] : ['20-39<20000', '20-39>20000']}
               activeRadio={(option) => selectActiveRadio(option, "Age")}
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
@@ -78,12 +99,21 @@ class Filters extends React.Component {
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
             <SearchModal
-              statistic={"Marrige"}
-              labels={["Less than 300", "More than 300"]}
-              filters={["<300", ">300"]}
-              method={Marrige}
+              statistic={Country !== "US" ? "Marrige" : "Income"}
+              labels={
+                Country !== "US"
+                  ? ["Less than 700", "More than 700"]
+                  : ["Less than 100.000", "More than 100.000", 'Less than 50.000']
+              }
+              filters={
+                Country !== "US" ? ["<700", ">700"] : ["<100000", ">100000", '<50000']
+              }
+              method={Country !== "US" ? Marrige : Income}
               activeRadio={(option) =>
-                selectActiveRadio(option, "Marrige")
+                selectActiveRadio(
+                  option,
+                  Country !== "US" ? "Marrige" : "Income"
+                )
               }
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
@@ -92,12 +122,21 @@ class Filters extends React.Component {
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
             <SearchModal
-              statistic={"Ethnisity"}
-              labels={["russians<5000 ", "russians>5000"]}
-              filters={["r<5000", "r>5000"]}
-              method={Ethnisity}
+              statistic={Country !== "US" ? "Ethnisity" : "Race"}
+              labels={
+                Country !== "US"
+                  ? ["russians<5.000 ", "russians>5.000"]
+                  : ["white<1.000", "white>1.000"]
+              }
+              filters={
+                Country !== "US" ? ["r<5000", "r>5000"] : ["w<1000", "w>1000"]
+              }
+              method={Country !== "US" ? Ethnisity : Race}
               activeRadio={(option) =>
-            selectActiveRadio(option, "Ethnisity")
+                selectActiveRadio(
+                  option,
+                  Country !== "US" ? "Ethnisity" : "Race"
+                )
               }
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
@@ -106,71 +145,82 @@ class Filters extends React.Component {
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
             <SearchModal
-              statistic={"Business"}
-              labels={["Less than 10000", "More than 10000"]}
-              filters={["b<10000", "b>10000"]}
-              method={Business}
-              activeRadio={(option) =>
-                selectActiveRadio(option, "Business")
+              statistic={Country !== "US" ? "Business" : "Real-Estate"}
+              labels={
+                Country !== "US"
+                  ? ["Less than 10000", "More than 10000"]
+                  : [
+                      "median home value lover $200.000",
+                      "median home value higher $200.000 ",
+                    ]
               }
+              filters={Country!=='US'?["b<10000", "b>10000"]: ['<200000', '>200000']}
+              method={Country!=='US'? Business: Real_Estate}
+              activeRadio={(option) => selectActiveRadio(option, Country !=='US'?"Business":'Real_Estate')}
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
         </div>
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
-            <SearchModal
+            {Country!=='US' ? <SearchModal
               statistic={"Small Business"}
-              labels={["Less than 200", "More than 200"]}
-              filters={["b<200", "b>200"]}
+              labels={["Less than 500", "More than 500"]}
+              filters={["b<500", "b>500"]}
               method={Small_Business}
               activeRadio={(option) =>
                 selectActiveRadio(option, "Small_Business")
               }
-            />
+            /> : <SearchModal
+            statistic={"Education"}
+            labels={["bachelors degree lover than 50%", "bachelors degree higher than 50%"]}
+            filters={["b<50%", "b>59%"]}
+            method={Education}
+            activeRadio={(option) =>
+              selectActiveRadio(option, "Education")
+            }
+            />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
         </div>
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
-            <SearchModal
+            {Country!=='US' && <SearchModal
               statistic={"Birth"}
               labels={[
-                "Born boys less than girls",
-                "Born boys more than girls",
+                "Born borm less than 1000",
+                "Born borm more than 1000",
+                "Girls born less than 1000",
+                'Girls born more than 1000'
               ]}
-              filters={["b<g", "b>g"]}
+              filters={["b<1000", "b>1000", 'g<1000', 'g>1000']}
               method={Birth}
               activeRadio={(option) => selectActiveRadio(option, "Birth")}
-            />
+            />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
         </div>
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
-            <SearchModal
+            {Country!=='US' && <SearchModal
               statistic={"Retired"}
-              labels={["Less than 15000", "More than 15000"]}
-              filters={["b<15000", "b>15000"]}
+              labels={["Males and Females < 15000", "Males and Females > 15000"]}
+              filters={["r<15000", "r>15000"]}
               method={Retired}
-              activeRadio={(option) =>
-                selectActiveRadio(option, "Retired")
-              }
-            />
+              activeRadio={(option) => selectActiveRadio(option, "Retired")}
+            />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
         </div>
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
-            <SearchModal
+            {Country!=='US' && <SearchModal
               statistic={"Non_Retired"}
-              labels={["Less than 100000", "More than 100000"]}
-              filters={["b<100000", "b>100000"]}
+              labels={["Males and Females < 100000", "Males and females > 100000"]}
+              filters={["n_r<100000", "n_r>100000"]}
               method={Non_Retired}
-              activeRadio={(option) =>
-                selectActiveRadio(option, "Non_Retired")
-              }
-            />
+              activeRadio={(option) => selectActiveRadio(option, "Non_Retired")}
+            />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
         </div>
@@ -178,7 +228,7 @@ class Filters extends React.Component {
           <button
             className={classes2.stc_drop_submit}
             type="submit"
-            onClick={searchDistricts}
+            onClick={() => searchDistricts()}
           >
             <span>Search</span>
             <svg

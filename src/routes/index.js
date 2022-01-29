@@ -70,17 +70,9 @@ const publicRoutes = [
   { path:'/email-sent', component: EmailSent },
   { path: "/register", component: Register },
   { path:'/reset-password', component:resetPassword},
- 
-
-  /* {
-     pacth:'/login',exact:true, component: () => {
-       if(sessionStorage.getItem('authUser') || sessionStorage.getItem('auth')){
-        return <Redirect to="/dashboard" />;
-       }
-    }
-  },*/
-
-  {
+  { path: '/business', component: Business},
+  { path: '/subscribe', component: Subscribe}
+  /*{
     path: "/business",
     component: () => {
       if (
@@ -111,7 +103,7 @@ const publicRoutes = [
       }
       return <Subscribe />;
     },
-  },
+  },*/
 ];
 
 export { authProtectedRoutes, publicRoutes };

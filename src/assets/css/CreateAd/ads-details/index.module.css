@@ -306,3 +306,72 @@
   margin-left:auto;
   text-align:left;
 }
+
+
+/* ads edit style */
+.ads_edit_input{
+  color:#2E3A59;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 32px;
+  border: 1px solid #E4E9F2;
+  border-radius:8px;
+  padding: 8px 16px;
+  background:#fff;
+  text-align:center;
+  width:102px;
+  transition:all .4s ease;
+}
+.ads_edit_input:focus,.detail_map_title input{
+ border:1px solid #7356C0;
+ outline:none;
+}
+.detail_map_title input{
+  background: #F7F9FC;
+  border: 1px solid #E4E9F2;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: #8F9BB3;
+  margin-left:8px;
+  height:30px;
+  text-align:center;
+  padding:0 8px;
+  transition:all .4s ease;
+}
+.details_edit_select{
+  position: relative;
+  width:100%;
+}
+.details_edit_select select{
+  border: 1px solid #E4E9F2;
+  border-radius: 8px;
+  background:#fff;
+  padding-left:8px;
+  padding-right:38px;
+  width:100%;
+  height:44px;
+  color:#2E3A59;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 28px;
+  transition:all .4s ease;
+}
+.details_edit_select select{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+       appearance: none;
+}
+.details_edit_arrow{
+  position: absolute;
+  right:12px;
+  top:12px;
+}
+.details_edit_select select:focus{
+  outline:none;
+  border:1px solid #7356C0;
+}
+.mt_8{
+  margin-top:8px;
+}

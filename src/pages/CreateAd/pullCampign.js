@@ -1,27 +1,21 @@
 import axios from "axios";
 import React, { Component } from "react";
 
-import GoogleMap from "../Dashboard/google-map";
-
 import { Link, withRouter } from "react-router-dom";
 
 import Trash from "../../assets/css/CreateAd/trash.svg";
 import ArrowRight from "../../assets/css/CreateAd/arrow-right.svg";
-import Trash2 from "../../assets/css/CreateAd/ads-details/trash.svg";
-import Edit from "../../assets/css/CreateAd/ads-details/edit.svg";
 
 import classes from "../../assets/css/CreateAd/index.module.css";
-import classes2 from "../../assets/css/CreateAd/ads-details/index.module.css";
-import { latLng } from "leaflet";
 
 import AdDetails from "./ad-details";
-
-import ZIP from "../Dashboard/ZipCoordinates";
 
 class Pullcampaigns extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      haveCampaigns: false,
+      checked: false,
       pullledCampaigns: [],
       modalViewDetailsStatus: false,
       viewCampaign: {},
@@ -36,12 +30,9 @@ class Pullcampaigns extends Component {
   }
   componentDidMount() {
     let auth = sessionStorage.getItem("authUser");
-    this.getCampaigns(auth)
-
-    console.log(this.props.data.area);
+    this.getCampaigns(auth);
   }
-  
-  
+
   //Get Campigns from APi call
   getCampaigns = (auth) => {
     this.setState({ ...this.state, loading: true });
@@ -73,28 +64,39 @@ class Pullcampaigns extends Component {
           console.log(adds);
         }
 
+        const campaignsLength = campaigns.length;
+        const campaignList = {};
+        console.log(campaignsLength);
+        for (let i = 0; i < campaignsLength; i++) {
+          campaignList[`name-${i + 1}`] = false;
+        }
+
         this.setState({
           ...this.state,
           pullledCampaigns: campaigns,
           adds: adds,
           loading: false,
+          haveCampaigns: campaignsLength > 0 ? true : false,
+          ...campaignList,
         });
       }
     });
   };
 
   toggleDeleteAd = (id, type) => {
-    this.setState({...this.state, loading:true})
+    this.setState({ ...this.state, loading: true });
     axios
       .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
       .then((response) => {
         window.location.reload();
-        if(type==='_details') this.props.history.push("/ad-manager");
-        this.setState({...this.state, loading:false})
+        if (type === "_details") {
+          this.props.history.replace("/ad-manager");
+          this.props.history.go("/ad-manager");
+        }
+        this.setState({ ...this.state, loading: false });
       })
 
       .catch((error) => console.log(error));
-      
   };
 
   toggle = (status, campaign) => {
@@ -109,6 +111,30 @@ class Pullcampaigns extends Component {
   toggleEditMode() {
     this.setState({ ...this.state, editable: !this.state.editable });
   }
+  checkBill = (event) => {
+    const id = event.target.id;
+
+    this.setState({
+      ...this.state,
+      [id]: !this.state[id],
+    });
+  };
+
+  checkAllBills = () => {
+    const campaigns = this.state.pullledCampaigns.length;
+
+    for (let i = 0; i < campaigns; i++) {
+      const name = `name-${i + 1}`;
+      console.log(this.state.checked);
+      if (this.state.checked === true) {
+        console.log("checked");
+        this.setState({ [name]: false, checked: false });
+      } else {
+        console.log("second ");
+        this.setState({ [name]: true, checked: true });
+      }
+    }
+  };
 
   locatePosition() {}
 
@@ -126,7 +152,18 @@ class Pullcampaigns extends Component {
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
                   <div className={classes.cads_check}>
-                    <input type="checkbox" id={`name-${i + 1}`} />
+                    <input
+                      type="checkbox"
+                      id={`name-${i + 1}`}
+                      checked={
+                        (this.state.checked ||
+                          (this.state.haveCampaigns &&
+                            this.state[`name-${i + 1}`])) &&
+                        this.state.haveCampaigns &&
+                        this.state[`name-${i + 1}`]
+                      }
+                      onChange={this.checkBill}
+                    />
                     <label htmlFor={`name-${i + 1}`}>
                       {campaign.campaign_name}
                     </label>
@@ -262,7 +299,12 @@ class Pullcampaigns extends Component {
                     <div
                       className={`${classes.cads_check} ${classes.invoice_th}`}
                     >
-                      <input type="checkbox" id="invoice-txt" />
+                      <input
+                        type="checkbox"
+                        id="invoice-txt"
+                        onChange={this.checkAllBills}
+                        checked={this.state.checked}
+                      />
                       <label htmlFor="invoice-txt">Name</label>
                     </div>
                   </th>

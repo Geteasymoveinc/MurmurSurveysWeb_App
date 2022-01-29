@@ -1,32 +1,13 @@
 import React, { Component } from "react";
-import Breadcrumbs from "../../components/Common/Breadcrumb";
+
 import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  Modal,
-  CardSubtitle,
-  CardText,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Media,
-  Table,
   TabContent,
   TabPane,
-  Nav,
-  NavItem,
-  NavLink,
 } from "reactstrap";
-import classnames from "classnames";
+
+
+import { queryForEmail } from "../../helpers/fakebackend_helper";
+
 import ABTargets from "./abtarget";
 import ABReporting from "./reporting";
 
@@ -50,6 +31,13 @@ class ABTesting extends Component {
       this.setState({ activeTab: tab });
     }
   };
+
+  /*componentDidMount(){
+    this.setState({ ...this.state, loading: true });
+    queryForEmail("https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
+      email: sessionStorage.getItem('userAuth')
+    }).then(res => {console.log(res)})
+  }*/
 
   render() {
     return (

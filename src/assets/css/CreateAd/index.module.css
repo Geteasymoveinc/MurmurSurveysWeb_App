@@ -379,11 +379,12 @@
 }
 .cads_quantity{
   min-width:124px;
+  white-space: nowrap
 }
 .cads_budget{
   min-width:110px;
 }
-.cads_th:not(:last-child),.cads-table table tr td:not(:first-child){
+.cads_th:not(:last-child),.cads_table table tr td:not(:first-child){
   text-align:center;
 }
 .cads_table table tr td:last-child{

@@ -51,7 +51,12 @@ class Subscribe extends React.Component {
 
   finishRegister() {
     if (this.state.subscribe) {
-      this.props.subscribeFn(this.props.user, this.props.history);
+      this.props.subscribeFn(
+        this.props.user,
+        this.props.history
+      );
+    }else{
+      //this.props.history.replace('/Dashboard')
     }
   }
 
@@ -62,17 +67,17 @@ class Subscribe extends React.Component {
     document.body.classList.remove("bg-transparent");
   }
 
-  handleClickSocialIcons = (e) => {
+  /* handleClickSocialIcons = (e) => {
     console.log(e.target.name);
     if ((e.target.name = "Facebook")) {
       window.open("https://facebook.com/murmurcars");
     } else {
       window.open("https://www.linkedin.com/company/murmurcars/");
     }
-  };
+  };*/
 
   render() {
-    console.log(this.props)
+    console.log(this.props);
     return (
       <React.Fragment>
         {this.props.loading && (
@@ -87,7 +92,7 @@ class Subscribe extends React.Component {
             </div>
           </div>
         )}
-        { !this.props.loading && 
+        {!this.props.loading && (
           <React.Fragment>
             <header className={classes.header}>
               <div className={classes.mur_contain}>
@@ -121,7 +126,7 @@ class Subscribe extends React.Component {
                         type="checkbox"
                         id="checkbox"
                         checked={this.state.subscribe}
-                        onClick={this.toggleSubscribe}
+                        onChange={this.toggleSubscribe}
                       />
                       <div
                         className={`${classes.slider} ${classes.round}`}
@@ -241,7 +246,7 @@ class Subscribe extends React.Component {
               </div>
             </footer>
           </React.Fragment>
-        }
+        )}
       </React.Fragment>
     );
   }

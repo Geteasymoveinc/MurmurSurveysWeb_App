@@ -185,13 +185,13 @@ class Modals extends Component {
                     </ul>
                   </div>
                   <div className="text-center">
-                    <Link
-                      to="#"
+                  <button
+                      
                       className="current_plan_btn"
                       onClick={this.props.closeUpdateModal}
                     >
-                      Current Plan
-                    </Link>
+                      Choose this plan
+                    </button>
                   </div>
                 </label>
               </div>
@@ -254,13 +254,13 @@ class Modals extends Component {
                     </ul>
                   </div>
                   <div className="text-center">
-                    <Link
-                      to="#"
+                    <button
+                    
                       className="current_plan_btn"
                       onClick={this.props.closeUpdateModal}
                     >
                       Choose this plan
-                    </Link>
+                    </button>
                   </div>
                 </label>
               </div>
@@ -323,13 +323,13 @@ class Modals extends Component {
                     </ul>
                   </div>
                   <div className="text-center">
-                    <Link
-                      to="#"
+                  <button
+                    
                       className="current_plan_btn"
                       onClick={this.props.closeUpdateModal}
                     >
                       Choose this plan
-                    </Link>
+                    </button>
                   </div>
                 </label>
               </div>

@@ -1,41 +1,5 @@
 import React, { Component } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  CardBody,
-  CardTitle,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Media,
-  Table,
-} from "reactstrap";
-import { Link } from "react-router-dom";
 
-//import Charts
-import StackedColumnChart from "./StackedColumnChart";
-import DeliveryPieChart from "./DeliveryPieChart";
-//import DeliveryDriversMap from "./DeliveryDriversMap"
-
-import modalimage1 from "../../assets/images/product/img-7.png";
-import modalimage2 from "../../assets/images/product/img-4.png";
-
-// Pages Components
-
-import MonthlyEarning from "./MonthlyEarning";
-import SocialSource from "./SocialSource";
-import ActivityComp from "./ActivityComp";
-import CampaignData from "./CampaignData";
-import LatestTranaction from "./LatestTranaction";
-
-//Import Breadcrumb
-import Breadcrumbs from "../../components/Common/Breadcrumb";
-
-import classes from '../../assets/css/Dashboard/dashboard.module.css'
 
 
 //i18n

@@ -133,7 +133,6 @@
 .stc_list_each{
   width:calc(100% / 2);
   margin-top:32px;
-  
 }
 .stc_list_each ul{
   list-style-type: none;
@@ -151,10 +150,11 @@
   border-right:1px solid #E4E9F2;
 }
 .stc_list_each:first-child{
-  /*padding-right:55px;*/
-  padding-right: 70%;
+  padding-right:55px;
+  width: 100%;
   display:flex;
   justify-content: space-between;
+  overflow-x: auto;
 }
 .stc_list_each:first-child ul{
   /*padding-right:55px;*/
@@ -163,8 +163,7 @@
 .stc_list_each:first-child ul span{
   /*padding-right:55px;*/
   margin-left: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  white-space: nowrap;
 }
 .stc_list_each:first-child ul p{
   /*padding-right:55px;*/
@@ -182,7 +181,6 @@
 .stc_list_li:not(:last-child){
   margin-bottom:16px;
 }
-
 
 
 .stc_list_li_input:not(:first-child){
@@ -285,6 +283,12 @@
 
 
 
+
+
+
+
+
+
 /* style streetIQ dropdowns */
 .stc_drop_btn{
   border: 1px solid #B69EEA;
@@ -341,4 +345,9 @@
 }
 .stc_drop_dropdown .dropdown-menu{
   margin-top:8px;
+}
+
+
+.dash_856px{
+  max-width:856px;
 }

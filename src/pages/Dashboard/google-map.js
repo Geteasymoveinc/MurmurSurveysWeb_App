@@ -62,12 +62,12 @@ class GoogleMap extends Component {
     }
 
     return renderDrivers;
-  };
-
+  }
  
   centerMoved(coord) {
-    //console.log(coord);
+    console.log(coord);
   }
+  
   render() {
     return (
       <Map
@@ -93,6 +93,7 @@ class GoogleMap extends Component {
           strokeOpacity={0.8}
           strokeWeight={1}
           strokeColor="#200b47"
+          
         />
         {/*{this.handleRenderDriversCoordinates()}*/}
       </Map>

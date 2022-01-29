@@ -102,6 +102,8 @@
     background:#fff;
     color:#7356C0;
   }
+
+
   @media screen and (min-width:1500px){
     .setting_cancel_modal.modal-dialog{
       margin-top:12%;
@@ -245,6 +247,7 @@
     color: #2E3A59;
     margin-left:8px;
   }
+   
   .current_plan_btn{
     background: #7356C0;
     border-radius: 61px;
@@ -254,9 +257,10 @@
     font-weight: 500;
     font-size: 12px;
     line-height: 32px;
-    color:#fff;
+    color:white;
     border:1px solid #7356C0;
     transition:all .4s ease;
+    padding-bottom: 2rem;
   }
   .current_plan_btn:hover{
     background:transparent;

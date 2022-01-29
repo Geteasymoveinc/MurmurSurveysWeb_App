@@ -93,7 +93,7 @@ class ResetPassword extends React.Component {
 
   componentDidMount() {
     document.body.classList.add("bg-transparent");
-    const token = this.props.location.search.split('?token=')[1].split('&utm_campaign=website&utm_source=sendgrid.com')[0]
+    const token = this.props.location.search.split('?token=')[1].split('&')[0]
     console.log(token)
     this.setState({ ...this.state, token });
   }

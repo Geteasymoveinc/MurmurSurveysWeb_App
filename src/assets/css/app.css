@@ -3601,8 +3601,26 @@ button{
 }
 
 
+.apexcharts-legend-series {
+  cursor: pointer;
+  line-height: normal;
 
 
+}
+
+
+
+.apexcharts-slices .apexcharts-text .apexcharts-pie-label{
+ fill: white;
+ font-size: 10px;
+ font-family: 'Montserrat';
+
+}
+
+
+.apexcharts-pie-label, .apexcharts-datalabels, .apexcharts-datalabel, .apexcharts-datalabel-label, .apexcharts-datalabel-value{
+  fill:white !important
+}
 
 
 
@@ -3627,9 +3645,9 @@ button{
 .apexcharts-toolbar{
   top:-10px !important;
 }
-/*5:03*/
+
 .chart1 .apexcharts-theme-light svg,.chart1 .apexcharts-theme-light foreignObject,.chart2 .apexcharts-theme-light svg,.chart2 .apexcharts-theme-light foreignObject,.chart3 .apexcharts-theme-light svg,.chart3 .apexcharts-theme-light foreignObject,.chart4 .apexcharts-theme-light svg,.chart4 .apexcharts-theme-light foreignObject{
-  height: 226px !important;
+  height: 236px !important;
   max-width: 304px;
   position: absolute;
   left: -3%;
@@ -3699,3 +3717,73 @@ button{
     margin-left:12%;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#chart-dash1 .apexcharts-legend{
+  top:0 !important;
+}
+.chart-dash1{
+  left:-24px !important;
+  font-family: 'Montserrat' !important;
+}
+#chart-dash1 .apexcharts-legend-text{
+  color: #2E3A59 !important;
+}
+#chart-dash2 .apexcharts-toolbar{
+  display:none;
+}
+/*.chart-dash2{
+  margin-left:-36px ;
+  margin-top:-32px ;
+}*/
+
+.chart-dash2 .apexcharts-tooltip{
+  /*padding: 0 3rem 0;*/
+  top: 0 !important;
+  left: 0 !important
+}
+#chart-dash2 .apexcharts-legend{
+  top:0 !important;
+  right:20px !important;
+}
+#chart-dash2 .apexcharts-legend .apexcharts-legend-text{
+  font-family: 'Montserrat' !important;
+}
+#chart-dash1 .apexcharts-legend .apexcharts-legend-text{
+  font-family: 'Montserrat' !important;
+}
+#chart-dash2 .apexcharts-legend-marker{
+  border-radius:50% !important;
+}
+#chart-dash1 .apexcharts-legend-series{
+  display: flex !important;
+  align-items: center !important;
+}
+
+#chart-dash2 .apexcharts-legend-series{
+  display: flex !important;
+  align-items: center !important;
+}
+
+
+

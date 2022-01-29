@@ -30,17 +30,15 @@ function* subscribeFn({ payload: { subscriber, history } }) {
       yield put(subscribeSuccesfully(subscriber));
       setTimeout(() => history.push("/login"), 2000);
     } else {
-      let source = [];
-
+      
       if (subscriber) {
-        console.log(subscriber);
-        source = subscriber;
+  
 
-        const firstName = source.fullName.split(" ")[0];
-        const lastName = source.fullName.split(" ")[1];
-        const email = source.email;
-        const phoneNumber = source.phone_number;
-        const company = source.company;
+        const firstName = subscriber.fullName.split(" ")[0];
+        const lastName = subscriber.fullName.split(" ")[1];
+        const email = subscriber.email;
+        const phoneNumber = subscriber.phone_number;
+        const company = subscriber.company;
         console.log(firstName, lastName, company, phoneNumber, email);
         const subscribed_user = {
           firstName,
@@ -69,6 +67,7 @@ function* subscribeFn({ payload: { subscriber, history } }) {
   } catch (error) {
     console.log(error);
     sessionStorage.removeItem("user");
+    history.replace("/register");
     yield put(subscriptionUserFailed(error));
   }
 }

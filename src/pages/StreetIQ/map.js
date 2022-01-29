@@ -147,7 +147,7 @@ class StreetIQMap extends Component {
           styles={this.props.mapStyle}
           initialCenter={this.props.maping.center}
           draggable={true}
-          center={this.props.maping.postCenter && this.props.maping.postCenter}
+          center={this.props.maping.postCenter}
           fullscreenControl={false}
           mapTypeControl={false}
           disableDefaultUI={true}
@@ -160,7 +160,8 @@ class StreetIQMap extends Component {
                   onClick={() => {
                     if (this.props.maping.districts.length) {
                       this.props.selectedDistrictData(
-                        this.props.maping.districts[index]
+                        this.props.maping.districts[index],
+                        index
                       );
                     }
                   }}

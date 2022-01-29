@@ -18,12 +18,14 @@ const login = (state = initialState, action) => {
       state = {
         ...state,
         loading: true,
+        error: false
       };
       break;
     case LOGIN_SUCCESS:
       state = {
         ...state,
         loading: false,
+        error: false,
         user: action.payload
       };
 

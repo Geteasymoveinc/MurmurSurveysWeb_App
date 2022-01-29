@@ -54,7 +54,7 @@ class TestingModal extends Component {
   };
 
   handleFileChange = (info) => {
-    const variant = this.state.variantDa
+    const variant = this.state.variantData
     const reader = new FileReader();
     reader.readAsDataURL(info.file);
 

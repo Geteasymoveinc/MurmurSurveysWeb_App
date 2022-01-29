@@ -208,7 +208,7 @@
   height:32px;
   padding-left:16px;
   padding-right:16px;
-  padding-bottom: 2.2rem;
+  padding-bottom: 2.05rem;
   text-decoration:none;
   border: 1px solid #3F2B89;
   border-radius: 4px;
@@ -220,7 +220,7 @@
 }
 .subc_upgrade_plan:hover{
   color:#fff;
-  background:#3F2B89;
+  background:#7356C0;
 }
 .subc_cancel{
   font-weight: 500;
@@ -255,6 +255,7 @@
   -ms-flex-align: center;
   align-items: center;
 }
+
 .profil_relative,.stng_relative{
   position: relative;
 }
@@ -311,6 +312,7 @@
   padding:4px 12px;
   background: #ECFDF3;
   border-radius: 16px;
+  
 }
 .stng_profil_detail span::before{
   content:'';

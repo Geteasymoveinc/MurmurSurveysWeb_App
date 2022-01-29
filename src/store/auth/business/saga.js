@@ -29,8 +29,8 @@ function* addPackageFn({ payload: { option, history } }) {
       yield put(addPackage(response));
     } else {
 
- 
-      
+        console.log(option.user)
+        if(option.user.email){
         const fullName = option.user.fullName;
         const email =option.user.email;
         const password = option.user.password;
@@ -51,19 +51,23 @@ function* addPackageFn({ payload: { option, history } }) {
         const response = yield call(
           postRegister,
           "https://backendapp.murmurcars.com/api/v1/users/signup",
+          //"http://localhost:4000/api/v1/users/signup",
           registered_user
         );
       
 
         yield put(sendPackageSuccessfully(response));
         history.push('/subscribe')
+        }else{
+          history.replace('/register')
+        }
   }
   } catch (error) {
 
     yield put(sendPackageFailed(error));
     sessionStorage.removeItem("user");
 
-     history.replace("/register")
+     setTimeout(() =>  history.replace("/register"), 1000)
    
 
   }

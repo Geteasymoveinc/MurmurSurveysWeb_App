@@ -4,6 +4,7 @@ import Add from "../../assets/css/ABTesting/add.svg";
 import classes from "../../assets/css/ABTesting/index.module.css";
 
 import AddVariantModal from "./add-variant";
+import axios from "axios";
 
 class ABTargets extends Component {
   constructor(props) {
@@ -40,6 +41,15 @@ class ABTargets extends Component {
     const Variants = this.state.Variants;
     Variants.push({ name: data.name, weight: data.weight, img: Gallery });
     this.setState({ ...this.state, modal: false, Variants});
+    axios.post('http://localhost:4000/api/v1/campaigns/create-ab-testing',{
+      advertisers_email: sessionStorage.getItem('authUser'),
+      ab_experiment: true,
+      ad_creativity_url: data.image,
+      ab_experiement_weight: data.weight,
+      ad_schedule: data.DateFrom + ' ' + data.DateTo,
+      ad_schedule_time: data.TimeFrom + " " +  data.TimeTo,
+      ad_experiement_name: data.name
+    }).then(resp => console.log(resp)).catch()
   };
 
   render() {

@@ -68,7 +68,7 @@ class ReportingChart extends Component {
 
   render() {
     return (
-      <div id="chart">
+      <div id="chart-report">
         <ReactApexChart
           options={this.state.options}
           series={this.state.series}

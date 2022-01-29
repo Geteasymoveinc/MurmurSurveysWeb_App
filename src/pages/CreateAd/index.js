@@ -50,7 +50,6 @@ import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 
 import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import classes from "../../assets/css/CreateAd/index.module.css";
-import classes2 from "../../assets/css/CreateAd/ads-details/index.module.css";
 
 import { addPackage, changeSideBar } from "../../store/actions";
 
