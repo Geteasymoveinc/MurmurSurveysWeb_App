@@ -175,12 +175,14 @@ class Settings extends Component {
       .then((res) => {
         console.log(res);
         const data = res.resp.at(-1);
+        console.log(data)
         let image = ''
-        if(data.profilePhoto.length>0){
+        if(data.profilePhoto && data.profilePhoto.length>0){
+          console.log('hey')
            image = data.profilePhoto.split("https://backendapi.murmurcars.com/advertisers/users/profilePhoto/")[1]
         }
         
-        console.log(image)
+      
            
             this.setState({
               ...this.state,
