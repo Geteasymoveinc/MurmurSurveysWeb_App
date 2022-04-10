@@ -345,3 +345,23 @@ background:transparent;
     font-size:12px;
   }
 }
+
+
+
+
+
+
+
+.no_analytics_alert{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.no_analytics_alert h1{
+font-size: 2vw;
+}
+.no_analytics_alert a{
+  font-size: 2vw;
+  color:#3F2B89;
+}

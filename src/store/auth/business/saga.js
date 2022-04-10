@@ -3,7 +3,6 @@ import { takeEvery, fork, put, all, call, select } from "redux-saga/effects";
 //Account Redux states
 import { ADD__PACKAGE } from "./actionTypes";
 
-
 //Include Both Helper File with needed methods
 import { getFirebaseBackend } from "../../../helpers/firebase_helper";
 import { postRegister } from "../../../helpers/fakebackend_helper";
@@ -11,16 +10,12 @@ import { postRegister } from "../../../helpers/fakebackend_helper";
 import {
   sendPackageSuccessfully,
   sendPackageFailed,
-  errorCleanup,
-  addPackage
+  Cleanup,
+  addPackage,
 } from "./actions";
-
-
-
 
 // initialize relavant method of both Auth
 const fireBaseBackend = getFirebaseBackend();
-
 
 function* addPackageFn({ payload: { option, history } }) {
   try {
@@ -28,13 +23,11 @@ function* addPackageFn({ payload: { option, history } }) {
       const response = yield call(fireBaseBackend.initFirebaseBackend, option);
       yield put(addPackage(response));
     } else {
-
-        console.log(option.user)
-        if(option.user.email){
+      if (option.user.email) {
         const fullName = option.user.fullName;
-        const email =option.user.email;
+        const email = option.user.email;
         const password = option.user.password;
-        const phone_number =option.user.phone_number;
+        const phone_number = option.user.phone_number;
         const company = option.user.company;
         const advertise_options = option.option;
 
@@ -44,32 +37,31 @@ function* addPackageFn({ payload: { option, history } }) {
           email,
           phone_number,
           company,
-          advertise_options,
-        }
+          advertise_options
+        };
 
-       
         const response = yield call(
           postRegister,
           "https://backendapp.murmurcars.com/api/v1/users/signup",
           //"http://localhost:4000/api/v1/users/signup",
           registered_user
         );
-      
 
         yield put(sendPackageSuccessfully(response));
-        history.push('/subscribe')
-        }else{
-          history.replace('/register')
-        }
-  }
+        history.push("/subscribe");
+      } else {
+        yield put(Cleanup())
+        history.replace("/register");
+      }
+    }
   } catch (error) {
 
     yield put(sendPackageFailed(error));
-    sessionStorage.removeItem("user");
+    
 
-     setTimeout(() =>  history.replace("/register"), 1000)
-   
-
+    setTimeout(() => {
+      history.replace("/register")
+    }, 1000);
   }
 }
 

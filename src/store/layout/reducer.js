@@ -9,7 +9,7 @@ import {
   SHOW_RIGHT_SIDEBAR,
   CHANGE_PRELOADER,
   HIDE_RIGHT_SIDEBAR,
-  CHANGE_SIDEBAR_VISIBILITY
+  CHANGE_SIDEBAR_VISIBILITY,
 } from "./actionTypes";
 
 const INIT_STATE = {
@@ -21,13 +21,12 @@ const INIT_STATE = {
   isPreloader: false,
   showRightSidebar: false,
   isMobile: false,
-  isSideBarVisible:true
+  isSideBarVisible: true,
 };
 
 const Layout = (state = INIT_STATE, action) => {
   switch (action.type) {
     case CHANGE_LAYOUT:
-      console.log(action.payload)
       return {
         ...state,
         layoutType: action.payload,
@@ -56,8 +55,8 @@ const Layout = (state = INIT_STATE, action) => {
     case CHANGE_SIDEBAR_VISIBILITY:
       return {
         ...state,
-        isSideBarVisible:action.payload
-      }
+        isSideBarVisible: action.payload,
+      };
     case CHANGE_TOPBAR_THEME:
       return {
         ...state,

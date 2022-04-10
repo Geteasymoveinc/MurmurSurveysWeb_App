@@ -6,21 +6,13 @@ import { Link, withRouter } from "react-router-dom";
 
 import { Button, Alert } from "reactstrap";
 
-import { addPackage, errorCleanup } from "../../../store/actions";
+import { addPackage,Cleanup } from "../../../store/actions";
 
 import classes from "../../../assets/css/Authentication/business/index.module.css";
 
-import Shop from "../../../assets/css/Authentication/business/shop.svg";
-import Circle from "../../../assets/css/Authentication/business/info-circle.svg";
 import Logo from "../../../assets/css/common/icons/logoBlue.svg";
 import Slash from "../../../assets/css/common/icons/slash.svg";
 import Copyright from "../../../assets/css/common/icons/copyrightblack.svg";
-import Footer from "../../../assets/css/Authentication/business/group7.svg";
-import LogoText from "../../../assets/css/common/icons/urmur.svg";
-
-import ModalBody from "reactstrap/lib/ModalBody";
-
-import Vector2 from "../../../assets/css/common/icons/vector2.svg";
 
 class Business extends React.Component {
   constructor(props) {
@@ -28,35 +20,20 @@ class Business extends React.Component {
     this.state = {
       advertise_options: "",
       alert_status: false,
-      package: "",
-      
     };
 
     // handleValidSubmit
-
-    this.onIndoorSelected = this.onIndoorSelected.bind(this);
-
-    this.onOutdoorSelected = this.onOutdoorSelected.bind(this);
-
     this.submitPackage = this.submitPackage.bind(this);
   }
 
-  // handleValidSubmit
-  onIndoorSelected() {
+  onBusinessGoalSelected = (type) => {
     this.setState({
       ...this.state,
-      error:false,
-      advertise_options: "indoor",
-    });
-  }
+      error: false,
 
-  onOutdoorSelected() {
-    this.setState({
-      ...this.state,
-      error:false,
-      advertise_options: "outdoor",
+      advertise_options: type,
     });
-  }
+  };
 
   submitPackage(event) {
     event.preventDefault();
@@ -71,14 +48,17 @@ class Business extends React.Component {
       this.setState({ ...this.state, alert_status: true });
     }
   }
-
   componentDidMount() {
-    document.body.classList.add("overflow-hidden");
-  }
-  componentWillUnmount() {
-    document.body.classList.remove("overflow-hidden");
+    //this.props.apiError("");
+
+    document.body.classList.add("bg-transparent");
   }
 
+
+ componentWillUnmount(){
+    Cleanup()
+    document.body.classList.remove("bg-transparent");
+ }
   render() {
     console.log(this.props);
     return (
@@ -107,22 +87,29 @@ class Business extends React.Component {
             </header>
             <div className={classes.ads_section}>
               <div className={classes.ads_cover}>
-                {this.state.alert_status ? (
+                {this.state.alert_status || this.props.error ? (
                   <Alert
                     color="danger"
-                    className="d-flex justify-content-between"
+                    className="d-flex justify-content-between align-items-center"
+                    style={{ padding: "0 1rem" }}
                   >
-                    <span className="mt-2">
-                      Choose one of available advertising packages
+                    <span>
+                      {`${
+                        !this.props.error
+                          ? "Choose one of available advertising products"
+                          : "Wrong credentials"
+                      }`}
                     </span>
-                    <Button
-                      color="link"
-                      onClick={() =>
-                        this.setState({ ...this.state, alert_status: false })
-                      }
-                    >
-                      Close
-                    </Button>
+                    {!this.props.error && (
+                      <Button
+                        color="link"
+                        onClick={() =>
+                          this.setState({ ...this.state, alert_status: false })
+                        }
+                      >
+                        Close
+                      </Button>
+                    )}
                   </Alert>
                 ) : null}
 
@@ -130,10 +117,10 @@ class Business extends React.Component {
                   How are you planning to use Murmur?
                 </h1>
                 <h4 className={classes.ads_h4}>
-                  Lectus mattis mi praesent vivamus libero libero.
+                  We help you to target people where they go.
                 </h4>
                 <div className={classes.ads_form}>
-                  <form action="">
+                  <form onSubmit={this.submitPackage}>
                     <div className={classes.ads_row}>
                       <div className={classes.ads_col}>
                         <div className={classes.ads_item}>
@@ -141,7 +128,9 @@ class Business extends React.Component {
                             type="radio"
                             name="ads-type"
                             id="ads-type1"
-                            onClick={this.onOutdoorSelected}
+                            onChange={() =>
+                              this.onBusinessGoalSelected("outdoor")
+                            }
                           />
                           <label htmlFor="ads-type1">
                             <svg
@@ -155,58 +144,58 @@ class Business extends React.Component {
                               <path
                                 d="M15.51 2.83H8.49C6 2.83 5.45 4.07 5.13 5.59L4 11H20L18.87 5.59C18.55 4.07 18 2.83 15.51 2.83Z"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M21.99 19.82C22.1 20.99 21.16 22 19.96 22H18.08C17 22 16.85 21.54 16.66 20.97L16.46 20.37C16.18 19.55 16 19 14.56 19H9.43998C7.99998 19 7.78998 19.62 7.53998 20.37L7.33998 20.97C7.14998 21.54 6.99998 22 5.91998 22H4.03998C2.83998 22 1.89998 20.99 2.00998 19.82L2.56998 13.73C2.70998 12.23 2.99998 11 5.61998 11H18.38C21 11 21.29 12.23 21.43 13.73L21.99 19.82Z"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M4 8H3"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M21 8H20"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M12 3V5"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M10.5 5H13.5"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M6 15H9"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                               <path
                                 d="M15 15H18"
                                 stroke="#292D32"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
                               />
                             </svg>
                             <p>Outdoor</p>
@@ -223,9 +212,76 @@ class Business extends React.Component {
                             type="radio"
                             name="ads-type"
                             id="ads-type2"
-                            onClick={this.onIndoorSelected}
+                            onChange={() =>
+                              this.onBusinessGoalSelected("backpack")
+                            }
                           />
-                          <label htmlFor="ads-type2">
+                          <label for="ads-type2">
+                            <svg
+                              className={classes.ads_svg2}
+                              width="14"
+                              height="20"
+                              viewBox="0 0 14 20"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M0.920592 0.114291L0.800587 0.228583V2.40266V4.57674L0.659971 4.84266C0.455965 5.22847 0.239355 5.84766 0.111549 6.41024L0 6.90127V12.9814V19.0616L0.113724 19.2822C0.239929 19.5269 0.493777 19.7711 0.76573 19.9092L0.944282 20H7H13.0557L13.2343 19.9092C13.5062 19.7711 13.7601 19.5269 13.8863 19.2822L14 19.0616V12.9814V6.90127L13.8885 6.41024C13.7606 5.84766 13.544 5.22847 13.34 4.84266L13.1994 4.57674V2.40266V0.228583L13.0794 0.114291L12.9594 0H11.568H10.1766L10.0663 0.109677L9.95601 0.219316V1.05134C9.95601 1.701 9.94476 1.87918 9.90469 1.8644C9.87649 1.85396 9.68221 1.80497 9.47299 1.75554L9.09257 1.66565L9.05106 1.50729C8.87399 0.831867 8.25758 0.23132 7.55967 0.05435C7.28907 -0.0142718 6.71093 -0.0142718 6.44033 0.05435C5.74316 0.231163 5.12585 0.832063 4.94939 1.50573L4.90833 1.66244L4.52746 1.75523C4.31799 1.80626 4.12355 1.85638 4.09531 1.86659C4.05528 1.88109 4.04399 1.70459 4.04399 1.06291V0.240587L3.9377 0.120313L3.8314 0H2.436H1.0406L0.920592 0.114291ZM3.18182 1.52121V2.26041L2.9868 2.36704C2.71001 2.51844 2.26336 2.84235 1.93988 3.1263L1.66276 3.36958V2.07582V0.782014H2.42229H3.18182V1.52121ZM12.3372 2.07582V3.36958L12.0601 3.1263C11.7366 2.84235 11.29 2.51844 11.0132 2.36704L10.8182 2.26041V1.52121V0.782014H11.5777H12.3372V2.07582ZM7.37874 0.862014C7.46282 0.884262 7.61009 0.959453 7.706 1.02909C7.87921 1.15492 8.14956 1.45896 8.14956 1.52798C8.14956 1.54913 7.67442 1.56403 7 1.56403C6.32558 1.56403 5.85044 1.54913 5.85044 1.52798C5.85044 1.46667 6.10946 1.1668 6.26621 1.04665C6.34816 0.983851 6.48672 0.908192 6.57413 0.878514C6.76405 0.814037 7.16624 0.805787 7.37874 0.862014ZM9.01173 2.49345C10.5246 2.84102 11.6571 3.66909 12.4531 5.00966C12.5248 5.13056 12.5836 5.24039 12.5836 5.25376C12.5836 5.26714 12.385 5.08825 12.1422 4.85627C11.3092 4.06014 10.3524 3.56481 9.16314 3.31406C8.76527 3.23019 8.65976 3.22588 7 3.22588C5.34024 3.22588 5.23473 3.23019 4.83686 3.31406C3.64755 3.56481 2.69075 4.06014 1.85777 4.85627C1.61505 5.08825 1.41642 5.26714 1.41642 5.25376C1.41642 5.24039 1.47517 5.13056 1.54694 5.00966C2.35356 3.65118 3.58671 2.76383 5.04985 2.48895C5.56494 2.39222 5.54301 2.39312 7.1437 2.40344C8.51262 2.41228 8.69724 2.42119 9.01173 2.49345ZM9.11437 4.15496C10.1198 4.4052 10.8834 4.828 11.5812 5.52082C12.3248 6.25904 12.7728 7.08426 13.0464 8.21959C13.1323 8.57591 13.1341 8.66022 13.1477 12.7957L13.1615 17.0088H10.9192H8.67696L8.55696 17.1231C8.35311 17.3173 8.40907 17.654 8.6644 17.7694C8.78009 17.8217 9.09544 17.8299 10.9783 17.8299H13.1584L13.1582 18.3284C13.158 18.8767 13.1157 19.0034 12.885 19.1474C12.7774 19.2146 12.4942 19.218 7 19.218C1.50584 19.218 1.22264 19.2146 1.11499 19.1474C0.884258 19.0034 0.841971 18.8767 0.841806 18.3284L0.841642 17.8299H3.02166C4.90456 17.8299 5.21991 17.8217 5.3356 17.7694C5.59093 17.654 5.64689 17.3173 5.44304 17.1231L5.32304 17.0088H3.08078H0.838522L0.852317 12.7957C0.865865 8.66053 0.867754 8.57587 0.953601 8.21967C1.24165 7.02444 1.75641 6.12 2.57399 5.37267C3.36739 4.64743 4.24594 4.24246 5.43988 4.05161C5.49633 4.04258 6.25381 4.03914 7.12317 4.04399C8.68078 4.05263 8.70981 4.05423 9.11437 4.15496ZM6.70945 17.1231C6.50183 17.3208 6.56194 17.6542 6.82683 17.7739C7.19103 17.9385 7.56484 17.5802 7.39163 17.2326C7.26703 16.9825 6.91616 16.9262 6.70945 17.1231Z"
+                                fill="#2E3A59"
+                              />
+                              <rect
+                                x="2.87354"
+                                y="6.09962"
+                                width="8.29325"
+                                height="9.65787"
+                                rx="0.86217"
+                                stroke="#2E3A59"
+                                stroke-width="0.985337"
+                              />
+                            </svg>
+                            <p>
+                              Backpack
+                              <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M10.0001 18.9583C5.05841 18.9583 1.04175 14.9417 1.04175 10C1.04175 5.05833 5.05841 1.04167 10.0001 1.04167C14.9417 1.04167 18.9584 5.05833 18.9584 10C18.9584 14.9417 14.9417 18.9583 10.0001 18.9583ZM10.0001 2.29167C5.75008 2.29167 2.29175 5.75 2.29175 10C2.29175 14.25 5.75008 17.7083 10.0001 17.7083C14.2501 17.7083 17.7084 14.25 17.7084 10C17.7084 5.75 14.2501 2.29167 10.0001 2.29167Z"
+                                  fill="#2E3A59"
+                                />
+                                <path
+                                  d="M10 11.4583C9.65833 11.4583 9.375 11.175 9.375 10.8333V6.66667C9.375 6.325 9.65833 6.04167 10 6.04167C10.3417 6.04167 10.625 6.325 10.625 6.66667V10.8333C10.625 11.175 10.3417 11.4583 10 11.4583Z"
+                                  fill="#2E3A59"
+                                />
+                                <path
+                                  d="M10.0001 14.1667C9.89175 14.1667 9.78341 14.1417 9.68341 14.1C9.58341 14.0583 9.49175 14 9.40841 13.925C9.33341 13.8417 9.27508 13.7583 9.23341 13.65C9.19175 13.55 9.16675 13.4417 9.16675 13.3333C9.16675 13.225 9.19175 13.1167 9.23341 13.0167C9.27508 12.9167 9.33341 12.825 9.40841 12.7417C9.49175 12.6667 9.58341 12.6083 9.68341 12.5667C9.88341 12.4833 10.1167 12.4833 10.3167 12.5667C10.4167 12.6083 10.5084 12.6667 10.5917 12.7417C10.6667 12.825 10.7251 12.9167 10.7667 13.0167C10.8084 13.1167 10.8334 13.225 10.8334 13.3333C10.8334 13.4417 10.8084 13.55 10.7667 13.65C10.7251 13.7583 10.6667 13.8417 10.5917 13.925C10.5084 14 10.4167 14.0583 10.3167 14.1C10.2167 14.1417 10.1084 14.1667 10.0001 14.1667Z"
+                                  fill="#2E3A59"
+                                />
+                              </svg>
+                            </p>
+                            <span>
+                              Lorem ipsum dolor sit amet, consectetur adipiscing
+                              elit. Dictum scelerisque.
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <div className={classes.ads_col}>
+                        <div className={classes.ads_item}>
+                          <input
+                            type="radio"
+                            name="ads-type"
+                            id="ads-type3"
+                            onChange={() =>
+                              this.onBusinessGoalSelected("indoor")
+                            }
+                          />
+                          <label htmlFor="ads-type3">
                             <svg
                               className={classes.ads_svg}
                               width="24"
@@ -310,7 +366,7 @@ class Business extends React.Component {
                   className={`${classes.footer_copyright} ${classes.mur_flex}`}
                 >
                   <img src={Copyright} alt="" />
-                  <span>{new Date().getFullYear()}, MurmurCars</span>
+                  <span>{new Date().getFullYear()}, Murmur</span>
                 </p>
                 <ul className={classes.footer_links}>
                   <li>
@@ -343,5 +399,5 @@ const mapStatetoProps = (state) => {
 
 export default connect(mapStatetoProps, {
   addPackage,
-  errorCleanup,
+  Cleanup
 })(withRouter(Business));

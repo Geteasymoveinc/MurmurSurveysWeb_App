@@ -25,7 +25,6 @@ class Pullcampaigns extends Component {
     };
 
     this.changeAddStatus = this.changeAddStatus.bind(this);
-    this.toggleEditMode = this.toggleEditMode.bind(this);
     this.settingInterval = null;
   }
   componentDidMount() {
@@ -36,58 +35,64 @@ class Pullcampaigns extends Component {
   //Get Campigns from APi call
   getCampaigns = (auth) => {
     this.setState({ ...this.state, loading: true });
-    const allCampaigns = `https://backendapp.murmurcars.com/api/v1/campaigns/${auth}/all`;
-    return axios.get(allCampaigns).then((response) => {
-      console.log("hehe", auth);
-      console.log(response);
-      if (response.status !== 400 || response.status !== 500) {
-        const adds = [];
-        let item = {};
-        const iterator = response.data.message;
-        const campaigns = [];
-        let index = 0;
-        for (let i = 0; i < iterator.length; i++) {
-          if (iterator[i].ad_schedule) {
-            campaigns.push(iterator[i]);
+    const allCampaigns = `http://localhost:4000/api/v1/campaigns/${auth}/all`;
+    return axios
+      .get(allCampaigns)
+      .then((response) => {
+        if (response.status !== 400 || response.status !== 500) {
+          const adds = [];
+          let item = {};
+          const iterator = response.data.message;
+          const campaigns = [];
+          let index = 0;
+          for (let i = 0; i < iterator.length; i++) {
+            if (iterator[i].ad_schedule) {
+              campaigns.push(iterator[i]);
+              console.log(iterator[i].ad_schedule);
+              const date = iterator[i].ad_schedule.split(" ")[1];
 
-            const date = iterator[i].ad_schedule.split(" ")[1];
-            console.log(date);
-            console.log(new Date(date) > new Date());
-            item = {
-              [`name-${index + 1}`]: new Date(date) > new Date(),
-              id: iterator[i]._id,
-              area: iterator[i].area,
-            };
-            adds.push(item);
-            index++;
+              item = {
+                [`name-${index + 1}`]: new Date(date) > new Date(),
+                id: iterator[i]._id,
+                area: iterator[i].area,
+                toggled: false,
+              };
+              adds.push(item);
+              index++;
+            }
+            console.log(adds);
           }
-          console.log(adds);
-        }
 
-        const campaignsLength = campaigns.length;
-        const campaignList = {};
-        console.log(campaignsLength);
-        for (let i = 0; i < campaignsLength; i++) {
-          campaignList[`name-${i + 1}`] = false;
-        }
+          const campaignsLength = campaigns.length;
+          const campaignList = {};
 
+          for (let i = 0; i < campaignsLength; i++) {
+            campaignList[`name-${i + 1}`] = false;
+          }
+
+          this.setState({
+            ...this.state,
+            pullledCampaigns: campaigns,
+            adds: adds,
+            loading: false,
+            haveCampaigns: campaignsLength > 0 ? true : false,
+            ...campaignList,
+          });
+        }
+      })
+      .catch(() => {
         this.setState({
           ...this.state,
-          pullledCampaigns: campaigns,
-          adds: adds,
           loading: false,
-          haveCampaigns: campaignsLength > 0 ? true : false,
-          ...campaignList,
         });
-      }
-    });
+      });
   };
 
   toggleDeleteAd = (id, type) => {
     this.setState({ ...this.state, loading: true });
     axios
       .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
-      .then((response) => {
+      .then(() => {
         window.location.reload();
         if (type === "_details") {
           this.props.history.replace("/ad-manager");
@@ -99,50 +104,73 @@ class Pullcampaigns extends Component {
       .catch((error) => console.log(error));
   };
 
-  toggle = (status, campaign) => {
-    console.log("modal", status, campaign);
-    let modalStatus = !status;
-    this.setState({
-      modalViewDetailsStatus: modalStatus,
-      viewCampaign: campaign,
-    });
-  };
-
-  toggleEditMode() {
-    this.setState({ ...this.state, editable: !this.state.editable });
+  toggleDeleteMultipleAd = () => {
+      const adds = this.state.adds
+      const list_of_ids = [] 
+      this.setState({ ...this.state, loading: true });
+      for(let i=0;i<adds.length;i++){
+          const keys = Object.keys(adds[i])
+          if(!adds[i][keys[0]]){
+              list_of_ids.push(adds[i].id)
+          }
+      }
+    
+      axios.delete(`http://localhost:4000/api/v1/campaigns/delete/${list_of_ids}`)
+      .then(() => {
+        window.location.reload();
+        this.setState({ ...this.state, loading: false });
+      })
+      .catch(err => {
+        
+      })
   }
-  checkBill = (event) => {
-    const id = event.target.id;
 
+  checkCampaign = (event) => {
+    const id = event.target.id;
+    const adds = this.state.adds;
+    for (let i = 0; i < adds.length; i++) {
+      const keys = Object.keys(adds[i]);
+      console.log(keys);
+      if (keys[0] === id) {
+        adds[i].toggled = !adds[i].toggled;
+      }
+    }
     this.setState({
       ...this.state,
       [id]: !this.state[id],
+      adds,
     });
   };
 
-  checkAllBills = () => {
+  checkAllCampigns = () => {
     const campaigns = this.state.pullledCampaigns.length;
+    const adds = this.state.adds;
 
     for (let i = 0; i < campaigns; i++) {
+      console.log(adds[i]);
       const name = `name-${i + 1}`;
       console.log(this.state.checked);
       if (this.state.checked === true) {
+        adds[i].toggled = false;
         console.log("checked");
-        this.setState({ [name]: false, checked: false });
+        this.setState({ [name]: false, checked: false, adds });
+        
       } else {
         console.log("second ");
-        this.setState({ [name]: true, checked: true });
+        adds[i].toggled = true;
+        this.setState({ [name]: true, checked: true, adds });
       }
     }
   };
 
   locatePosition() {}
 
+  //ad-campaign
   handleCampaigns = () => {
-    const toggle = this.toggle;
+    const {multiple} = this.state
     console.log("our campaigns " + this.state.pullledCampaigns);
     let murmurCampaigns = [];
-    /*this part is add-manager STARTING*/
+
     if (this.state.pullledCampaigns.length !== 0) {
       {
         this.state.pullledCampaigns.map((campaign, i) => {
@@ -153,6 +181,7 @@ class Pullcampaigns extends Component {
                 <div className={classes.cads_flex_th}>
                   <div className={classes.cads_check}>
                     <input
+             
                       type="checkbox"
                       id={`name-${i + 1}`}
                       checked={
@@ -162,18 +191,18 @@ class Pullcampaigns extends Component {
                         this.state.haveCampaigns &&
                         this.state[`name-${i + 1}`]
                       }
-                      onChange={this.checkBill}
+                      onChange={this.checkCampaign}
                     />
                     <label htmlFor={`name-${i + 1}`}>
                       {campaign.campaign_name}
                     </label>
                   </div>
                   <div className={`${classes.cads_radio_active}`}>
-                    {!this.state.adds[i]["name-" + (i + 1)] && (
+                    {!this.state.adds[i]["name-" + (i + 1)] && !multiple && (
                       <button
                         type="button"
-                        className={classes.check_remove}
-                        onClick={() => this.toggleDeleteAd(campaign._id)}
+                        className={`${classes.check_remove}`}
+                        onChange={() => this.toggleDeleteAd(campaign._id)}
                       >
                         <img src={Trash} alt="" />
                       </button>
@@ -186,8 +215,9 @@ class Pullcampaigns extends Component {
                         type="checkbox"
                         id={`checkbox${i + 1}`}
                         name={`name-${i + 1}`}
-                        defaultChecked={this.state.adds[i]["name-" + (i + 1)]}
-                        onClick={this.changeAddStatus}
+                        checked={this.state.adds[i]["name-" + (i + 1)]}
+
+                        onChange={() => this.changeAddStatus(campaign._id)}
                       />
                       <div
                         className={`${classes.slider} ${classes.round}`}
@@ -226,7 +256,7 @@ class Pullcampaigns extends Component {
               </td>
               <td className={classes.cads_td}>
                 <Link
-                  to={"/ad-manager/" + campaign._id}
+                  to={`/ad-manager?campaign=${campaign._id}`}
                   className={classes.details_link}
                   onClick={this.locatePosition}
                 >
@@ -242,27 +272,58 @@ class Pullcampaigns extends Component {
           );
         });
       }
-      /*this part is add-manager ENDING*/
     }
 
     return murmurCampaigns;
   };
 
-  //Sort Data
-  changeAddStatus(event) {
-    const name = event.target.name;
-    const index = name.split("-")[1];
-    const addsItemsArray = this.state.adds;
-    const addItemCurrentStatus = this.state.adds[index - 1][name];
-    const modifiedAddItemObject = { [name]: !addItemCurrentStatus };
-    addsItemsArray[index - 1] = modifiedAddItemObject;
-    this.setState({ ...this.state, adds: [...addsItemsArray] });
+  //activating and disactivating ad campaign
+  changeAddStatus(id) {
+    const target = id;
+    const adds = this.state.adds;
+    let count = 0
+    let multiple = false
+    let isSwitchRadiosInctive = false
+
+    for (let i = 0; i < adds.length; i++) {
+      const keys = Object.keys(adds[i]);
+      if(!adds[i][keys[0]]){
+        count++
+      }
+      if (adds[i]["toggled"]) {
+        
+        count++
+  
+        if(!adds[i][keys[0]]){
+          isSwitchRadiosInctive = true
+        }
+        adds[i][keys[0]] = !adds[i][keys[0]];
+      } else if (adds[i]["id"] === target) {
+        console.log("right");
+        count++
+        if(!adds[i][keys[0]]){
+          isSwitchRadiosInctive = true
+        }
+        adds[i][keys[0]] = !adds[i][keys[0]];
+      }
+    }
+    if((count>1 && !isSwitchRadiosInctive) ){
+      multiple = true
+    }
+    this.setState({
+      ...this.state,
+      adds,
+      multiple
+    });
+    console.log(target);
   }
+
+
+
   render() {
-    /*extracting dymanic pathname (id) from url and querying pulledCampaigns for campaign with selected id*/
-    const url = this.props.location.pathname;
-    const params = url.split("/")[2];
-    const statusArray = this.state.adds.filter((el) => el.id === params);
+    const url = this.props.location.search; //extracting billing id
+    const params = url.split("?campaign=")[1]; // geting rid of left side
+    const statusArray = this.state.adds.filter((el) => el.id === params); //looking for ad by ad campaign id
     let status = [];
 
     if (statusArray.length) {
@@ -270,9 +331,9 @@ class Pullcampaigns extends Component {
     }
     const campaigns = this.state.pullledCampaigns.filter(
       (el) => el._id === params
-    );
-    console.log(this.state);
-
+    ); //looging for campaign by ad campaign id
+    const {multiple} = this.state
+    console.log(this.state)
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -290,46 +351,58 @@ class Pullcampaigns extends Component {
             </div>
           </div>
         )}
-        {this.props.match.isExact && !this.state.loading && (
-          <div className={classes.cads_table}>
-            <table>
-              <thead>
-                <tr className={classes.first_tr}>
-                  <th className={classes.cads_th}>
-                    <div
-                      className={`${classes.cads_check} ${classes.invoice_th}`}
+        {!this.props.location.search.length > 0 &&
+          !this.state.loading && ( //list all campaigns
+            <div className={classes.cads_table}>
+              <table>
+                <thead>
+                  <tr className={classes.first_tr}>
+                    <th className={classes.cads_th}>
+                      <div
+                        className={`${classes.cads_check} ${classes.invoice_th}`}
+                      >
+                        <input
+                          type="checkbox"
+                          id="invoice-txt"
+                          onChange={this.checkAllCampigns}
+                          checked={this.state.checked}
+                        />
+                        <label htmlFor="invoice-txt">Name</label>
+                        {multiple && (
+                      <button
+                        type="button"
+                        className={`${classes.check_remove} ${classes.multiple_remove}`}
+                        onClick={() => this.toggleDeleteMultipleAd()}
+                      >
+                        <img src={Trash} alt="" />
+                      </button>
+                    )}
+                      </div>
+                 
+                    </th>
+                    <th className={classes.cads_th}>
+                      <span>Status</span>
+                    </th>
+                    <th
+                      className={`${classes.cads_th} ${classes.cads_quantity}`}
                     >
-                      <input
-                        type="checkbox"
-                        id="invoice-txt"
-                        onChange={this.checkAllBills}
-                        checked={this.state.checked}
-                      />
-                      <label htmlFor="invoice-txt">Name</label>
-                    </div>
-                  </th>
-                  <th className={classes.cads_th}>
-                    <span>Status</span>
-                  </th>
-                  <th className={`${classes.cads_th} ${classes.cads_quantity}`}>
-                    <span>Display Quantity</span>
-                  </th>
-                  <th className={`${classes.cads_th} ${classes.cads_budget}`}>
-                    <span>Daily Budget</span>
-                  </th>
-                  <th className={classes.cads_th}>
-                    <span>Area</span>
-                  </th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>{this.handleCampaigns()}</tbody>
-            </table>
-          </div>
-        )}
-        {/* this part is ad-manager ENDING*/}
-        {/*this part is ad-details STARTING*/}
-        {!this.props.match.isExact && (
+                      <span>Display Quantity</span>
+                    </th>
+                    <th className={`${classes.cads_th} ${classes.cads_budget}`}>
+                      <span>Daily Budget</span>
+                    </th>
+                    <th className={classes.cads_th}>
+                      <span>Area</span>
+                    </th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>{this.handleCampaigns()}</tbody>
+              </table>
+            </div>
+          )}
+
+        {this.props.location.search.length > 0 && ( //when user selects an add to check details
           <AdDetails
             campaigns={campaigns}
             adds={this.state.adds}
@@ -337,7 +410,6 @@ class Pullcampaigns extends Component {
             loading={this.state.loading}
           />
         )}
-        {/*this part is ad-details ENDING*/}
       </React.Fragment>
     );
   }

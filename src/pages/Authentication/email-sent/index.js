@@ -14,23 +14,10 @@ import Vector2 from "../../../assets/css/common/icons/copyrightblack.svg";
 import EmailSent from "../../../assets/css/Authentication/email-sent/email-sent.svg";
 
 class EmailWasSent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
 
-    this.handleValidSubmit = this.handleValidSubmit.bind(this);
+  constructor(props){
+    super(props)
   }
-
-  // handleValidSubmit
-  handleValidSubmit(event) {
-    event.preventDefault();
-
-    // axios
-    //   .post("http://localhost:4000/api/v1/users/signup", this.state)
-    //   .then((res) => console.log({ res }))
-    //   .catch((err) => console.log({ err }));
-  }
-
   componentDidMount() {
     document.body.classList.add("bg-transparent");
   }
@@ -86,7 +73,7 @@ class EmailWasSent extends React.Component {
           <div className={`${classes.mur_contain} ${classes.mur_flex}`}>
             <p className={`${classes.footer_copyright} ${classes.mur_flex}`}>
               <img src={Vector2} alt="copyright icon" />
-              <span>{new Date().getFullYear()}, MurmurCars</span>
+              <span>{new Date().getFullYear()}, Murmur</span>
             </p>
             <ul className={classes.footer_links}>
               <li>

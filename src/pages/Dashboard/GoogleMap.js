@@ -7,8 +7,6 @@ import Bar from "./peopleReachedByWeekDays";
 
 import GoogleMap from "./google-map";
 
-
-import firebase from "firebase";
 import Geocode from "react-geocode";
 
 import SearchNormal from "../../assets/css/Settings/search-normal.svg";
@@ -22,17 +20,6 @@ import axios from "axios";
 
 Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCufaPUqLeJ83iRcMEoq9wZoXxP8jyF2OY",
-  authDomain: "murmurdriverreactnativeapp.firebaseapp.com",
-  databaseURL: "https://murmurdriverreactnativeapp-default-rtdb.firebaseio.com",
-  projectId: "murmurdriverreactnativeapp",
-  storageBucket: "murmurdriverreactnativeapp.appspot.com",
-  messagingSenderId: "476698745619",
-  appId: "1:476698745619:web:32c16fa59b7df52a0818e6",
-  measurementId: "G-B6HKFHXVNN",
-};
-
 class GoogleMaps extends Component {
   constructor(props) {
     super(props);
@@ -40,11 +27,12 @@ class GoogleMaps extends Component {
       NumberOfDrivers: "",
       address: "",
       postalCode: "",
-
-      errorZipCode: false,
+      alert_status: false,
+      permission: false,
+      errorZipCode: false, //false
       errorMessage: null,
       coordinates: [],
-      toggleCartWithAreaInformation: false,
+      toggleCartWithAreaInformation: false, //false
 
       center: {
         lat: 41.8781,
@@ -52,7 +40,7 @@ class GoogleMaps extends Component {
       },
       zoom: 11,
       drivers: [],
-      loaded: false,
+      loaded: false, //temperorary shoudl to be false
       postCenter: {
         lat: 0,
         lng: 0,
@@ -68,40 +56,6 @@ class GoogleMaps extends Component {
     this.submitLocationToZoomIn = this.submitLocationToZoomIn.bind(this);
   }
 
-  handleConnectionToFirebaseRealTimeDatabase = () => {
-    let ref = firebase.database().ref("users/");
-    ref.on("value", (snapshot) => {
-      const newValue = snapshot.val();
-
-      //Convert Objects into Array
-      let newArrayOfDrivers = Object.values(newValue);
-
-      this.setState({
-        ...this.state,
-        drivers: newArrayOfDrivers,
-        loaded: true,
-        NumberOfDrivers: newArrayOfDrivers.length,
-      });
-
-      ref.off();
-    });
-  };
-
-  handleReverseGeocode = () => {
-    Geocode.fromLatLng(
-      this.state.postCenter.lat,
-      this.state.postCenter.lng
-    ).then(
-      (response) => {
-        const address = response.results[5].formatted_address;
-        this.setState({ ...this.state, address });
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  };
-
   onChangeLocationToZoomIn(e) {
     this.setState({ ...this.state, postalCode: e.target.value });
   }
@@ -109,13 +63,18 @@ class GoogleMaps extends Component {
   submitLocationToZoomIn(e) {
     e.preventDefault();
     if (
-      this.state.postalCode.length > 0 &&
-      /[1-9]/i.test(this.state.postalCode)
+      this.state.address.includes("Azerbaijan") ||
+      this.state.address.includes("US")
+    ) {
+
+    
+    if (
+      this.state.address.includes("US")
     ) {
       this.setState({ ...this.state, loaded: false });
       axios
         .post(
-          "http://localhost:4000/api/v1/zipcode/get-zipcode-polygon-coords",
+          "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords",
           { postalCode: this.state.postalCode }
         )
         .then((res) => {
@@ -125,9 +84,7 @@ class GoogleMaps extends Component {
               .then((response) => {
                 const { lat, lng } = response.results[0].geometry.location;
                 const areaStatistic = [];
-              
 
-                
                 areaStatistic.push({
                   General: res.data.areaStatistic.Population.General,
                   population_age:
@@ -165,17 +122,13 @@ class GoogleMaps extends Component {
     } else {
       this.setState({ ...this.state, loaded: false });
       axios
-        .post(
-          "http://localhost:4000/api/v1/zipcode/get-district-information",
-          { district: this.state.postalCode }
-        )
+        .post("https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information", {
+          district: this.state.postalCode,
+        })
         .then((res) => {
           if (res.data.status !== 204) {
-      
-            
-
             const statistic = this.state.statistic;
-            statistic.areaStatistic = [res.data.areaStatistic['Population']];
+            statistic.areaStatistic = [res.data.areaStatistic["Population"]];
             statistic.location = this.state.postalCode;
 
             this.setState({
@@ -204,63 +157,89 @@ class GoogleMaps extends Component {
         })
         .catch((err) => console.log(err));
     }
+  }else{
+    this.setState({ ...this.state, alert_status: true });
+    return;
+  }
   }
   toggleCard() {
     console.log("run");
     this.setState({
       ...this.state,
-      toggle: !this.state.toggle,
+      toggleCartWithAreaInformation: !this.state.toggleCartWithAreaInformation,
     });
   }
 
+  handleReverseGeocode = () => {
+    Geocode.fromLatLng(
+      this.state.postCenter.lat,
+      this.state.postCenter.lng
+    ).then(
+      (response) => {
+        console.log(response);
+        const address = response.results[5].formatted_address;
+        this.setState({ ...this.state, address, loaded: true });
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
+
   componentDidMount() {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    } else {
-      firebase.app(); // if already initialized, use that one
-    }
-
-    this.handleConnectionToFirebaseRealTimeDatabase();
-
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.setState({
-        postCenter: {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        },
-      });
-      this.handleReverseGeocode();
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+        this.setState({
+          postCenter: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          permission:true
+        });
+        this.handleReverseGeocode();
+      },
+      (err) => {
+        this.setState({
+          ...this.state,
+          loaded: true,
+          alert_status: true,
+          permission: false,
+        });
+      }
+    );
   }
 
   render() {
     console.log(this.state);
-    const { loaded } = this.state;
+    const { loaded, alert_status, permission, statistic} = this.state;
+    const {areaStatistic} = statistic
     let male,
       female,
-      location = "";
+      location,
+      population= "";
 
     let labels,
       data = [];
-    if (this.state.statistic.areaStatistic.length) {
+    if (areaStatistic.length) {
+      population = areaStatistic[0]['General']['population']
       male =
-        this.state.statistic.areaStatistic[0]["General"]["population_males"];
+           areaStatistic[0]["General"]["population_males"];
       female =
-        this.state.statistic.areaStatistic[0]["General"]["population_females"];
-      location = this.state.statistic.location;
+        areaStatistic[0]["General"]["population_females"];
+      location = statistic.location;
       labels = Object.keys(
-        this.state.statistic.areaStatistic[0]["population_age"]
+        areaStatistic[0]["population_age"]
       );
       data = Object.values(
-        this.state.statistic.areaStatistic[0]["population_age"]
+          areaStatistic[0]["population_age"]
       );
-      console.log(this.state.statistic.areaStatistic[0]);
     }
 
     return (
       <React.Fragment>
         {!loaded && (
-          <div id="preloader">
+          <div id="preloader" style={{ opacity: 0.7 }}>
             <div id="status">
               <div className="spinner-chase">
                 <div className="chase-dot"></div>
@@ -276,7 +255,7 @@ class GoogleMaps extends Component {
 
         <div className={classes.dash_right}>
           <div className={classes.map}>
-            <GoogleMap state={this.state} />
+            <GoogleMap state={this.state} toggle={this.toggleCard} />
           </div>
 
           {loaded && (
@@ -357,25 +336,43 @@ class GoogleMaps extends Component {
                     </Button>
                   </Alert>
                 ) : null}
-
+                {alert_status && (
+                  <Alert className='d-flex align-items-center justify-content-between'>
+                    {!permission
+                     ? 'Please activate geolocation in order to fetch data' 
+                    :  'We are not providing data in your region'}
+               
+                    <Button
+                      color="link"
+                      
+                      onClick={() =>
+                        this.setState({
+                          ...this.state,
+                          alert_status: false,
+                        })
+                      }
+                    >
+                      Close
+                    </Button>
+           
+                  </Alert>
+                )}
                 {!this.state.errorZipCode &&
                   this.state.toggleCartWithAreaInformation && (
                     <div className={classes.choosen_place}>
                       <h6 className={classes.choosen_h6}>
-                        {`Statistics of the  ${location.toUpperCase()}:`}
+                        {`Better understand audiences in ${location.toUpperCase()}`}
                       </h6>
                       <div className={classes.choosen_flex}>
                         <div className={classes.choosen_item}>
-                          <p className={classes.choosen_item_p}>
-                            Number of cars:
-                          </p>
+                          <p className={classes.choosen_item_p}>Population:</p>
                           <h5 className={classes.choosen_h5}>
-                            {this.state.NumberOfDrivers}
+                            {population}
                           </h5>
                         </div>
                         <div className={classes.choosen_item}>
                           <p className={classes.choosen_item_p}>
-                            Gender rates:
+                            Population Gender:
                           </p>
                           <div className={classes.gender_rates}>
                             <div className={classes.graph_rate}>
@@ -383,12 +380,15 @@ class GoogleMaps extends Component {
                                 male={male}
                                 female={female}
                                 location={location}
+                                labels={['males', 'females']}
                               />
                             </div>
                           </div>
                         </div>
                         <div className={classes.choosen_item}>
-                          <p className={classes.choosen_item_p}>Age rates:</p>
+                          <p className={classes.choosen_item_p}>
+                            Population Age :
+                          </p>
                           <div className={classes.gender_rates}>
                             <div className={classes.graph_rate}>
                               {this.state.statistic.areaStatistic.length && (
@@ -414,12 +414,23 @@ class GoogleMaps extends Component {
                       >
                         <img
                           src={Close}
-                          alt=""
+                          alt="Hello"
                           className={classes.choosen_close_img}
                         />
                       </button>
                     </div>
                   )}
+                {this.state.toggleCartWithAreaInformation ? null : this.state
+                    .statistic.areaStatistic.length ? (
+                  <div
+                    className={classes.show_place}
+                    onClick={() => {
+                      this.setState({ toggleCartWithAreaInformation: true });
+                    }}
+                  >
+                    <p className={classes.choosen_show_text}>Show Data</p>
+                  </div>
+                ) : null}
               </div>
             </React.Fragment>
           )}

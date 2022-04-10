@@ -1,10 +1,5 @@
 
 /*subscribe*/
-
-.mur_contain{
-  padding-left:75px;
-  padding-right:75px;
-}
 .subscribe_section{
   position:relative;
   min-height:calc(100vh - 154px);

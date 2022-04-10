@@ -7,9 +7,9 @@ import {
 } from "./actionTypes";
 
 const initialState = {
-  error: "",
+  error: null,
   loading: false,
-  user: "",
+  user: null,
 };
 
 const login = (state = initialState, action) => {
@@ -18,14 +18,14 @@ const login = (state = initialState, action) => {
       state = {
         ...state,
         loading: true,
-        error: false
+        error: null
       };
       break;
     case LOGIN_SUCCESS:
       state = {
         ...state,
         loading: false,
-        error: false,
+        error: null,
         user: action.payload
       };
 

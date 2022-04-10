@@ -203,7 +203,7 @@
   padding-left:13px;
 }
 .lbl_type{
-  margin-right:8px;
+  /*margin-right:8px;*/
 }
 .lbl_month .lbl_type,.lbl_price{
   color:#3F2B89;
@@ -382,8 +382,17 @@
   font-size: 14px;
   line-height: 20px;
 }
+.blng_td a{
+  color:#8F9BB3;
+}
+
 .billing_table table tr td{
   padding:24px 4px;
+  padding-bottom: 14px;
+}
+.billing_table table tr td:not(:first-child){
+   position: relative;
+   top: -6px
 }
 .billing_table table tr td:first-child{
   padding-left:24px;
@@ -457,4 +466,9 @@
 .dash_right{
   width:calc(100% - 290px);
   padding-left:32px;
+}
+
+
+.billing_check.invoice_th.no_margin > label{
+  margin:0 !important;
 }

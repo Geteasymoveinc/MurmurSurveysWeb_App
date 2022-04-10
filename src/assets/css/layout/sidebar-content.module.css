@@ -88,6 +88,8 @@
   -ms-flex-align: center;
   align-items: center;
   transition:all .4s ease;
+
+  white-space: nowrap
 }
 .dash_menu_block{
   margin-top:32px;

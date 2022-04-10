@@ -45,20 +45,13 @@ class PeopleReachedByWeekDay extends Component {
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "01/01/2011 GMT",
-          "01/02/2011 GMT",
-          "01/03/2011 GMT",
-          "01/04/2011 GMT",
-          "01/05/2011 GMT",
-          "01/06/2011 GMT",
-        ],
+        categories: this.props.categories,
         labels: {
           show: true,
           style: {
             colors: ['#ffffff'],
             fontSize: '12px',
-            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontFamily: 'Montserrat, sans-serif',
             fontWeight: 400,
             cssClass: 'apexcharts-yaxis-label',
         },

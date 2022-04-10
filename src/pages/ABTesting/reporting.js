@@ -6,7 +6,15 @@ import Gallery from "../../assets/css/ABTesting/gallery.svg";
 import classes from "../../assets/css/ABTesting/index.module.css";
 
 class ABReporting extends Component {
-  state = {};
+  constructor(props){
+    super(props)
+    this.state = {
+      haveTesting:false
+    }
+  }
+  componentDidMount(){
+    this.setState({haveTesting:true})
+  }
   render() {
     return (
       <React.Fragment>

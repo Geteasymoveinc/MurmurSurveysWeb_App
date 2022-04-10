@@ -1,0 +1,33 @@
+.dropdown-custom .dropdown-menu{
+    min-width: 164px;
+}
+
+.dropdown-custom button{
+    background: transparent !important;
+color: #2E3A59 !important;
+border: transparent !important;
+outline: none !important;
+}
+
+.dropdown-custom button::after{
+    display: none;
+}
+.dropdown-custom .dropdown{
+    padding-bottom: 10px;
+}
+.dropdown-custom .dropdown button span{
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    color: #2E3A59;
+    margin-right: 15px;
+}
+
+@media (max-width: 900px){
+
+.dropdown-custom{
+    align-self: flex-start;
+}
+}

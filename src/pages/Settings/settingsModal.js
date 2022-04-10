@@ -7,14 +7,21 @@ import check from "../../assets/css/Settings/grncheck.svg";
 class Modals extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      billing: this.props.billing
+    }
   }
-
+  billingPackageChange = (billing) => {
+    this.setState({
+      billing
+    })
+  }
   render() {
     return (
       <React.Fragment>
         <Modal
           isOpen={this.props.canselModal}
-          toggle={this.props.closeUpdateModal}
+          toggle={this.props.toggleModal}
           className="setting_cancel_modal"
         >
           <ModalHeader>
@@ -23,7 +30,7 @@ class Modals extends Component {
               type="button"
               className="btn-close"
               aria-label="Close"
-              onClick={this.props.closeCanselModal}
+              onClick={() => this.props.toggleModal('canselModal')}
             >
               <svg
                 width="24"
@@ -87,7 +94,7 @@ class Modals extends Component {
                 ></textarea>
               </div>
               <div className="form_element_btn text-center">
-                <button type="button" className="reason_cancel_btn">
+                <button type="button" className="reason_cancel_btn" onClick={this.props.canselBilling}>
                   Cancel my plan
                 </button>
               </div>
@@ -97,7 +104,7 @@ class Modals extends Component {
 
         <Modal
           isOpen={this.props.updateModal}
-          toggle={this.closeModal}
+          toggle={this.props.toggleModal}
           className="setting_plan_modal"
         >
           <ModalHeader>
@@ -106,7 +113,10 @@ class Modals extends Component {
               type="button"
               className="btn-close"
               aria-label="Close"
-              onClick={this.props.closeUpdateModal}
+              onClick={() => {
+                this.setState({billing:this.props.billing})
+                this.props.toggleModal('updateModal')}
+              }
             >
               <svg
                 width="24"
@@ -131,8 +141,8 @@ class Modals extends Component {
                   type="radio"
                   name="modal-plan"
                   id="plan_walk"
-                  onChange={this.props.selectUpdatePackage}
-                  checked={this.props.billing === "plan_walk"}
+                  onChange={() => this.billingPackageChange('Walk')}
+                  checked={this.state.billing === "Walk"}
                 />
                 <label htmlFor="plan_walk" className="plan_type">
                   <div className="play_flex_top">
@@ -188,7 +198,7 @@ class Modals extends Component {
                   <button
                       
                       className="current_plan_btn"
-                      onClick={this.props.closeUpdateModal}
+                      onClick={() => this.props.selectUpdatePackage('Walk', 10)}
                     >
                       Choose this plan
                     </button>
@@ -200,8 +210,8 @@ class Modals extends Component {
                   type="radio"
                   name="modal-plan"
                   id="plan_run"
-                  onChange={this.props.selectUpdatePackage}
-                  checked={this.props.billing === "plan_run"}
+                  onChange={() => this.props.billingPackageChange('Run')}
+                  checked={this.state.billing === "Run"}
                 />
                 <label htmlFor="plan_run" className="plan_type">
                   <div className="plan_flex_top">
@@ -257,7 +267,7 @@ class Modals extends Component {
                     <button
                     
                       className="current_plan_btn"
-                      onClick={this.props.closeUpdateModal}
+                      onClick={() => this.props.selectUpdatePackage('Run', 55)}
                     >
                       Choose this plan
                     </button>
@@ -269,8 +279,8 @@ class Modals extends Component {
                   type="radio"
                   name="modal-plan"
                   id="plan_fly"
-                  onChange={this.props.selectUpdatePackage}
-                  checked={this.props.billing === "plan_fly"}
+                  onChange={() => this.billingPackageChange('Fly')}
+                  checked={this.state.billing === "Fly"}
                 />
                 <label htmlFor="plan_fly" className="plan_type">
                   <div className="plan_flex_top">
@@ -326,7 +336,7 @@ class Modals extends Component {
                   <button
                     
                       className="current_plan_btn"
-                      onClick={this.props.closeUpdateModal}
+                      onClick={() => this.props.selectUpdatePackage('Fly', 75)}
                     >
                       Choose this plan
                     </button>

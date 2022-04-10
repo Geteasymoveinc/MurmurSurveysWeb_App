@@ -17,7 +17,7 @@ class PeopleReachedByWeekDay extends Component {
           enabled: true,
         },
         legend: {
-          show: true,
+          show: false,
           position: "right",
           showForSingleSeries: true,
           customLegendItems: ['0-19','20-29', '30-39','40-49','50-59'],

@@ -10,23 +10,12 @@ import {
 //Account Redux states
 import { NEW_USER } from "./actionTypes";
 
-
-
-
-
-
 // Is user register successfull then direct plot user in redux.
 function* registerUserFn({ payload: { user, history } }) {
-  try{
-      
-      history.push('/business')
-      sessionStorage.setItem('user', JSON.stringify('user'))
-} catch (error) {
-   console.log(error)
+  try {
+    history.push("/business");
+  } catch (error) {}
 }
-  
-}
-
 
 export function* watchUserRegister() {
   yield takeEvery(NEW_USER, registerUserFn);

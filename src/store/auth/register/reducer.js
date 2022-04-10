@@ -1,4 +1,3 @@
-
 import { NEW_USER } from "./actionTypes";
 
 const initialState = {
@@ -6,7 +5,6 @@ const initialState = {
 };
 
 const account = (state = initialState, action) => {
-  console.log("Action Reducer", action.payload);
   switch (action.type) {
     case NEW_USER:
       state = {
@@ -23,4 +21,4 @@ const account = (state = initialState, action) => {
   return state;
 };
 
-export default account
+export default account;

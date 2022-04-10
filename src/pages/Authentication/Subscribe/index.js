@@ -13,22 +13,12 @@ import {
 
 import classes from "../../../assets/css/Authentication/subscribe/index.module.css";
 
-import Car from "../../../assets/css/Authentication/business/car.svg";
-import Shop from "../../../assets/css/Authentication/business/shop.svg";
-import Circle from "../../../assets/css/Authentication/business/info-circle.svg";
+
 import Logo from "../../../assets/css/common/icons/logoBlue.svg";
-import LeftIcon from "../../../assets/css/Authentication/business/left.svg";
-import RightIcon from "../../../assets/css/Authentication/business/right.svg";
-import Vector2 from "../../../assets/css/Authentication/business/vector2.svg";
-import Footer from "../../../assets/css/Authentication/business/group7.svg";
-import LogoText from "../../../assets/css/common/icons/urmur.svg";
 import Facebook from "../../../assets/css/Authentication/subscribe/facebook.svg";
 import Linkedin from "../../../assets/css/Authentication/subscribe/linkedin.svg";
 import Slack from "../../../assets/css/common/icons/slack.svg";
-import Arrow from "../../../assets/css/Authentication/subscribe/arrow.svg";
-import Line from "../../../assets/css/Authentication/subscribe/line.svg";
 import Slash from "../../../assets/css/common/icons/slash.svg";
-
 import Copyright from "../../../assets/css/common/icons/copyrightblack.svg";
 
 class Subscribe extends React.Component {
@@ -51,11 +41,8 @@ class Subscribe extends React.Component {
 
   finishRegister() {
     if (this.state.subscribe) {
-      this.props.subscribeFn(
-        this.props.user,
-        this.props.history
-      );
-    }else{
+      this.props.subscribeFn(this.props.user, this.props.history);
+    } else {
       //this.props.history.replace('/Dashboard')
     }
   }
@@ -66,15 +53,6 @@ class Subscribe extends React.Component {
   componentWillUnmount() {
     document.body.classList.remove("bg-transparent");
   }
-
-  /* handleClickSocialIcons = (e) => {
-    console.log(e.target.name);
-    if ((e.target.name = "Facebook")) {
-      window.open("https://facebook.com/murmurcars");
-    } else {
-      window.open("https://www.linkedin.com/company/murmurcars/");
-    }
-  };*/
 
   render() {
     console.log(this.props);
@@ -107,7 +85,7 @@ class Subscribe extends React.Component {
                   Signup Complete!
                 </h1>
                 <h4 className={`${classes.subc_h4} ${classes.subc_center}`}>
-                  Nice work! Your account is created.
+                  Nice job! Your account has been created.
                 </h4>
                 <h4 className={`${classes.subc_h4} ${classes.subc_center}`}>
                   Join our Community to learn more about Marketing, Growth
@@ -149,7 +127,7 @@ class Subscribe extends React.Component {
                           className={classes.subc_item_link}
                         >
                           <img src={Slack} alt="Slack icon" />
-                          <span>@murmurcars</span>
+                          <span>@murmur</span>
                         </a>
                       </div>
                     </li>
@@ -165,7 +143,7 @@ class Subscribe extends React.Component {
                           className={classes.subc_item_link}
                         >
                           <img src={Facebook} alt="Facebook icon" />
-                          <span>@murmurcars</span>
+                          <span>@murmur</span>
                         </a>
                       </div>
                     </li>
@@ -181,7 +159,7 @@ class Subscribe extends React.Component {
                           className={classes.subc_item_link}
                         >
                           <img src={Linkedin} alt="Linkedin icon" />
-                          <span>@murmurcars</span>
+                          <span>@murmur</span>
                         </a>
                       </div>
                     </li>
@@ -229,7 +207,7 @@ class Subscribe extends React.Component {
                   className={`${classes.footer_copyright} ${classes.mur_flex}`}
                 >
                   <img src={Copyright} alt="" />
-                  <span>{new Date().getFullYear()}, MurmurCars</span>
+                  <span>{new Date().getFullYear()}, Murmur</span>
                 </p>
                 <ul className={classes.footer_links}>
                   <li>

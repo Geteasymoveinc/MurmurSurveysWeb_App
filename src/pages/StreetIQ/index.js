@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 import StreetIQMap from "./map";
 
-import { Button, Alert } from "reactstrap";
+import { Button, Alert, TabContent, TabPane } from "reactstrap";
 
 import SearchNormal from "../../assets/css/Settings/search-normal.svg";
-import SearchMaximize from "../../assets/css/Settings/search-maximize.svg";
-import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import Close from "../../assets/css/StreetIQ/close.svg";
 import ArrowRight from "../../assets/css/CreateAd/arrow-right.svg";
 import classes from "../../assets/css/Dashboard/dashboard.module.css";
 import classes2 from "../../assets/css/StreetIQ/index.module.css";
+import './scroolbar.css'
+import "../../assets/css/app.css";
+
 import MapMulti from "../../assets/css/StreetIQ/map-multi.svg";
 
 import firebase from "firebase";
@@ -19,6 +20,8 @@ import axios from "axios";
 
 import Statistic from "./statistic";
 import Filters from "./filters";
+import Charts from './charts'
+
 
 Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
 const firebaseConfig = {
@@ -32,6 +35,9 @@ const firebaseConfig = {
   measurementId: "G-B6HKFHXVNN",
 };
 
+
+
+let ref = null
 class StreetIQMain extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +46,9 @@ class StreetIQMain extends Component {
         areaStatistic: {},
         display: false,
         district: "",
+        modal: false,
+        loading: false,
+        activeTab: "1",
       },
       segments: [],
       filterMethod: {
@@ -58,7 +67,7 @@ class StreetIQMain extends Component {
         Income: "",
         Race: "",
         Real_Estate: "",
-        Education:''
+        Education: "",
       },
       filter: {
         display: false,
@@ -72,8 +81,8 @@ class StreetIQMain extends Component {
         address: "",
         districts: [],
         center: {
-          lat: 41.8781,
-          lng: -87.6298,
+          lat: 0,
+          lng: 0,
         },
         places: [],
         zoom: 11,
@@ -87,17 +96,23 @@ class StreetIQMain extends Component {
         errorZipCode: false,
         errorMessage: null,
         coordinates: [],
+        alert_status: false,
+        permission: true,
       },
     };
   }
+ 
 
-  selectActiveRadio = (option, type) => {
+  //selecting options in filters
+  selectFilterData = (option, type) => {
     const id = option.target.id;
     const filterMethod = this.state.filterMethod;
-    filterMethod[type] = id;
+    filterMethod[type] = id;  //segment(income,age and setera) and its filter value
     this.setState({ ...this.state, filterMethod });
   };
+ 
 
+  //switching from seaching by filter and input
   switchToDifferentQueryMode = () => {
     const filterMethod = this.state.filterMethod;
     filterMethod.display = !filterMethod.display;
@@ -105,16 +120,17 @@ class StreetIQMain extends Component {
     statistic.display = false;
     const google = this.state.google;
     const polygons = [];
-    const districts = google.districts;
+    const districts = google.districts; //when send filter data to backend it returns districts with polygons we store districts in districts
 
     if (polygons.length && google.coordinates) {
-      google.coordinates = polygons;
-    } else if (districts.length) {
+      google.coordinates = polygons; //if we already cashed the polygons in state
+    } /*else if (districts.length) {  //
       axios
         .post(
-          "http://localhost:4000/api/v1/zipcode/get-multiple-polygon-coords",
+          "https://backendapp.murmurcars.com/api/v1/zipcode/get-multiple-polygon-coords",
           {
-            districts, country: google.address
+            districts,
+            country: google.address,
           }
         )
         .then((resp) => {
@@ -125,8 +141,8 @@ class StreetIQMain extends Component {
           const segments = [];
           return this.setState({
             ...this.state,
-            filterMethod:{
-              display:  filterMethod.display,
+            filterMethod: {
+              display: filterMethod.display,
               Population: "",
               Age: "",
               Gender: "",
@@ -141,7 +157,7 @@ class StreetIQMain extends Component {
               Income: "",
               Race: "",
               Real_Estate: "",
-              Education:''
+              Education: "",
             },
             statistic,
             google,
@@ -149,28 +165,28 @@ class StreetIQMain extends Component {
           });
         })
         .catch((err) => console.log(err));
-    }
+    }*/
     google.zoom = 10;
     google.places = [];
     const segments = [];
-    this.setState({ ...this.state,   filterMethod:{
-      ...this.state.filterMethod,
-      display: filterMethod.display,
-    }, statistic, google, segments });
+    this.setState({ ...this.state, filterMethod, statistic, google, segments });
   };
-  //filter method
-  searchDistricts = () => {
+
+
+
+  //filter method (sending filter data to backend)
+  searchLocationsByFilterData = () => {
     const filters = this.state.filterMethod;
     const google = this.state.google;
     const Country = this.state.google.address;
     let url = "";
 
     if (Country.includes("Azerbaijan")) {
-      url = "http://localhost:4000/api/v1/zipcode/filter-baku-demographics";
+      url = "https://backendapp.murmurcars.com/api/v1/zipcode/filter-baku-demographics";
     } else {
-      url = "http://localhost:4000/api/v1/zipcode/filter-us-demographics";
+      url = "https://backendapp.murmurcars.com/api/v1/zipcode/filter-us-demographics";
     }
-    console.log(url);
+
     google.loaded = false;
     this.setState({ ...this.state, google });
     axios
@@ -178,7 +194,7 @@ class StreetIQMain extends Component {
         filters,
       })
       .then((res) => {
-        Geocode.fromAddress(Country !== "US" ? "Baku" : "Chikago")
+        Geocode.fromAddress(!Country.includes("US") ? "Baku" : "Chikago")
           .then((result) => {
             const { lat, lng } = result.results[0].geometry.location;
             google.center = { lat, lng };
@@ -187,200 +203,198 @@ class StreetIQMain extends Component {
             google.districts = res.data.districts;
             google.zoom = 10;
             google.loaded = true;
-            /*const filter = this.state.filter
-        filter.result = res.data.filtered
-        filter.display = true*/
             this.setState({
               ...this.state,
               google,
-              // filter
             });
           })
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
   };
-  //filter method
 
+ //location input
   onChangeLocationToZoomIn = (e) => {
     const google = this.state.google;
     google.postalCode = e.target.value;
     this.setState({ ...this.state, google });
   };
-
+ 
+  //submiting to backend and getting polygons and statistics
   submitLocationToZoomIn = (e) => {
     e.preventDefault();
     const statistic = this.state.statistic;
     const google = this.state.google;
-    google.loaded = false
+    google.loaded = false;
     let segments = this.state.segments;
-    this.setState({...this.state, google})
-    if (
-      this.state.google.postalCode.length > 0 &&
-      /[1-9]/i.test(this.state.google.postalCode)
-    ) {
-      axios
-        .post(
-          "http://localhost:4000/api/v1/zipcode/get-zipcode-polygon-coords",
-          { postalCode: this.state.google.postalCode }
-        )
-        .then((res) => {
-          if (res.data.status !== 204) {
-            Geocode.fromAddress(this.state.google.postalCode)
-              .then((response) => {
-                const { lat, lng } = response.results[0].geometry.location;
-                console.log(response);
+    this.setState({ ...this.state, google });
+    if (google.address.includes("Azerbaijan") || google.address.includes("US")) {
+      if (google.address.includes("US")) {
+        axios
+          .post(
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords",
+            { postalCode: this.state.google.postalCode }
+          )
+          .then((res) => {
+            if (res.data.status !== 204) {
+              Geocode.fromAddress(this.state.google.postalCode)
+                .then((response) => {
+                  const { lat, lng } = response.results[0].geometry.location;
+                  console.log(response);
 
-                statistic.areaStatistic = res.data.areaStatistic;
-                statistic.display = true;
+                  statistic.areaStatistic = res.data.areaStatistic;
+                  statistic.display = true;
 
-                segments = [];
-                google.zoom = 12;
-                google.postCenter = { lat, lng };
-                google.coordinates = [res.data.polygon];
-                google.loaded = true;
-                google.center = { lat, lng };
-                google.toggleCartWithAreaInformation = true;
-                this.setState({
-                  ...this.state,
-                  google,
-                  statistic,
-                  segments,
-                });
-              })
-              .catch((err) => console.log(err));
-          } else {
-            google.loaded = true;
-            google.hint = res.data.hints;
-            google.zoom = 10;
-            google.errorMessage = res.data.message;
-            google.errorZipCode = true;
-            google.toggleCartWithAreaInformation = false;
-            this.setState({
-              ...this.state,
-              google,
-            });
-          }
-        })
-        .catch((err) => {
-          const google = this.state.google;
-          google.errorMessage = err.message;
-          google.errorZipCode = true;
-          this.setState({
-            ...this.state,
-            google,
-          });
-        });
-    } else {
-      
-      axios
-        .post("http://localhost:4000/api/v1/zipcode/get-district-information", {
-          district: this.state.google.postalCode,
-        })
-        .then((res) => {
-          if (res.data.status !== 204) {
-            console.log(res.data);
+                  segments = [];
+                  google.zoom = 12;
+                  google.postCenter = { lat, lng };
+                  if(res.data.polygon) google.coordinates = [res.data.polygon];
+                  google.loaded = true;
+                  google.center = { lat, lng };
+                  google.toggleCartWithAreaInformation = true;
+
+                  this.setState({
+                    ...this.state,
+                    google,
+                    statistic,
+                    segments,
+                  });
+                })
+                .catch((err) => console.log(err));
+            } else {
+              google.loaded = true;
+              google.hint = res.data.hints;
+              google.zoom = 10;
+              google.errorMessage = res.data.message;
+              google.errorZipCode = true;
+              google.toggleCartWithAreaInformation = false;
+              this.setState({
+                ...this.state,
+                google,
+              });
+            }
+          })
+          .catch((err) => {
             const google = this.state.google;
-
-            google.errorMessage = null;
-            google.errorZipCode = false;
-            google.hint = null;
-            google.coordinates = [res.data.polygons];
-            google.zoom = 12;
-            google.loaded = true
-            google.districts = [];
-            google.postCenter = res.data.center;
-            google.center = res.data.center
-            google.toggleCartWithAreaInformation = true;
-            google.places = [];
-
-            let segments = this.state.segments;
-            segments = [];
-
-            const statistic = this.state.statistic;
-            statistic.areaStatistic = res.data.areaStatistic;
-            statistic.district = this.state.google.postalCode;
-            statistic.display = true;
-
-            const filterMethod = this.state.filterMethod;
-            filterMethod.Places = "";
-
+            google.errorMessage = err.message;
+            google.errorZipCode = true;
             this.setState({
               ...this.state,
               google,
-              statistic,
-              segments,
-              filterMethod,
             });
-          } else {
-            google.hint = res.data.hints
-            google.toggleCartWithAreaInformation = false 
-            google.errorMessage = res.data.message 
-            google.errorZipCode = true 
-            google.loaded = true 
-            this.setState({
-              ...this.state,
-             google
-            })
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+          });
+      } else {
+        axios
+          .post(
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information",
+            {
+              district: this.state.google.postalCode,
+            }
+          )
+          .then((res) => {
+            if (res.data.status !== 204) {
+              console.log(res.data);
+              const google = this.state.google;
+
+              google.errorMessage = null;
+              google.errorZipCode = false;
+              google.hint = null;
+              google.coordinates = [res.data.polygons];
+              google.zoom = 12;
+              google.loaded = true;
+              google.districts = [];
+              google.postCenter = res.data.center;
+              google.center = res.data.center;
+              google.toggleCartWithAreaInformation = true;
+              google.places = [];
+
+              let segments = this.state.segments;
+              segments = [];
+
+              const statistic = this.state.statistic;
+              statistic.areaStatistic = res.data.areaStatistic;
+              statistic.district = this.state.google.postalCode;
+              statistic.display = true;
+
+              const filterMethod = this.state.filterMethod;
+              filterMethod.Places = "";
+              if (res.data.areaStatistic.Places) {
+                const Places = res.data.areaStatistic.Places;
+                const place_filter = this.state.filterMethod.Places;
+                console.log(place_filter);
+
+                console.log(Places);
+
+                if (Places.length) {
+                  const high_rated = Places[0]["high_rated"];
+                  const low_rated = Places[1]["low_rated"];
+                  const places = [...high_rated, ...low_rated];
+
+                  for (let i = 0; i < places.length; i++) {
+                    google.places.push({
+                      name: Object.keys(places[i])[0],
+                      position: places[i][Object.keys(places[i])[0]].position,
+                      rating: places[i][Object.keys(places[i])[0]].rating,
+                      address: places[i][Object.keys(places[i])[0]].address,
+                    });
+                  }
+                }
+              }
+              this.setState({
+                ...this.state,
+                google,
+                statistic,
+                segments,
+                filterMethod,
+              });
+            } else {
+              google.hint = res.data.hints;
+              google.toggleCartWithAreaInformation = false;
+              google.errorMessage = res.data.message;
+              google.errorZipCode = true;
+              google.loaded = true;
+              this.setState({
+                ...this.state,
+                google,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
   };
 
-  selectedDistrictData = (district, index) => {
+
+
+//filter method dhows all location and this is method for selecting and rendering data
+  selectedLocation = (district, index) => {
+
     const google = this.state.google;
     const country = google.address;
     let url = "";
     google.loaded = false;
     this.setState({ ...this.state, google });
     if (country.includes("Azerbaijan")) {
-      url = "http://localhost:4000/api/v1/zipcode/get-district-information";
+      url = "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information";
     } else {
-      url = "http://localhost:4000/api/v1/zipcode/get-us-information";
+      url = "https://backendapp.murmurcars.com/api/v1/zipcode/get-us-information";
     }
     axios.post(url, { district }).then((resp) => {
-      Geocode.fromAddress(district).then((response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        console.log(response);                                
-
-        const statistic = this.state.statistic;
-        statistic.areaStatistic = resp.data.areaStatistic;
-        statistic.district = district;
-        statistic.display = true;
-        const polygon = google.coordinates[index];
-        const filterMethod = this.state.filterMethod;
-        filterMethod.display = false;
-
-        google.zoom = 12 
-        google.postCenter = {lat,lng}
-        google.center = {lat, lng}
-        google.coordinates = [polygon]
-        google.loaded = true
-
-        if(country.includes('Azerbaijan')){
-          console.log('azer')
-          google.postCenter = resp.data.center
-          google.center = resp.data.center
-        }
-
-        this.setState({
-          ...this.state,
-          statistic,
-          filterMethod,
-          google
-        });
-      }).catch(err => console.log(err))
-    });
-  };
-  selectedDataSegment = (type) => {
-    const google = this.state.google;
-    if (type === "Places") {
       const statistic = this.state.statistic;
-      if (statistic.areaStatistic.Places) {
-        const Places = this.state.statistic.areaStatistic.Places;
+      statistic.areaStatistic = resp.data.areaStatistic;
+      statistic.district = district;
+      statistic.display = true;
+      const polygon = google.coordinates[index];
+      const filterMethod = this.state.filterMethod;
+      filterMethod.display = false;
+
+      google.zoom = 12;
+      google.coordinates = [polygon];
+      google.loaded = true;
+      if (resp.data.areaStatistic.Places) {
+        const Places = resp.data.areaStatistic.Places;
         const place_filter = this.state.filterMethod.Places;
         console.log(place_filter);
 
@@ -404,6 +418,63 @@ class StreetIQMain extends Component {
           }
         }
       }
+      if (country.includes("Azerbaijan")) {
+        google.postCenter = resp.data.center;
+        google.center = resp.data.center;
+
+        this.setState({
+          ...this.state,
+          statistic,
+          filterMethod,
+          google,
+        });
+      } else {
+        Geocode.fromAddress(district)
+          .then((response) => {
+            const { lat, lng } = response.results[0].geometry.location;
+            console.log(response);
+
+            google.postCenter = { lat, lng };
+            google.center = { lat, lng };
+
+            this.setState({
+              ...this.state,
+              statistic,
+              filterMethod,
+              google,
+            });
+          })
+          .catch((err) => console.log(err));
+      }
+    });
+  };
+  selectedDataSegment = (type) => {
+    const google = this.state.google;
+    const statistic = this.state.statistic;
+    if (statistic.areaStatistic.Places) {
+      const Places = this.state.statistic.areaStatistic.Places;
+      const place_filter = this.state.filterMethod.Places;
+      console.log(place_filter);
+
+      console.log(Places[0].high_rated);
+      const hight_rated = Places[0]["high_rated"];
+      const low_rated = Places[1]["low_rated"];
+      if (place_filter.length === 0 || place_filter === ">4") {
+        for (let i = 0; i < hight_rated.length; i++) {
+          google.places.push({
+            name: Object.keys(hight_rated[i])[0],
+            position: hight_rated[i][Object.keys(hight_rated[i])[0]].position,
+          });
+        }
+      }
+      if (place_filter.length === 0 || place_filter === "<4") {
+        for (let i = 0; i < low_rated.length; i++) {
+          google.places.push({
+            name: Object.keys(low_rated[i])[0],
+            position: low_rated[i][Object.keys(low_rated[i])[0]].position,
+          });
+        }
+      }
     }
 
     if (type !== "Places") google.places = [];
@@ -418,61 +489,69 @@ class StreetIQMain extends Component {
     }
 
     this.handleConnectionToFirebaseRealTimeDatabase();
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position);
-      const google = this.state.google;
-      google.postCenter = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+        const google = this.state.google;
+        google.postCenter = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
 
-      google.center = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
+        google.center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
 
-      this.setState({
-        ...this.state,
-        google,
-      });
-      this.handleReverseGeocode();
-    });
-    this.setState({
-      ...this.state,
-      google: {
-        ...this.state.google,
-        address: "US",
+        google.permission = true;
+
+        this.setState({
+          ...this.state,
+          google,
+        });
+        this.handleReverseGeocode();
       },
-    });
+      (err) => {
+        this.setState({
+          ...this.state,
+          google: {
+            ...this.state.google,
+             alert_status: false,
+            loaded: true,
+             permission: true,
+          },
+        });
+      }
+    );
   }
 
   handleConnectionToFirebaseRealTimeDatabase = () => {
-    let ref = firebase.database().ref("users/");
+     ref = firebase.database().ref("users/");
     ref.on("value", (snapshot) => {
       const newValue = snapshot.val();
       //Convert Objects into Array
       let newArrayOfDrivers = Object.values(newValue);
       const google = this.state.google;
-      google.loaded = true;
       google.drivers = newArrayOfDrivers;
       google.NumberOfDrivers = newArrayOfDrivers.length;
       this.setState({
         ...this.state,
         google,
       });
-      ref.off();
+
     });
   };
-
+ 
   handleReverseGeocode = () => {
     Geocode.fromLatLng(
       this.state.google.postCenter.lat,
       this.state.google.postCenter.lng
     ).then(
       (response) => {
-        const address = response.results[5].formatted_address;
-        const google = this.state.google;
+       const address = response.results[5].formatted_address;
+       const google = this.state.google;
         google.address = address;
+        google.loaded = true;
         this.setState({ ...this.state, google });
       },
       (error) => {
@@ -480,14 +559,31 @@ class StreetIQMain extends Component {
       }
     );
   };
+  showMoreInDatabox = () => {
+    document.getElementById("scroll").scrollTop = 0;
+    this.setState({
+      ...this.state,
+      statistic: {
+        ...this.state.statistic,
+        modal: !this.state.statistic.modal,
+        loading: false,
+      },
+    });
+  };
 
+  componentWillUnmount(){
+    ref.off()
+  }
   render() {
     console.log(this.state);
-    const { loaded } = this.state.google;
+    const { loaded, address, alert_status, permission, errorZipCode} =
+      this.state.google;
+    const { modal, activeTab} = this.state.statistic;
+ 
     return (
       <React.Fragment>
         {!loaded && (
-          <div id="preloader">
+          <div id="preloader" style={{ opacity: 0.7 }}>
             <div id="status">
               <div className="spinner-chase">
                 <div className="chase-dot"></div>
@@ -500,17 +596,19 @@ class StreetIQMain extends Component {
             </div>
           </div>
         )}
-        {loaded && (
-          <div className={classes.dash_right}>
-            <div className={classes.map}>
-              <StreetIQMap
-                maping={this.state.google}
-                selectedDistrictData={this.selectedDistrictData}
-              />
-            </div>
 
-            <div className={classes.head_search_dashboard}>
-              <div className={classes.head_search}>
+        <div className={classes.dash_right}>
+          <div className={classes.map}>
+            <StreetIQMap
+              maping={this.state.google}
+              selectedLocation={this.selectedLocation}
+            />
+          </div>
+
+          {loaded && (
+            <React.Fragment>
+              <div className={classes.head_search_dashboard}>
+                {/*<div className={classes.head_search}>
                 <form onSubmit={this.submitLocationToZoomIn}>
                   <div
                     className={`${classes.dash_relative} ${classes.search_box}`}
@@ -540,150 +638,264 @@ class StreetIQMain extends Component {
                     </div>
                   </div>
                 </form>
+              </div>*/}
               </div>
-            </div>
-            <div
-              className={`${classes.dashboard_right} ${classes2.dash_856px}`}
-            >
-              {this.state.google.errorZipCode ? (
-                <Alert color="danger">
-                  {this.state.google.errorMessage}
-                  <div className="d-flex flex-wrap">
-                    {this.state.google.hint &&
-                      this.state.google.hint.map((el, i) => (
-                        <a
-                          className="mr-3"
-                          onClick={() => {
-                            const google = this.state.google;
-                            google.postalCode = el;
-                            google.errorZipCode = false;
-                            google.coordinates = []
-                            const statistic = this.state.statistic
-                            statistic.display = false 
+              <div
+                className={`${classes.dashboard_right} ${classes2.dash_856px}`}
+              >
+                {this.state.google.errorZipCode ? (
+                  <Alert color="danger">
+                    {this.state.google.errorMessage}
+                    <div className="d-flex flex-wrap">
+                      {this.state.google.hint &&
+                        this.state.google.hint.map((el, i) => (
+                          <a
+                            className="mr-3"
+                            onClick={() => {
+                              const google = this.state.google;
+                              google.postalCode = el;
+                              google.errorZipCode = false;
+                              google.coordinates = [];
+                              const statistic = this.state.statistic;
+                              statistic.display = false;
 
-                            this.setState({ ...this.state, google });
-                          }}
-                          href="#"
-                          key={i}
-                        >
-                          {el}
-                        </a>
-                      ))}
-                  </div>
-                  <Button
-                    color="link"
-                    onClick={() => {
-                      const google = this.state.google;
-                      google.errorZipCode = false;
-                      this.setState({
-                        ...this.state,
-                        google,
-                      });
-                    }}
+                              this.setState({ ...this.state, google });
+                            }}
+                            href="#"
+                            key={i}
+                          >
+                            {el}
+                          </a>
+                        ))}
+                    </div>
+                    <Button
+                      color="link"
+                      onClick={() => {
+                        const google = this.state.google;
+                        google.errorZipCode = false;
+                        this.setState({
+                          ...this.state,
+                          google,
+                        });
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </Alert>
+                ) : null}
+                {alert_status && (
+                  <Alert className="d-flex align-items-center justify-content-between">
+                    {!permission
+                      ? "Please activate geolocation in order to fetch data"
+                      : "We are not providing data in your region"}
+
+                    <Button
+                      color="link"
+                      onClick={() =>
+                        this.setState({
+                          ...this.state,
+                          google: { ...this.state.google, alert_status: false },
+                        })
+                      }
+                    >
+                      Close
+                    </Button>
+                  </Alert>
+                )}
+                {!errorZipCode && permission && (
+                  <div
+                    id="scroll"
+                    className={`${classes.choosen_place} 
+                    ${
+                      modal
+                        ? classes2.choose_modal_section
+                        : classes2.choose_search_section
+                    }`}
                   >
-                    Close
-                  </Button>
-                </Alert>
-              ) : null}
-              {!this.state.google.errorZipCode && (
-                <div
-                  className={`${classes.choosen_place} ${classes.choose_search_section}`}
+                    {!this.state.filterMethod.display && (
+                      <div className={classes2.stc_place_content}>
+                        {!modal ? (
+                          <>
+                            {" "}
+                            <div className={classes2.stc_place_head}>
+                              <h5 className={classes2.stc_h5}>
+                                Statistics of the choosen Place:{" "}
+                                {this.state.statistic.district}
+                              </h5>
+                              <a
+                                onClick={this.switchToDifferentQueryMode}
+                                className={classes2.stc_p}
+                              >
+                                Search using statistics
+                                <img src={ArrowRight} alt="" />
+                              </a>
+                            </div>
+                            <div className={classes2.stc_search_block}>
+                              <input
+                                type="text"
+                                className={classes2.stc_search_input}
+                                name="stc_search_input"
+                                id="stc_search_input"
+                                placeholder={address!=='US' ?'Enter district name' : 'Enter zipcode'}
+                                value={`${
+                                  this.state.google.postalCode &&
+                                  this.state.google.postalCode
+                                }`}
+                                onChange={this.onChangeLocationToZoomIn}
+                              />
+                              <button
+                                type="button"
+                                className={classes2.search_normal}
+                                onClick={this.submitLocationToZoomIn}
+                              >
+                                <img src={SearchNormal} alt="" />
+                              </button>
+                              <button
+                                type="button"
+                                className={classes2.stc_srch_close}
+                                onClick={() => {
+                                  const google = this.state.google;
+                                  google.postalCode = "";
+                                  this.setState({ ...this.state, google });
+                                }}
+                              >
+                                <img src={Close} alt="" />
+                              </button>
+                            </div>
+                          </>
+                        ) : 
+                          <>
+                              <div className={classes2.streetIQ}>
+            <ul className={classes2.streetIQ_menu}>
+              <li
+                className={`${this.state.statistic.activeTab === "1" && classes2.active}`}
+              >
+                <a
+                  href="#"
+                  className={classes2.streetIQ_nav_a}
+                  onClick={() => {
+                    this.setState({
+                      ...this.state, statistic: {
+                        ...this.state.statistic,
+                        activeTab: '1'
+                      }
+                    })
+                 }}
                 >
-                  {!this.state.filterMethod.display && (
-                    <div className={classes2.stc_place_content}>
-                      <div className={classes2.stc_place_head}>
-                        <h5 className={classes2.stc_h5}>
-                          Statistics of the choosen Place:{" "}
-                          {this.state.statistic.district}
-                        </h5>
-                        <a
-                          onClick={this.switchToDifferentQueryMode}
-                          className={classes2.stc_p}
-                        >
-                          Search using statistics
-                          <img src={ArrowRight} alt="" />
-                        </a>
-                      </div>
-                      <div className={classes2.stc_search_block}>
-                        <input
-                          type="text"
-                          className={classes2.stc_search_input}
-                          name="stc_search_input"
-                          id="stc_search_input"
-                          placeholder="Enter zipcode"
-                          value={`${
-                            this.state.google.postalCode &&
-                            this.state.google.postalCode
-                          }`}
-                          onChange={this.onChangeLocationToZoomIn}
-                        />
-                        <button
-                          type="button"
-                          className={classes2.search_normal}
-                          onClick={this.submitLocationToZoomIn}
-                        >
-                          <img src={SearchNormal} alt="" />
-                        </button>
-                        <button
-                          type="button"
-                          className={classes2.stc_srch_close}
-                          onClick={() => {
-                            const google = this.state.google;
-                            google.postalCode = "";
-                            this.setState({ ...this.state, google });
-                          }}
-                        >
-                          <img src={Close} alt="" />
-                        </button>
-                      </div>
-                      {!this.state.statistic.display && (
-                        <div className={classes2.stc_zip_code}>
-                          <img src={MapMulti} alt="" />
-                          <p className={classes2.ztc_zip_p}>
-                            Enter zip code or search using Statistics
-                          </p>
-                        </div>
-                      )}
-                      {this.state.statistic.display && (
-                        <Statistic
-                          segments={this.state.segments}
-                          selectedDataSegment={this.selectedDataSegment}
-                          areaStatistic={this.state.statistic.areaStatistic}
-                          Places={this.state.filterMethod.Places}
-                          Country={this.state.google.country}
-                        />
-                      )}
-                    </div>
-                  )}
-                  {this.state.filterMethod.display && (
-                    <div className={classes2.stc_plc_zipcode}>
-                      <div className={classes2.stc_place_head}>
-                        <h5 className={classes2.stc_h5}>
-                          Statistics of the choosen Place:
-                        </h5>
-                        <a
-                          onClick={this.switchToDifferentQueryMode}
-                          className={classes2.stc_p}
-                        >
-                          Search using zipcode
-                          <img src={ArrowRight} alt="" />
-                        </a>
-                      </div>
-                      <div className={classes2.stc_place_drops}>
-                        <Filters
-                          filterMethod={this.state.filterMethod}
-                          searchDistricts={this.searchDistricts}
-                          selectActiveRadio={this.selectActiveRadio}
-                          Country={this.state.google.address}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+                  Statistics
+                </a>
+              </li>
+              <li
+                className={`${this.state.statistic.activeTab === "2" && classes2.active}`}
+              >
+                <a
+                  href="#"
+                  className={classes2.streetIQ_nav_a}
+                  onClick={() => {
+                     this.setState({
+                       ...this.state, statistic: {
+                         ...this.state.statistic,
+                         activeTab: '2'
+                       }
+                     })
+                  }}
+                >
+                  Charts
+                </a>
+              </li>
+            </ul>
             </div>
-          </div>
-        )}
+                        
+                      <>
+                      
+                        { activeTab==='1' && modal &&(
+                          <Statistic
+                            segments={this.state.segments}
+                            selectedDataSegment={this.selectedDataSegment}
+                            expandStatisticModalWithScrool={
+                              this.showMoreInDatabox
+                            }
+                            modal = {true}
+                            areaStatistic={this.state.statistic.areaStatistic}
+                            Places={this.state.filterMethod.Places}
+                            Country={this.state.google.address}
+                          />
+                        )}
+                     
+                        { activeTab==='2' && modal &&(
+                          <Charts
+                            segments={this.state.segments}
+                            selectedDataSegment={this.selectedDataSegment}
+                            expandStatisticModalWithScrool={
+                              this.showMoreInDatabox
+                            }
+                            areaStatistic={this.state.statistic.areaStatistic}
+                            Places={this.state.filterMethod.Places}
+                            Country={this.state.google.address}
+                            modal ={true}
+                          />
+                        )}
+                          
+                           </>
+                          </>
+                      }
+                        
+                        {!this.state.statistic.display && !modal && (
+                          <div className={classes2.stc_zip_code}>
+                            <img src={MapMulti} alt="" />
+                            <p className={classes2.ztc_zip_p}>
+                              {`Enter  ${
+                                address !== "US" ? "district name" : "zip code"
+                              } or search using Statistics`}
+                            </p>
+                          </div>
+                        )}
+                        {this.state.statistic.display && !modal && (
+                          <Statistic
+                            segments={this.state.segments}
+                            selectedDataSegment={this.selectedDataSegment}
+                            expandStatisticModalWithScrool={
+                              this.showMoreInDatabox
+                            }
+                            areaStatistic={this.state.statistic.areaStatistic}
+                            Places={this.state.filterMethod.Places}
+                            Country={this.state.google.address}
+                          />
+                        )}
+                      </div>
+                    )}
+                    {this.state.filterMethod.display && (
+                      <div className={classes2.stc_plc_zipcode}>
+                        <div className={classes2.stc_place_head}>
+                          <h5 className={classes2.stc_h5}>
+                            Statistics of the choosen Place:
+                          </h5>
+                          <a
+                            onClick={this.switchToDifferentQueryMode}
+                            className={classes2.stc_p}
+                          >
+                            {`Search using ${
+                              address !== "US" ? "district name" : "zipcode"
+                            }`}
+                            <img src={ArrowRight} alt="" />
+                          </a>
+                        </div>
+                        <div className={classes2.stc_place_drops}>
+                          <Filters
+                            filterMethod={this.state.filterMethod}
+                            searchLocationsByFilterData={this.searchLocationsByFilterData}
+                            selectFilterData={this.selectFilterData}
+                            Country={this.state.google.address}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </React.Fragment>
+          )}
+        </div>
       </React.Fragment>
     );
   }

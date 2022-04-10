@@ -6,15 +6,15 @@ import LogoCreate from "../../assets/css/CreateAd/logo-create.png";
 import Copyright from "../../assets/css/CreateAd/copyright.svg";
 import Check from "../../assets/css/CreateAd/check.svg";
 import InfoCircle from "../../assets/css/CreateAd/info-circle.svg";
-import Text from "../../assets/css/CreateAd/text.svg";
 import ArrowDown from "../../assets/css/CreateAd/arrow-down.svg";
 import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 import Hashtag from "../../assets/css/CreateAd/hashtag.svg";
+import HashtagError from "../../assets/css/CreateAd/hashtag-error.svg";
 import Location from "../../assets/css/CreateAd/location.svg";
+import LocationError from "../../assets/css/CreateAd/location-error.svg";
 
-import {changeSideBar} from '../../store/actions';
-import {connect} from 'react-redux'
-
+import { changeSideBar } from "../../store/actions";
+import { connect } from "react-redux";
 
 import { Link, withRouter } from "react-router-dom";
 
@@ -22,47 +22,63 @@ class Audience extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      age: '18-25',
-      gender: 'Male',
-      specificAttribute: null,
-      location: null,
+      
+      audience: {
+        Country: "Azerbaijan",
+        age: "18-25",
+        gender: "Male",
+        specificAttribute: null,
+        location: 'nizami',
+        
+      },
+      error: {
+        specificAttribute: false,
+        Country: false,
+        location: false,
+      },
     };
     this.submit = this.submit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.canselNewCampaign = this.canselNewCampaign.bind(this)
+    this.canselNewCampaign = this.canselNewCampaign.bind(this);
   }
-
   submit(event) {
     event.preventDefault();
-    if (
-      this.state.age != null &&
-      this.state.gender != null &&
-      this.state.specificAttribute != null &&
-      this.state.location != null
-    ) {
-      this.props.createAudience({
-        audienceAge: this.state.age,
-        audienceGender: this.state.gender,
-        area: this.state.location,
-        specificAttribute: this.state.specificAttribute,
-      });
+    let hasNull = false;
+    const { createAudience } = this.props;
+    const { error } = this.state;
+    const { audience } = this.state;
+    const states = Object.keys(audience);
+    console.log(states);
+    for (let i = 0; i < states.length; i++) {
+      if (this.state.audience[states[i]] === null || !this.state.audience[states[i]].length) {
+        error[states[i]] = true;
+        console.log(error);
+        this.setState({ audience, error });
+        hasNull = true;
+      }
+    }
+
+    if (!hasNull) {
+      createAudience(audience);
     }
   }
-  handleChange(event) {
-    const name = event.target.name;
+  handleChange = (event, name) => {
     const value = event.target.value;
-    if (name === "step-attributes")
-      this.setState({ ...this.state, specificAttribute: value });
-    else if (name === "step-aud-location")
-      this.setState({ ...this.state, location: value });
-    else {
-      this.setState({ ...this.state, [name]: value });
-    }
-  }
-  canselNewCampaign(){
+    const {audience} = this.state
+    const {error} = this.state
+    this.setState({
+      ...this.state,
+      audience: { ...audience, [name]: value },
+      error: {
+        ...error,
+        [name]: false,
+      },
+    });
+  };
+
+  canselNewCampaign() {
     this.props.changeSideBar(true);
-    this.props.history.replace('/ad-manager')
-    this.props.history.go('/ad-manager')
+    this.props.history.replace("/ad-manager");
+    this.props.history.go("/ad-manager");
   }
   componentDidMount() {
     //this.props.apiError("");
@@ -72,17 +88,41 @@ class Audience extends React.Component {
   componentWillUnmount() {
     document.body.classList.remove("bg-transparent");
   }
-
+  
+  componentDidUpdate(props, state){
+        if(state.audience.Country!==this.state.audience.Country){
+          if(this.state.audience.Country!=='Azerbaijan'){
+            this.setState({
+              ...this.state, audience:{
+                ...this.state.audience, location: null
+              }
+            })
+          }else{
+            this.setState({
+              ...this.state, audience:{
+                ...this.state.audience, location: 'nizami'
+              }
+            })
+          }
+        }
+  }
   render() {
     console.log(this.state);
+    const {error} = this.state
     return (
       <React.Fragment>
         <header className={classes2.header}>
-          <div className={`${classes2.mur_contain} ${classes2.create_top_cancel}`}>
+          <div
+            className={`${classes2.mur_contain} ${classes2.create_top_cancel}`}
+          >
             <a href="#">
               <img src={LogoCreate} alt="" />
             </a>
-            <button type="button" className={classes2.create_cancel_btn} onClick={this.canselNewCampaign}>
+            <button
+              type="button"
+              className={classes2.create_cancel_btn}
+              onClick={this.canselNewCampaign}
+            >
               Cancel
               <svg
                 width="24"
@@ -240,7 +280,7 @@ class Audience extends React.Component {
                           name="age"
                           id="step-aud-age"
                           className={classes.step_select_item}
-                          onChange={this.handleChange}
+                          onChange={e => this.handleChange(e, 'age')}
                         >
                           <option value="" disabled>
                             Select Age
@@ -272,7 +312,7 @@ class Audience extends React.Component {
                           name="gender"
                           id="step-aud-gender"
                           className={classes.step_select_item}
-                          onChange={this.handleChange}
+                          onChange={e => this.handleChange(e,'gender')}
                         >
                           <option value="" disabled>
                             Select Gender
@@ -292,21 +332,21 @@ class Audience extends React.Component {
                     <div className={classes.step_form_item}>
                       <label
                         htmlFor="step-attributes"
-                        className={classes.step_label}
+                        className={`${classes.step_label} ${error['specificAttribute']? classes.pass_error_text: ''}`}
                       >
                         Audience Specific attributes
                       </label>
                       <div className={classes.step_relative}>
                         <input
                           type="text"
-                          className={classes.step_element}
+                          className={`${classes.step_element} ${error['specificAttribute']? classes.pass_error:''}`}
                           name="step-attributes"
                           id="step-attributes"
                           placeholder="For exapmle: Audience wearing"
-                          onChange={this.handleChange}
+                          onChange={e => this.handleChange(e, 'specificAttribute')}
                         />
                         <img
-                          src={Hashtag}
+                          src={error['specificAttribute']? HashtagError: Hashtag}
                           alt=""
                           className={classes.step_form_icon}
                         />
@@ -315,24 +355,75 @@ class Audience extends React.Component {
                     </div>
                     <div className={classes.step_form_item}>
                       <label
+                        htmlFor="step-aud-city"
+                        className={classes.step_label}
+                      >
+                        Country
+                      </label>
+                      <div className={classes.step_relative}>
+                        <input
+                          type="text"
+                          className={`${classes.step_element} ${error.Country? classes.pass_error: ''}`}
+                          name="step-aud-country"
+                          id="step-aud-country"
+                          placeholder="Enter Country"
+                          value={this.state.audience.Country}
+                          onChange={e => this.handleChange(e, 'Country')}
+                        />
+                        <img
+                           src={error.Country ? LocationError : Location}
+                          alt=""
+                          className={classes.step_form_icon}
+                        />
+                      </div>
+                    </div>
+                    <div className={classes.step_form_item}>
+                      <label
                         htmlFor="step-aud-location"
                         className={classes.step_label}
                       >
                         Audience Location
                       </label>
+
                       <div className={classes.step_relative}>
-                        <input
-                          type="text"
-                          className={classes.step_element}
-                          name="step-aud-location"
-                          id="step-aud-location"
-                          placeholder="Enter zip code"
-                          onChange={this.handleChange}
-                        />
+                        {this.state.audience.Country === "Azerbaijan" ? (
+                          <select
+                            name="step-aud-location"
+                            id="step-aud-location"
+                            className={classes.step_select_item}
+                            onChange={e => this.handleChange(e,'location')}
+                          >
+                            <option value="nizami">Nizami</option>
+                            <option value="nasimi">Nasimi</option>
+                            <option value="khazar">Khazar</option>
+                            <option value="sabunchu">Sabunchu</option>
+                            <option value="qaradaq">Qaradaq</option>
+                            <option value="binaqadi">Binaqadi</option>
+                            <option value="narimanov">Narimanov</option>
+                            <option value="sabayil">Sabayil</option>
+                            <option value="pirallahı">Pirallahı</option>
+                            <option value="xətai">Xətai</option>
+                            <option value="yasamal">Yasamal</option>
+                            <option value="suraxanı">Suraxanı</option>
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            className={`${classes.step_element} ${error.location ? classes.pass_error: ''}`}
+                            name="step-aud-location"
+                            id="step-aud-location"
+                            placeholder="Enter zip code"
+                            onChange={e => this.handleChange(e, 'location')}
+                          />
+                        )}
                         <img
-                          src={Location}
+                          src={this.state.audience.Country==='Azerbaijan'? ArrowDown: error.location ? LocationError : Location}
                           alt=""
-                          className={classes.step_form_icon}
+                          className={`${
+                            this.state.audience.Country !== "US"
+                              ? classes.step_form_icon_selector
+                              : classes.step_form_icon
+                          }`}
                         />
                       </div>
                       {/*<!-- <span class="pass_error">Error message</span> -->*/}
@@ -363,13 +454,13 @@ class Audience extends React.Component {
                   <li>
                     <p className={classes.create_ul_p}>Audience Age</p>
                     <div className={classes.create_ul_txt}>
-                    Define the age of who you want to see your ads.
+                      Define the age of who you want to see your ads.
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Audience Gender</p>
                     <div className={classes.create_ul_txt}>
-                    Define the gender of who you want to see your ads.
+                      Define the gender of who you want to see your ads.
                     </div>
                   </li>
                   <li>
@@ -377,15 +468,15 @@ class Audience extends React.Component {
                       Audience Specific Attibutes
                     </p>
                     <div className={classes.create_ul_txt}>
-                    Define the some tags/attibution which specific to your
-                          audience.
+                      Define the some tags/attibution which specific to your
+                      audience.
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Audience Location</p>
                     <div className={classes.create_ul_txt}>
-                    Define the location where you want to show your ads.
-                          Add ZipCodes.
+                      Define the location where you want to show your ads. Add
+                      ZipCodes.
                     </div>
                   </li>
                 </ul>
@@ -418,4 +509,4 @@ class Audience extends React.Component {
   }
 }
 
-export default connect(null, {changeSideBar})(withRouter(Audience));
+export default connect(null, { changeSideBar })(withRouter(Audience));

@@ -52,22 +52,22 @@ class Login extends React.Component {
 
   handleInputChange = (event) => {
     const name = event.target.name;
-    this.setState({ ...this.state, [name]: event.target.value });
-    if (name === "email" && /@/i.test(event.target.value)) {
+    this.setState({ ...this.state, [name]: event.target.value.trim() });
+    if (name === "email" && /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(event.target.value)) {
       this.setState({
         ...this.state,
-        [name]: event.target.value,
+        [name]: event.target.value.trim(),
         errorEmail: false,
       });
     } else if (
       name === "password" &&
       /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
-        event.target.value
+        event.target.value.trim()
       )
     ) {
       this.setState({
         ...this.state,
-        [name]: event.target.value,
+        [name]: event.target.value.trim(),
         errorPassword: false,
       });
     }
@@ -78,23 +78,25 @@ class Login extends React.Component {
     event.preventDefault();
 
     if (
-      /@/i.test(this.state.email) &&
+      /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(this.state.email) &&
       /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
         this.state.password
       )
     ) {
-      
       this.props.loginUser(
         { email: this.state.email, password: this.state.password },
         this.props.history
       );
     } else {
-      if (!/@/i.test(this.state.email) && this.state.password.length < 8) {
+      if (
+        !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(this.state.email) &&
+        !/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
+          this.state.password
+        )
+      ) {
         this.setState({ ...this.state, errorEmail: true, errorPassword: true });
-        return;
-      } else if (!/@/i.test(this.state.email)) {
+      } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(this.state.email)) {
         this.setState({ ...this.state, errorEmail: true });
-        return;
       } else if (
         !/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
           this.state.password
@@ -116,6 +118,12 @@ class Login extends React.Component {
     });
   }
 
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.error !== prevProps.error) {
+      this.setState({ ...this.state, error: true });
+    }
+  }
   componentDidMount() {
     //this.props.apiError("");
 
@@ -123,13 +131,6 @@ class Login extends React.Component {
   }
   componentWillUnmount() {
     document.body.classList.remove("bg-transparent");
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.error !== prevProps.error 
-    ) {
-      this.setState({ ...this.state, error: true });
-    }
   }
   render() {
     return (
@@ -160,36 +161,34 @@ class Login extends React.Component {
                   className={`${classes.footer_copyright} ${classes.mur_flex} ${classes.log_reg_footer}`}
                 >
                   <img src={Vector2} alt="" />
-                  <span>2021, MurmurCars</span>
+                  <span>2022, Murmur</span>
                 </p>
               </div>
             </div>
-         
+
             <div className={classes.log_reg_right}>
-         
               <div className={classes.login_section}>
-              {this.state.error ? (
-               
-               <Alert
-                 color="danger"
-                 className="d-flex justify-content-between align-items-center"
-                 style={{padding: '0 1rem'}}
-               >
-                 <span style={{fontFamily:'Montserrat'}}>
-                   Email or password is not correct
-                 </span>
-                 <Button
-                   color="link"
-                   onClick={() =>
-                     this.setState({ ...this.state, error: false })
-                   }
-                 >
-                   Close
-                 </Button>
-               </Alert>
-             ) : null}
-                <h1 className={classes.login_h1}>Login to Murmur</h1>
-           
+                {this.state.error ? (
+                  <Alert
+                    color="danger"
+                    className="d-flex justify-content-between align-items-center"
+                    style={{ padding: "0 1rem" }}
+                  >
+                    <span style={{ fontFamily: "Montserrat" }}>
+                      {this.props.error}
+                    </span>
+                    <Button
+                      color="link"
+                      onClick={() =>
+                        this.setState({ ...this.state, error: false })
+                      }
+                    >
+                      Close
+                    </Button>
+                  </Alert>
+                ) : null}
+                <h1 className={classes.login_h1}>Welcome</h1>
+
                 <form onSubmit={this.handleValidSubmit}>
                   <div className={classes.login_form}>
                     <div
@@ -237,8 +236,7 @@ class Login extends React.Component {
                       />
                       {this.state.errorPassword && (
                         <span className={classes.pass_error}>
-                          1 lovercase, uppercase English letter, digit and
-                          special character, at least 8 long
+                           lowercase, upercase, special character and at least 8 long
                         </span>
                       )}
                       <button

@@ -29,19 +29,6 @@ const { Dragger } = Upload;
 const propsD = {
   name: "file",
   multiple: true,
-
-  /* onChange(info) {
-    console.log({ info });
-    const { status } = info.file;
-   if (status !== "uploading") {
-    console.log(info.file, info.fileList);
-   }
-   if (status === "done") {
-     //message.success(`${info.file.name} file uploaded successfully.`);
-   } else if (status === "error") {
-      //message.error(`${info.file.name} file upload failed.`);
-  }
- },*/
   onDrop(e) {
     console.log("Dropped files", e.dataTransfer.files);
   },
@@ -59,15 +46,28 @@ class Settings extends Component {
       stng_phone: "",
       stng_password: "",
       stng_fullName: "",
-      stng_address: '',
+      stng_address: "",
+      stng_city: "",
+      stng_state: "",
       email: true,
+      fullName: true,
       password: true,
       phone_number: true,
       company: true,
-      billing: "plan_walk",
       image: "",
+      file: "",
+      profile_photo: "",
       loading: false,
-      subscription_status: "",
+      wrong_credentials: [],
+      user_billing: {
+        user_id: "",
+        hasBilling: false,
+        billing: {
+          billing_id: "",
+          billing_package: "",
+          billing_price: 0,
+        },
+      },
     };
     this.toggleEye = this.toggleEye.bind(this);
   }
@@ -76,139 +76,243 @@ class Settings extends Component {
     this.setState({ ...this.state, text: !this.state.text });
   }
 
-  openUpdateModal = () => {
-    this.setState({ ...this.state, updateModal: true });
+  openModal = (modal) => {
+    this.setState({ ...this.state, [modal]: true });
   };
 
-  closeUpdateModal = () => {
-    this.setState({ ...this.state, updateModal: false });
-  };
-
-  openCanselModal = () => {
-    this.setState({ ...this.state, canselModal: true });
-  };
-
-  closeCanselModal = () => {
-    this.setState({ ...this.state, canselModal: false });
+  toggleModal = (modal) => {
+    this.setState({ ...this.state, [modal]: false });
   };
 
   handleFileChange = (info) => {
     const reader = new FileReader();
-   
     reader.readAsDataURL(info.file);
-    console.log(info.file)
-    reader.onload = (e) => {
-      console.log(e.target.result.length);
-
-      this.setState({ ...this.state, image: e.target.result, 
-    })
+    reader.onload = (event) => {
+      this.setState({
+        ...this.state,
+        image: event.target.result,
+        file: info.file,
+        profile_photo: info.file.name,
+      });
     };
   };
 
   settingInputsChange = (event) => {
-    const name = event.target.name;
+    let name = event.target.name;
     const value = event.target.value;
 
     this.setState({ ...this.state, [name]: value });
   };
 
-  selectUpdatePackage = (event) => {
-    const name = event.target.id;
-
-    this.setState({ ...this.state, billing: name });
-    console.log(this.state);
+  //update billing
+  updateBilling = (billing, amount) => {
+    const { invoice_link, invoice_status, _id: id } = this.state.Billing;
+    this.setState({ ...this.state, loading: true });
+    axios
+      .put(
+        `https://backendapp.murmurcars.com/api/v1/billing/update-billing/${id}`,
+        {
+          amount,
+          invoice_link,
+          invoice_status,
+          subscription_package: billing,
+        }
+      )
+      .then((res) => {
+        this.setState({ ...this.state, loading: false, updateModal: false });
+        console.log(res);
+      })
+      .catch((err) => {
+        this.setState({ ...this.state, loading: false, updateModal: false });
+        console.log(err);
+      });
+  };
+  //cansel billing
+  canselBilling = () => {
+    this.setState({ ...this.state, loading: true });
+    axios
+      .delete(
+        `https://backendapp.murmurcars.com/api/v1/billing/delete-invoice/${this.state.stng_id}`
+      )
+      .then((res) => {
+        window.location.reload();
+        this.setState({
+          ...this.state,
+          loading: false,
+          canselModal: false,
+          loading: false,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          ...this.state,
+          loading: false,
+          canselModal: false,
+          loading: false,
+        });
+      });
   };
 
   submitUpdateSettings = (event) => {
-    this.setState({ ...this.state, loading: true });
     event.preventDefault();
-
-    const formData = new FormData();
-    formData.append("email", this.state.stng_email);
-    formData.append("phone_number", this.state.stng_phone);
-    formData.append("company", this.state.stng_company);
-    if (this.state.password.length > 0) {
-      formData.append("password", this.state.stng_password);
+    let wrong_credentials = [];
+    const password = this.state.stng_password;
+    const email = this.state.stng_email;
+    const password_edit = this.state.password;
+    const email_edit = this.state.email;
+    if (!password_edit || !email_edit) {
+      if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email)) {
+        wrong_credentials.push("email");
+        this.setState({
+          ...this.state,
+          wrong_credentials: [...this.state.wrong_credentials, "email"],
+        });
+      }
+      if (
+        !/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
+          password
+        )
+      ) {
+        wrong_credentials.push("password");
+        this.setState({
+          ...this.state,
+          wrong_credentials: [...this.state.wrong_credentials, "password"],
+        });
+      }
     }
-    //formData.append("photo", this.state.image);
-    formData.append("advertise_options", this.state.stng_advertise_options);
-    formData.append(
-      "subscribedToMurmurNewsettler",
-      this.state.stng_subscribedToMurmurNewsettler
-    );
-    formData.append("fullName", this.state.stng_fullName);
-    formData.append("subscription_status", this.state.subscription_status);
-    formData.append('profilePhoto', this.state.image)
-    formData.append("companyAddress", this.state.stng_address);
-
-    axios({
-      url: `http://localhost:4000/api/v1/users/update/${this.state.stng_id}`,
-      method: "PUT",
-      data: formData,
-    })
-      .then((res) => {
-        console.log(res)
-        sessionStorage.removeItem('profileImage')
-        sessionStorage.setItem('profileImage', this.state.image)
-        this.setState({ ...this.state, loading: false });
+    if (!wrong_credentials.length) {
+      this.setState({ ...this.state, loading: true });
+      const formData = new FormData();
+      formData.append("email", this.state.stng_email);
+      formData.append("phone_number", this.state.stng_phone);
+      formData.append("company", this.state.stng_company);
+      if (this.state.stng_password.length) {
+        formData.append("password", this.state.stng_password);
+      }
+      //formData.append("photo", this.state.image);
+      formData.append("advertise_options", this.state.stng_advertise_options);
+      formData.append(
+        "subscribedToMurmurNewsettler",
+        this.state.stng_subscribedToMurmurNewsettler
+      );
+      formData.append("fullName", this.state.stng_fullName);
+      formData.append("subscription_status", this.state.subscription_status);
+      formData.append("photo", this.state.profile_photo);
+      formData.append("companyAddress", this.state.stng_address);
+      formData.append("profilePhoto", this.state.file);
+      axios({
+        url: `https://backendapp.murmurcars.com/api/v1/users/update/${this.state.stng_id}`,
+        method: "PUT",
+        data: formData,
       })
-      .catch((err) => {
-        this.setState({ ...this.state, loading: false });
-        alert(err);
-      });
-    /*   data: {
-        email: this.state.stng_email,
-        phone_number: this.state.stng_phone,
-        company: this.state.stng_company,
-        password: this.state.stng_password,
-        profile_photo: this.state.image,
-        advertise_options: this.state.stng_advertise_options,
-        subscribedToMurmurNewsettler: this.state.stng_subscribedToMurmurNewsettler
-      },*/
+        .then((res) => {
+          console.log(res);
+          sessionStorage.removeItem("profileImage");
+          sessionStorage.setItem(
+            "profileImage",
+            `https://backendapp.murmurcars.com/advertisers/users/profilePhoto/${this.state.profile_photo}`
+          );
+          this.setState({ ...this.state, loading: false });
+        })
+        .catch((err) => {
+          this.setState({ ...this.state, loading: false });
+          alert(err);
+        });
+    }
   };
 
   componentDidMount() {
     this.setState({ ...this.state, loading: true });
-    queryForEmail("https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
-      email: this.state.stng_email,
-    })
+    queryForEmail(
+      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      {
+        email: this.state.stng_email,
+      }
+    )
       .then((res) => {
-        console.log(res);
-        const data = res.resp.at(-1);
-        console.log(data)
-        let image = ''
-        if(data.profilePhoto && data.profilePhoto.length>0){
-          console.log('hey')
-           image = data.profilePhoto.split("https://backendapi.murmurcars.com/advertisers/users/profilePhoto/")[1]
-        }
-        
-      
-           
+        const data = res.resp;
+        console.log(data);
+        axios
+          .get(
+            `https://backendapp.murmurcars.com/api/v1/billing/user/${data._id}`
+          )
+          .then((user) => {
+            console.log(user);
+
+            const user_billing = this.state.user_billing;
+            const billing_state = user_billing.billing
+            let hasBilling = this.state.user_billing.hasBilling
+
+            if(user.data){
+              user_billing._id = user.data._id
+              const  billing = user.data.billing
+              hasBilling = true
+            if (billing.length) {
+              billing_state.billing_package = billing[0].subscription_package
+              billing_state.billing_price = billing[0].amount
+              billing_state.billing_id = billing[0]._id
+            }
+          }
             this.setState({
               ...this.state,
               stng_id: data._id,
               stng_company: data.company,
               stng_phone: data.phone_number,
               stng_advertise_options: data.advertise_options,
-              stng_subscribedToMurmurNewsettler: data.subscribedToMurmurNewsettler,
+              stng_subscribedToMurmurNewsettler:
+                data.subscribedToMurmurNewsettler,
               stng_fullName: data.fullName,
               stng_address: data.companyAddress,
+              stng_city: data.city,
+              stng_state: data.state,
               subscription_status: data.subscription_status,
               loading: false,
-              image
-            });
-          
-          }).catch((err) =>
+              profile_photo: data.profilePhoto
+                ? data.profilePhoto.split(
+                    "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+                  )[1]
+                : null,
+              user_billing: {
+                ...user_billing,
+                hasBilling,
+                billing: {
+                  ...billing_state
+                }
+              }
+            })
+            
+          })
+          .catch((err) => this.setState({
+            ...this.state,
+            loading:false
+          }));
+      })
+      .catch((err) =>
         this.setState({
           ...this.state,
           loading: false,
         })
       );
-      
   }
 
   render() {
     console.log(this.state);
+
+    const { user_billing, wrong_credentials } = this.state;
+
+    let email,
+      password = false;
+
+    if (wrong_credentials.length) {
+      for (let i = 0; i < wrong_credentials.length; i++) {
+        if (wrong_credentials[i] === "email") {
+          email = true;
+        } else if (wrong_credentials[i] === "password") {
+          password = true;
+        }
+      }
+    }
     return (
       <React.Fragment>
         {this.state.loading && (
@@ -255,7 +359,7 @@ class Settings extends Component {
             {/*<!-- settings block -->*/}
             <div className={classes.setting_block}>
               <div className={classes.setting_left}>
-                <h4 className={classes.stng_plan}>Subscription Plan</h4>
+                <h4 className={classes.stng_plan}>Profile settings</h4>
 
                 <div className={classes.stng_profil}>
                   <Dragger
@@ -287,10 +391,44 @@ class Settings extends Component {
                     <p>{this.state.stng_fullName}</p>
                     <span>Active</span>
                   </div>
-                  
                 </div>
                 <form onSubmit={this.submitUpdateSettings}>
                   <div className={classes.stng_form}>
+                    <div className={classes.stng_form_item}>
+                      <label
+                        htmlFor="stng-fullName"
+                        className={classes.stng_label}
+                      >
+                        Full name
+                      </label>
+                      <div className={classes.stng_form_flex}>
+                        <div className={classes.stng_relative}>
+                          <img
+                            src={SMS}
+                            alt="email icon"
+                            className={classes.stng_email_icon}
+                          />
+                          <input
+                            type="text"
+                            className={classes.stng_element}
+                            name="stng_fullName"
+                            id="stng-fullName"
+                            value={this.state.stng_fullName}
+                            onChange={this.settingInputsChange}
+                            disabled={this.state.fullName}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          className={classes.form_edit_btn}
+                          onClick={() =>
+                            this.setState({ ...this.state, fullName: false })
+                          }
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    </div>
                     <div className={classes.stng_form_item}>
                       <label
                         htmlFor="stng-email"
@@ -306,14 +444,21 @@ class Settings extends Component {
                             className={classes.stng_email_icon}
                           />
                           <input
-                            type="email"
+                            type="text"
                             className={classes.stng_element}
                             name="stng_email"
                             id="stng-email"
                             value={this.state.stng_email}
-                            onChange={this.settingInputsChange}
+                            onChange={(event) =>
+                              this.settingInputsChange(event)
+                            }
                             disabled={this.state.email}
                           />
+                          {email && (
+                            <span className={classes.pass_error}>
+                              incorrect email
+                            </span>
+                          )}
                         </div>
                         <button
                           type="button"
@@ -341,15 +486,19 @@ class Settings extends Component {
                             name="stng_password"
                             id="stng-password"
                             placeholder="123456"
-                            onChange={this.settingInputsChange}
+                            onChange={(event) =>
+                              this.settingInputsChange(event)
+                            }
                             value={this.state.stng_password}
                             disabled={this.state.password}
                           />
+
                           <img
                             src={Lock}
                             alt=""
                             className={classes.stng_email_icon}
                           />
+
                           <button
                             type="button"
                             className={classes.pass_eye}
@@ -360,6 +509,12 @@ class Settings extends Component {
                               alt=""
                             />
                           </button>
+                          {password && (
+                            <span className={classes.pass_error}>
+                              {" "}
+                              upercase, special character and 8 long
+                            </span>
+                          )}
                         </div>
                         <button
                           type="button"
@@ -463,7 +618,7 @@ class Settings extends Component {
                           name="stng_address"
                           id="stng-address"
                           placeholder="Company address"
-                          value = {this.state.stng_address}
+                          value={this.state.stng_address}
                           onChange={this.settingInputsChange}
                         />
                         <img
@@ -483,7 +638,7 @@ class Settings extends Component {
                           className={classes.stng_element}
                           name="stng_city"
                           id="stng-city"
-                          placeholder="City"
+                          value={this.state.stng_city}
                           onChange={this.settingInputsChange}
                         />
                         <img
@@ -508,7 +663,7 @@ class Settings extends Component {
                               className={classes.stng_element}
                               name="stng_state"
                               id="stng-state"
-                              placeholder="State"
+                              value={this.state.stng_state}
                               onChange={this.settingInputsChange}
                             />
                             <img
@@ -552,32 +707,40 @@ class Settings extends Component {
                 </form>
               </div>
               <div className={classes.setting_right}>
-                <h4 className={classes.subc_plan}>Profile settings</h4>
-                <div className={classes.subc_block}>
-                  <div className={classes.subcrb_top}>
-                    <div className={classes.ads_subtype}>
-                      <p>Walk Package</p>
-                      <span>30 Days remaining</span>
-                      <span>Type {this.state.stng_advertise_options}</span>
+                <h4 className={classes.subc_plan}>Subscription Plan</h4>
+                <div
+                  className={`${
+                    !user_billing.hasBilling && classes.subc_block_no_billing
+                  } ${classes.subc_block}`}
+                >
+                  {user_billing.hasBilling && (
+                    <div className={classes.subcrb_top}>
+                      <div className={classes.ads_subtype}>
+                        <p>{`${user_billing.billing.billing_package} Package`}</p>
+                        <span>30 Days remaining</span>
+                        <span>Type {this.state.stng_advertise_options}</span>
+                      </div>
+                      <p className={classes.subc_price}>
+                        {user_billing.billing.billing_price}$<span>/month</span>
+                      </p>
                     </div>
-                    <p className={classes.subc_price}>
-                      56$<span>/month</span>
-                    </p>
-                  </div>
+                  )}
                   <div className={classes.subc_flex}>
                     <button
                       className={classes.subc_upgrade_plan}
-                      onClick={this.openUpdateModal}
+                      onClick={() => this.openModal("updateModal")}
                     >
                       Upgrade plan
                     </button>
-                    <button
-                      type="button"
-                      className={classes.subc_cancel}
-                      onClick={this.openCanselModal}
-                    >
-                      Cancel plan
-                    </button>
+                    {user_billing.hasBilling && (
+                      <button
+                        type="button"
+                        className={classes.subc_cancel}
+                        onClick={() => this.openModal("canselModal")}
+                      >
+                        Cancel plan
+                      </button>
+                    )}
                   </div>
                   <img src={Car} alt="" className={classes.subc_car} />
                 </div>
@@ -585,10 +748,10 @@ class Settings extends Component {
               <Modal
                 updateModal={this.state.updateModal}
                 canselModal={this.state.canselModal}
-                closeUpdateModal={this.closeUpdateModal}
-                closeCanselModal={this.closeCanselModal}
-                selectUpdatePackage={this.selectUpdatePackage}
-                billing={this.state.billing}
+                toggleModal={this.toggleModal}
+                selectUpdatePackage={this.updateBilling}
+                canselBilling={this.canselBilling}
+                billing={this.state.user_billing}
               />
             </div>
           </div>

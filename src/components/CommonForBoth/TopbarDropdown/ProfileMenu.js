@@ -13,7 +13,7 @@ import { withNamespaces } from "react-i18next";
 // users
 import user1 from "../../../assets/images/avatar.png";
 
-import classes from '../../../assets/css/Settings/settings.module.css'
+import classes from "../../../assets/css/Settings/settings.module.css";
 
 class ProfileMenu extends Component {
   constructor(props) {
@@ -23,46 +23,70 @@ class ProfileMenu extends Component {
       username: sessionStorage.getItem("fullName")
         ? sessionStorage.getItem("fullName")
         : null,
+
+      profile_image: '',
     };
     this.toggle = this.toggle.bind(this);
   }
 
   toggle() {
-    console.log('profile is running')
+
     this.setState((prevState) => ({
       menu: !prevState.menu,
     }));
   }
+componentDidMount(){
+  const url =  sessionStorage.getItem("profileImage")
+  const image = new Image()
+  image.src = url
 
+  this.setState({
+    ...this.state,
+    profile_image: image
+  })
+}
   render() {
     return (
       <React.Fragment>
         <Dropdown
-          isOpen={this.state.menu && this.props.scope==='global'}
+          isOpen={this.state.menu && this.props.scope!=='local'}
           toggle={this.toggle}
 
           //className={`${this.props.scope==='global' &&  classes.search_profil_parent}`}
-         // className="d-inline-block"
+          // className="d-inline-block"
         >
           <DropdownToggle
             //className="btn header-item waves-effect"
             id="page-header-user-dropdown"
             tag="button"
-            type='button'
-            className={`${this.props.scope==='global'? classes.search_profil: classes.profil_cover}`}
+            type="button"
+            className={`${
+              this.props.scope === "global"
+                ? classes.search_profil
+                : this.props.scope === "survey"
+                ? classes.search_profil
+                : classes.profil_cover
+            }`}
           >
             <img
               //className="rounded-circle header-profile-user"
-              className={`${this.props.scope==='global'? classes.profil_img : classes.profil_cover_img}`}
-              
-             
-             src = {this.props.scope==='local'? (this.props.image.length>0? this.props.image: sessionStorage.getItem("profileImage")?
-                   sessionStorage.getItem("profileImage")
-                  : user1) : sessionStorage.getItem("profileImage")?sessionStorage.getItem("profileImage"):user1}
-              
+              className={`${
+                this.props.scope === "global"
+                  ? classes.profil_img
+                  : this.props.scope === "survey"
+                  ? classes.profil_img
+                  : classes.profil_cover_img
+              }`}
+              src={`${
+                this.props.image && this.props.image.length > 0
+                  ? this.props.image
+                  : this.state.profile_image.src
+                  ? this.state.profile_image.src
+                  : user1
+              }`}
               alt="Header Avatar"
             />
-           {/* <span 
+            {/* <span 
            // className="d-none d-xl-inline-block ml-2 mr-1"
             >
               {this.state.username}

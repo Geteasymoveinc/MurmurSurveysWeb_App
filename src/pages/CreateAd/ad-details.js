@@ -16,11 +16,7 @@ import classes2 from "../../assets/css/CreateAd/ads-details/index.module.css";
 
 import { Upload } from "antd";
 
-
-
 import Geocode from "react-geocode";
-
-
 
 const { Dragger } = Upload;
 
@@ -39,43 +35,39 @@ class AdDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      NumberOfDrivers: "",
-      address: "",
-      postalCode: "",
-      location: "",
-      errorZipCode: false,
-      errorMessage: null,
-      coordinates: [],
-      toggleCartWithAreaInformation: false,
-
-      center: {
-        lat: 41.8781,
-        lng: -87.6298,
+      loaded: false,
+      map: {
+        center: {
+          lat: 41.8781,
+          lng: -87.6298,
+        },
+        coordinates: [],
+        zoom: 11,
+        postCenter: {
+          lat: 0,
+          lng: 0,
+        },
       },
-      zoom: 11,
-      drivers: [],
-      loaded: true,
-      postCenter: {
-        lat: 0,
-        lng: 0,
-      },
-      updates: {
-       
-        daily_budget: "",
-        advertisers_email: "",
-        audienceAge: "",
-        audienceGender: "",
-        campaign_name: "",
-        campaign_type: "",
-        artWork_url: "",
-        display_quantity: "",
-        area: "",
-      },
-      editable: false
+      updates: [
+        {
+          daily_budget: "",
+          advertisers_email: "",
+          audienceAge: "",
+          audienceGender: "",
+          campaign_name: "",
+          campaign_type: "",
+          artWork_url: "",
+          display_quantity: "",
+          area: "",
+          image: '',
+          file: {}
+        },
+      ],
+      editable: false,
     };
   }
   toggleEditMode = () => {
-    this.setState({ ...this.state, editable:true });
+    this.setState({ ...this.state, editable: true });
   };
   handleFileChange = (info) => {
     const reader = new FileReader();
@@ -83,7 +75,10 @@ class AdDetails extends React.Component {
 
     reader.onload = (e) => {
       const updates = this.state.updates;
-      updates.artWork_url = e.target.result;
+      updates[0].artWork_url = info.file.name;
+      updates[0].file = info.file
+      updates[0].image = e.target.result 
+
       this.setState({ ...this.state, updates });
     };
   };
@@ -91,90 +86,197 @@ class AdDetails extends React.Component {
     const name = event.target.name;
     const value = event.target.value;
     const updates = this.state.updates;
-    updates[name] = value;
+    updates[0][name] = value;
     this.setState({ ...this.state, updates });
   };
   submitUpdates = () => {
-    const updates = this.state.updates;
-    updates.ad_schedule = this.props.campaigns[0].ad_schedule;
-    updates.ad_schedule_time = this.props.campaigns[0].ad_schedule_time;
-    this.setState({ ...this.state, loaded: false });
+    const updates = this.state.updates[0];
 
-    axios
-      .put(
-        `https://backendapp.murmurcars.com/api/v1/campaigns/${this.props.campaigns[0]._id}`,
-        { ...updates }
-      )
+    const area = updates.area
+    const advertisers_email = updates.advertisers_email
+    const campaign_type = updates.campaign_type
+    const campaign_name = updates.campaign_name
+    const ad_schedule = this.props.campaigns[0].ad_schedule
+    const daily_budget = updates.daily_budget
+    const display_quantity = updates.display_quantity
+    const file = updates.file
+    const audienceAge = updates.audienceAge
+    const audienceGender = updates.audienceGender
+    const ad_schedule_time = updates.ad_schedule_time
+    const artWork_url = updates.artWork_url
+
+    /*updates[0].ad_schedule = this.props.campaigns[0].ad_schedule;
+    updates[0].ad_schedule_time = this.props.campaigns[0].ad_schedule_time;*/
+    this.setState({ ...this.state, loaded: false });
+  
+    const formData = new FormData();
+    formData.append("advertisers_email",advertisers_email)
+    formData.append("campaign_type",campaign_type)
+    formData.append("campaign_name", campaign_name)
+    formData.append("ad_schedule",ad_schedule)
+    formData.append("area", area)
+    formData.append("daily_budget", daily_budget)
+    formData.append("display_quantity",display_quantity)
+    formData.append('file', file)
+    formData.append("audienceAge", audienceAge)
+    formData.append("audienceGender", audienceGender)
+    formData.append("ad_schedule_time",ad_schedule_time)
+    formData.append('artWork_url', artWork_url)
+    axios({
+      url:   `http://localhost:4000/api/v1/campaigns/${this.props.campaigns[0]._id}`,
+      method: "PUT",
+      data: formData,
+    })
       .then((res) => {
-        window.location.reload()
-        this.setState({ ...this.state, loaded: true, editable: false });
+        //window.location.reload()
+        let url = "";
+
+        if (/[1-9]/i.test(area)) {
+          url =
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords";
+        } else {
+          url =
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-polygon-coords";
+        }
+         
+        axios.post(url, { postalCode: area, district: area }).then((res) => {
+          if (!/[1-9]/i.test(area)) {
+          this.setState({
+            ...this.state,
+            loaded: true,
+            editable: false,
+            map: {
+              ...this.state.map,
+              coordinates: [res.data.polygons],
+              postCenter: res.data.center,
+              center: res.data.center,
+              zoom: 8,
+            }
+          });
+        }else{
+          Geocode.fromAddress("" + area)
+          .then((response) => {
+            const { lat, lng } = response.results[0].geometry.location;
+          this.setState({
+            ...this.state,
+            loaded: true,
+            editable: false,
+            map: {
+              ...this.state.map,
+              coordinates: [res.data],
+              postCenter: { lat, lng },
+              center: { lat, lng },
+              zoom: 10,
+            },
+          });
+        }).catch(err => console.log(err))
+        }
+        }).catch(err => console.log(err))
       })
       .catch((err) => console.log(err));
   };
 
-  componentDidUpdate(prevProps) {
-    let url = this.props.location.pathname;
-    const params = url.split("/")[2];
+  componentDidUpdate(prevProps, prevState) {
     let area;
-    if (this.props.adds.length !== prevProps.adds.length) {
-      for (let i = 0; i < this.props.adds.length; i++) {
-        if (this.props.adds[i].id === params) {
-          area = this.props.adds[i].area;
+    const { campaigns } = this.props;
+    if (campaigns.length && campaigns.length !== prevProps.campaigns.length) {
+      area = campaigns[0].area;
+
+      let url = "";
+
+      if (area) {
+        if (/[1-9]/i.test(area)) {
+          url =
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords";
+        } else {
+          url =
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-polygon-coords";
         }
-      } 
 
-    url = ''
-    if( /[1-9]/i.test(area)){
-      url =  "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords"
-    }
-      this.setState({...this.state, loaded: false})
-      axios
-      .post(
-        url,
-        { postalCode: area }
-      )
-      .then((res) => {
-  
-     
+        axios
+          .post(url, { postalCode: area, district: area })
+          .then((res) => {
+            console.log(res);
 
-      Geocode.fromAddress("" + area).then((response) => {
-        const { lat, lng } = response.results[0].geometry.location;
-        this.setState({
-          ...this.state,
-          coordinates: [res.data],
-          zoom: 13,
-          postCenter: { lat, lng },
-          center: {lat, lng},
-          loaded: !this.props.loading,
-          updates: {
-            ...this.state.updates,
-            daily_budget: this.props.campaigns[0].daily_budget,
-            advertisers_email: sessionStorage.getItem("authUser"),
-            audienceAge: this.props.campaigns[0].audienceAge,
-            audienceGender: this.props.campaigns[0].audienceGender,
-            campaign_name: this.props.campaigns[0].campaign_name,
-            campaign_type: this.props.campaigns[0].campaign_type,
-            artWork_url: this.props.campaigns[0].artWork_url,
-            display_quantity: this.props.campaigns[0].display_quantity,
-            area: this.props.campaigns[0].area,
-          },
-        });
-      })
-    })
+            if (/[1-9]/i.test(area)) {
+              Geocode.fromAddress("" + area)
+                .then((response) => {
+                  const { lat, lng } = response.results[0].geometry.location;
+                  this.setState({
+                    ...this.state,
+                    loaded: true,
+                    map: {
+                      ...this.state.map,
+                      coordinates: [res.data],
+                      postCenter: { lat, lng },
+                      center: { lat, lng },
+                      zoom: 10,
+                    },
+                    updates: [
+                      {
+                        ...this.state.updates,
+                        daily_budget: campaigns[0].daily_budget,
+                        advertisers_email: sessionStorage.getItem("authUser"),
+                        audienceAge: campaigns[0].audienceAge,
+                        audienceGender: campaigns[0].audienceGender,
+                        campaign_name: campaigns[0].campaign_name,
+                        campaign_type: campaigns[0].campaign_type,
+                        image: campaigns[0].artWork_url,
+                        display_quantity: campaigns[0].display_quantity,
+                        area: campaigns[0].area,
+                        artWork_url: campaigns[0].artWork_url.split('http://localhost:4000/advertisers/media/uploads/')[1]
+                      
+                      },
+                    ],
+                  });
+                })
+                .catch((err) => alert(err));
+            } else {
+              this.setState({
+                ...this.state,
+                loaded: true,
+                map: {
+                  ...this.state.map,
+                  coordinates: [res.data.polygons],
+                  postCenter: res.data.center,
+                  center: res.data.center,
+                  zoom: 8,
+                },
+
+                updates: [
+                  {
+                    ...this.state.updates,
+                    daily_budget: campaigns[0].daily_budget,
+                    advertisers_email: sessionStorage.getItem("authUser"),
+                    audienceAge: campaigns[0].audienceAge,
+                    audienceGender: campaigns[0].audienceGender,
+                    campaign_name: campaigns[0].campaign_name,
+                    campaign_type: campaigns[0].campaign_type,
+                    image: campaigns[0].artWork_url,
+                    display_quantity: campaigns[0].display_quantity,
+                    area: campaigns[0].area,
+                    artWork_url: campaigns[0].artWork_url.split('http://localhost:4000/advertisers/media/uploads/')[1]
+                  },
+                ],
+              });
+            }
+          })
+          .catch((err) => alert(err));
+      }
     }
-  
   }
-  
+
   render() {
-    const url = this.props.location.pathname;
-    const params = url.split("/")[2];
+    const { editable } = this.state;
+    const url = this.props.location.search;
+    const params = url.split("?campaign=")[1];
     const statusArray = this.props.adds.filter((el) => el.id === params);
     let status = [];
-    
+
     if (statusArray.length) {
       status = Object.values(statusArray[0]);
     }
-    const { editable } = this.state;
+    console.log(this.state);
     return (
       <React.Fragment>
         {!this.state.loaded && (
@@ -192,7 +294,7 @@ class AdDetails extends React.Component {
           </div>
         )}
         {this.state.loaded &&
-          this.props.campaigns.map((campaign, index) => (
+          this.state.updates.map((campaign, index) => (
             <div className={classes2.ads_details_section} key={index}>
               <Link to="/ad-manager" className={classes2.ads_back_icon}>
                 <img src={ArrowLeft} alt="" className={classes2.ads_left_img} />
@@ -215,13 +317,13 @@ class AdDetails extends React.Component {
                   {/*<!-- <span class="cads_deactive_dot"><span class="cads_dot"></span>Deactive</span> -->*/}
                 </div>
                 <button
-                  type={editable? 'submit' :'button'}
+                  type={editable ? "submit" : "button"}
                   className={classes2.crrnt_edit}
                   onClick={() => {
-                    if(editable){
-                     this.submitUpdates();
-                    }else{
-                    this.toggleEditMode()
+                    if (editable) {
+                      this.submitUpdates();
+                    } else {
+                      this.toggleEditMode();
                     }
                   }}
                 >
@@ -236,7 +338,7 @@ class AdDetails extends React.Component {
                 <div className={classes2.ads_detail_image}>
                   <div className={classes2.ads_detail_col}>
                     <div className={classes2.detail_img}>
-                      <img src={campaign.artWork_url} alt="" />
+                      <img src={campaign.image} alt="" />
                     </div>
                     <div className={classes2.detail_img_title}>
                       <span>Current Image</span>
@@ -385,7 +487,7 @@ class AdDetails extends React.Component {
                           type="text"
                           name="display_quantity"
                           className={classes2.ads_edit_input}
-                          value={this.state.updates.display_quantity}
+                          value={campaign.display_quantity}
                           onChange={this.handleDetailsUpdate}
                         />
                       )}
@@ -411,7 +513,7 @@ class AdDetails extends React.Component {
                           type="text"
                           name="daily_budget"
                           className={classes2.ads_edit_input}
-                          value={this.state.updates.daily_budget}
+                          value={campaign.daily_budget}
                           onChange={this.handleDetailsUpdate}
                         />
                       )}
@@ -468,20 +570,65 @@ class AdDetails extends React.Component {
                 <div className={classes2.ads_detail_area}>
                   <div className={classes2.ads_detail_col}>
                     <div className={classes2.detail_img}>
-                      <GoogleMap state={this.state} />
+                      <GoogleMap
+                        state={this.state.map}
+                        location={campaign.area}
+                      />
                     </div>
                     <div className={classes2.detail_map_title}>
                       <span>Targer Area</span>
                       {!editable ? (
                         <small>{campaign.area}</small>
-                      ) : (
+                      ) : /[1-9]/i.test(campaign.area) ? (
                         <input
                           type="text"
-                          value={this.state.updates.area}
+                          value={campaign.area}
                           size="2"
                           name="area"
                           onChange={this.handleDetailsUpdate}
                         />
+                      ) : (
+                        <div className={classes2.details_edit_select}>
+                          {" "}
+                          <select
+                            name="area"
+                            onChange={this.handleDetailsUpdate}
+                          >
+                            <option value={campaign.area}>
+                              {campaign.area}
+                            </option>
+                            {[
+                              "Nizami",
+                              "Nasimi",
+                              "Khazar",
+                              "Sabunchu",
+                              "Qaradaq",
+                              "Binaqadi",
+                              "Narimanov",
+                              "Sabayil",
+                              "Pirallahı",
+                              "Xətai",
+                              "Yasamal",
+                              "Suraxanı",
+                            ].map((district, i) => {
+                              if (district !== campaign.area) {
+                                return (
+                                  <option
+                                    value={district.toLowerCase()}
+                                    key={i}
+                                  >
+                                    {district}
+                                  </option>
+                                );
+                              }
+                            })}
+                          </select>
+                          <img
+                            src={ArrowDown}
+                            alt="arrow"
+                            className={classes2.details_edit_arrow}
+                          />
+                        </div>
                       )}
                     </div>
                   </div>

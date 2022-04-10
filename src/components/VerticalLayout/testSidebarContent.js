@@ -20,88 +20,38 @@ import Billing from "../../assets/css/layout/refresh.svg";
 import DashboardActive from "../../assets/css/layout/dashboard-active.svg";
 import LocationActive from "../../assets/css/layout/location-active.svg";
 import CreateAdActive from "../../assets/css/layout/create-ad-active.svg";
-import AnalyticsActive  from "../../assets/css/layout/analytics-active.svg";
-import ABTestingActive from  "../../assets/css/layout/abtesting-active.svg";
-import DestinationActive  from "../../assets/css/layout/destination-active.svg";
+import AnalyticsActive from "../../assets/css/layout/analytics-active.svg";
+import ABTestingActive from "../../assets/css/layout/abtesting-active.svg";
+import DestinationActive from "../../assets/css/layout/destination-active.svg";
 import SettingsActive from "../../assets/css/layout/settings-active.svg";
 import BillingActive  from "../../assets/css/layout/billing-active.svg";
-import Copyright from '../../assets/css/common/icons/copyright-dashboard.svg'
+import Copyright from '../../assets/css/common/icons/copyright-dashboard.svg';
+import Gps from "../../assets/css/layout/gps.svg";
+import GpsInactive from "../../assets/css/layout/gps-inactive.svg";
+
 
 import classes from "../../assets/css/layout/sidebar-content.module.css";
 
 class SidebarContent extends Component {
   constructor(props) {
     super(props);
-    this.state = {matchingMenuItem: ''};
-
+    this.state = { matchingMenuItem: "" };
   }
 
   componentDidMount() {
-    this.initMenu();
     document.body.classList.add("dash_board");
-    this.setState({matchingMenuItem: this.props.match.path})
+    this.setState({ matchingMenuItem: this.props.match.path });
   }
 
-  componentDidUpdate(prevProps) {
-    console.log(prevProps.type, this.props.type);
-    if (this.props.type !== prevProps.type) {
-      this.initMenu();
-    }
-  }
 
-  initMenu() {
-    //new MetisMenu("#side-menu");
 
-    /* var matchingMenuItem = null;
-    var ul = document.getElementById('side-menu');
-    var items = ul.getElementsByTagName("a");
-    console.log(items)
-    for (var i = 0; i < items.length; ++i) {
-      console.log(items[i].pathname )
-      if (this.props.location.pathname === items[i].pathname) {
-        matchingMenuItem = items[i];
-        break;
-      }
-    }
-    if (matchingMenuItem) {
-      this.activateParentDropdown(matchingMenuItem);
-    }
-  }
-
-  activateParentDropdown = (item) => {
-   console.log(item)
-    item.classList.add('active');
-    const parent = item.parentElement;
-
-    if (parent) {
-      parent.classList.add("mm-active");
-      const parent2 = parent.parentElement;
-
-      if (parent2) {
-        parent2.classList.add("mm-show");
-
-        const parent3 = parent2.parentElement;
-
-        if (parent3) {
-          parent3.classList.add("mm-active"); // li
-          parent3.childNodes[0].classList.add("mm-active"); //a
-          const parent4 = parent3.parentElement;
-          if (parent4) {
-            parent4.classList.add("mm-active");
-          }
-        }
-      }
-      return false;
-    }
-    return false;*/
-  }
 
   render() {
-    console.log( this.props)
+    console.log(this.props);
     return (
-
       <React.Fragment>
         <div className={classes.dash_menu}>
+
         
             <a href="#" className={classes.dash_logo}>
               <img src={Logo} alt="" />
@@ -271,6 +221,31 @@ class SidebarContent extends Component {
                       <span>{this.props.t("Destination")}</span>
                     </Link>
                   </li>
+                  <li name='/tracking'
+                    onClick={this.menuItemActive}
+                    className={`${
+                      this.state.matchingMenuItem === "/tracking"
+                        ? classes.active
+                        : ""
+                    }`}
+                  >
+                    <Link to="/tracking">
+                      <div className={classes.dash_imgs}>
+                        <img
+                          src={GpsInactive}
+                          alt=""
+                          className={classes.dash_img_1}
+                        />
+                        <img
+                          src={Gps}
+                          alt=""
+                          className={classes.dash_img_2}
+                        />
+                      </div>
+                      <span>{this.props.t("Tracking")}</span>
+                    </Link>
+                  </li>
+
                 </ul>
               </div>
               <div className={classes.menu_block}>
@@ -326,12 +301,11 @@ class SidebarContent extends Component {
                   </li>
                 </ul>
               </div>
-            </div>
-            <div className={classes.dash_copy}>
-              <img src={Copyright} alt="" />
-              <span>{new Date().getFullYear()}, Murmurcars</span>
-            </div>
-     
+              </div>
+          <div className={classes.dash_copy}>
+            <img src={Copyright} alt="" />
+            <span>{new Date().getFullYear()}, Murmur</span>
+          </div>
         </div>
       </React.Fragment>
     );

@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 
-import {
-  TabContent,
-  TabPane,
-} from "reactstrap";
-
+import { TabContent, TabPane } from "reactstrap";
 
 import { queryForEmail } from "../../helpers/fakebackend_helper";
 
@@ -26,7 +22,7 @@ class ABTesting extends Component {
   }
 
   toggle = (tab) => {
-    console.log(tab)
+    console.log(tab);
     if (this.state.activeTab !== tab) {
       this.setState({ activeTab: tab });
     }
@@ -72,7 +68,9 @@ class ABTesting extends Component {
 
           <div className={classes.ab_testing}>
             <ul className={classes.testing_menu}>
-              <li className={`${this.state.activeTab==='1' && classes.active}`}>
+              <li
+                className={`${this.state.activeTab === "1" && classes.active}`}
+              >
                 <a
                   href="#"
                   className={classes.testing_nav_a}
@@ -83,7 +81,9 @@ class ABTesting extends Component {
                   Details
                 </a>
               </li>
-              <li className={`${this.state.activeTab==='2' && classes.active}`}>
+              <li
+                className={`${this.state.activeTab === "2" && classes.active}`}
+              >
                 <a
                   href="#"
                   className={classes.testing_nav_a}
@@ -96,7 +96,6 @@ class ABTesting extends Component {
               </li>
             </ul>
             <div>
-        
               <TabContent activeTab={this.state.activeTab}>
                 <TabPane tabId="1">
                   <ABTargets />

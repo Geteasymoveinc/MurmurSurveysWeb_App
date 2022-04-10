@@ -3,7 +3,7 @@ import {
   ADD__PACKAGE,
   SEND_PACKAGE_SECCESSFULL,
   SEND_PACKAGE_ERROR,
-  ERROR_CLEAN
+  CLEAN
 } from "./actionTypes";
 
 
@@ -23,8 +23,8 @@ const business = (state = initialState, action) => {
         case SEND_PACKAGE_ERROR:
             return {...state, loading:false, error:action.payload};
 
-        case ERROR_CLEAN:
-            return {...state, error:false}
+        case CLEAN:
+            return {...state, loading:false, error:null}
         
         default:
             return state;

@@ -1,0 +1,21 @@
+
+.image-dragger  .ant-upload.profil_img_edit{
+    width: 88px;
+    height: 80px;
+ }
+ 
+
+ .image-dragger .ant-upload.ant-upload-drag .ant-upload{
+     padding:0
+ }
+
+
+ .img-dragger-2{
+    width: 20px;
+    height: 20px;
+
+ }
+
+ .img-dragger-2 .ant-upload.ant-upload-drag .ant-upload{
+     padding: 0;
+ }

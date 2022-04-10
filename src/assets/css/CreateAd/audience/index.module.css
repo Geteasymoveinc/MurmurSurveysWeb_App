@@ -138,15 +138,22 @@
     left: 17px;
     top: 14px;
 }
+.step_form_icon_selector{
+    position: absolute;
+    pointer-events: none;
+    right: 17px;
+    top: 14px;
+}
 .step_element:focus,.step_select_item:focus{
     outline: none;
     border-color: #3F2B89
 }
 .pass_error{
-    color: #8F9BB3;
-    font-size: 12px;
-    margin-top: 8px;
-    display: block;
+    border-color: red;
+    color:red
+}
+.pass_error_text{
+    color:red
 }
 .step_form_item{
     margin-bottom:24px;

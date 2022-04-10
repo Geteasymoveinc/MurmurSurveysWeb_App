@@ -211,13 +211,15 @@
     border-color: #3F2B89
 }
 .pass_error{
-    color: #8F9BB3;
-    font-size: 12px;
-    margin-top: 8px;
-    display: block;
+    border-color: red;
+    color:red
+}
+.pass_error_text{
+    color:red
 }
 .step_form_item{
     margin-bottom:24px;
+
 }
 .step_select_icon{
     pointer-events:none;
@@ -461,10 +463,12 @@
   .footer_links li{
     display:inline-block;
     margin-left:12px;
+    margin-bottom:1rem;
   }
   .footer_link{
     color:#200B47;
     font-size:12px;
+
   }
   .footer_link,.footer_link:hover{
     text-decoration:none;

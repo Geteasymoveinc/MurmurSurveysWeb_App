@@ -197,7 +197,7 @@ class CampaignObjective extends React.Component {
                     <button
                       className={`${classes.mur_flex} ${classes.step_link}`}
                       onClick={() => {
-                        this.props.toggleObjective(1);
+                        this.props.toggleObjective('brandAwareness');
                         this.props.history.push("/ad-manager/campaign-details");
                       }}
                     >
@@ -209,7 +209,7 @@ class CampaignObjective extends React.Component {
                     <button
                       className={`${classes.mur_flex} ${classes.step_link}`}
                       onClick={() => {
-                        this.props.toggleObjective(2);
+                        this.props.toggleObjective('reach');
                         this.props.history.push("/ad-manager/campaign-details");
                       }}
                     >
@@ -222,7 +222,7 @@ class CampaignObjective extends React.Component {
                       href="#"
                       className={`${classes.mur_flex} ${classes.step_link}`}
                       onClick={() => {
-                        this.props.toggleObjective(3);
+                        this.props.toggleObjective('traffic');
                         this.props.history.push("/ad-manager/campaign-details");
                       }}
                     >

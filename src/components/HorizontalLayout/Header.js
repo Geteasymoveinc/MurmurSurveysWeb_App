@@ -277,7 +277,7 @@ class Header extends Component {
                     this.setState({ isSearch: !this.state.isSearch });
                   }}
                 >
-                  <i className="mdi mdi-magnify"></i>
+                  <i className="mdi mdi-magnify"></i> Emin
                 </button>
                 <div
                   className={

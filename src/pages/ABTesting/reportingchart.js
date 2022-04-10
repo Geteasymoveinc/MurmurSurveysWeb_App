@@ -3,7 +3,10 @@ import ReactApexChart from "react-apexcharts";
 import "./apexchart.css";
 
 class ReportingChart extends Component {
-  state = {
+  constructor(props){
+    super(props)
+  
+  this.state = {
 
     series: [
  
@@ -61,10 +64,11 @@ class ReportingChart extends Component {
           /* Basic colors/Neutral 600 */
 
           color: "#8F9BB3",
-        },
-      },
-    },
-  };
+        }
+      }
+    }
+  }
+}
 
   render() {
     return (

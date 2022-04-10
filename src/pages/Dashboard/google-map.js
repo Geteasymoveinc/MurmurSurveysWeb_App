@@ -5,13 +5,11 @@ import { Map, GoogleApiWrapper, Marker, Polygon } from "google-maps-react";
 import googleMapStyles from "./google-styles";
 
 import Geocode from "react-geocode";
+import { GOOGLE_MAP_KEY } from "../../api";
 
-Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+Geocode.setApiKey(GOOGLE_MAP_KEY);
 
-const mapStyles = {
-  width: "100%",
-  height: "100%",
-};
+
 
 const LoadingContainer = (props) => (
   <div id="preloader">
@@ -31,7 +29,7 @@ const LoadingContainer = (props) => (
 class GoogleMap extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+ 
   }
 
   handleRenderDriversCoordinates = () => {
@@ -62,22 +60,28 @@ class GoogleMap extends Component {
     }
 
     return renderDrivers;
-  }
- 
+  };
+
   centerMoved(coord) {
     console.log(coord);
   }
-  
+
+
+
   render() {
+    const { toggle, segment, state} = this.props;
+
+    const {markers} = state
+ 
     return (
       <Map
         google={this.props.google}
-        zoom={this.props.state.zoom}
+        zoom={state.zoom}
         styles={this.props.mapStyle}
-        initialCenter={this.props.state.center}
+        initialCenter={state.center}
         fullscreenControl={false}
         draggable={true}
-        center={this.props.state.postCenter}
+        center={state.postCenter}
         scrollwheel={false}
         mapTypeControl={false}
         disableDoubleClickZoom={false}
@@ -86,16 +90,28 @@ class GoogleMap extends Component {
         onDragend={(coord) => this.centerMoved(coord)}
       >
         <Polygon
-          paths={this.props.state.coordinates}
+          paths={state.coordinates}
           fillColor="#7356bd"
           fillOpacity={0.35}
           //fillOpacity="0.5"
           strokeOpacity={0.8}
           strokeWeight={1}
           strokeColor="#200b47"
-          
+          onClick={toggle}
         />
         {/*{this.handleRenderDriversCoordinates()}*/}
+        {segment && markers[segment] && 
+            markers[segment].map((place, index) => (
+           
+                
+                  <Marker
+                    key={index}
+                    name={place.name}
+                    position={place.position}
+                    icon={place.image}      
+                  />
+            ))}
+       
       </Map>
     );
   }
@@ -104,6 +120,6 @@ class GoogleMap extends Component {
 GoogleMap.defaultProps = googleMapStyles;
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio",
+  apiKey: GOOGLE_MAP_KEY,
   LoadingContainer: LoadingContainer,
 })(GoogleMap);

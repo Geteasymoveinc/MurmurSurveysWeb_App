@@ -21,6 +21,8 @@ import ArrowDown from "../../assets/css/Billing/arrow-down.svg";
 import classes from "../../assets/css/Billing/index.module.css";
 
 import UpdateModal from "./updateBilling";
+import axios from "axios";
+import { queryForEmail } from "../../helpers/fakebackend_helper";
 
 class Billing extends Component {
   constructor(props) {
@@ -28,10 +30,11 @@ class Billing extends Component {
     this.state = {
       haveInvoices: false,
       checked: false,
-      billing: "plan-walk",
+      billing: "Walk",
       modal: false,
+      loading: false,
       invoices: [
-        {
+        /*{
           id: "customCheck2",
           invoice_name: "Murmur Inc",
           invoiceAmountPaid: "$6000",
@@ -50,7 +53,7 @@ class Billing extends Component {
           invoiceData: "Due",
           link: "#",
           billing: "Run",
-        },
+        },*/
       ],
     };
   }
@@ -66,7 +69,8 @@ class Billing extends Component {
 
   checkAllBills = () => {
     const invoices = this.state.invoices.length;
-
+   
+    if(invoices.length){
     for (let i = 0; i < invoices; i++) {
       const name = `invoice-${i + 1}`;
       console.log(this.state.checked);
@@ -78,193 +82,204 @@ class Billing extends Component {
         this.setState({ [name]: true, checked: true });
       }
     }
+  }else{
+      this.setState({ checked: !this.state.checked });
+    }
   };
 
   selectBillingPlan = (event) => {
-    const name = event.target.id;
-    
-    
-      this.setState({ ...this.state, billing: name, modal: true });
-      
+    const plan = event.target.name;
+    this.setState({ ...this.state, billing: plan, modal: true });
   };
 
-  selectBilling = () => {
-        this.setState({...this.state, modal:false})
-  }
+  selectBilling = (plan, amount) => {
+    console.log(plan, amount);
+    this.setState({
+      ...this.state,
+      loading: true,
+    });
+    axios
+      .post("https://backendapp.murmurcars.com/api/v1/billing/create-billing", {
+        user: this.state.user_id,
+        amount,
+        subscription_package: plan,
+        invoice_link:
+          "https://slicedinvoices.com/pdf/wordpress-pdf-invoice-plugin-sample.pdf",
+        invoice_status: "Due",
+      })
+      .then((response) => {
+        console.log(response);
+        window.location.reload()
+        this.setState({ ...this.state, modal: false, loading: false });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({ ...this.state, modal: false, loading: false });
+      });
+  };
+  closeModal = () => {
+    this.setState({ ...this.state, modal: false });
+  };
 
   componentDidMount() {
+    this.setState({
+      ...this.state,
+      loading: true,
+    });
     const invoices = this.state.invoices.length;
 
-    for (let i = 0; i < invoices; i++) {
-      const name = `invoice-${i + 1}`;
-      this.setState({ ...this.state, [name]: false, haveInvoices: true });
-    }
-  }
+   
+    queryForEmail("https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
+      email: sessionStorage.getItem("authUser"),
+    })
+      .then((user) => {
+        const user_id = user.resp.at(-1)._id;
+        this.setState({ ...this.state, user_id });
+        axios
+          .get(`http://localhost:4000/api/v1/billing/user/${user_id}`)
+          .then((billing) => {
+            console.log(billing);
+            const invoices = this.state.invoices
+            if(billing.data.length){
+            const {billing:invoice} = billing.data[0]
+            console.log(invoice)
 
+            for(let i=0; i<invoice.length;i++){
+
+            invoices.push({
+              invoice_name: 'Murmur_Inc',
+              invoiceAmountPaid: invoice[i].amount,
+              invoiceDate: invoice[i].invoiceDate,
+              invoiceData: invoice[i].invoice_status,
+              billing: invoice[i].subscription_package,
+              link: new URL(invoice[i].invoice_link)
+            })
+            }
+            for (let i = 0; i < invoices; i++) {
+              const name = `invoice-${i + 1}`;
+              this.setState({ ...this.state, [name]: false });
+            }
+
+            this.setState({
+              ...this.state,
+              loading: false,
+              invoices,
+              haveInvoices:true
+            })
+          }else{
+            this.setState({
+              ...this.state,
+              loading:false
+            })
+          }
+          })
+          .catch((err) => {
+            console.log(err);
+            this.setState({
+              ...this.state,
+              loading: false,
+            });
+          });
+       
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          ...this.state,
+          loading: false,
+        });
+      });
+  }
 
   render() {
     console.log(this.state);
+    const { loading } = this.state;
+    const {haveInvoices} = this.state
     return (
       <React.Fragment>
-        <div className={classes.dash_right}>
-          {/*<!-- header search block -->*/}
-          <div className={classes.head_search}>
-            <h1 className={classes.dash_h1}>Billing History</h1>
-
-            <form>
-              <div className={`${classes.dash_relative} ${classes.search_box}`}>
-                <input type="text" placeholder="Search" />
-                <div className={classes.search_box_flex}>
-                  <button type="submit" className={classes.search_icon}>
-                    <img
-                      src={SearchNormal}
-                      alt=""
-                      className={classes.search_img}
-                    />
-                  </button>
-                  <button type="button" className={classes.search_maximize}>
-                    <img
-                      src={SearchMaximize}
-                      alt=""
-                      className={classes.maximize_img}
-                    />
-                  </button>
-
-                  <ProfileMenu scope={"global"} />
-                </div>
+        {loading && (
+          <div id="preloader">
+            <div id="status">
+              <div className="spinner-chase">
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
               </div>
-            </form>
+            </div>
           </div>
-          {/*<!-- billing-history block -->*/}
-          <div className={classes.billing_history}>
-            <div className={classes.current_plan}>
-              <h4 className={classes.history_h4}>Current Plan</h4>
-              <p className={classes.history_p}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam
-                risus mi morbi euismod quisque id.
-              </p>
-              <div className={classes.plan_row}>
-                <div className={classes.plan_col}>
-                  <div className={classes.plan_item}>
-                    <input
-                      type="radio"
-                      name="billing-plan"
-                      id="plan-walk"
-                      checked={this.state.billing === "plan-walk"}
-                      onChange={this.selectBillingPlan}
-                    />
-                    <label htmlFor="plan-walk">
-                      <div className={classes.lbl_flex}>
-                        <div className={classes.lbl_imgs}>
-                          <img src={Walk} alt="" className={classes.pln_icon} />
-                          <img
-                            src={WalkActive}
-                            alt=""
-                            className={classes.pln_icon_active}
-                          />
-                        </div>
-                        <div className={classes.lbl_data}>
-                          <p className={classes.lbl_month}>
-                            <span className={classes.lbl_type}>Walk</span>
-                            <span className={classes.lbl_price}>
-                              $10 <small>/month</small>
-                            </span>
-                          </p>
-                          <p className={classes.lbl_p}>
-                            Phasellus nunc purus in diam nibh natoque.
-                          </p>
-                        </div>
-                      </div>
-                      <div className={classes.check_icon}>
-                        <img
-                          src={Check}
-                          alt=""
-                          className={classes.plan_check}
-                        />
-                        <img
-                          src={Ellipse}
-                          alt=""
-                          className={classes.plan_ellipse}
-                        />
-                      </div>
-                    </label>
+        )}
+        {!loading && (
+          <div className={classes.dash_right}>
+            {/*<!-- header search block -->*/}
+            <div className={classes.head_search}>
+              <h1 className={classes.dash_h1}>Billing History</h1>
+
+              <form>
+                <div
+                  className={`${classes.dash_relative} ${classes.search_box}`}
+                >
+                  <input type="text" placeholder="Search" />
+                  <div className={classes.search_box_flex}>
+                    <button type="submit" className={classes.search_icon}>
+                      <img
+                        src={SearchNormal}
+                        alt=""
+                        className={classes.search_img}
+                      />
+                    </button>
+                    <button type="button" className={classes.search_maximize}>
+                      <img
+                        src={SearchMaximize}
+                        alt=""
+                        className={classes.maximize_img}
+                      />
+                    </button>
+
+                    <ProfileMenu scope={"global"} />
                   </div>
                 </div>
-                <div className={classes.plan_col}>
-                  <div className={classes.plan_item}>
-                    <input
-                      type="radio"
-                      name="billing-plan"
-                      id="plan-run"
-                      checked={this.state.billing === "plan-run"}
-                      onChange={this.selectBillingPlan}
-                    />
-                    <label htmlFor="plan-run">
-                      <div className={classes.lbl_flex}>
-                        <div className={classes.lbl_imgs}>
-                          <img src={Run} alt="" className={classes.pln_icon} />
-                          <img
-                            src={RunActive}
-                            alt=""
-                            className={classes.pln_icon_active}
-                          />
-                        </div>
-                        <div className={classes.lbl_data}>
-                          <p className={classes.lbl_month}>
-                            <span className={classes.lbl_type}>Run</span>
-                            <span className={classes.lbl_price}>
-                              $55 <small>/month</small>
-                            </span>
-                          </p>
-                          <p className={classes.lbl_p}>
-                            Phasellus nunc purus in diam nibh natoque.
-                          </p>
-                        </div>
-                      </div>
-                      <div className={classes.check_icon}>
-                        <img
-                          src={Check}
-                          alt=""
-                          className={classes.plan_check}
-                        />
-                        <img
-                          src={Ellipse}
-                          alt=""
-                          className={classes.plan_ellipse}
-                        />
-                      </div>
-                    </label>
-                  </div>
-                </div>
-                <div className={classes.plan_col}>
-                  <div className={classes.plan_item}>
+              </form>
+            </div>
+            {/*<!-- billing-history block -->*/}
+            <div className={classes.billing_history}>
+              <div className={classes.current_plan}>
+                <h4 className={classes.history_h4}>Current Plan</h4>
+                <p className={classes.history_p}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam
+                  risus mi morbi euismod quisque id.
+                </p>
+                <div className={classes.plan_row}>
+                  <div className={classes.plan_col}>
                     <div className={classes.plan_item}>
                       <input
                         type="radio"
-                        name="billing-plan"
-                        id="plan-fly"
-                        checked={this.state.billing === "plan-fly"}
+                        name="Walk"
+                        id="plan-walk"
+                        checked={this.state.billing === "Walk"}
                         onChange={this.selectBillingPlan}
                       />
-                      <label htmlFor="plan-fly">
+                      <label htmlFor="plan-walk">
                         <div className={classes.lbl_flex}>
                           <div className={classes.lbl_imgs}>
                             <img
-                              src={Fly}
+                              src={Walk}
                               alt=""
                               className={classes.pln_icon}
                             />
                             <img
-                              src={FlyActive}
+                              src={WalkActive}
                               alt=""
                               className={classes.pln_icon_active}
                             />
                           </div>
                           <div className={classes.lbl_data}>
                             <p className={classes.lbl_month}>
-                              <span className={classes.lbl_type}>Fly</span>
+                              <span className={classes.lbl_type}>Walk</span>
                               <span className={classes.lbl_price}>
-                                $75 <small>/month</small>
+                                $10 <small>/month</small>
                               </span>
                             </p>
                             <p className={classes.lbl_p}>
@@ -287,143 +302,241 @@ class Billing extends Component {
                       </label>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            <div className={classes.billing_section}>
-              <div className={classes.billing_head}>
-                <div className={classes.bllng_head_left}>
-                  <h4 className={classes.history_h4}>Billing history</h4>
-                  <p className={classes.history_p}>
-                    Please reach out to our friendly team via
-                    billing@murmurcars.com with questions
-                  </p>
-                </div>
-                <Link
-                  to="myfile.pdf"
-                  target="_blank"
-                  download
-                  className={classes.download_all}
-                >
-                  {" "}
-                  Download all{" "}
-                  <img
-                    src={DocumentDownload}
-                    alt=""
-                    className={classes.download_img}
-                  />
-                </Link>
-                {/* <button type="button" className={classes.download_all}>
-                  Download all{" "}
-                  <img
-                    src={DocumentDownload}
-                    alt=""
-                    className={classes.download_img}
-                  />
-              </button>*/}
-              </div>
-              <div className={classes.billing_table}>
-                <table>
-                  <thead>
-                    <tr className={classes.first_tr}>
-                      <th className={classes.blng_th}>
-                        <div
-                          className={`${classes.billing_check} ${classes.invoice_th}`}
-                        >
-                          <input
-                            type="checkbox"
-                            id="invoice-txt"
-                            onChange={this.checkAllBills}
-                            checked={this.state.checked}
-                          />
-                          <label htmlFor="invoice-txt">
-                            Invoice{" "}
+                  <div className={classes.plan_col}>
+                    <div className={classes.plan_item}>
+                      <input
+                        type="radio"
+                        name="Run"
+                        id="plan-run"
+                        checked={this.state.billing === "Run"}
+                        onChange={this.selectBillingPlan}
+                      />
+                      <label htmlFor="plan-run">
+                        <div className={classes.lbl_flex}>
+                          <div className={classes.lbl_imgs}>
                             <img
-                              src={ArrowDown}
+                              src={Run}
                               alt=""
-                              className={classes.invoice_arrow}
+                              className={classes.pln_icon}
                             />
-                          </label>
+                            <img
+                              src={RunActive}
+                              alt=""
+                              className={classes.pln_icon_active}
+                            />
+                          </div>
+                          <div className={classes.lbl_data}>
+                            <p className={classes.lbl_month}>
+                              <span className={classes.lbl_type}>Run</span>
+                              <span className={classes.lbl_price}>
+                                $55 <small>/month</small>
+                              </span>
+                            </p>
+                            <p className={classes.lbl_p}>
+                              Phasellus nunc purus in diam nibh natoque.
+                            </p>
+                          </div>
                         </div>
-                      </th>
-                      <th className={classes.blng_th}>
-                        <span>Status</span>
-                      </th>
-                      <th className={classes.blng_th}>
-                        <span>Amount</span>
-                      </th>
-                      <th className={classes.blng_th}>
-                        <span>Plan</span>
-                      </th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.state.invoices.map((invoice, index) => {
-                      console.log(index);
+                        <div className={classes.check_icon}>
+                          <img
+                            src={Check}
+                            alt=""
+                            className={classes.plan_check}
+                          />
+                          <img
+                            src={Ellipse}
+                            alt=""
+                            className={classes.plan_ellipse}
+                          />
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <div className={classes.plan_col}>
+                    <div className={classes.plan_item}>
+                      <div className={classes.plan_item}>
+                        <input
+                          type="radio"
+                          name="Fly"
+                          id="plan-fly"
+                          checked={this.state.billing === "Fly"}
+                          onChange={this.selectBillingPlan}
+                        />
+                        <label htmlFor="plan-fly">
+                          <div className={classes.lbl_flex}>
+                            <div className={classes.lbl_imgs}>
+                              <img
+                                src={Fly}
+                                alt=""
+                                className={classes.pln_icon}
+                              />
+                              <img
+                                src={FlyActive}
+                                alt=""
+                                className={classes.pln_icon_active}
+                              />
+                            </div>
+                            <div className={classes.lbl_data}>
+                              <p className={classes.lbl_month}>
+                                <span className={classes.lbl_type}>Fly</span>
+                                <span className={classes.lbl_price}>
+                                  $75 <small>/month</small>
+                                </span>
+                              </p>
+                              <p className={classes.lbl_p}>
+                                Phasellus nunc purus in diam nibh natoque.
+                              </p>
+                            </div>
+                          </div>
+                          <div className={classes.check_icon}>
+                            <img
+                              src={Check}
+                              alt=""
+                              className={classes.plan_check}
+                            />
+                            <img
+                              src={Ellipse}
+                              alt=""
+                              className={classes.plan_ellipse}
+                            />
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className={classes.billing_section}>
+                <div className={classes.billing_head}>
+                  <div className={classes.bllng_head_left}>
+                    <h4 className={classes.history_h4}>Billing history</h4>
+                    <p className={classes.history_p}>
+                      Please reach out to our friendly team via
+                      billing@murmurcars.com with questions
+                    </p>
+                  </div>
+                  <Link
+                    to="myfile.pdf"
+                    target="_blank"
+                    download
+                    className={classes.download_all}
+                  >
+                    {" "}
+                    Download all{" "}
+                    <img
+                      src={DocumentDownload}
+                      alt=""
+                      className={classes.download_img}
+                    />
+                  </Link>
 
-                      return (
-                        invoice.billing === this.state.billing && (
-                          <tr key={index}>
-                            <td className={classes.blng_td}>
-                              <div className={classes.billing_check}>
-                                <input
-                                  type="checkbox"
-                                  id={`invoice-${index + 1}`}
-                                  onChange={this.checkBill}
-                                  checked={
-                                    (this.state.checked ||
-                                      (this.state.haveInvoices &&
-                                        this.state[`invoice-${index + 1}`])) &&
-                                    this.state.haveInvoices &&
-                                    this.state[`invoice-${index + 1}`]
-                                  }
-                                />
-                                <label htmlFor={`invoice-${index + 1}`}>
-                                  {invoice.invoiceDate}
-                                </label>
-                              </div>
-                            </td>
-                            <td className={classes.blng_td}>
-                              <span className={classes.blng_paid}>
-                                <img
-                                  src={CheckGreen}
-                                  alt=""
-                                  className={classes.green_check}
-                                />
-                                {invoice.data}
-                              </span>
-                            </td>
-                            <td className={classes.blng_td}>
-                              <span className={classes.usd_span}>
-                                {invoice.invoiceAmountPaid}
-                              </span>
-                            </td>
-                            <td className={classes.blng_td}>
-                              <span className={classes.td_status}>
-                                {invoice.billing}
-                              </span>
-                            </td>
-                            <td className={classes.blng_td}>
-                              <Link to="myfile.pdf" target="_blank" download>
-                                Download
-                              </Link>
-                            </td>
-                          </tr>
-                        )
-                      );
-                    })}
-                  </tbody>
-                </table>
+                </div>
+                <div className={classes.billing_table}>
+                  <table>
+                    <thead>
+                      <tr className={classes.first_tr}>
+                        <th className={classes.blng_th}>
+                          <div
+                            className={`${classes.billing_check} ${classes.invoice_th} ${classes.no_margin}`}
+                          >
+                            <input
+                              type="checkbox"
+                              id="invoice-txt"
+                              onChange={this.checkAllBills}
+                              checked={this.state.checked}
+                            />
+                            <label htmlFor="invoice-txt">
+                              Invoice{" "}
+                              <img
+                                src={ArrowDown}
+                                alt=""
+                                className={classes.invoice_arrow}
+                              />
+                            </label>
+                          </div>
+                        </th>
+                        <th className={classes.blng_th}>
+                          <span>Status</span>
+                        </th>
+                        <th className={classes.blng_th}>
+                          <span>Amount</span>
+                        </th>
+                        <th className={classes.blng_th}>
+                          <span>Plan</span>
+                        </th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.invoices.map((invoice, index) => {
+                        console.log(index);
+
+                        return (
+                          invoice.billing === this.state.billing && (
+                            <tr key={index}>
+                              <td className={classes.blng_td}>
+                                <div className={classes.billing_check}>
+                                  <input
+                                    type="checkbox"
+                                    id={`invoice-${index + 1}`}
+                                    onChange={this.checkBill}
+                                    checked={
+                                      (this.state.checked ||
+                                        (this.state.haveInvoices &&
+                                          this.state[
+                                            `invoice-${index + 1}`
+                                          ])) &&
+                                      this.state.haveInvoices &&
+                                      this.state[`invoice-${index + 1}`]
+                                    }
+                                  />
+                                  <label htmlFor={`invoice-${index + 1}`}>
+                                    {invoice.invoiceDate}
+                                  </label>
+                                </div>
+                              </td>
+                              <td className={classes.blng_td}>
+                                <span className={classes.blng_paid}>
+                                  <img
+                                    src={CheckGreen}
+                                    alt=""
+                                    className={classes.green_check}
+                                  />
+                                  {invoice.data}
+                                </span>
+                              </td>
+                              <td className={classes.blng_td}>
+                                <span className={classes.usd_span}>
+                                  {invoice.invoiceAmountPaid}
+                                </span>
+                              </td>
+                              <td className={classes.blng_td}>
+                                <span className={classes.td_status}>
+                                  {invoice.billing}
+                                </span>
+                              </td>
+                              <td className={classes.blng_td}>
+                                <a href={invoice.link} target="_blank" download>
+                                  Download
+                                </a>
+                              </td>
+                            </tr>
+                          )
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
+           {!haveInvoices && <UpdateModal
+              toggleModal={this.closeModal}
+              selectBilling={this.selectBilling}
+              modal={this.state.modal}
+              billing={this.state.billing}
+            />}
           </div>
-        </div>
-        <UpdateModal
-          toggleModal={this.selectBilling}
-          modal={this.state.modal}
-          billing={this.state.billing}
-        />
+        )}
       </React.Fragment>
     );
   }

@@ -3,7 +3,7 @@ import {
   ADD__PACKAGE,
   SEND_PACKAGE_SECCESSFULL,
   SEND_PACKAGE_ERROR,
-  ERROR_CLEAN
+  CLEAN
 } from './actionTypes'
 
 export const addPackage = (option, history) => {
@@ -32,9 +32,9 @@ export const sendPackageFailed = (err) => {
 };
 
 
-export const errorCleanup = () => {
+export const Cleanup = () => {
   return {
-    type: ERROR_CLEAN
+    type: CLEAN
   }
 }
 

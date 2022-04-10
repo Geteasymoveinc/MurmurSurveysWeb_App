@@ -128,10 +128,11 @@
     border-color: #3F2B89
 }
 .pass_error{
-    color: #8F9BB3;
-    font-size: 12px;
-    margin-top: 8px;
-    display: block;
+    border-color: red;
+    color:red
+}
+.pass_error_text{
+    color:red
 }
 .step_form_item{
     margin-bottom:24px;

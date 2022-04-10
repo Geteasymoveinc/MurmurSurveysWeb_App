@@ -93,9 +93,16 @@ class ResetPassword extends React.Component {
 
   componentDidMount() {
     document.body.classList.add("bg-transparent");
-    const token = this.props.location.search.split('?token=')[1].split('&')[0]
-    console.log(token)
+    let token = ''
+    if(this.props.location.search){
+     const pattern = /token=/
+     if(!pattern.test(this.props.location.search)) return
+     const splited = this.props.location.search.split("?token=")
+     token = splited[1].split("&")[0];
+     
+    }
     this.setState({ ...this.state, token });
+    
   }
   componentWillUnmount() {
     document.body.classList.remove("bg-transparent");
@@ -106,15 +113,15 @@ class ResetPassword extends React.Component {
     return (
       <React.Fragment>
         {this.props.loading && (
-          <div
-            className=" d-flex  flex-row  justify-content-center"
-            style={{ height: "100vh" }}
-          >
-            <div
-              className="spinner-border text-primary "
-              role="status"
-              style={{ margin: "auto" }}
-            ></div>
+          <div id="status">
+            <div className="spinner-chase">
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+            </div>
           </div>
         )}
         {!this.props.loading && (
@@ -142,7 +149,7 @@ class ResetPassword extends React.Component {
                 <form onSubmit={this.handleValidSubmit}>
                   <div className={classes.newpass_form}>
                     <div
-                      className={`${classes.newpass_relative} ${classes.mb_24}`}
+                      className={`${classes.newpass_relative}  ${classes.mb_24}`}
                     >
                       <input
                         type={`${this.state.text ? "text" : "password"}`}
@@ -151,9 +158,10 @@ class ResetPassword extends React.Component {
                           classes.newpass_form_item_error
                         }`}
                         name="password"
-                        id="newpass-email"
+                        id="password"
                         placeholder="Password"
                         onChange={this.handlePasswordChange}
+                        value={this.state.password}
                       />
                       <img
                         src={Lock}
@@ -162,8 +170,7 @@ class ResetPassword extends React.Component {
                       />
                       {this.state.errorPassword && (
                         <span className={classes.pass_error}>
-                          1 lovercase, uppercase English letter, digit and
-                          special character, at least 8 long
+                          at least 1 upercase, special character and 8 long
                         </span>
                       )}
                       <button
@@ -187,6 +194,7 @@ class ResetPassword extends React.Component {
                         name="confirm_password"
                         id="confirm-password"
                         placeholder="Confirm password"
+                        value={this.state.confirm_password}
                         onChange={this.handlePasswordChange}
                       />
                       {this.state.errorConfirm && (

@@ -17,56 +17,51 @@ import { connect } from "react-redux";
 
 const { Dragger } = Upload;
 
-const propsD = {
-  name: "file",
-  multiple: true,
 
-  /* onChange(info) {
-    console.log({ info });
-    const { status } = info.file;
-   if (status !== "uploading") {
-    console.log(info.file, info.fileList);
-   }
-   if (status === "done") {
-     //message.success(`${info.file.name} file uploaded successfully.`);
-   } else if (status === "error") {
-      //message.error(`${info.file.name} file upload failed.`);
-  }
- },*/
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
 
 class AdCreative extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      file:{},
-      images: '',
+      files: [],
+      img:[],
+      error: false,
     };
     this.submit = this.submit.bind(this);
     this.handleFileChange = this.handleFileChange.bind(this);
     this.canselNewCampaign = this.canselNewCampaign.bind(this);
   }
 
-  submit(event) {
-    if (this.state.images.length>0) {
-      this.props.createAdImage({ img: this.state.images, file: this.state.file });
+  submit() {
+    if (this.state.img.length > 0) {
+      const files = this.state.files
+      const verify_img = this.state.img[0]
+      this.props.createAdImage({
+        files,
+        verify_img
+      });
+    } else {
+      this.setState({
+        ...this.state,
+        error: true,
+      });
     }
   }
 
   handleFileChange = (info) => {
-    let attached_ad_files = [];
-    if (this.state.images.length) attached_ad_files = [...this.state.images];
-
     const reader = new FileReader();
+    const images = this.state.files 
+    const img = this.state.img
+   
     reader.readAsDataURL(info.file);
-
     reader.onload = (e) => {
-      attached_ad_files.push(e.target.result);
-      console.log( e.target.result.length)
-      this.setState({ ...this.state, images: e.target.result, file: info.fileList });
+      images.push(info.file)
+      img.push(e.target.result)
+      this.setState({
+        ...this.state,
+        files:images,
+        img
+      });
     };
   };
 
@@ -84,8 +79,6 @@ class AdCreative extends React.Component {
   componentWillUnmount() {
     document.body.classList.remove("bg-transparent");
   }
-
-
 
   render() {
     console.log(this.state);
@@ -256,13 +249,16 @@ class AdCreative extends React.Component {
                 <div className={classes.step_max_media}>
                   <div className={classes.media_block}>
                     <Dragger
-                      {...propsD}
+                      listType="picture-card"
+        
                       beforeUpload={() => false}
                       showUploadList={false}
                       onChange={(info) => this.handleFileChange(info)}
                       style={{
                         background: "white",
-                        borderColor: "transparent",
+                        borderColor: `${
+                          this.state.error ? "red" : "transparent"
+                        }`,
                       }}
                     >
                       <img src={Backup} alt="" />
@@ -277,27 +273,14 @@ class AdCreative extends React.Component {
                         Upload Image
                       </button>
                     </Dragger>
-                    {/*<img src={Backup} alt="" />
-                    <h4 className={classes.media_h4}>Drag & Drop</h4>
-                    <h5 className={classes.media_h5}>
-                      Drag or click here to upload
-                    </h5>
-                    <button type="button" className={classes.media_upload_btn} onClick={() => this.fileInput.click()}>
-                      Upload Image
-                    </button>
-                    <input
-                      type="file"
-                      style={{ display: "none" }}
-                      ref={(fileInput) => (this.fileInput = fileInput)}
-                      onChange={this.file}
-                    />*/}
                   </div>
-              
-                   {this.state.images.length>0 && <img
-                      src={this.state.images}
-                      style={{ width: "200px", height: "200px" }}
-                    />}
-                  
+
+                  {this.state.img.length > 0 && this.state.img.map(img => 
+                    <img
+                      src={img}
+                      className={classes.example_img}
+                    />
+                  )}
 
                   <button
                     type="button"

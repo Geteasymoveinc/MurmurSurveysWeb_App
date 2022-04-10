@@ -282,7 +282,7 @@
   line-height: 20px;
 }
 .cads_table table tr td{
-  padding:24px 4px;
+  padding:14px 4px;
 }
 .cads_table table tr td:first-child{
   padding-left:24px;
@@ -453,12 +453,19 @@ input:checked + .slider:before {
   border:0;
   background:transparent;
   margin-right:16px;
+  margin-bottom: 10px;
   cursor:pointer;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
 }
+.multiple_remove{
+  position: absolute;
+  top:0;
+  right:0
+}
+
 @media screen and (max-width:1320px){
   .cads_radio_active{
       margin-left:12px;
@@ -471,4 +478,15 @@ input:checked + .slider:before {
 .dash_right{
   width:calc(100% - 290px);
   padding-left:32px;
+}
+
+
+
+.cads_flex_th{
+  margin-top: 7px;
+}
+
+.invoice_th{
+  margin-top: 7px;
+  position: relative;
 }

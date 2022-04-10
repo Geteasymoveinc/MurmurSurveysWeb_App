@@ -28,20 +28,11 @@ function FirebaseAuth(value, props) {
         const additionalUserInfo = result.additionalUserInfo;
        
 
-        props.login({email: additionalUserInfo.profile.email, history: props.history})
+        props.login({profile: additionalUserInfo.profile, history: props.history})
 
       
-        sessionStorage.setItem(
-          "profileImage",
-          additionalUserInfo.profile.picture
-        );
    
-        sessionStorage.setItem(
-          "fullName",
-          additionalUserInfo.profile.given_name +
-            " " +
-            additionalUserInfo.profile.family_name
-        );
+   
       
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = credential.accessToken;

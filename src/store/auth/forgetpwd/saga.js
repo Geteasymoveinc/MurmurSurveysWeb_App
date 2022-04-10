@@ -27,8 +27,8 @@ function* forgetUser({ payload: { email, history } }) {
       console.log(email)
       const response = yield call(
         postForgetPwd,
-        //"https://backendapp.murmurcars.com/api/v1/users/forgot-password",
-        "http://localhost:4000/api/v1/users/forgot-password",
+        "https://backendapp.murmurcars.com/api/v1/users/forgot-password",
+        //"http://localhost:4000/api/v1/users/forgot-password",
          {email}
       );
       if (response) {
@@ -42,8 +42,11 @@ function* forgetUser({ payload: { email, history } }) {
       }
     }
   } catch (error) {
-    console.log(error)
-    yield put(userForgetPasswordError(error));
+    if(error.status){
+      yield put(userForgetPasswordError(error.message))
+    }else{
+      yield put(userForgetPasswordError('Please contact our technical Support'))
+    }
   }
 }
 

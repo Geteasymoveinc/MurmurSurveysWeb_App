@@ -296,9 +296,7 @@ class Header extends Component {
                   type="button"
                   className="btn header-item noti-icon waves-effect"
                   id="page-header-search-dropdown"
-                >
-                  <i className="mdi mdi-magnify"></i>
-                </button>
+                ></button>
                 <div
                   className={
                     this.state.isSearch
@@ -313,7 +311,7 @@ class Header extends Component {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Search ..."
+                          placeholder="Type Zipcode"
                           aria-label="Recipient's username"
                         />
                         <div className="input-group-append">

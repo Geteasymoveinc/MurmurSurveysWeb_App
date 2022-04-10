@@ -10,15 +10,18 @@ class ApexRadial extends Component {
             options: {
                 plotOptions: {
                     radialBar: {
+
                         startAngle: -135,
                         endAngle: 135,
                         dataLabels: {
+                            enabled: false,
                             name: {
                                 fontSize: "13px",
                                 color: void 0,
                                 offsetY: 60
                             },
                             value: {
+                              
                                 offsetY: 22,
                                 fontSize: "16px",
                                 color: void 0,

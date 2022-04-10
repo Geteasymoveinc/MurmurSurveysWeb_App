@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 // Gets the logged in user data from local session
 const getLoggedInUser = () => {
   const user = localStorage.getItem("user");
@@ -85,20 +86,19 @@ const subscribe = (url, data) => {
 };
 // Login Method
 const postLogin = (url, data) => {
-
+  console.log(url, data)
   return axios
     .post(url, data)
     .then((response) => {
-      if (response.status === 400 || response.status === 500){
+      if (response.data.status!==204 && response.status===200){
        
-        throw response.data;
+        return  response.data;
       }
   
-      return response.data;
+      throw response.data;
     })
     .catch((err) => {
-      console.log(err.message)
-      throw err.message;
+      throw err
     });
 };
 
@@ -126,14 +126,16 @@ const postForgetPwd = (url, data) => {
   return axios
     .post(url, data)
     .then((response) => {
-      console.log(response)
-      if (response.status === 400 || response.status === 500)
-        throw response.data;
-      return response.data;
+      if(response.status===200 && response.data.status!==204){
+           return response.data
+      }else{
+
+           throw response.data
+   
+      }
     })
     .catch((err) => {
-      console.log(err)
-      throw err[1];
+      throw err
     });
 };
 

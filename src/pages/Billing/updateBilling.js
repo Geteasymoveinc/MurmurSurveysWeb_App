@@ -50,8 +50,7 @@ class UpdateModal extends React.Component{
                     type="radio"
                     name="modal-plan"
                     id="plan_walk"
-                    onChange={this.props.toggleModal}
-                    checked={this.props.billing === "plan_walk"}
+                
                   />
                   <label htmlFor="plan_walk" className="plan_type">
                     <div className="play_flex_top">
@@ -107,7 +106,7 @@ class UpdateModal extends React.Component{
                     <button
                     
                         className="current_plan_btn"
-                        onClick={this.props.toggleModal}
+                        onClick={() => this.props.selectBilling('Walk', 10)}
                       >
                         Choose this plan
                       </button>
@@ -119,8 +118,8 @@ class UpdateModal extends React.Component{
                     type="radio"
                     name="modal-plan"
                     id="plan_run"
-                    onChange={this.props.toggleModal}
-                    checked={this.props.billing === "plan_run"}
+                
+                   
                   />
                   <label htmlFor="plan_run" className="plan_type">
                     <div className="plan_flex_top">
@@ -176,7 +175,7 @@ class UpdateModal extends React.Component{
                       <button
               
                         className="current_plan_btn"
-                        onClick={this.props.toggleModal}
+                        onClick={() => this.props.selectBilling('Run',55)}
                       >
                         Choose this plan
                       </button>
@@ -188,8 +187,7 @@ class UpdateModal extends React.Component{
                     type="radio"
                     name="modal-plan"
                     id="plan_fly"
-                    onChange={this.props.toggleModal}
-                    checked={this.props.billing === "plan_fly"}
+                 
                   />
                   <label htmlFor="plan_fly" className="plan_type">
                     <div className="plan_flex_top">
@@ -245,7 +243,7 @@ class UpdateModal extends React.Component{
                     <button
                       
                         className="current_plan_btn"
-                        onClick={this.props.toggleModal}
+                        onClick={() => this.props.selectBilling('Fly',75)}
                       >
                         Choose this plan
                       </button>

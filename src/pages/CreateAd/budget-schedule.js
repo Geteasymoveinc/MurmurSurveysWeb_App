@@ -8,61 +8,120 @@ import Check from "../../assets/css/CreateAd/check.svg";
 import InfoCircle from "../../assets/css/CreateAd/info-circle.svg";
 import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 import Calendar from "../../assets/css/CreateAd/calendar.svg";
+import CalendarError from "../../assets/css/CreateAd/calendar-error.svg";
 import DollarCircle from "../../assets/css/CreateAd/dollar-circle.svg";
+import DollarCircleError from "../../assets/css/CreateAd/dollar-circle-error.svg";
 import Clock from "../../assets/css/CreateAd/clock.svg";
+import ClockError from "../../assets/css/CreateAd/clock-error.svg";
 
-import {changeSideBar} from '../../store/actions';
-import {connect} from 'react-redux'
+import { changeSideBar } from "../../store/actions";
+import { connect } from "react-redux";
 
 import "./ant-picker.css";
-import { DatePicker,TimePicker } from "antd";
+import { DatePicker, TimePicker } from "antd";
 import { Link, withRouter } from "react-router-dom";
 
 class BudgetAndSchedule extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dateRange: [new Date(), new Date()],
-      timeRange: [null, null],
-      budget: 0,
+      campaign: {
+        dateRange: [null, null],
+        timeRange: [null, null],
+        budget: 0,
+      },
+      error: {
+        dateRange: false,
+        timeRange: false,
+        budget: false,
+      },
     };
     this.submit = this.submit.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.onBudgetValueChange = this.onBudgetValueChange.bind(this);
-    this.canselNewCampaign = this.canselNewCampaign.bind(this)
+    this.canselNewCampaign = this.canselNewCampaign.bind(this);
   }
-
   submit(event) {
     event.preventDefault();
-    if (this.state.dateRange != null && this.state.budget !== 0) {
-      this.props.createBudgetAndDuration({
-        budgetValue: this.state.budget,
-        duration: this.state.dateRange,
-        time: this.state.timeRange
+    let hasNull = false;
+    const { createBudgetAndDuration } = this.props;
+    const { error } = this.state;
+    const { campaign } = this.state;
+    const states = Object.keys(campaign);
+    console.log(states);
+    for (let i = 0; i < states.length; i++) {
+      if (
+        this.state.campaign[states[i]] === null ||
+        !this.state.campaign[states[i]] ||
+        this.state.campaign[states[i]][0] === null ||
+        this.state.campaign[states[i]][1] === null
+      ) {
+        error[states[i]] = true;
+        console.log(error);
+        this.setState({ campaign, error });
+        hasNull = true;
+      }
+    }
+
+    if (!hasNull) {
+      createBudgetAndDuration({
+        budgetValue: campaign.budget,
+        duration: campaign.dateRange,
+        time: campaign.timeRange,
       });
     }
   }
+
   handleDateChange(update) {
-    console.log(update)
-    if(update.type ==='campaing_time'){
-      this.setState({...this.state, timeRange: update.dateString})
-    }else{
-        this.setState({ ...this.state, dateRange: update.dateString });
+    console.log(update);
+    if (update.type === "campaing_time") {
+      this.setState({
+        ...this.state,
+        campaign: {
+          ...this.state.campaign,
+          timeRange: update.dateString,
+        },
+        error: {
+          ...this.state.error,
+          timeRange: false,
+        },
+      });
+    } else {
+      this.setState({
+        ...this.state,
+        campaign: {
+          ...this.state.campaign,
+          dateRange: update.dateString,
+        },
+        error: {
+          ...this.state.error,
+          dateRange: false,
+        },
+      });
     }
   }
 
-  canselNewCampaign(){
+  canselNewCampaign() {
     this.props.changeSideBar(true);
-    this.props.history.replace('/ad-manager')
-    this.props.history.go('/ad-manager')
+    this.props.history.replace("/ad-manager");
+    this.props.history.go("/ad-manager");
   }
 
   onBudgetValueChange(event) {
+    const value = Number.parseFloat(event.target.value)
     this.setState({
       ...this.state,
-      budget: event.target.value,
+      campaign: {
+        ...this.state.campaign,
+        budget: value,
+      },
+      error: {
+        ...this.state.error,
+        budget: false
+      }
     });
   }
+
   componentDidMount() {
     //this.props.apiError("");
 
@@ -73,6 +132,9 @@ class BudgetAndSchedule extends React.Component {
   }
 
   render() {
+    console.log(this.state);
+    const { campaign, error } = this.state;
+
     return (
       <React.Fragment>
         <header className={classes2.header}>
@@ -82,7 +144,11 @@ class BudgetAndSchedule extends React.Component {
             <a href="#">
               <img src={LogoCreate} alt="" />
             </a>
-            <button type="button" className={classes2.create_cancel_btn} onClick={this.canselNewCampaign}>
+            <button
+              type="button"
+              className={classes2.create_cancel_btn}
+              onClick={this.canselNewCampaign}
+            >
               Cancel
               <svg
                 width="24"
@@ -233,21 +299,27 @@ class BudgetAndSchedule extends React.Component {
                     <div className={classes.step_form_item}>
                       <label
                         htmlFor="daily-budget"
-                        className={classes.step_label}
+                        className={`${classes.step_label} ${
+                          error["budget"] ? classes.pass_error : ""
+                        }`}
                       >
                         Daily Budget
                       </label>
                       <div className={classes.step_relative}>
                         <input
                           type="text"
-                          className={classes.step_element}
+                          className={`${classes.step_element}  ${
+                            error["budget"] ? classes.pass_error : ""
+                          }`}
                           name="daily-budget"
                           id="daily-budget"
                           placeholder="Type max Budget"
                           onChange={this.onBudgetValueChange}
                         />
                         <img
-                          src={DollarCircle}
+                          src={`${
+                            error["budget"] ? DollarCircleError : DollarCircle
+                          }`}
                           alt=""
                           className={classes.step_form_icon}
                         />
@@ -255,61 +327,74 @@ class BudgetAndSchedule extends React.Component {
                       {/*<!-- <span class="pass_error">Error message</span> -->*/}
                     </div>
                     <div className={classes.step_form_item}>
-                      <label htmlFor="duration" className={classes.step_label}>
+                      <label
+                        htmlFor="duration"
+                        className={`${classes.step_label} ${
+                          error["dateRange"] ? classes.pass_error : ""
+                        }`}
+                      >
                         Campaign Duration
                       </label>
                       <div
                         className={`${classes.step_relative} ${classes.duration_step}`}
                       >
-                        <form>
                         <DatePicker.RangePicker
+                          className={`${classes.step_element}`}
+                       
                           name="duration"
                           id="duration"
                           picker="date"
-                
+                          onChange={(date, dateString) =>
+                            this.handleDateChange({ date, dateString })
+                          }
                         />
-                        </form>
+
                         <img
-                          src={Calendar}
+                          src={`${
+                            error["dateRange"] ? CalendarError : Calendar
+                          }`}
                           alt=""
                           className={classes.calendar_icon}
                         />
                       </div>
-                     </div>
-                      <div className={classes.step_form_item}>
-                        <label
-                          htmlFor="campaing_time"
-                          className={classes.step_label}
-                        >
-                          Campaing Time
-                        </label>
-                        <div
-                          className={`${classes.step_relative} ${classes.duration_step}`}
-                        >
-                           <TimePicker.RangePicker
+                    </div>
+                    <div className={classes.step_form_item}>
+                      <label
+                        htmlFor="campaing_time"
+                        className={`${classes.step_label} ${
+                          error["timeRange"] ? classes.pass_error : ""
+                        }`}
+                      >
+                        Campaing Time
+                      </label>
+                      <div
+                        className={`${classes.step_relative} ${classes.duration_step}`}
+                      >
+                        <TimePicker.RangePicker
                           //defaultValue={this.state.duration}
                           name="campaing_time"
                           id="campaing_time"
                           className={`${classes.step_element}`}
+                      
                           onChange={(date, dateString) =>
                             this.handleDateChange({
-                              type: 'campaing_time',
+                              type: "campaing_time",
                               date,
                               dateString,
                             })
                           }
-                          use12Hours format='HH:mm'
+                          use12Hours
+                          format="HH:mm"
                           picker="date"
-                
                         />
-                          <img
-                            src={Clock}
-                            alt=""
-                            className={classes.calendar_icon}
-                          />
-                        </div>
-                        {/*<!-- <span class="pass_error">Error message</span> -->*/}
-                  
+                        <img
+                          src={`${error["timeRange"] ? ClockError : Clock}`}
+                          alt=""
+                          className={classes.calendar_icon}
+                        />
+                      </div>
+                      {/*<!-- <span class="pass_error">Error message</span> -->*/}
+
                       {/*<!-- <span class="pass_error">Error message</span> -->*/}
                     </div>
                     <button type="submit" className={classes.step4_btn}>
@@ -377,4 +462,4 @@ class BudgetAndSchedule extends React.Component {
   }
 }
 
-export default connect(null, {changeSideBar})(withRouter(BudgetAndSchedule));
+export default connect(null, { changeSideBar })(withRouter(BudgetAndSchedule));

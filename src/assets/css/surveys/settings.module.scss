@@ -1,0 +1,174 @@
+.container_center{
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+  }
+  
+  .settings_container{
+    display: flex;
+    justify-content: center;
+    width: 611px;
+    height: 392px;
+    
+    
+    /* Basic colors/Neutral 100 */
+    
+    background: #FFFFFF;
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding-top: 30px;
+    }
+    
+    
+    .smaller_container{
+        position: relative;
+        width: 563px;
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .settings_container h3{
+          align-self: flex-start;
+          font-family: 'Montserrat';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 20px;
+/* identical to box height, or 125% */
+
+
+/* Basic colors/Neutral 700 */
+
+color: #2E3A59;
+
+      }
+      .settings_container  .audience_p{
+        align-self: flex-start;
+        font-family: 'Montserrat';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 20px;
+/* identical to box height, or 125% */
+
+
+/* Basic colors/Neutral 700 */
+
+color: #2E3A59;
+
+      }
+      
+      .map_container{
+        position: relative;
+        width: 100%;
+        height: 152px;
+        margin-bottom: 25px;
+     }
+     .google_map_location_input{
+       width:80px;
+       height:30px;
+       background-color: transparent;
+       position: absolute;
+       right:20px;
+       bottom: 20px;
+       background: #F7F9FC;
+border: 1px solid #B69EEA;
+box-sizing: border-box;
+border-radius: 4px;
+     }
+     .google_map_location_input input{
+       position: relative;
+       width: 100%;
+       background-color: transparent;
+       border: transparent;
+       outline: none;
+     }
+
+
+   .google_map_location_input input{
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    /* identical to box height, or 150% */
+    
+    letter-spacing: 0.0015em;
+    
+    /* Brand Color/Purple/Purple 500 */
+    
+    color: #7356C0;
+    
+   }
+
+     .gender_age_container{
+       width:82%;
+       display: flex;
+       justify-content: space-between;
+     }
+ 
+    
+
+
+
+     .details_edit_select{
+        position: relative;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .details_edit_select select{
+        border: 1px solid #E4E9F2;
+        border-radius: 8px;
+        background:#fff;
+        padding-left:8px;
+        padding-right:38px;
+        width: 100px;
+        height: 48px;
+        color:#2E3A59;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 28px;
+        transition:all .4s ease;
+
+      }
+
+      .details_edit_select label{
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 16px;
+
+        letter-spacing: 0.0015em;
+
+        color: #2E3A59;
+      }
+      .details_edit_select:first-child{
+        width: 113px;
+
+      }
+      .details_edit_select:first-child select{
+        width: 113px;
+        height: 48px;
+      }
+      .details_edit_select select{
+        -webkit-appearance: none;
+        -moz-appearance: none;
+             appearance: none;
+      }
+      .details_edit_arrow{
+        position: absolute;
+        right:12px;
+        top:45px;
+      }
+      .details_edit_select select:focus{
+        outline:none;
+        border:1px solid #7356C0;
+      }
+ 

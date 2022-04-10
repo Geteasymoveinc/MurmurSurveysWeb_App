@@ -512,9 +512,23 @@
 
 
 
+
 .dash_right{
-  width:calc(100% - 290px);
+  width:calc(100%);
   padding-left:32px;
+}
+
+
+@media  (max-width: 1150px){
+  
+
+  .dash_right{
+    width:calc(100%);
+    padding:0;
+  }
+  .head_search{
+    padding-right: 20px;
+  }
 }
 
 

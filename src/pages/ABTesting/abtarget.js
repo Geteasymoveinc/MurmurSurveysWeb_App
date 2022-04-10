@@ -43,13 +43,13 @@ class ABTargets extends Component {
     this.setState({ ...this.state, modal: false, Variants});
     axios.post('http://localhost:4000/api/v1/campaigns/create-ab-testing',{
       advertisers_email: sessionStorage.getItem('authUser'),
-      ab_experiment: true,
-      ad_creativity_url: data.image,
-      ab_experiement_weight: data.weight,
-      ad_schedule: data.DateFrom + ' ' + data.DateTo,
-      ad_schedule_time: data.TimeFrom + " " +  data.TimeTo,
-      ad_experiement_name: data.name
-    }).then(resp => console.log(resp)).catch()
+      ab_creativity_url: data.image,
+      ab_experiment_weight: data.weight,
+      ab_schedule: data.DateFrom + ' ' + data.DateTo,
+      ab_schedule_time: data.TimeFrom + " " +  data.TimeTo,
+      ab_experiment_name: data.name,
+      //images: data.images
+    }).then(resp => console.log(resp)).catch(err => console.log(err))
   };
 
   render() {
@@ -92,38 +92,7 @@ class ABTargets extends Component {
                   </td>
                 </tr>
               ))}
-              {/*<tr>
-                <td>
-                  <span className={classes.ab_td_tt}>
-                    1. <small>Variant 1</small>
-                  </span>
-                </td>
-                <td>
-                  <span className={classes.ab_td}>50%</span>
-                </td>
-                <td>
-                  <a href="#" className={classes.view_creative}>
-                    <span>View Creative</span>
-                    <img src={Gallery} alt="" />
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <span className={classes.ab_td_tt}>
-                    2. <small>Variant 2</small>
-                  </span>
-                </td>
-                <td>
-                  <span className={classes.ab_td}>50%</span>
-                </td>
-                <td>
-                  <a href="#" className={classes.view_creative}>
-                    <span>View Creative</span>
-                    <img src={Gallery} alt="" />
-                  </a>
-                </td>
-              </tr>*/}
+
             </tbody>
           </table>
           <button

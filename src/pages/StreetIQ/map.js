@@ -6,16 +6,14 @@ import {
   Marker,
   Polygon,
   Circle,
+  InfoWindow,
 } from "google-maps-react";
-import axios from "axios";
 
 import Geocode from "react-geocode";
 
 import { MapStyle } from "./mapStyles";
 
 Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
-
-const CarImage = "../../assets/images/car.png";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCufaPUqLeJ83iRcMEoq9wZoXxP8jyF2OY",
@@ -26,12 +24,6 @@ const firebaseConfig = {
   messagingSenderId: "476698745619",
   appId: "1:476698745619:web:32c16fa59b7df52a0818e6",
   measurementId: "G-B6HKFHXVNN",
-};
-
-const mapStyles = {
-  width: "100%",
-  height: "100%",
-  //marginTop: "10%",
 };
 
 const LoadingContainer = (props) => (
@@ -53,6 +45,31 @@ class StreetIQMap extends Component {
   state = {
     streetIQCardStatus: true,
     NumberOfDrivers: "",
+
+    activeMarker: {},
+    selectedPlace: {},
+    showingInfoWindow: false,
+  };
+
+  onMarkerClick = (props, marker) =>
+    this.setState({
+      activeMarker: marker,
+      selectedPlace: props,
+      showingInfoWindow: true,
+    });
+
+  onInfoWindowClose = () =>
+    this.setState({
+      activeMarker: null,
+      showingInfoWindow: false,
+    });
+
+  onMapClicked = () => {
+    if (this.state.showingInfoWindow)
+      this.setState({
+        activeMarker: null,
+        showingInfoWindow: false,
+      });
   };
 
   handleRenderDriversCircleCoordinates = () => {
@@ -139,6 +156,7 @@ class StreetIQMap extends Component {
   render() {
     const { places } = this.props.maping;
     console.log(places);
+    console.log(this.state)
     return (
       <React.Fragment>
         <Map
@@ -159,7 +177,7 @@ class StreetIQMap extends Component {
                 <Polygon
                   onClick={() => {
                     if (this.props.maping.districts.length) {
-                      this.props.selectedDistrictData(
+                      this.props.selectedLocation(
                         this.props.maping.districts[index],
                         index
                       );
@@ -180,13 +198,33 @@ class StreetIQMap extends Component {
           {/*{this.handleRenderDriversCircleCoordinates()}*/}
           {places.length &&
             places.map((place, index) => (
-              <Marker
-                key={index}
-                name={place.name}
-                position={place.position}
-                icon={require("../../assets/images/placeholder.png")}
-              />
+           
+                
+                  <Marker
+                    key={index}
+                    name={place.name}
+                    rating={place.rating}
+                    position={place.position}
+                    icon={require("../../assets/images/placeholder.png")}
+                    address={place.address}
+          
+                    onMouseover={this.onMarkerClick}
+                    
+                  />
+                
+       
             ))}
+                     <InfoWindow
+              marker={this.state.activeMarker}
+              onClose={this.onInfoWindowClose}
+              visible={this.state.showingInfoWindow}
+            >
+              <div>
+                <h6>Name: {this.state.selectedPlace.name}</h6>
+                <h6> Rating: {this.state.selectedPlace.rating}</h6>
+                <h6> address: {this.state.selectedPlace.address}</h6>
+              </div>
+              </InfoWindow>
         </Map>
         )
       </React.Fragment>

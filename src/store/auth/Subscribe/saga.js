@@ -28,18 +28,15 @@ function* subscribeFn({ payload: { subscriber, history } }) {
       );
 
       yield put(subscribeSuccesfully(subscriber));
-      setTimeout(() => history.push("/login"), 2000);
+      setTimeout(() => history.push("/"), 2000);
     } else {
-      
       if (subscriber) {
-  
-
         const firstName = subscriber.fullName.split(" ")[0];
         const lastName = subscriber.fullName.split(" ")[1];
         const email = subscriber.email;
         const phoneNumber = subscriber.phone_number;
         const company = subscriber.company;
-        console.log(firstName, lastName, company, phoneNumber, email);
+
         const subscribed_user = {
           firstName,
           lastName,
@@ -53,21 +50,15 @@ function* subscribeFn({ payload: { subscriber, history } }) {
           "https://backendapp.murmurcars.com/api/v1/subscribe/mailchimp",
           subscribed_user
         );
-        console.log(response);
 
         yield put(subscribeSuccesfully(response));
-
-        sessionStorage.setItem("authUser", email);
-        sessionStorage.removeItem("user");
-        history.push('/dashboard')
+        sessionStorage.setItem('authUser', email)
+        history.push("/dashboard");
       } else {
         history.replace("/register");
       }
     }
   } catch (error) {
-    console.log(error);
-    sessionStorage.removeItem("user");
-    history.replace("/register");
     yield put(subscriptionUserFailed(error));
   }
 }

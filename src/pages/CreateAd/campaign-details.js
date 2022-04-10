@@ -4,51 +4,69 @@ import classes from "../../assets/css/CreateAd/campaign-details/index.module.css
 import LogoCreate from "../../assets/css/CreateAd/logo-create.png";
 import Copyright from "../../assets/css/CreateAd/copyright.svg";
 import Check from "../../assets/css/CreateAd/check.svg";
-import InfoCircle from  '../../assets/css/CreateAd/info-circle.svg'
+import InfoCircle from "../../assets/css/CreateAd/info-circle.svg";
 import Text from "../../assets/css/CreateAd/text.svg";
+import TextError from "../../assets/css/CreateAd/text-error.svg";
 import ArrowDown from "../../assets/css/CreateAd/arrow-down.svg";
 import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 
-import {changeSideBar} from '../../store/actions';
-import {connect} from 'react-redux'
+import { changeSideBar } from "../../store/actions";
+import { connect } from "react-redux";
 
-
-import {Link, withRouter} from 'react-router-dom'
+import { Link, withRouter } from "react-router-dom";
 
 class CampaignDetails extends React.Component {
   constructor(props) {
     super(props);
-    this.state={
-        campaign_name:null,
-        adCategory:'Category 1'
-    }
-    this.submit = this.submit.bind(this)
-    this.canselNewCampaign = this.canselNewCampaign.bind(this)
+    this.state = {
+      campaign: {
+        campaign_name: null,
+        adCategory: 'Consumer Services',
+      },
+      error: { campaign_name: false },
+    };
+    this.submit = this.submit.bind(this);
+    this.canselNewCampaign = this.canselNewCampaign.bind(this);
   }
 
-  submit(event){
-      event.preventDefault()
-      if(this.state.adCategory!=null && this.state.campaign_name!=null){
-         this.props.createAdDetails({campaign_name:this.state.campaign_name, adCategory:this.state.adCategory})
+  submit(event) {
+    event.preventDefault();
+    let hasNull = false;
+    const { createAdDetails } = this.props;
+    const {error} = this.state
+    const {campaign} = this.state
+    const states = Object.keys(campaign);
+    console.log(states)
+    for (let i = 0; i < states.length; i++) {
+      if (this.state.campaign[states[i]] === null || !this.state.campaign[states[i]].length) {
+        error[states[i]] = true;
+        console.log(error)
+        this.setState({campaign, error})
+        hasNull = true;
       }
+    }
 
+    if (!hasNull) {
+      createAdDetails(this.state.campaign);
+    }
   }
-  handleChange(event){
-       const name= event.target.name
-       if(name==="step-campaing-name"){
-           this.setState({
-               ...this.state, campaign_name:event.target.value
-           })
-       }else{
-        this.setState({
-            ...this.state, [name]:event.target.value
-        })
-       }
-  }
-  canselNewCampaign(){
+  handleChange = (event, name) => {
+    const value = event.target.value;
+    const {campaign} = this.state
+    const {error} = this.state
+    this.setState({
+      ...this.state,
+      campaign: { ...campaign, [name]: value },
+      error: {
+        ...error,
+        [name]: false,
+      },
+    });
+  };
+  canselNewCampaign() {
     this.props.changeSideBar(true);
-    this.props.history.replace('/ad-manager')
-    this.props.history.go('/ad-manager')
+    this.props.history.replace("/ad-manager");
+    this.props.history.go("/ad-manager");
   }
 
   componentDidMount() {
@@ -61,14 +79,21 @@ class CampaignDetails extends React.Component {
   }
   render() {
     console.log(this.state);
+    const { error } = this.state;
     return (
       <React.Fragment>
-         <header className={classes.header}>
-          <div className={`${classes.mur_contain} ${classes.create_top_cancel}`}>
+        <header className={classes.header}>
+          <div
+            className={`${classes.mur_contain} ${classes.create_top_cancel}`}
+          >
             <a href="#">
               <img src={LogoCreate} alt="" />
             </a>
-            <button type="button" className={classes.create_cancel_btn} onClick={this.canselNewCampaign}>
+            <button
+              type="button"
+              className={classes.create_cancel_btn}
+              onClick={this.canselNewCampaign}
+            >
               Cancel
               <svg
                 width="24"
@@ -213,21 +238,25 @@ class CampaignDetails extends React.Component {
                     <div className={classes.step_form_item}>
                       <label
                         htmlFor="step-campaing-name"
-                        className={classes.step_label}
+                        className={`${classes.step_label} ${ error["campaign_name"] ? classes.pass_error_text : ''}` }
                       >
                         Campaing Name
                       </label>
                       <div className={classes.step_relative}>
                         <input
                           type="text"
-                          className={classes.step_element}
-                          onChange={this.handleChange.bind(this)}
+                          className={`${classes.step_element} ${
+                            error["campaign_name"] ? classes.pass_error : ""
+                          }`}
+                          onChange={(event) =>
+                            this.handleChange(event, "campaign_name")
+                          }
                           name="step-campaing-name"
                           id="step-campaing-name"
                           placeholder="Campaing name"
                         />
                         <img
-                          src={Text}
+                          src={error['campaign_name'] ? TextError : Text}
                           alt=""
                           className={classes.step_form_icon}
                         />
@@ -246,16 +275,27 @@ class CampaignDetails extends React.Component {
                           name="adCategory"
                           id="step-categories"
                           className={classes.step_select_item}
-                          onChange={this.handleChange.bind(this)}
+                          onChange={event =>  this.handleChange(event,'adCategory')}
                         >
-                          <option value="Consumer Services">Consumer Services</option>
-                          <option value="Consumer Products<">Consumer Products</option>
-                          <option value="Business Service">Business Service</option>
-                          <option value="Business Products">Business Products</option>
+                   
+                          <option value="Consumer Services">
+                            Consumer Services
+                          </option>
+                          <option value="Consumer Products<">
+                            Consumer Products
+                          </option>
+                          <option value="Business Service">
+                            Business Service
+                          </option>
+                          <option value="Business Products">
+                            Business Products
+                          </option>
                           <option value="Real-Estate">Real-Estate</option>
                           <option value="Insurance">Insurance</option>
                           <option value="Mortgage">Mortgage</option>
-                          <option value="Professional Services">Professional Services</option>
+                          <option value="Professional Services">
+                            Professional Services
+                          </option>
                           <option value="Home Services">Home Services</option>
                           <option value="Automotive">Automotive</option>
                         </select>
@@ -265,14 +305,14 @@ class CampaignDetails extends React.Component {
                           className={classes.step_select_icon}
                         />
                       </div>
-                      {/*<!-- <span class="pass_error">Error message</span> -->*/}
+       
                     </div>
                     <button type="submit" className={classes.step2_btn}>
                       Next
                     </button>
                     <div className={classes.step_center}>
                       <Link
-                        to='/ad-manager/campaign-objective'
+                        to="/ad-manager/campaign-objective"
                         className={classes.step2_back_link}
                       >
                         <img src={ArrowLeft} alt="" />
@@ -293,16 +333,16 @@ class CampaignDetails extends React.Component {
                   <li>
                     <p className={classes.create_ul_p}>Campaing Name</p>
                     <div className={classes.create_ul_txt}>
-                    We do`t advertice tabaco, adult and alcohol products &
-                          services
+                      We do`t advertice tabaco, adult and alcohol products &
+                      services
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Categories</p>
                     <div className={classes.create_ul_txt}>
-                    You're required to declare if your ads are related to
-                          credit, employment or housing opportunities or related
-                          to social issues, elections or politics.
+                      You're required to declare if your ads are related to
+                      credit, employment or housing opportunities or related to
+                      social issues, elections or politics.
                     </div>
                   </li>
                 </ul>
@@ -335,5 +375,4 @@ class CampaignDetails extends React.Component {
   }
 }
 
-export default connect(null, {changeSideBar})(withRouter(CampaignDetails));
-
+export default connect(null, { changeSideBar })(withRouter(CampaignDetails));

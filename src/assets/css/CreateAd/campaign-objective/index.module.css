@@ -371,10 +371,12 @@
   .footer_links li{
     display:inline-block;
     margin-left:12px;
+    margin-bottom:1rem;
   }
   .footer_link{
     color:#200B47;
     font-size:12px;
+    
   }
   .footer_link,.footer_link:hover{
     text-decoration:none;

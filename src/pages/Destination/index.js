@@ -1,36 +1,15 @@
 import React, { Component } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-  Card,
-  CardBody,
-  CardTitle,
-  CardText,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Media,
-  Table,
-} from "reactstrap";
-import classnames from "classnames";
-import "antd/dist/antd.css";
-import { Tabs, Button, Tooltip, Input } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
-//Import Breadcrumb
-import Breadcrumbs from "../../components/Common/Breadcrumb";
+
+import "antd/dist/antd.css";
+
+
+
 
 import classes from "../../assets/css/Destination/index.module.css";
 import SearchNormal from "../../assets/css/Settings/search-normal.svg";
 import SearchMaximize from "../../assets/css/Settings/search-maximize.svg";
-import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
+
 import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import ArrowDown from "../../assets/css/Destination/arrow-down.svg";
 import AddCircle from "../../assets/css/Destination/add-circle.svg";
@@ -41,10 +20,7 @@ import L from "../../assets/css/Destination/l.svg";
 import LastLine from "../../assets/css/Destination/last-line.svg";
 import Line1 from "../../assets/css/Destination/line1.svg";
 import Line2 from "../../assets/css/Destination/line2.svg";
-import Line3 from "../../assets/css/Destination/line3.svg";
-import Line4 from "../../assets/css/Destination/line4.svg";
 import Micon from "../../assets/css/Destination/m-icon.svg";
-import MoreVertical from "../../assets/css/Destination/more-vertical.svg";
 import Segment from "../../assets/css/Destination/segment.svg";
 
 import ToggleButtonDopDown from "./toggleButtonDopDown";
@@ -715,68 +691,7 @@ class Destination extends Component {
             )}
           </div>
         </div>
-        {/*<div className={classes.page}>
-        <div>
-          <Container fluid>
-            <Card>
-              <CardBody>
-                <Tabs defaultActiveKey="1" onChange={this.callback}>
-                  <TabPane tab="Create Destination" key="1">
-                    <Tooltip title="Add Data to Segment as a destination">
-                      <Button
-                        onClick={this.toggleModal}
-                        type="primary"
-                        icon={<PlusOutlined />}
-                      >
-                        Add Destination
-                      </Button>
-                    </Tooltip>
-                  </TabPane>
-                  {/* <TabPane tab="Tab 2" key="2"></TabPane> 
-                </Tabs>
-              </CardBody>
-            </Card>
-          </Container>
-        </div>
-        <Container fluid>
-          <Modal
-            isOpen={this.state.modalStatus}
-            toggle={this.toggleModal}
-            className={classnames}
-          >
-            <ModalHeader toggle={this.toggleModal}>Sync to Segment</ModalHeader>
-            <ModalBody>
-              <Table striped>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>
-                      <Input placeholder="Basic usage" placeholder="API Key" />
-                    </td>
-                    <td>
-                      <Input placeholder="Basic usage" placeholder="Name" />
-                    </td>
-                    <td>
-                      <DeleteOutlined
-                        onClick={() => alert("Hello")}
-                        style={{ color: "blue" }}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            </ModalBody>
-            <ModalFooter>
-              <Button danger onClick={this.toggleModal}>
-                Cancel
-              </Button>
-              <Button type="primary" onClick={this.toggleModal}>
-                Save
-              </Button>
-            </ModalFooter>
-          </Modal>
-        </Container>
-    </div>*/}
+
       </React.Fragment>
     );
   }

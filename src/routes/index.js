@@ -34,6 +34,9 @@ import Pixel from "./../pages/Pixel/index";
 import Settings from "./../pages/Settings/index";
 import ABTesting from "./../pages/ABTesting/index";
 import StreetIQMain from "./../pages/StreetIQ/index";
+import Tracking from "../pages/Tracking";
+import Dashboards from '../pages/Dashboard/Dashboards'
+import Surveys from "../pages/surveys";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
@@ -58,7 +61,9 @@ const authProtectedRoutes = [
   { path: "/settings", component: Settings },
   { path: "/testing", component: ABTesting },
   { path: "/streetIQ", component: StreetIQMain },
-
+  { path: '/tracking', component: Tracking},
+  { path: '/dashboards', component:Dashboards },
+  { path: '/surveys', component: Surveys},
   // this route should be at the end of all other routes
   { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },
 ];
@@ -67,43 +72,11 @@ const publicRoutes = [
   { path: "/logout", component: Logout },
   { path: "/login", component: Login },
   { path: "/forgot-password", component: ForgetPwd },
-  { path:'/email-sent', component: EmailSent },
+  { path: "/email-sent", component: EmailSent },
   { path: "/register", component: Register },
-  { path:'/reset-password', component:resetPassword},
-  { path: '/business', component: Business},
-  { path: '/subscribe', component: Subscribe}
-  /*{
-    path: "/business",
-    component: () => {
-      if (
-        !JSON.parse(sessionStorage.getItem("user")) &&
-        !sessionStorage.getItem("authUser")
-      ) {
-        return <Redirect to="/login" />;
-      } else if (
-        sessionStorage.getItem("authUser")
-      ) {
-        return <Redirect to="/" />;
-      }
-      return <Business />;
-    },
-  },
-  {
-    path: "/subscribe",
-    component: () => {
-      if (
-        !JSON.parse(sessionStorage.getItem("user")) &&
-        !sessionStorage.getItem("authUser")) 
-       {
-        return <Redirect to="/login" />;
-      } else if (
-        sessionStorage.getItem("authUser")
-      ) {
-        return <Redirect to="/" />;
-      }
-      return <Subscribe />;
-    },
-  },*/
+  { path: "/reset-password", component: resetPassword },
+  { path: "/business", component: Business },
+  { path: "/subscribe", component: Subscribe },
 ];
 
 export { authProtectedRoutes, publicRoutes };

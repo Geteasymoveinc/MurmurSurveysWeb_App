@@ -97,10 +97,9 @@ class Login extends React.Component {
               </h6>
               <p className={classes.main__paragraph}>
                 Explore audience on streets via real-time street-level data and
-                connect with them via smart digital car-top billboards, engage
-                with viewers in real-time, collect data in exchange of rewards
-                and discounts and retarget them via retargeting online Ads
-                dynamically.
+                connect with them via smart digital screens, engage with viewers
+                in real-time, collect data in exchange of rewards and discounts
+                and retarget them via retargeting online Ads dynamically.
               </p>
             </div>
           </section>
@@ -119,7 +118,7 @@ class Login extends React.Component {
               <div className={classes.footer__copyright}>
                 <p>
                   {new Date().getFullYear()}{" "}
-                  <span className={classes.companyName}>MurmurCars</span>
+                  <span className={classes.companyName}>Murmur</span>
                 </p>
               </div>
             </div>
@@ -133,7 +132,7 @@ class Login extends React.Component {
         <div className={classes.formContainer}>
           <div className={classes.form__header}>
             {" "}
-            <span className={classes.head}>Login to Murmur</span>
+            <span className={classes.head}>Welcome </span>
           </div>
 
           <form

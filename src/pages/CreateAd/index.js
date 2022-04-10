@@ -1,31 +1,12 @@
 import React, { Component } from "react";
 import {
-  Container,
-  Row,
-  Col,
+
   Button,
-  Card,
-  CardBody,
-  CardTitle,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Media,
-  Table,
+
   Badge,
-  CardText,
-  CardSubtitle,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Fade,
-  FormText,
-  Tooltip,
+
   Alert,
-  InputGroupAddon,
-  InputGroup,
+
 } from "reactstrap";
 
 import axios from "axios";
@@ -111,11 +92,12 @@ class CreateAdDashboard extends Component {
       area: "",
       campaign_name: "",
       artWork_url: "",
-      file: {},
+      images: [],
+      verify_img:'',
       daily_budget: "",
       ad_schedule_time: "",
     };
-    this.toggleTooltip = this.toggleTooltip.bind(this);
+    this.selectCampaignObjective = this.selectCampaignObjective.bind(this);
     this.handleCreateDetails = this.handleCreateDetails.bind(this);
     this.handleAudience = this.handleAudience.bind(this);
     this.handleBudgetAndDate = this.handleBudgetAndDate.bind(this);
@@ -126,8 +108,9 @@ class CreateAdDashboard extends Component {
   }
 
   componentDidMount() {
-    //this.setState({ modal: true });
-    //this.toggle();
+    if (!this.props.match.isExact) { //if user on create add page and accidentaly refrash page then react will render first step of ad creation to start all over again
+      this.toggle();
+    }
   }
   toggle = () => {
     const modal = !this.state.modal;
@@ -139,39 +122,18 @@ class CreateAdDashboard extends Component {
       reach: false,
       traffic: false,
     });
-    this.props.changeSideBar(false);
+    this.props.changeSideBar(false); //geting rid of left navbar for creating ad 
     this.props.history.push("/ad-manager/campaign-objective");
   };
 
-  //Toggle Tooltip
-  toggleTooltip(id) {
-    if (id === 1) {
-      this.setState({
-        ...this.state,
-        brandAwareness: true,
-        reach: false,
-        traffic: false,
-      });
-    }
-    if (id === 2) {
-      this.setState({
-        ...this.state,
-        brandAwareness: false,
-        reach: true,
-        traffic: false,
-      });
-    }
-    if (id === 3) {
-      this.setState({
-        ...this.state,
-        brandAwareness: false,
-        reach: false,
-        traffic: true,
-      });
-    }
+  //objectives
+  selectCampaignObjective(objective) {
+    this.setState({
+      ...this.state, [objective]:true
+    })
   }
 
-  handleInputDisplayChange = (e) => {
+  /*handleInputDisplayChange = (e) => {
     const displayQuantity = e.target.value;
     this.setState({ ...this.state, display_quantity: displayQuantity });
 
@@ -211,7 +173,7 @@ class CreateAdDashboard extends Component {
         speedometerMaxValue: 4250000,
       });
     }
-  };
+  };*/
 
   handleCreateDetails({ campaign_name, adCategory }) {
     this.setState({
@@ -231,25 +193,25 @@ class CreateAdDashboard extends Component {
     }
   };
 
-  handleAudience({ audienceAge, audienceGender, area, specificAttribute }) {
+  handleAudience({ age, gender, location, specificAttribute }) {
     this.setState({
       ...this.state,
-      audienceAge,
-      audienceGender,
-      area,
+      audienceAge: age,
+      audienceGender: gender,
+      area: location,
       attribute: specificAttribute,
     });
     this.props.history.push("/ad-manager/budget-schedule");
   }
 
-  toggleCreateAd = () => {
+  /*toggleCreateAd = () => {
     const createAdStatus = !this.state.createAdStatus;
     this.setState({
       ...this.state,
       createAdStatus,
       modal: false,
     });
-  };
+  };*/
 
   toggleCancelCreateAd = () => {
     this.setState({ ...this.state, createAdStatus: false });
@@ -261,7 +223,7 @@ class CreateAdDashboard extends Component {
       ...this.state,
       daily_budget: budgetValue,
       duration: duration[0] + " " + duration[1],
-      ad_schedule_time: time[0] + ' ' + time[1]
+      ad_schedule_time: time[0] + " " + time[1],
     });
     this.props.history.push("/ad-manager/placement-type");
   }
@@ -270,61 +232,47 @@ class CreateAdDashboard extends Component {
     this.setState({ ...this.state, campaign_type, display_quantity });
     this.props.history.push("/ad-manager/ad-creative");
   }
-  handleImage({ img, file }) {
-    console.log(file)
-    this.setState({ ...this.state, file, artWork_url: img });
+  handleImage({  files,verify_img }) {
+    
+    this.setState({ ...this.state, artWork_url: files[0].name, images: files, verify_img });
     this.props.history.push("/ad-manager/verify-data");
   }
 
   toggleCompleteCreateAd() {
     console.log(this.state.artWork_url);
-    //let formdata = new FormData();
-    const formData = {};
-    //formData["images"] = this.state.file[0].originFileObj;
-    formData["advertisers_email"] = this.state.advertisers_email;
-    formData["campaign_type"] = this.state.adCategory;
-    formData["campaign_name"] = this.state.campaign_name;
-    formData["ad_schedule"] = this.state.duration;
-    formData["area"] = this.state.area;
-    formData["daily_budget"] = this.state.daily_budget;
-    formData["display_quantity"] = this.state.display_quantity;
-    formData["artWork_url"] =    this.state.artWork_url
-    formData["audienceAge"] = this.state.audienceAge;
-    formData["audienceGender"] = this.state.audienceGender;
-    formData["ad_schedule_time"] = this.state.ad_schedule_time;
+    const formData = new FormData();
+    formData.append("advertisers_email",this.state.advertisers_email)
+    formData.append("campaign_type",this.state.adCategory)
+    formData.append("campaign_name", this.state.campaign_name)
+    formData.append("ad_schedule",this.state.duration)
+    formData.append("area", this.state.area)
+    formData.append("daily_budget", this.state.daily_budget)
+    formData.append("display_quantity",this.state.display_quantity)
 
-    /*formdata.append('campaign_name', this.state.campaign_name)
-    formdata.append('advertisers_email', this.state.advertisers_email)
-    formdata.append('ad_schedule', this.state.ad_schedule)
-    formdata.append('audienceAge', this.state.audienceAge)
-    formdata.append('ad_schedule_time', this.state.ad_schedule_time)
-    formdata.append('daily_budget', this.state.daily_budget)
-    formdata.append('ad_schedule_time', this.state.ad_schedule_time)
-    formdata.append('area', this.state.area)
-    formdata.append('audienceGender', this.state.audienceGender)
-    formdata.append('artWork_url',  "/advertisers/media/uploads/" + this.state.artWork_url)
-    formdata.append('audienceGender', this.state.audienceGender)*/
-
-
-  
+    formData.append("audienceAge", this.state.audienceAge)
+    formData.append("audienceGender", this.state.audienceGender)
+    formData.append("ad_schedule_time",this.state.ad_schedule_time)
+    formData.append('artWork_url', this.state.artWork_url)
+    for (const image of this.state.images) {
+      formData.append("images", image);
+    }
     axios({
-      url: "https://backendapp.murmurcars.com/api/v1/campaigns/create",
+      url: "http://localhost:4000/api/v1/campaigns/create",
       method: "POST",
       data: formData,
     })
-      .then()
-      .catch();
+     .then((res) => {
+        this.setState({ ...this.state, alertStatus: false });
+        this.props.history.replace("/ad-manager");
+        this.props.history.go("/ad-manager");
+      })
+      .catch((err) => console.log(err));
     this.setState({ ...this.state, createAdStatus: false, alertStatus: true });
-    setTimeout(() => {
-      this.setState({ ...this.state, alertStatus: false });
-      this.props.history.replace("/ad-manager");
-      this.props.history.go("/ad-manager");
-    }, 3000);
   }
 
-  handleOnChange = (event) => {
+  /*handleOnChange = (event) => {
     this.setState({ ...this.state, campaign_type: event.target.name });
-  };
+  };*/
 
   handleDateChange = (date, dateString) => {
     console.log("Date", date.dateString);
@@ -337,7 +285,7 @@ class CreateAdDashboard extends Component {
     console.log("this is schedule state", this.state.scheduleCampaignDate);
   };
 
-  toggleDeleteCampaign = () => {};
+
 
   handleCampaigns = () => {
     let murmurCampaigns = [];
@@ -408,12 +356,13 @@ class CreateAdDashboard extends Component {
   };
 
   render() {
-    console.log(this.state, this.props);
+    console.log(this.state);
+    const { modal } = this.state;
     return (
       <React.Fragment>
-        {!this.state.modal && (
+        {!this.state.modal && (  //page where user see all its campaigns and can create new one
           <div className={classes.dash_right}>
-            {this.state.alertStatus ? (
+            {this.state.alertStatus ? ( 
               <Alert color="success">
                 We received your Ad Request and Reviewing it. Usually it takes
                 15 min for approval.
@@ -422,8 +371,8 @@ class CreateAdDashboard extends Component {
               </Alert>
             ) : null}
 
-            {/*<!-- header search block -->*/}
 
+          
             <div className={classes.head_search}>
               <h1 className={classes.dash_h1}>Ads manager</h1>
 
@@ -453,8 +402,8 @@ class CreateAdDashboard extends Component {
                 </div>
               </form>
             </div>
-            {/*add-manager*/}
-            {this.props.match.isExact && (
+        
+            {this.props.match.isExact && !this.props.location.search && (  //page where user see all its campaigns
               <div className={classes.create_ads}>
                 <div className={classes.ads_section}>
                   <div className={classes.cads_head}>
@@ -499,140 +448,22 @@ class CreateAdDashboard extends Component {
                   <Pullcampaigns data={this.state} />
                 </div>
               </div>
-            )}
-            {/*add-details STARTING*/}
-            {!this.props.match.isExact && <Pullcampaigns data={this.state} />}
-            {/*add-details ENDING*/}
-            {/* Create Ad Part begins */}
-            {/*} {this.state.createAdStatus ? (
-              <div className="page-content">
-                <Row xs="2" sm="4" md="2">
-                  <Col>
-                    <Button
-                      outline
-                      color="danger"
-                      onClick={this.toggleCancelCreateAd}
-                    >
-                      Cancel
-                    </Button>
-                  </Col>
-                </Row>
-                <br></br>
-                <Card body>
-                  <CardTitle tag="h5">Specify your Ad</CardTitle>
-                  <CardText>
-                    We do`t advertice tabaco, adult and alcohol products &
-                    services
-                  </CardText>
-                  <Container fluid>
-                    <CreateAddForm
-                      brandAwareness={this.state.brandAwareness}
-                      reach={this.state.reach}
-                      traffic={this.state.traffic}
-                    />
-                  </Container>
-                </Card>
-              </div>
-            ) : null}*/}
-            {/* Create Ad Part Ends*/}
-            {/*<Modal isOpen={this.state.modal} toggle={this.toggle}>
-              <ModalHeader toggle={this.toggle}>
-                Choose a Campaign Objective
-              </ModalHeader>
-
-              <ModalBody>
-                <Container className="themed-container" fluid={true}>
-                  <Row xs="1">
-                    <Col>
-                      <Form>
-                        <FormGroup
-                          check
-                          onChange={(event) => this.handleOnChange(event)}
-                        >
-                          <Fade in={true} tag="h5" className="mt-3">
-                            <Label check>
-                              <Input type="radio" name="Brand Awareness" />{" "}
-                              Brand awareness{" "}
-                              <i
-                                className="bx bxs-error-circle"
-                                id="BrandAwareness"
-                              ></i>
-                              <Tooltip
-                                id="BrandAwareness"
-                                placement="right"
-                                isOpen={this.state.brandAwareness}
-                                target="BrandAwareness"
-                                toggle={() => this.toggleTooltip(1)}
-                              >
-                                Show your ads to people who most likely to
-                                remember them
-                              </Tooltip>
-                            </Label>
-                          </Fade>
-                          <Fade in={true} tag="h5" className="mt-3">
-                            <Label check>
-                              <Input type="radio" name="Reach" /> Reach
-                              <i className="bx bxs-error-circle" id="Reach"></i>
-                            </Label>
-                            <Tooltip
-                              id="Reach"
-                              placement="right"
-                              isOpen={this.state.reach}
-                              target="Reach"
-                              toggle={() => this.toggleTooltip(2)}
-                            >
-                              Show your ads to the maximum number of people
-                            </Tooltip>
-                          </Fade>{" "}
-                          <Fade in={true} tag="h5" className="mt-3">
-                            <Label check>
-                              <Input type="radio" name="Traffic" /> Traffic
-                              <i
-                                className="bx bxs-error-circle"
-                                id="Traffic"
-                              ></i>
-                              <Tooltip
-                                id="Traffic"
-                                placement="right"
-                                isOpen={this.state.traffic}
-                                target="Traffic"
-                                toggle={() => this.toggleTooltip(3)}
-                              >
-                                Send people to a destination, like webpage,
-                                event, etc
-                              </Tooltip>
-                            </Label>
-                          </Fade>
-                        </FormGroup>
-                      </Form>
-                    </Col>
-                  </Row>
-                </Container>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="success" onClick={this.toggleCreateAd}>
-                  Next
-                </Button>
-              </ModalFooter>
-            </Modal>
-            */}
-            <Modal
-              isOpen={this.state.modalCreateAdBody}
-              toggle={this.toggle}
-            ></Modal>
-          </div>
+        
         )}
 
-        {this.state.modal && (
+        {this.props.match.isExact && this.props.location.search.length>0 && ( //details
+          <Pullcampaigns data={this.state} />
+          )}
+          </div>
+        )}
+        {modal && ( //nesting routes (creat new ad campaign)
           <Switch>
             <Route path="/ad-manager/campaign-objective">
-              <CampaignObjective toggleObjective={this.toggleTooltip} />
+              <CampaignObjective toggleObjective={this.selectCampaignObjective} />
             </Route>
             <Route path="/ad-manager/campaign-details">
               <CampaignDetails
                 createAdDetails={this.handleCreateDetails}
-                adCategory={this.state.adCategory}
-                campaign_name={this.state.campaign_name}
               />
             </Route>
             <Route path="/ad-manager/audience">
@@ -671,7 +502,7 @@ class CreateAdDashboard extends Component {
                     displayNumber: this.state.display_quantity,
                     category: this.state.adCategory,
                     budget: this.state.daily_budget,
-                    artWork: this.state.artWork_url,
+                    artWork: this.state.verify_img,
                   },
                 ]}
                 sendToBackEnd={this.toggleCompleteCreateAd}

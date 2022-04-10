@@ -28,7 +28,7 @@ class Filters extends React.Component {
       Education
     } = this.props.filterMethod;
     const { Country } = this.props;
-    const { searchDistricts, selectActiveRadio } = this.props;
+    const { searchLocationsByFilterData, selectFilterData } = this.props;
 
     return (
       <div className={classes2.stc_drops}>
@@ -45,7 +45,7 @@ class Filters extends React.Component {
                 Country !== "US" ? ["<100000", ">100000"] : ["<50000", ">50000"]
               }
               method={Population}
-              activeRadio={(option) => selectActiveRadio(option, "Population")}
+              activeRadio={(option) => selectFilterData(option, "Population")}
             />
           </div>
         </div>
@@ -57,7 +57,7 @@ class Filters extends React.Component {
                 labels={["high rated", "low rated"]}
                 filters={[">4", "<4"]}
                 method={Places}
-                activeRadio={(option) => selectActiveRadio(option, "Places")}
+                activeRadio={(option) => selectFilterData(option, "Places")}
               />
             )}
           </div>
@@ -79,7 +79,7 @@ class Filters extends React.Component {
                 "35-44<20000",
                 "35-44>20000",
               ] : ['20-39<20000', '20-39>20000']}
-              activeRadio={(option) => selectActiveRadio(option, "Age")}
+              activeRadio={(option) => selectFilterData(option, "Age")}
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
@@ -91,7 +91,7 @@ class Filters extends React.Component {
               labels={["Males more than Females", "Females more than males"]}
               filters={["Males>Females", "Females>Males"]}
               method={Gender}
-              activeRadio={(option) => selectActiveRadio(option, "Gender")}
+              activeRadio={(option) => selectFilterData(option, "Gender")}
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
@@ -110,7 +110,7 @@ class Filters extends React.Component {
               }
               method={Country !== "US" ? Marrige : Income}
               activeRadio={(option) =>
-                selectActiveRadio(
+                selectFilterData(
                   option,
                   Country !== "US" ? "Marrige" : "Income"
                 )
@@ -133,7 +133,7 @@ class Filters extends React.Component {
               }
               method={Country !== "US" ? Ethnisity : Race}
               activeRadio={(option) =>
-                selectActiveRadio(
+                selectFilterData(
                   option,
                   Country !== "US" ? "Ethnisity" : "Race"
                 )
@@ -156,7 +156,7 @@ class Filters extends React.Component {
               }
               filters={Country!=='US'?["b<10000", "b>10000"]: ['<200000', '>200000']}
               method={Country!=='US'? Business: Real_Estate}
-              activeRadio={(option) => selectActiveRadio(option, Country !=='US'?"Business":'Real_Estate')}
+              activeRadio={(option) => selectFilterData(option, Country !=='US'?"Business":'Real_Estate')}
             />
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
@@ -169,7 +169,7 @@ class Filters extends React.Component {
               filters={["b<500", "b>500"]}
               method={Small_Business}
               activeRadio={(option) =>
-                selectActiveRadio(option, "Small_Business")
+                selectFilterData(option, "Small_Business")
               }
             /> : <SearchModal
             statistic={"Education"}
@@ -177,7 +177,7 @@ class Filters extends React.Component {
             filters={["b<50%", "b>59%"]}
             method={Education}
             activeRadio={(option) =>
-              selectActiveRadio(option, "Education")
+              selectFilterData(option, "Education")
             }
             />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
@@ -195,7 +195,7 @@ class Filters extends React.Component {
               ]}
               filters={["b<1000", "b>1000", 'g<1000', 'g>1000']}
               method={Birth}
-              activeRadio={(option) => selectActiveRadio(option, "Birth")}
+              activeRadio={(option) => selectFilterData(option, "Birth")}
             />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
@@ -207,7 +207,7 @@ class Filters extends React.Component {
               labels={["Males and Females < 15000", "Males and Females > 15000"]}
               filters={["r<15000", "r>15000"]}
               method={Retired}
-              activeRadio={(option) => selectActiveRadio(option, "Retired")}
+              activeRadio={(option) => selectFilterData(option, "Retired")}
             />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
@@ -219,7 +219,7 @@ class Filters extends React.Component {
               labels={["Males and Females < 100000", "Males and females > 100000"]}
               filters={["n_r<100000", "n_r>100000"]}
               method={Non_Retired}
-              activeRadio={(option) => selectActiveRadio(option, "Non_Retired")}
+              activeRadio={(option) => selectFilterData(option, "Non_Retired")}
             />}
             {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
           </div>
@@ -228,7 +228,7 @@ class Filters extends React.Component {
           <button
             className={classes2.stc_drop_submit}
             type="submit"
-            onClick={() => searchDistricts()}
+            onClick={() => searchLocationsByFilterData()}
           >
             <span>Search</span>
             <svg

@@ -6,7 +6,8 @@ import {
 
 const initialState = {
   forgetSuccess: null,
-  forgetError: null
+  forgetError: null,
+  loading:false
 };
 
 const forgetPassword = (state = initialState, action) => {
@@ -14,18 +15,19 @@ const forgetPassword = (state = initialState, action) => {
     case FORGET_PASSWORD:
       state = {
         ...state,
-        forgetSuccess: null,
-        forgetError: null
+        loading:true,
+        forgetError:null
       };
       break;
     case FORGET_PASSWORD_SUCCESS:
       state = {
         ...state,
-        forgetSuccess: action.payload
+        forgetSuccess: action.payload,
+        loading:false
       };
       break;
     case FORGET_PASSWORD_ERROR:
-      state = { ...state, forgetError: action.payload };
+      state = { ...state, forgetError: action.payload, loading:false };
       break;
     default:
       state = { ...state };

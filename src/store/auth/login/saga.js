@@ -20,34 +20,37 @@ function* loginUser({ payload: { user, history } }) {
       );
       yield put(loginSuccess(response));
     } else {
-      console.log(user.email, user.password);
       const response = yield call(
         postLogin,
-      "https://backendapp.murmurcars.com/api/v1/users/login",
+        "https://backendapp.murmurcars.com/api/v1/users/login",
         //"http://localhost:4000/api/v1/users/login",
         {
           email: user.email,
           password: user.password,
         }
       );
+
       console.log(response)
-      const image = response.resp.at(-1).profilePhoto
-      let profilePhoto
-      if(image){
-       profilePhoto = image.split("https://backendapi.murmurcars.com/advertisers/users/profilePhoto/")[1]
-      }
+
+      const image = response.resp.at(-1).profilePhoto;
+
       
       sessionStorage.setItem("authUser", response.resp.at(-1).email);
-
-      if(profilePhoto){
-      sessionStorage.setItem('profileImage', profilePhoto)
+      console.log(image)
+      if (image) {
+        sessionStorage.setItem("profileImage", image);
       }
       yield put(loginSuccess(response));
     }
     history.push("/dashboard");
   } catch (error) {
-    console.log('error is ' + error)
-    yield put(apiError(error));
+    if (error.status) {
+      yield put(apiError(error.message));
+      history.push("/login");
+    } else {
+      yield put(apiError("Please contact Murmur technical Support"));
+      history.push("/login");
+    }
   }
 }
 
@@ -56,8 +59,6 @@ function* logoutUser({ payload: { history } }) {
     sessionStorage.removeItem("fullName");
     sessionStorage.removeItem("profileImage");
     sessionStorage.removeItem("authUser");
-    sessionStorage.removeItem("auth");
-    sessionStorage.removeItem("user");
 
 
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {

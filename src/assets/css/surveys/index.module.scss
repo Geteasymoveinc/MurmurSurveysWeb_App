@@ -1,0 +1,155 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+
+.mur_contain {
+    padding-left: 65px;
+    padding-right: 65px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+  
+  .header {
+    position: relative;
+   
+    height: 106px;
+    background-color: white;
+    border-bottom: 1px solid  #7356C0;
+    display: flex;
+    justify-content: space-between;
+  }
+ .header_flex_aligned{
+  display: flex;
+ }
+/*header----- start*/
+  .pass_eye{
+    background-color: transparent;
+    outline: none;
+    border: transparent;
+  }
+  .pass_eye:hover .pass_eye{
+    cursor: pointer;
+  }
+  .publish_survey{
+
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 6px 12px;
+background: #7356C0;
+border-radius: 4px;
+width: 70px;
+height: 28px;
+outline: none;
+border: transparent;
+  }
+  .publish_survey span{
+    font-family: 'Montserrat';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 16px;
+color: #FFFFFF;
+
+  }
+  .menu_self_flex{
+    align-self: flex-end;
+    width:412px;
+  
+   
+  }
+
+  
+
+.menu_flex{
+  width: 276px;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+
+@media (max-width: 900px) {
+.menu_self_flex{
+ width:300px;
+}
+.menu_flex{
+ width: 160px;
+}
+
+}
+
+
+.menu_flex button{
+height: 16px;
+font-family: 'Montserrat';
+font-style: normal;
+font-weight: 500;
+font-size: 12px;
+line-height: 16px;
+color: #2E3A59;
+border: transparent;
+background-color: transparent;
+outline: none;
+}
+
+.menu_flex  .button_containers{
+position: relative;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+height: 25px;
+width:69px
+}
+
+.border_active{
+  border-bottom: 3px solid  #7356C0;;
+  width:70%;
+  align-self: center;
+}
+
+
+.dash_relative {
+  position: relative;
+  right: 75px;
+  top:30px
+}
+
+
+.search_box_flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width:180px;
+}
+  /*header----- end*/
+
+
+
+/*-----body-containers------*/
+/*---questions -- start*/
+
+@import './questions.module.scss';
+
+
+/*question-end*/
+
+
+/*answers start*/
+
+@import './analytics.module.scss';
+
+
+/*answers end*/
+/*settings --start*/
+
+
+
+@import './settings.module.scss';
+
+
+
+
+@import './answers.module.scss'

@@ -6,18 +6,21 @@ import {
 } from "./actionTypes";
 
 export const google_signup = (data) => {
-  console.log(data);
+
+
   return {
     type: GOOGLE_SIGNUP,
     payload: data,
   };
 };
 
-export const google_login = ({ email, history }) => {
-  console.log(email,history)
+
+export const google_login = ({ profile, history }) => {
+  
+
   return {
     type: GOOGLE_LOGIN,
-    payload: { email, history },
+    payload: { profile, history },
   };
 };
 

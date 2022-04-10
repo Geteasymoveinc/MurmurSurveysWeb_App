@@ -40,7 +40,8 @@ class TestingModal extends Component {
         TimeTo:'',
         name: '',
         weight: '',
-        image: ''
+        image: '',
+        images:[]
       },
     };
   }
@@ -54,14 +55,15 @@ class TestingModal extends Component {
   };
 
   handleFileChange = (info) => {
+    const images = this.state.variantData.images
     const variant = this.state.variantData
     const reader = new FileReader();
     reader.readAsDataURL(info.file);
 
     reader.onload = (e) => {
       variant.image = e.target.result
-
-      this.setState({ ...this.state, variantData: variant});
+      images.push(e.target.result)
+      this.setState({ ...this.state, variantData: variant, images});
     };
   };
 

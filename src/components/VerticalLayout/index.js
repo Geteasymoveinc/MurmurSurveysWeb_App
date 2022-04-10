@@ -42,7 +42,7 @@ class Layout extends Component {
   };
 
   componentDidMount() {
-    console.log("i am in vertical layout" + this.props);
+
     if (this.props.isPreloader === true) {
       document.getElementById("preloader").style.display = "block";
       document.getElementById("status").style.display = "block";
