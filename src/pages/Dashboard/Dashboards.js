@@ -252,22 +252,22 @@ class Dashboards extends Component {
       
     for (let type = 0; type < types.length; type++) {
       if (types[type] === input) {
-        if(input ==='pedestria'){
+        if(input ==='pedestrian'){
           types_state[types[type]] = {
             ...this.state[input],
-            display:!this.state[types[type]].display,
+            display:!this.state[input].display,
             min: data.min, max:data.max,avg:data.avg
           }
         }
         else{
           types_state[types[type]] = {
           ...this.state[input],
-          display: !this.state[types[type]].display
+          display: !this.state[input].display
         }
       }
        }else{
         types_state[types[type]] = {
-          ...this.state[input],
+          ...this.state[types[type]],
           display:false
         }
       }
@@ -287,11 +287,11 @@ class Dashboards extends Component {
        
         types_state[types[type]] = {
           ...this.state[input],
-          display: !this.state[types[type]].display
+          display: !this.state[input].display
         }
        }else{
         types_state[types[type]] = {
-          ...this.state[input],
+          ...this.state[types[type]],
           display: false
         }
       }
