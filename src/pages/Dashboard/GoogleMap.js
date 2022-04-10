@@ -181,7 +181,7 @@ class GoogleMaps extends Component {
         this.setState({ ...this.state, address, loaded: true });
       },
       (error) => {
-        console.error(error);
+        this.setState({ ...this.state, loaded: true });
       }
     );
   };

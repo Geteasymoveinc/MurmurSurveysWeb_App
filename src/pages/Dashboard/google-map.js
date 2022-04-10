@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Map, GoogleApiWrapper, Marker, Polygon } from "google-maps-react";
+import { Map, GoogleApiWrapper, Marker, Polygon, InfoWindow } from "google-maps-react";
 
 import googleMapStyles from "./google-styles";
 
@@ -29,8 +29,34 @@ const LoadingContainer = (props) => (
 class GoogleMap extends Component {
   constructor(props) {
     super(props);
- 
+    this.state = {
+      streetIQCardStatus: true,
+      activeMarker: {},
+      selectedPlace: {},
+      showingInfoWindow: false,
+    };
   }
+    onMarkerClick = (props, marker) =>
+      this.setState({
+        activeMarker: marker,
+        selectedPlace: props,
+        showingInfoWindow: true,
+      });
+  
+    onInfoWindowClose = () =>
+      this.setState({
+        activeMarker: null,
+        showingInfoWindow: false,
+      });
+  
+    onMapClicked = () => {
+      if (this.state.showingInfoWindow)
+        this.setState({
+          activeMarker: null,
+          showingInfoWindow: false,
+        });
+    };
+  
 
   handleRenderDriversCoordinates = () => {
     let renderDrivers = [];
@@ -108,10 +134,21 @@ class GoogleMap extends Component {
                     key={index}
                     name={place.name}
                     position={place.position}
+                    population = {place.population}
                     icon={place.image}      
+                    onMouseover={this.onMarkerClick}
                   />
             ))}
-       
+                     <InfoWindow
+              marker={this.state.activeMarker}
+              onClose={this.onInfoWindowClose}
+              visible={this.state.showingInfoWindow}
+            >
+              <div>
+                <h6> Location: {this.state.selectedPlace.name}</h6>
+                <h6> Population: {this.state.selectedPlace.population}</h6>
+              </div>
+              </InfoWindow>
       </Map>
     );
   }

@@ -7,13 +7,13 @@ import { Button } from "reactstrap";
 import DatePicker from "react-datepicker";
 
 //router and redux
-import { Link,withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 //assets and map
 import GoogleMap from "./google-map";
 import classes from "../../assets/css/Dashboard/dashboard.module.css";
-import "../../assets/css/Dashboard/date_picker.css"
+import "../../assets/css/Dashboard/date_picker.css";
 import ChevronDown from "../../assets/css/Dashboard/chevron-down.svg";
 import ChevronUp from "../../assets/css/Dashboard/chevron-up.svg";
 import PedestriansMeasure from "../../assets/css/Dashboard/pedestrians-measure.svg";
@@ -37,6 +37,47 @@ import { changeSideBar } from "../../store/actions";
 //axiso
 import axios from "axios";
 
+import Geocode from 'react-geocode'
+
+Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+
+const getPopulation = async () => {
+  const response = await axios.get(
+    "http://localhost:4000/api/v1/zipcode/get-population?city=Baku"
+  );
+  const { data } = response.data;
+  const  {avg,max,min} = data
+  let {all_location_population} = data 
+  all_location_population = all_location_population.map(el => {
+       if(el.population < (avg-avg*0.3)){
+         return {
+           position: el.coordinate,
+           image: Population_low,
+           population:el.population,
+           name: el.name
+         }
+       }else if(el.population> (avg- avg*0.3) && el.population< (avg+avg*0.3)){
+        return {
+          position: el.coordinate,
+          image: Population_avg,
+          population:el.population,
+          name: el.name
+        }
+       }else{
+        return {
+          position: el.coordinate,
+          image: Population_hight,
+          population:el.population,
+          name: el.name
+        }
+       } 
+  })
+
+  return {avg,min,max, all_location_population}
+};
+
+
+
 class Dashboards extends Component {
   constructor(props) {
     super(props);
@@ -47,7 +88,7 @@ class Dashboards extends Component {
           lng: 49.89201,
           lat: 40.37767,
         },
-        zoom: 13,
+        zoom: 11,
 
         coordinates: [],
         markers: {
@@ -103,7 +144,12 @@ class Dashboards extends Component {
           ],
         },
       },
-      pedestrian: false,
+      pedestrian: {
+        display: false,
+        min:0,
+        max:0,
+        avg:0,
+      },
       temperature: {
         display: false,
         data: {
@@ -117,7 +163,7 @@ class Dashboards extends Component {
       },
       noise_level: { display: false },
       user_input: {
-        date_picked: '',
+        date_picked: "",
       },
     };
   }
@@ -137,26 +183,51 @@ class Dashboards extends Component {
       .then((fetched_data) => {
         //fetched data
         const { forecast, current } = fetched_data["data"];
-     
-        const {air_quality} = current
-        console.log(air_quality)
+
+        const { air_quality } = current;
+        console.log(air_quality);
 
         const { forecastday } = forecast;
         const { day } = forecastday[0];
         const { maxtemp_c, avgtemp_c, mintemp_c } = day;
-      
 
-        this.setState({
-          ...this.state,
-          map: {
-            ...this.state.map,
-            loading: false,
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log(position);
+            this.setState({
+              postCenter: {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              },
+              permission:true,
+              map: {
+                ...this.state.map,
+                loading: false,
+              },
+              temperature: {
+                ...this.state.temperature,
+                data: { maxtemp_c, mintemp_c, avgtemp_c },
+              },
+            });
+            this.handleReverseGeocode();
           },
-          temperature: {
-            ...this.state.temperature,
-            data: { maxtemp_c, mintemp_c, avgtemp_c },
-          },
-        });
+          (err) => {
+            this.setState({
+              ...this.state,
+
+              alert_status: true,
+              permission: false,
+              map: {
+                ...this.state.map,
+                loading: false,
+              },
+              temperature: {
+                ...this.state.temperature,
+                data: { maxtemp_c, mintemp_c, avgtemp_c },
+              },
+            });
+            });
       })
       .catch((err) => {
         console.log(err);
@@ -170,37 +241,74 @@ class Dashboards extends Component {
       });
   }
 
-  toggleCollapse = (input) => {
+
+  
+
+  toggleCollapse = async (input) => {
     const types = ["pedestrian", "temperature", "air_quality", "noise_level"];
     let types_state = {};
-    if(input === 'pedestrian'){
-       axios.get()
-    }
+    if (input === "pedestrian") {
+       const data = await getPopulation();
+      
     for (let type = 0; type < types.length; type++) {
       if (types[type] === input) {
+        if(input ==='pedestria'){
+          types_state[types[type]] = {
+            ...this.state[input],
+            display:!this.state[types[type]].display,
+            min: data.min, max:data.max,avg:data.avg
+          }
+        }
+        else{
+          types_state[types[type]] = {
+          ...this.state[input],
+          display: !this.state[types[type]].display
+        }
+      }
+       }else{
         types_state[types[type]] = {
           ...this.state[input],
-          display: !this.state[input].display,
-        };
-      } else {
-        types_state[types[type]] = {
-          ...this.state[types[type]],
-          display: false,
-        };
+          display:false
+        }
       }
+      
     }
-    this.setState({ ...this.state, ...types_state });
+    this.setState({
+      ...this.state, ...types_state, map: {
+        ...this.state.map, loading:false, markers: {
+          ...this.state.map.markers, pedestrian: data.all_location_population
+        }
+      }
+    })
+    }else{
+
+    for (let type = 0; type < types.length; type++) {
+      if (types[type] === input) {
+       
+        types_state[types[type]] = {
+          ...this.state[input],
+          display: !this.state[types[type]].display
+        }
+       }else{
+        types_state[types[type]] = {
+          ...this.state[input],
+          display: false
+        }
+      }
+      
+    }
+    this.setState({ ...this.state, ...types_state});
+  }
   };
 
   handleDateChange = (data) => {
- 
-      this.setState({
-        ...this.state,
-        user_input: {
-          ...this.state.user_input,
-          date_picked: data,
-        },
-      });
+    this.setState({
+      ...this.state,
+      user_input: {
+        ...this.state.user_input,
+        date_picked: data,
+      },
+    });
   };
   handleResetDate = () => {
     console.log("reseting");
@@ -214,68 +322,101 @@ class Dashboards extends Component {
   };
 
   getTemperatureDataFromApi = () => {
-     const {date_picked} = this.state.user_input
-     const str = date_picked.toString();
-     let parts = str.split(" ");
-     let months = {
-       Jan: "01",
-       Feb: "02",
-       Mar: "03",
-       Apr: "04",
-       May: "05",
-       Jun: "06",
-       Jul: "07",
-       Aug: "08",
-       Sep: "09",
-       Oct: "10",
-       Nov: "11",
-       Dec: "12"
-     };
-     const date =  parts[3] + "-" + months[parts[1]] + "-" + parts[2];
+    const { date_picked } = this.state.user_input;
+    const str = date_picked.toString();
+    let parts = str.split(" ");
+    let months = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
+    };
+    const date = parts[3] + "-" + months[parts[1]] + "-" + parts[2];
 
-     let url 
-   
-     if(new Date()< new Date(date_picked) || new Date() === new Date(date_picked)){
-       url = `https://api.weatherapi.com/v1/forecast.json?key=273d1d3ea19940fcbc7184258223103&q=Baku&days=7&dt=${date}`
-     }else{
-       url = `https://api.weatherapi.com/v1/history.json?key=273d1d3ea19940fcbc7184258223103&q=Baku&dt=${date}`
-     }
-     this.setState({
-       ...this.state, map: {
-         ...this.state.map, loading: true
-       }
-     })
-     axios.get(url)
-     .then(fetched_data => {
- 
-      const { forecast } = fetched_data["data"];
-      const { forecastday } = forecast;
-      const { day } = forecastday[0];
+    let url;
 
-      const { maxtemp_c, avgtemp_c, mintemp_c } = day;
+    if (
+      new Date() < new Date(date_picked) ||
+      new Date() === new Date(date_picked)
+    ) {
+      url = `https://api.weatherapi.com/v1/forecast.json?key=273d1d3ea19940fcbc7184258223103&q=Baku&days=7&dt=${date}`;
+    } else {
+      url = `https://api.weatherapi.com/v1/history.json?key=273d1d3ea19940fcbc7184258223103&q=Baku&dt=${date}`;
+    }
+    this.setState({
+      ...this.state,
+      map: {
+        ...this.state.map,
+        loading: true,
+      },
+    });
+    axios
+      .get(url)
+      .then((fetched_data) => {
+        const { forecast } = fetched_data["data"];
+        const { forecastday } = forecast;
+        const { day } = forecastday[0];
 
-      this.setState({
-        ...this.state, map: {
-          ...this.state.map, loading: false
-        },
-        temperature: {
-          ...this.state.temperature, data: { maxtemp_c, avgtemp_c, mintemp_c}
-        }
+        const { maxtemp_c, avgtemp_c, mintemp_c } = day;
+
+        this.setState({
+          ...this.state,
+          map: {
+            ...this.state.map,
+            loading: false,
+          },
+          temperature: {
+            ...this.state.temperature,
+            data: { maxtemp_c, avgtemp_c, mintemp_c },
+          },
+        });
       })
-     })
-     .catch(err => {
-      this.setState({
-        ...this.state, map: {
-          ...this.state.map, loading: false
-        }
-      })
-     })
-  }
+      .catch((err) => {
+        this.setState({
+          ...this.state,
+          map: {
+            ...this.state.map,
+            loading: false,
+          },
+        });
+      });
+  };
 
   toAddCampaign = () => {
-    window.location.reload()
-    this.props.history.push('/ad-manager/campaign-objective')
-  }
+    window.location.reload();
+    this.props.history.push("/ad-manager/campaign-objective");
+  };
+
+
+
+
+
+
+  handleReverseGeocode = () => {
+    Geocode.fromLatLng(
+      this.state.postCenter.lat,
+      this.state.postCenter.lng
+    ).then(
+      (response) => {
+        console.log(response);
+        const address = response.results[5].formatted_address;
+        this.setState({ ...this.state, address });
+      },
+      (error) => {
+        this.setState({ ...this.state, map: {
+          ...this.state.map, loading: false
+        } });
+      }
+    );
+  };
 
   render() {
     console.log(this.state);
@@ -287,6 +428,8 @@ class Dashboards extends Component {
       noise_level,
       user_input,
     } = this.state;
+
+    const {min,avg,max} = pedestrian
     const renderOnMap = pedestrian.display
       ? "pedestrian"
       : temperature.display
@@ -339,7 +482,7 @@ class Dashboards extends Component {
                     <img src={Pedestrian} />
                   </span>
                   <span>
-                    <h3>Pedestrian</h3>
+                    <h3>Population</h3>
                   </span>
                   <span>
                     <Button
@@ -367,9 +510,9 @@ class Dashboards extends Component {
                     <div className={classes.measures_and_img}>
                       <img src={PedestriansMeasure} alt="measure" />
                       <span className={classes.pedestrians_measures}>
-                        <p>2</p>
-                        <p>3</p>
-                        <p>4</p>
+                        <p>{min}</p>
+                        <p>{avg}</p>
+                        <p>{max}</p>
                       </span>
                     </div>
                     <p
@@ -443,24 +586,29 @@ class Dashboards extends Component {
                     >
                       Show tempature of:
                     </p>
-                    <div className={classes.date_picker_cont} id='date-picker'>
+                    <div className={classes.date_picker_cont} id="date-picker">
                       <DatePicker
                         className={`${classes.date_picker}`}
-                         format='yyyy-MM-dd'
+                        format="yyyy-MM-dd"
                         //picker="date"
-                         isClearable
-                         selected={date_picked}
-                         minDate={new Date(new Date().getFullYear(),
-                          new Date().getMonth(),
-                          new Date().getDate()-4)}
-                          maxDate={new Date(new Date().getFullYear(),
+                        isClearable
+                        selected={date_picked}
+                        minDate={
+                          new Date(
+                            new Date().getFullYear(),
                             new Date().getMonth(),
-                            new Date().getDate()+6)}
-                         onChange={(data) =>
-                          this.handleDateChange(data)
-
+                            new Date().getDate() - 4
+                          )
                         }
-                        placeholderText='Select date'
+                        maxDate={
+                          new Date(
+                            new Date().getFullYear(),
+                            new Date().getMonth(),
+                            new Date().getDate() + 6
+                          )
+                        }
+                        onChange={(data) => this.handleDateChange(data)}
+                        placeholderText="Select date"
                       />
                       <span className={classes.date_picker_icon}>
                         <img src={DateIcon} alt="date-picker icon" />
@@ -605,10 +753,10 @@ class Dashboards extends Component {
                   </span>
                   <span>
                     <Button
-                       onClick={this.toAddCampaign}
-                       className={classes.collapse_btn}
-                       color="white"
-                       aria-expanded={true}
+                      onClick={this.toAddCampaign}
+                      className={classes.collapse_btn}
+                      color="white"
+                      aria-expanded={true}
                     >
                       <img src={`${Add}`} alt="collapse icon" />
                     </Button>
