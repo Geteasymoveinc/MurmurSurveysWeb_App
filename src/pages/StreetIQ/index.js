@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import StreetIQMap from "./map";
+import { Link } from "react-router-dom";
 
 import { Button, Alert, TabContent, TabPane } from "reactstrap";
 
@@ -8,7 +9,7 @@ import Close from "../../assets/css/StreetIQ/close.svg";
 import ArrowRight from "../../assets/css/CreateAd/arrow-right.svg";
 import classes from "../../assets/css/Dashboard/dashboard.module.css";
 import classes2 from "../../assets/css/StreetIQ/index.module.css";
-import './scroolbar.css'
+import "./scroolbar.css";
 import "../../assets/css/app.css";
 
 import MapMulti from "../../assets/css/StreetIQ/map-multi.svg";
@@ -20,24 +21,11 @@ import axios from "axios";
 
 import Statistic from "./statistic";
 import Filters from "./filters";
-import Charts from './charts'
-
+import Charts from "./charts";
 
 Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
-const firebaseConfig = {
-  apiKey: "AIzaSyCufaPUqLeJ83iRcMEoq9wZoXxP8jyF2OY",
-  authDomain: "murmurdriverreactnativeapp.firebaseapp.com",
-  databaseURL: "https://murmurdriverreactnativeapp-default-rtdb.firebaseio.com",
-  projectId: "murmurdriverreactnativeapp",
-  storageBucket: "murmurdriverreactnativeapp.appspot.com",
-  messagingSenderId: "476698745619",
-  appId: "1:476698745619:web:32c16fa59b7df52a0818e6",
-  measurementId: "G-B6HKFHXVNN",
-};
 
-
-
-let ref = null
+let ref = null;
 class StreetIQMain extends Component {
   constructor(props) {
     super(props);
@@ -78,14 +66,14 @@ class StreetIQMain extends Component {
       },
       google: {
         country: "",
-        address: "",
+        address: "US",
         districts: [],
         center: {
           lat: 0,
-          lng: 0,
+          lng: 0
         },
         places: [],
-        zoom: 11,
+        zoom: 12,
         drivers: [],
         loaded: false,
         postCenter: {
@@ -98,19 +86,22 @@ class StreetIQMain extends Component {
         coordinates: [],
         alert_status: false,
         permission: true,
+    
       },
+      places: {
+        place: "",
+        list_of_places: []
+      }
     };
   }
- 
 
   //selecting options in filters
   selectFilterData = (option, type) => {
     const id = option.target.id;
     const filterMethod = this.state.filterMethod;
-    filterMethod[type] = id;  //segment(income,age and setera) and its filter value
+    filterMethod[type] = id; //segment(income,age and setera) and its filter value
     this.setState({ ...this.state, filterMethod });
   };
- 
 
   //switching from seaching by filter and input
   switchToDifferentQueryMode = () => {
@@ -172,8 +163,6 @@ class StreetIQMain extends Component {
     this.setState({ ...this.state, filterMethod, statistic, google, segments });
   };
 
-
-
   //filter method (sending filter data to backend)
   searchLocationsByFilterData = () => {
     const filters = this.state.filterMethod;
@@ -182,9 +171,11 @@ class StreetIQMain extends Component {
     let url = "";
 
     if (Country.includes("Azerbaijan")) {
-      url = "https://backendapp.murmurcars.com/api/v1/zipcode/filter-baku-demographics";
+      url =
+        "https://backendapp.murmurcars.com/api/v1/zipcode/filter-baku-demographics";
     } else {
-      url = "https://backendapp.murmurcars.com/api/v1/zipcode/filter-us-demographics";
+      url =
+        "https://backendapp.murmurcars.com/api/v1/zipcode/filter-us-demographics";
     }
 
     google.loaded = false;
@@ -213,22 +204,39 @@ class StreetIQMain extends Component {
       .catch((err) => console.log(err));
   };
 
- //location input
+  onPlaceSelected = (e) => {
+    const value = e.target.value;
+
+    this.setState({
+      ...this.state,
+      places: {
+        ...this.state.places,
+        place: value,
+      },
+    });
+  };
+  //location input
   onChangeLocationToZoomIn = (e) => {
     const google = this.state.google;
     google.postalCode = e.target.value;
     this.setState({ ...this.state, google });
   };
- 
+
   //submiting to backend and getting polygons and statistics
   submitLocationToZoomIn = (e) => {
     e.preventDefault();
     const statistic = this.state.statistic;
     const google = this.state.google;
-    google.loaded = false;
     let segments = this.state.segments;
+    const places = this.state.places
+
+    google.loaded = false;
+
     this.setState({ ...this.state, google });
-    if (google.address.includes("Azerbaijan") || google.address.includes("US")) {
+    if (
+      google.address.includes("Azerbaijan") ||
+      google.address.includes("US")
+    ) {
       if (google.address.includes("US")) {
         axios
           .post(
@@ -248,7 +256,7 @@ class StreetIQMain extends Component {
                   segments = [];
                   google.zoom = 12;
                   google.postCenter = { lat, lng };
-                  if(res.data.polygon) google.coordinates = [res.data.polygon];
+                  if (res.data.polygon) google.coordinates = [res.data.polygon];
                   google.loaded = true;
                   google.center = { lat, lng };
                   google.toggleCartWithAreaInformation = true;
@@ -286,16 +294,17 @@ class StreetIQMain extends Component {
       } else {
         axios
           .post(
-            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information",
+            "http://localhost:4000/api/v1/zipcode/get-district-information",
             {
               district: this.state.google.postalCode,
+              place: this.state.places.place,
             }
           )
           .then((res) => {
             if (res.data.status !== 204) {
               console.log(res.data);
-              const google = this.state.google;
-
+              
+              places.list_of_places = res.data.places.results 
               google.errorMessage = null;
               google.errorZipCode = false;
               google.hint = null;
@@ -321,10 +330,7 @@ class StreetIQMain extends Component {
               if (res.data.areaStatistic.Places) {
                 const Places = res.data.areaStatistic.Places;
                 const place_filter = this.state.filterMethod.Places;
-                console.log(place_filter);
-
-                console.log(Places);
-
+   
                 if (Places.length) {
                   const high_rated = Places[0]["high_rated"];
                   const low_rated = Places[1]["low_rated"];
@@ -346,6 +352,7 @@ class StreetIQMain extends Component {
                 statistic,
                 segments,
                 filterMethod,
+                places
               });
             } else {
               google.hint = res.data.hints;
@@ -356,30 +363,38 @@ class StreetIQMain extends Component {
               this.setState({
                 ...this.state,
                 google,
+                places
               });
             }
           })
           .catch((err) => {
-            console.log(err);
+  
+            google.toggleCartWithAreaInformation = false;
+            google.errorZipCode = true;
+            google.loaded = true;
+            this.setState({
+              ...this.state,
+              google,
+              places
+            });
           });
       }
     }
   };
 
-
-
-//filter method dhows all location and this is method for selecting and rendering data
+  //filter method dhows all location and this is method for selecting and rendering data
   selectedLocation = (district, index) => {
-
     const google = this.state.google;
     const country = google.address;
     let url = "";
     google.loaded = false;
     this.setState({ ...this.state, google });
     if (country.includes("Azerbaijan")) {
-      url = "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information";
+      url =
+        "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information";
     } else {
-      url = "https://backendapp.murmurcars.com/api/v1/zipcode/get-us-information";
+      url =
+        "https://backendapp.murmurcars.com/api/v1/zipcode/get-us-information";
     }
     axios.post(url, { district }).then((resp) => {
       const statistic = this.state.statistic;
@@ -482,13 +497,13 @@ class StreetIQMain extends Component {
   };
 
   componentDidMount() {
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    } else {
-      firebase.app(); // if already initialized, use that one
-    }
+    // if (!firebase.apps.length) {
+    //   firebase.initializeApp(firebaseConfig);
+    // } else {
+    //   firebase.app(); // if already initialized, use that one
+    // }
 
-    this.handleConnectionToFirebaseRealTimeDatabase();
+    //this.handleConnectionToFirebaseRealTimeDatabase();
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log(position);
@@ -516,9 +531,9 @@ class StreetIQMain extends Component {
           ...this.state,
           google: {
             ...this.state.google,
-             alert_status: false,
+            alert_status: false,
             loaded: true,
-             permission: true,
+            permission: true,
           },
         });
       }
@@ -526,7 +541,7 @@ class StreetIQMain extends Component {
   }
 
   handleConnectionToFirebaseRealTimeDatabase = () => {
-     ref = firebase.database().ref("users/");
+    ref = firebase.database().ref("users/");
     ref.on("value", (snapshot) => {
       const newValue = snapshot.val();
       //Convert Objects into Array
@@ -538,24 +553,25 @@ class StreetIQMain extends Component {
         ...this.state,
         google,
       });
-
     });
   };
- 
+
   handleReverseGeocode = () => {
+    const google = this.state.google;
     Geocode.fromLatLng(
       this.state.google.postCenter.lat,
       this.state.google.postCenter.lng
     ).then(
       (response) => {
-       const address = response.results[5].formatted_address;
-       const google = this.state.google;
+        const address = response.results[5].formatted_address;
+
         google.address = address;
         google.loaded = true;
         this.setState({ ...this.state, google });
       },
       (error) => {
-        console.error(error);
+        google.loaded = true;
+        this.setState({ ...this.state, google });
       }
     );
   };
@@ -571,15 +587,15 @@ class StreetIQMain extends Component {
     });
   };
 
-  componentWillUnmount(){
-    ref.off()
+  componentWillUnmount() {
+    //ref.off();
   }
   render() {
     console.log(this.state);
-    const { loaded, address, alert_status, permission, errorZipCode} =
+    const { loaded, address, alert_status, permission, errorZipCode } =
       this.state.google;
-    const { modal, activeTab} = this.state.statistic;
- 
+    const { modal, activeTab } = this.state.statistic;
+
     return (
       <React.Fragment>
         {!loaded && (
@@ -602,6 +618,7 @@ class StreetIQMain extends Component {
             <StreetIQMap
               maping={this.state.google}
               selectedLocation={this.selectedLocation}
+              list_of_places = {this.state.places.list_of_places}
             />
           </div>
 
@@ -641,7 +658,7 @@ class StreetIQMain extends Component {
               </div>*/}
               </div>
               <div
-                className={`${classes.dashboard_right} ${classes2.dash_856px}`}
+                className={`${classes.dashboard_right}  ${classes2.dash_856px}`}
               >
                 {this.state.google.errorZipCode ? (
                   <Alert color="danger">
@@ -719,7 +736,7 @@ class StreetIQMain extends Component {
                             {" "}
                             <div className={classes2.stc_place_head}>
                               <h5 className={classes2.stc_h5}>
-                                Statistics of the choosen Place:{" "}
+                              Statistics of the Choosen Location
                                 {this.state.statistic.district}
                               </h5>
                               <a
@@ -730,122 +747,162 @@ class StreetIQMain extends Component {
                                 <img src={ArrowRight} alt="" />
                               </a>
                             </div>
-                            <div className={classes2.stc_search_block}>
-                              <input
-                                type="text"
-                                className={classes2.stc_search_input}
-                                name="stc_search_input"
-                                id="stc_search_input"
-                                placeholder={address!=='US' ?'Enter district name' : 'Enter zipcode'}
-                                value={`${
-                                  this.state.google.postalCode &&
-                                  this.state.google.postalCode
-                                }`}
-                                onChange={this.onChangeLocationToZoomIn}
-                              />
-                              <button
-                                type="button"
-                                className={classes2.search_normal}
-                                onClick={this.submitLocationToZoomIn}
-                              >
-                                <img src={SearchNormal} alt="" />
-                              </button>
-                              <button
-                                type="button"
-                                className={classes2.stc_srch_close}
-                                onClick={() => {
-                                  const google = this.state.google;
-                                  google.postalCode = "";
-                                  this.setState({ ...this.state, google });
-                                }}
-                              >
-                                <img src={Close} alt="" />
-                              </button>
-                            </div>
+                            <form onSubmit={this.submitLocationToZoomIn}>
+                              <div className={classes2.stc_search_block}>
+                                <input
+                                  type="text"
+                                  className={classes2.stc_search_input}
+                                  name="stc_search_input"
+                                  id="stc_search_input"
+                                  placeholder={
+                                    !address.includes("US")
+                                      ? "Enter district name"
+                                      : "Enter zipcode"
+                                  }
+                                  value={`${
+                                    this.state.google.postalCode &&
+                                    this.state.google.postalCode
+                                  }`}
+                                  onChange={this.onChangeLocationToZoomIn}
+                                />
+                                <button
+                                  type="submit"
+                                  className={classes2.search_normal}
+                                  //onClick={this.submitLocationToZoomIn}
+                                >
+                                  <img src={SearchNormal} alt="" />
+                                </button>
+                                <button
+                                  type="button"
+                                  className={classes2.stc_srch_close}
+                                  onClick={() => {
+                                    const places = this.state.places;
+                                    places.place = "";
+                                    this.setState({ ...this.state, places });
+                                  }}
+                                >
+                                  <img src={Close} alt="" />
+                                </button>
+                                <button
+                                  type="button"
+                                  className={classes2.stc_srch_close_2}
+                                  onClick={() => {
+                                    const google = this.state.google;
+
+                                    google.postalCode = "";
+                                    this.setState({ ...this.state, google });
+                                  }}
+                                >
+                                  <img src={Close} alt="" />
+                                </button>
+                                <input
+                                  type="text"
+                                  className={`${classes2.stc_search_input} ${classes2.stc_search_place}`}
+                                  name="stc_search_input"
+                                  id="stc_search_input"
+                                  onChange={this.onPlaceSelected}
+                                  placeholder="Type place"
+                                  value={
+                                    this.state.places.place &&
+                                    this.state.places.place
+                                  }
+                                />
+                              </div>
+                            </form>
                           </>
-                        ) : 
+                        ) : (
                           <>
-                              <div className={classes2.streetIQ}>
-            <ul className={classes2.streetIQ_menu}>
-              <li
-                className={`${this.state.statistic.activeTab === "1" && classes2.active}`}
-              >
-                <a
-                  href="#"
-                  className={classes2.streetIQ_nav_a}
-                  onClick={() => {
-                    this.setState({
-                      ...this.state, statistic: {
-                        ...this.state.statistic,
-                        activeTab: '1'
-                      }
-                    })
-                 }}
-                >
-                  Statistics
-                </a>
-              </li>
-              <li
-                className={`${this.state.statistic.activeTab === "2" && classes2.active}`}
-              >
-                <a
-                  href="#"
-                  className={classes2.streetIQ_nav_a}
-                  onClick={() => {
-                     this.setState({
-                       ...this.state, statistic: {
-                         ...this.state.statistic,
-                         activeTab: '2'
-                       }
-                     })
-                  }}
-                >
-                  Charts
-                </a>
-              </li>
-            </ul>
-            </div>
-                        
-                      <>
-                      
-                        { activeTab==='1' && modal &&(
-                          <Statistic
-                            segments={this.state.segments}
-                            selectedDataSegment={this.selectedDataSegment}
-                            expandStatisticModalWithScrool={
-                              this.showMoreInDatabox
-                            }
-                            modal = {true}
-                            areaStatistic={this.state.statistic.areaStatistic}
-                            Places={this.state.filterMethod.Places}
-                            Country={this.state.google.address}
-                          />
-                        )}
-                     
-                        { activeTab==='2' && modal &&(
-                          <Charts
-                            segments={this.state.segments}
-                            selectedDataSegment={this.selectedDataSegment}
-                            expandStatisticModalWithScrool={
-                              this.showMoreInDatabox
-                            }
-                            areaStatistic={this.state.statistic.areaStatistic}
-                            Places={this.state.filterMethod.Places}
-                            Country={this.state.google.address}
-                            modal ={true}
-                          />
-                        )}
-                          
-                           </>
+                            <div className={classes2.streetIQ}>
+                              <ul className={classes2.streetIQ_menu}>
+                                <li
+                                  className={`${
+                                    this.state.statistic.activeTab === "1" &&
+                                    classes2.active
+                                  }`}
+                                >
+                                  <a
+                                    href="#"
+                                    className={classes2.streetIQ_nav_a}
+                                    onClick={() => {
+                                      this.setState({
+                                        ...this.state,
+                                        statistic: {
+                                          ...this.state.statistic,
+                                          activeTab: "1",
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    Statistics
+                                  </a>
+                                </li>
+                                <li
+                                  className={`${
+                                    this.state.statistic.activeTab === "2" &&
+                                    classes2.active
+                                  }`}
+                                >
+                                  <a
+                                    href="#"
+                                    className={classes2.streetIQ_nav_a}
+                                    onClick={() => {
+                                      this.setState({
+                                        ...this.state,
+                                        statistic: {
+                                          ...this.state.statistic,
+                                          activeTab: "2",
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    Charts
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+
+                            <>
+                              {activeTab === "1" && modal && (
+                                <Statistic
+                                  segments={this.state.segments}
+                                  selectedDataSegment={this.selectedDataSegment}
+                                  expandStatisticModalWithScrool={
+                                    this.showMoreInDatabox
+                                  }
+                                  modal={true}
+                                  areaStatistic={
+                                    this.state.statistic.areaStatistic
+                                  }
+                                  Places={this.state.filterMethod.Places}
+                                  Country={this.state.google.address}
+                                />
+                              )}
+
+                              {activeTab === "2" && modal && (
+                                <Charts
+                                  segments={this.state.segments}
+                                  selectedDataSegment={this.selectedDataSegment}
+                                  expandStatisticModalWithScrool={
+                                    this.showMoreInDatabox
+                                  }
+                                  areaStatistic={
+                                    this.state.statistic.areaStatistic
+                                  }
+                                  Places={this.state.filterMethod.Places}
+                                  Country={this.state.google.address}
+                                  modal={true}
+                                />
+                              )}
+                            </>
                           </>
-                      }
-                        
+                        )}
+
                         {!this.state.statistic.display && !modal && (
                           <div className={classes2.stc_zip_code}>
                             <img src={MapMulti} alt="" />
                             <p className={classes2.ztc_zip_p}>
                               {`Enter  ${
-                                address !== "US" ? "district name" : "zip code"
+                                !address.includes("US") ? "District Name" : "Zip Code"
                               } or search using Statistics`}
                             </p>
                           </div>
@@ -883,7 +940,9 @@ class StreetIQMain extends Component {
                         <div className={classes2.stc_place_drops}>
                           <Filters
                             filterMethod={this.state.filterMethod}
-                            searchLocationsByFilterData={this.searchLocationsByFilterData}
+                            searchLocationsByFilterData={
+                              this.searchLocationsByFilterData
+                            }
                             selectFilterData={this.selectFilterData}
                             Country={this.state.google.address}
                           />
@@ -892,6 +951,13 @@ class StreetIQMain extends Component {
                     )}
                   </div>
                 )}
+                <Link to="/ad-manager">
+                  <div className={classes.show_create_ad_place}>
+                    <p className={classes.choosen_create_ad_text}>
+                      Create Outdoor Ad
+                    </p>
+                  </div>
+                </Link>
               </div>
             </React.Fragment>
           )}

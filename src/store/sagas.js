@@ -10,6 +10,11 @@ import LayoutSaga from "./layout/saga";
 import PackageSaga from './auth/business/saga'
 import SubscribeSaga from "./auth/Subscribe/saga";
 
+
+//surveys
+
+import  SurveySaga from "./survey/sagas";
+
 export default function* rootSaga() {
   yield all([
     //public
@@ -20,6 +25,8 @@ export default function* rootSaga() {
     ResetPasswordSaga(),
     LayoutSaga(),
     PackageSaga(),
-    SubscribeSaga()
+    SubscribeSaga(),
+    //private
+    SurveySaga()
   ]);
 }

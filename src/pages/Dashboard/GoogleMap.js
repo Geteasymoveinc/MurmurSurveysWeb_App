@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
-import { Button, Alert } from "reactstrap";
+import { Button, Alert, Modal, ModalBody } from "reactstrap";
+import { Link } from "react-router-dom";
 
 import Pie from "./pieChart";
 import Bar from "./peopleReachedByWeekDays";
@@ -15,7 +16,7 @@ import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMe
 import Close from "../../assets/css/Dashboard/close.svg";
 
 import classes from "../../assets/css/Dashboard/dashboard.module.css";
-//import "../../assets/css/app.css";
+import "../../assets/css/app.css";
 import axios from "axios";
 
 Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
@@ -35,8 +36,8 @@ class GoogleMaps extends Component {
       toggleCartWithAreaInformation: false, //false
 
       center: {
-        lat: 41.8781,
-        lng: -87.6298,
+        lat:0,
+        lng:0,
       },
       zoom: 11,
       drivers: [],
@@ -66,101 +67,100 @@ class GoogleMaps extends Component {
       this.state.address.includes("Azerbaijan") ||
       this.state.address.includes("US")
     ) {
+      if (this.state.address.includes("US")) {
+        this.setState({ ...this.state, loaded: false });
+        axios
+          .post(
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords",
+            { postalCode: this.state.postalCode }
+          )
+          .then((res) => {
+            console.log(res.data);
+            if (res.data.status !== 204) {
+              Geocode.fromAddress("" + this.state.postalCode)
+                .then((response) => {
+                  const { lat, lng } = response.results[0].geometry.location;
+                  const areaStatistic = [];
 
-    
-    if (
-      this.state.address.includes("US")
-    ) {
-      this.setState({ ...this.state, loaded: false });
-      axios
-        .post(
-          "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords",
-          { postalCode: this.state.postalCode }
-        )
-        .then((res) => {
-          console.log(res.data);
-          if (res.data.status !== 204) {
-            Geocode.fromAddress("" + this.state.postalCode)
-              .then((response) => {
-                const { lat, lng } = response.results[0].geometry.location;
-                const areaStatistic = [];
+                  areaStatistic.push({
+                    General: res.data.areaStatistic.Population.General,
+                    population_age:
+                      res.data.areaStatistic.Population.population_age,
+                  });
+                  const statistic = this.state.statistic;
 
-                areaStatistic.push({
-                  General: res.data.areaStatistic.Population.General,
-                  population_age:
-                    res.data.areaStatistic.Population.population_age,
+                  statistic.location = this.state.postalCode;
+                  statistic.areaStatistic = areaStatistic;
+                  this.setState({
+                    ...this.state,
+                    coordinates: res.data.polygon,
+                    zoom: 13,
+                    loaded: true,
+                    postCenter: { lat, lng },
+                    errorZipCode: false,
+                    statistic,
+                    toggleCartWithAreaInformation: true,
+                  });
+                })
+                .catch((err) => {
+                  console.log(err);
                 });
-                const statistic = this.state.statistic;
-
-                statistic.location = this.state.postalCode;
-                statistic.areaStatistic = areaStatistic;
-                this.setState({
-                  ...this.state,
-                  coordinates: res.data.polygon,
-                  zoom: 13,
-                  loaded: true,
-                  postCenter: { lat, lng },
-                  errorZipCode: false,
-                  statistic,
-                  toggleCartWithAreaInformation: true,
-                });
-              })
-              .catch((err) => {
-                console.log(err);
+            } else {
+              this.setState({
+                ...this.state,
+                errorMessage: res.data.message,
+                errorZipCode: true,
+                hint: res.data.hints,
+                loaded: true,
               });
-          } else {
-            this.setState({
-              ...this.state,
-              errorMessage: res.data.message,
-              errorZipCode: true,
-              hint: res.data.hints,
-              loaded: true,
-            });
-          }
-        })
-        .catch((err) => console.log(err));
-    } else {
-      this.setState({ ...this.state, loaded: false });
-      axios
-        .post("https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information", {
-          district: this.state.postalCode,
-        })
-        .then((res) => {
-          if (res.data.status !== 204) {
-            const statistic = this.state.statistic;
-            statistic.areaStatistic = [res.data.areaStatistic["Population"]];
-            statistic.location = this.state.postalCode;
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        this.setState({ ...this.state, loaded: false });
+        axios
+          .post(
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information",
+            {
+              district: this.state.postalCode,
+            }
+          )
+          .then((res) => {
+            if (res.data.status !== 204) {
+              const statistic = this.state.statistic;
+              statistic.areaStatistic = [res.data.areaStatistic["Population"]];
+              statistic.location = this.state.postalCode;
 
-            this.setState({
-              ...this.state,
-              errorZipCode: false,
-              errorMessage: "",
-              postalCode: "",
-              hint: "",
-              loaded: true,
-              coordinates: res.data.polygons,
-              postCenter: res.data.center,
-              center: res.data.center,
-              zoom: 12,
-              toggleCartWithAreaInformation: true,
-              statistic,
-            });
-          } else {
-            this.setState({
-              ...this.state,
-              errorZipCode: true,
-              errorMessage: res.data.message,
-              loaded: true,
-              hint: res.data.hints,
-            });
-          }
-        })
-        .catch((err) => console.log(err));
+              this.setState({
+                ...this.state,
+                errorZipCode: false,
+                errorMessage: "",
+                postalCode: "",
+                hint: "",
+                loaded: true,
+                coordinates: res.data.polygons,
+                postCenter: res.data.center,
+                center: res.data.center,
+                zoom: 12,
+                toggleCartWithAreaInformation: true,
+                statistic,
+              });
+            } else {
+              this.setState({
+                ...this.state,
+                errorZipCode: true,
+                errorMessage: res.data.message,
+                loaded: true,
+                hint: res.data.hints,
+              });
+            }
+          })
+          .catch((err) => console.log(err));
+      }
+    } else {
+      this.setState({ ...this.state, alert_status: true });
+      return;
     }
-  }else{
-    this.setState({ ...this.state, alert_status: true });
-    return;
-  }
   }
   toggleCard() {
     console.log("run");
@@ -178,7 +178,9 @@ class GoogleMaps extends Component {
       (response) => {
         console.log(response);
         const address = response.results[5].formatted_address;
+       
         this.setState({ ...this.state, address, loaded: true });
+  
       },
       (error) => {
         this.setState({ ...this.state, loaded: true });
@@ -187,15 +189,21 @@ class GoogleMaps extends Component {
   };
 
   componentDidMount() {
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position);
+
         this.setState({
+          ...this.state,
           postCenter: {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           },
-          permission:true
+          center: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          permission: true,
         });
         this.handleReverseGeocode();
       },
@@ -212,28 +220,31 @@ class GoogleMaps extends Component {
 
   render() {
     console.log(this.state);
-    const { loaded, alert_status, permission, statistic} = this.state;
-    const {areaStatistic} = statistic
+    const { loaded, alert_status, permission, statistic, address } = this.state;
+    const { areaStatistic } = statistic;
     let male,
       female,
       location,
-      population= "";
+      population = "";
 
     let labels,
       data = [];
     if (areaStatistic.length) {
-      population = areaStatistic[0]['General']['population']
-      male =
-           areaStatistic[0]["General"]["population_males"];
-      female =
-        areaStatistic[0]["General"]["population_females"];
+      population = areaStatistic[0]["General"]["population"];
+      male = areaStatistic[0]["General"]["population_males"];
+      female = areaStatistic[0]["General"]["population_females"];
       location = statistic.location;
-      labels = Object.keys(
-        areaStatistic[0]["population_age"]
-      );
-      data = Object.values(
-          areaStatistic[0]["population_age"]
-      );
+      labels = Object.keys(areaStatistic[0]["population_age"]).map((el) => {
+        if (el.includes("_")) {
+          return el
+            .split("_")
+            .slice(1, el.length)
+            .reduce((total, el2) => total + "-" + el2);
+        } else {
+          return el;
+        }
+      });
+      data = Object.values(areaStatistic[0]["population_age"]);
     }
 
     return (
@@ -255,7 +266,7 @@ class GoogleMaps extends Component {
 
         <div className={classes.dash_right}>
           <div className={classes.map}>
-            <GoogleMap state={this.state} toggle={this.toggleCard} />
+            <GoogleMap state={this.state} location={address} toggle={this.toggleCard} />
           </div>
 
           {loaded && (
@@ -337,14 +348,13 @@ class GoogleMaps extends Component {
                   </Alert>
                 ) : null}
                 {alert_status && (
-                  <Alert className='d-flex align-items-center justify-content-between'>
+                  <Alert className="d-flex align-items-center justify-content-between">
                     {!permission
-                     ? 'Please activate geolocation in order to fetch data' 
-                    :  'We are not providing data in your region'}
-               
+                      ? "Please activate geolocation in order to fetch data"
+                      : "We are not providing data in your region"}
+
                     <Button
                       color="link"
-                      
                       onClick={() =>
                         this.setState({
                           ...this.state,
@@ -354,7 +364,6 @@ class GoogleMaps extends Component {
                     >
                       Close
                     </Button>
-           
                   </Alert>
                 )}
                 {!this.state.errorZipCode &&
@@ -366,9 +375,7 @@ class GoogleMaps extends Component {
                       <div className={classes.choosen_flex}>
                         <div className={classes.choosen_item}>
                           <p className={classes.choosen_item_p}>Population:</p>
-                          <h5 className={classes.choosen_h5}>
-                            {population}
-                          </h5>
+                          <h5 className={classes.choosen_h5}>{population}</h5>
                         </div>
                         <div className={classes.choosen_item}>
                           <p className={classes.choosen_item_p}>
@@ -380,7 +387,7 @@ class GoogleMaps extends Component {
                                 male={male}
                                 female={female}
                                 location={location}
-                                labels={['males', 'females']}
+                                labels={["males", "females"]}
                               />
                             </div>
                           </div>
@@ -428,9 +435,18 @@ class GoogleMaps extends Component {
                       this.setState({ toggleCartWithAreaInformation: true });
                     }}
                   >
-                    <p className={classes.choosen_show_text}>Show Data</p>
+                    <p className={classes.choosen_show_text}>
+                      Show Street Data
+                    </p>
                   </div>
                 ) : null}
+                <Link to="/ad-manager">
+                  <div className={classes.show_create_ad_place}>
+                    <p className={classes.choosen_create_ad_text}>
+                      Create Outdoor Ad
+                    </p>
+                  </div>
+                </Link>
               </div>
             </React.Fragment>
           )}

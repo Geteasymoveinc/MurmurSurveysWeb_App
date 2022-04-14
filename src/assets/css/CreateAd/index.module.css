@@ -483,10 +483,16 @@ input:checked + .slider:before {
 
 
 .cads_flex_th{
-  margin-top: 7px;
+ /* margin-top: 7px;*/
 }
 
 .invoice_th{
   margin-top: 7px;
+  position: relative;
+}
+
+.cads_check.invoice_th{
+  margin: 0;
+  margin-bottom:0;
   position: relative;
 }

@@ -123,7 +123,7 @@ class AdDetails extends React.Component {
     formData.append("ad_schedule_time",ad_schedule_time)
     formData.append('artWork_url', artWork_url)
     axios({
-      url:   `http://localhost:4000/api/v1/campaigns/${this.props.campaigns[0]._id}`,
+      url:   `https://backendapp.murmurcars.com/api/v1/campaigns/${this.props.campaigns[0]._id}`,
       method: "PUT",
       data: formData,
     })
@@ -224,7 +224,7 @@ class AdDetails extends React.Component {
                         image: campaigns[0].artWork_url,
                         display_quantity: campaigns[0].display_quantity,
                         area: campaigns[0].area,
-                        artWork_url: campaigns[0].artWork_url.split('http://localhost:4000/advertisers/media/uploads/')[1]
+                        artWork_url: campaigns[0].artWork_url.split('https://backendapp.murmurcars.com/advertisers/media/uploads/')[1]
                       
                       },
                     ],
@@ -255,7 +255,7 @@ class AdDetails extends React.Component {
                     image: campaigns[0].artWork_url,
                     display_quantity: campaigns[0].display_quantity,
                     area: campaigns[0].area,
-                    artWork_url: campaigns[0].artWork_url.split('http://localhost:4000/advertisers/media/uploads/')[1]
+                    artWork_url: campaigns[0].artWork_url.split('https://backendapp.murmurcars.com/advertisers/media/uploads/')[1]
                   },
                 ],
               });

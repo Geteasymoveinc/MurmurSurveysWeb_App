@@ -12,8 +12,11 @@ import Business from "./auth/business/reducer";
 import Subscribe from "./auth/Subscribe/reducer";
 import GoogleAuth from "./helpers/reducer";
 
+//surveys
+import Survey from './survey/reducer'
+
 const rootReducer = combineReducers({
-  // public
+  //public
   Layout,
   Login,
   Account,
@@ -22,6 +25,8 @@ const rootReducer = combineReducers({
   Business,
   Subscribe,
   GoogleAuth,
+  //private
+  Survey
 });
 
 export default rootReducer;

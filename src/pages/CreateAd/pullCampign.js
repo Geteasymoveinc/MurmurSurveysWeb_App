@@ -35,7 +35,7 @@ class Pullcampaigns extends Component {
   //Get Campigns from APi call
   getCampaigns = (auth) => {
     this.setState({ ...this.state, loading: true });
-    const allCampaigns = `http://localhost:4000/api/v1/campaigns/${auth}/all`;
+    const allCampaigns = `https://backendapp.murmurcars.com/api/v1/campaigns/${auth}/all`;
     return axios
       .get(allCampaigns)
       .then((response) => {
@@ -115,7 +115,7 @@ class Pullcampaigns extends Component {
           }
       }
     
-      axios.delete(`http://localhost:4000/api/v1/campaigns/delete/${list_of_ids}`)
+      axios.delete(`https://backendapp.murmurcars.com/api/v1/campaigns/delete/${list_of_ids}`)
       .then(() => {
         window.location.reload();
         this.setState({ ...this.state, loading: false });
@@ -357,7 +357,7 @@ class Pullcampaigns extends Component {
               <table>
                 <thead>
                   <tr className={classes.first_tr}>
-                    <th className={classes.cads_th}>
+                    <th className={`${classes.cads_th}`}>
                       <div
                         className={`${classes.cads_check} ${classes.invoice_th}`}
                       >

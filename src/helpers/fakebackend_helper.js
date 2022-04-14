@@ -122,22 +122,30 @@ const queryForEmail = (url, data) => {
 
 // postForgetPwd
 const postForgetPwd = (url, data) => {
-  console.log(data)
+
   return axios
     .post(url, data)
     .then((response) => {
       if(response.status===200 && response.data.status!==204){
            return response.data
       }else{
-
            throw response.data
-   
       }
     })
     .catch((err) => {
       throw err
     });
 };
+
+
+
+const post_surveys = (url, data) => {
+  return axios.post(url, data)
+  .then(response => {
+      return response
+  })
+  .catch(err => console.log(err))
+}
 
 export {
   getLoggedInUser,
@@ -146,6 +154,8 @@ export {
   postLogin,
   postForgetPwd,
   subscribe,
-  queryForEmail
+  queryForEmail,
+ //surveys
+  post_surveys
 
 };

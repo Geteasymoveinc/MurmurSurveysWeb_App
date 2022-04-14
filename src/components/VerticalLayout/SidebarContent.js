@@ -243,12 +243,12 @@ class SidebarContent extends Component {
                 </li>
               </ul>
             </li> */}
-            <li className="menu-title">Integrations</li>
+            {/* <li className="menu-title">Integrations</li> */}
             <li>
-              <Link to="/destination" className=" waves-effect">
+              {/* <Link to="/destination" className=" waves-effect">
                 <i className="bx bx-shuffle"></i>
                 <span>{this.props.t("Destination")}</span>
-              </Link>
+              </Link> */}
               {/* <ul className="sub-menu">
                 <li>
                   <Link to="#">{this.props.t("Login")}</Link>

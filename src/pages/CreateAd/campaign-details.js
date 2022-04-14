@@ -21,7 +21,7 @@ class CampaignDetails extends React.Component {
     this.state = {
       campaign: {
         campaign_name: null,
-        adCategory: 'Consumer Services',
+        adCategory: "Consumer Services",
       },
       error: { campaign_name: false },
     };
@@ -33,15 +33,18 @@ class CampaignDetails extends React.Component {
     event.preventDefault();
     let hasNull = false;
     const { createAdDetails } = this.props;
-    const {error} = this.state
-    const {campaign} = this.state
+    const { error } = this.state;
+    const { campaign } = this.state;
     const states = Object.keys(campaign);
-    console.log(states)
+    console.log(states);
     for (let i = 0; i < states.length; i++) {
-      if (this.state.campaign[states[i]] === null || !this.state.campaign[states[i]].length) {
+      if (
+        this.state.campaign[states[i]] === null ||
+        !this.state.campaign[states[i]].length
+      ) {
         error[states[i]] = true;
-        console.log(error)
-        this.setState({campaign, error})
+        console.log(error);
+        this.setState({ campaign, error });
         hasNull = true;
       }
     }
@@ -52,8 +55,8 @@ class CampaignDetails extends React.Component {
   }
   handleChange = (event, name) => {
     const value = event.target.value;
-    const {campaign} = this.state
-    const {error} = this.state
+    const { campaign } = this.state;
+    const { error } = this.state;
     this.setState({
       ...this.state,
       campaign: { ...campaign, [name]: value },
@@ -228,19 +231,18 @@ class CampaignDetails extends React.Component {
             </div>
             <div className={classes.create_details}>
               <div className={classes.create_step_1}>
-                <h4 className={classes.create_step_h4}>Campaing Details</h4>
-                <p className={classes.create_step_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non
-                  facilisis quis a faucibus.
-                </p>
+                <h4 className={classes.create_step_h4}>Campaign Details</h4>
+
                 <div className={classes.step_max_form}>
                   <form onSubmit={this.submit}>
                     <div className={classes.step_form_item}>
                       <label
                         htmlFor="step-campaing-name"
-                        className={`${classes.step_label} ${ error["campaign_name"] ? classes.pass_error_text : ''}` }
+                        className={`${classes.step_label} ${
+                          error["campaign_name"] ? classes.pass_error_text : ""
+                        }`}
                       >
-                        Campaing Name
+                        Campaign Name
                       </label>
                       <div className={classes.step_relative}>
                         <input
@@ -256,7 +258,7 @@ class CampaignDetails extends React.Component {
                           placeholder="Campaing name"
                         />
                         <img
-                          src={error['campaign_name'] ? TextError : Text}
+                          src={error["campaign_name"] ? TextError : Text}
                           alt=""
                           className={classes.step_form_icon}
                         />
@@ -275,9 +277,10 @@ class CampaignDetails extends React.Component {
                           name="adCategory"
                           id="step-categories"
                           className={classes.step_select_item}
-                          onChange={event =>  this.handleChange(event,'adCategory')}
+                          onChange={(event) =>
+                            this.handleChange(event, "adCategory")
+                          }
                         >
-                   
                           <option value="Consumer Services">
                             Consumer Services
                           </option>
@@ -305,7 +308,6 @@ class CampaignDetails extends React.Component {
                           className={classes.step_select_icon}
                         />
                       </div>
-       
                     </div>
                     <button type="submit" className={classes.step2_btn}>
                       Next
@@ -327,21 +329,21 @@ class CampaignDetails extends React.Component {
               <div className={classes.create_info}>
                 <p className={classes.create_info_icon}>
                   <img src={InfoCircle} alt="" />
-                  <span>Info</span>
+                  <span>Information</span>
                 </p>
                 <ul className={classes.create_info_ul}>
                   <li>
-                    <p className={classes.create_ul_p}>Campaing Name</p>
+                    <p className={classes.create_ul_p}>Campaign Name</p>
                     <div className={classes.create_ul_txt}>
-                      We do`t advertice tabaco, adult and alcohol products &
-                      services
+                      We do not advertise tabacco, adult and alcohol products
+                      and services
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Categories</p>
                     <div className={classes.create_ul_txt}>
-                      You're required to declare if your ads are related to
-                      credit, employment or housing opportunities or related to
+                      You are required to declare if your ads are related to
+                      credit, employment and housing opportunities or related to
                       social issues, elections or politics.
                     </div>
                   </li>

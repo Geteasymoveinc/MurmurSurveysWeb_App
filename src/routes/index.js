@@ -75,7 +75,7 @@ const publicRoutes = [
   { path: "/email-sent", component: EmailSent },
   { path: "/register", component: Register },
   { path: "/reset-password", component: resetPassword },
-  { path: "/business", component: Business },
+  { path: "/subscribe_package", component: Business },
   { path: "/subscribe", component: Subscribe },
 ];
 

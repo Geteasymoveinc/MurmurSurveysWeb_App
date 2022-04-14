@@ -18,10 +18,10 @@
   overflow:hidden
 }
 .choose_modal_section{
-  height: 560px;
-  max-height: 560px;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  
+  max-height: 490px;
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
 }
 .stc_h5{
   font-weight: 500;
@@ -65,11 +65,12 @@
 .stc_search_block{
   position:relative;
   margin-top:16px;
+  display: flex;
 }
 .stc_search_input{
   display:block;
   /*width:calc(100% - 106px);*/
-  width:100%;
+  width:75%;
   height:40px;
   border: 1px solid #EDF1F7;
   background: #F7F9FC;
@@ -103,6 +104,9 @@
 .stc_search_input:-moz-placeholder { 
   color: #8F9BB3;
 }
+.stc_search_input.stc_search_place{
+  width:25%
+}
 .stc_zip_code{
   text-align:center;
   padding-top:16px;
@@ -115,7 +119,7 @@
   font-size: 14px;
   line-height: 20px;
 }
-.stc_srch_close,.search_normal{
+.stc_srch_close,.stc_srch_close_2,.search_normal{
   border:0;
   padding:0;
   background:transparent;
@@ -129,6 +133,11 @@
   position: absolute;
   top: 8px;
   right: 16px;
+}
+.stc_srch_close_2{
+  position: absolute;
+  top: 8px;
+  right: 210px;
 }
 .stc_result_list{
   display: -webkit-box;
@@ -203,6 +212,7 @@
 }
 .stc_place_drops{
   margin-top:16px;
+
 }
 .stc_drop{
   margin-bottom:24px;
@@ -360,7 +370,7 @@
 }
 .button_fixed button{
   position: absolute;
-  bottom: 500px;
+  bottom: 430px;
 
 }
 

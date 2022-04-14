@@ -85,8 +85,8 @@ class Dashboards extends Component {
       map: {
         loading: true,
         center: {
-          lng: 49.89201,
-          lat: 40.37767,
+          lng: 0,
+          lat: 0,
         },
         zoom: 11,
 

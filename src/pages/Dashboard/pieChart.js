@@ -1,5 +1,6 @@
 import ReactApexChart from "react-apexcharts";
 import React, { Component } from "react";
+import "../../assets/css/app.css";
 
 class PieChart extends Component {
   constructor(props) {
@@ -60,7 +61,6 @@ class PieChart extends Component {
   }
   componentDidUpdate(prevProps, prevState) {
     if (prevState.location !== this.props.location) {
-      console.log("update");
       this.setState({
         location: this.props.location,
         series: [
@@ -77,7 +77,7 @@ class PieChart extends Component {
           options={this.state.options}
           series={this.state.series}
           type="pie"
-          height={100}
+          height={130}
           width={240}
         />
       </div>

@@ -257,7 +257,7 @@ class CreateAdDashboard extends Component {
       formData.append("images", image);
     }
     axios({
-      url: "http://localhost:4000/api/v1/campaigns/create",
+      url: "https://backendapp.murmurcars.com/api/v1/campaigns/create",
       method: "POST",
       data: formData,
     })
@@ -408,10 +408,9 @@ class CreateAdDashboard extends Component {
                 <div className={classes.ads_section}>
                   <div className={classes.cads_head}>
                     <div className={classes.cads_head_left}>
-                      <h4 className={classes.cads_h4}>Current Ads</h4>
+                      <h4 className={classes.cads_h4}>Your Current Ads</h4>
                       <p className={classes.cads_p}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Tortor lacinia vel pulvinar pellentesque. Dolor.
+                      Here you can view the status of your ads with all the necessary details
                       </p>
                     </div>
                     <button

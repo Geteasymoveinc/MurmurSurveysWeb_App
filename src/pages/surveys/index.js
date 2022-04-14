@@ -14,13 +14,20 @@ import Preview from "./preview";
 import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 
 import { changeSideBar } from "../../store/actions";
+import { publish_survey } from "../../store/actions";
 import { connect } from "react-redux";
+
 import { Link, withRouter } from "react-router-dom";
+
+import axios from "axios";
+import { queryForEmail } from "../../helpers/fakebackend_helper";
 
 class Survey extends Component {
   constructor(props) {
     super(props);
     this.state = {
+
+      user_id:'',
       menu: {
         menu_item: "questions",
         preview: false,
@@ -41,10 +48,10 @@ class Survey extends Component {
       ...this.state,
       menu: {
         ...this.state.menu,
-        preview: !this.state.menu.preview
-      }
-    })
-  }
+        preview: !this.state.menu.preview,
+      },
+    });
+  };
 
   componentWillUnmount() {
     document.body.classList.remove("grey-background");
@@ -53,11 +60,56 @@ class Survey extends Component {
     console.log(this.props.history);
     document.body.classList.add("grey-background");
     this.props.changeSideBar(false);
+
+    queryForEmail(
+      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      {
+        email: this.state.stng_email,
+      }
+    )
+    .then(user => {
+         this.setState({
+           ...this.state,
+           user_id: user.id
+         })
+    })
+    .catch(err => console.log(err))
   }
+  submitNewSurvey = (event) => {
+    event.preventDefault();
+    const { price, title, surveys, settings } = this.props;
+
+    console.log(price, title, surveys, settings);
+    let post_survey = {
+      survey_title: title.title,
+      survey_status: settings.active,
+      survey_earnings: price.price,
+      
+    };
+
+    let survey_question = surveys.map((survey) => {
+      return {
+        question: survey.question,
+        type: survey.type,
+        answers: survey.answers,
+        important: survey.important,
+      };
+    });
+
+    post_survey["survey_questions"] = survey_question;
+
+    this.props.publish_survey({
+      data: post_survey,
+      user_id: this.state.user_id,
+      history: this.props.history,
+    });
+  };
 
   render() {
-    const { menu } = this.state;
+    const { menu, fetch_questions } = this.state;
     const { menu_item, preview: preview_mode } = menu;
+
+    console.log(this.props);
     return (
       <Fragment>
         {this.props.loading && (
@@ -130,10 +182,17 @@ class Survey extends Component {
               <div className={classes.dash_relative}>
                 <div className={classes.search_box_flex}>
                   <button className={classes.pass_eye}>
-                    <img src={Eye} alt="icon" onClick={this.togglePreviewMode}/>
+                    <img
+                      src={Eye}
+                      alt="icon"
+                      onClick={this.togglePreviewMode}
+                    />
                   </button>
-                  <form >
-                    <button className={classes.publish_survey}>
+                  <form>
+                    <button
+                      className={classes.publish_survey}
+                      onClick={this.submitNewSurvey}
+                    >
                       <span>Publish</span>
                     </button>
                   </form>
@@ -141,17 +200,24 @@ class Survey extends Component {
                 </div>
               </div>
             </header>
-           
-            {(!preview_mode && menu_item === "questions") && <SurveyQuestion />}
-            {(!preview_mode && menu_item === "settings") && <SurveySettings />}
-            {(!preview_mode && menu_item === "analytics") && <SurveyAnalytics />}
-            {(!preview_mode && menu_item === "answers") && <SurveyAnswers />}
-            {preview_mode && <Preview/>}        
+
+            {!preview_mode && menu_item === "questions" && <SurveyQuestion />}
+            {!preview_mode && menu_item === "settings" && <SurveySettings />}
+            {!preview_mode && menu_item === "analytics" && <SurveyAnalytics />}
+            {!preview_mode && menu_item === "answers" && <SurveyAnswers />}
+            {preview_mode && <Preview />}
           </div>
         )}
       </Fragment>
     );
   }
 }
+const mapPropsToState = (state) => {
+  const { surveys, title, price, settings } = state.Survey;
 
-export default connect(null, { changeSideBar })(withRouter(Survey));
+  return { surveys, title, price, settings };
+};
+
+export default connect(mapPropsToState, { changeSideBar, publish_survey })(
+  withRouter(Survey)
+);

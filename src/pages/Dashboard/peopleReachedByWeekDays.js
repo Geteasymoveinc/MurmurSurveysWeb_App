@@ -142,7 +142,7 @@ class PeopleReachedByWeekDay extends Component {
           series={this.state.series}
           type="bar"
           width={250}
-          height={122}
+          height={102}
         />
       </div>
     );

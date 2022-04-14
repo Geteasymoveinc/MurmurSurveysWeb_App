@@ -249,7 +249,14 @@
     border: transparent;
     border-bottom: 2px solid   #8F9BB3;
   }
-  
+  .title_image_container .user_input_setting img{
+    position: absolute;
+    top:15px;
+    left:2px;
+  }
+  .title_image_container .user_input_setting img:hover{
+    cursor: pointer;
+  }
   /*title_image_container----end*/
   /*survey_amount_price----start*/
   .survey_amount_price {
@@ -337,7 +344,13 @@
       height:25px;
       position: relative;
       top:0;
+      left: 15px;
       margin-right: 5px;
+  }
+
+
+  .user_input_setting_hotisontal img:hover{
+    cursor: pointer;
   }
   /*----survey_amount_price --end*/
   
@@ -593,6 +606,7 @@ color: #8F9BB3;
   .survey_input_align_center .flex_row{
     display: flex;
     align-items: center;
+    padding-bottom: 8px;
   }
   
   .spacing_between{
@@ -689,7 +703,9 @@ color: #8F9BB3;
   
   
   
-  
+  .question_answer label{
+    margin-left: 10px !important;
+  }
   .question_answer .add_question label{
     font-family: 'Montserrat';
     font-style: normal;

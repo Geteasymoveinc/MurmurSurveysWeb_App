@@ -18,18 +18,26 @@ import { connect } from "react-redux";
 
 import { Link, withRouter } from "react-router-dom";
 
+import Geocode from "react-geocode";
+
+Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+
 class Audience extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      
+      location: {
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+      },
       audience: {
-        Country: "Azerbaijan",
+        Country: "",
         age: "18-25",
         gender: "Male",
         specificAttribute: null,
-        location: 'nizami',
-        
+        location: "nizami",
       },
       error: {
         specificAttribute: false,
@@ -49,7 +57,10 @@ class Audience extends React.Component {
     const states = Object.keys(audience);
     console.log(states);
     for (let i = 0; i < states.length; i++) {
-      if (this.state.audience[states[i]] === null || !this.state.audience[states[i]].length) {
+      if (
+        this.state.audience[states[i]] === null ||
+        !this.state.audience[states[i]].length
+      ) {
         error[states[i]] = true;
         console.log(error);
         this.setState({ audience, error });
@@ -63,8 +74,8 @@ class Audience extends React.Component {
   }
   handleChange = (event, name) => {
     const value = event.target.value;
-    const {audience} = this.state
-    const {error} = this.state
+    const { audience } = this.state;
+    const { error } = this.state;
     this.setState({
       ...this.state,
       audience: { ...audience, [name]: value },
@@ -84,31 +95,73 @@ class Audience extends React.Component {
     //this.props.apiError("");
 
     document.body.classList.add("bg-transparent");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = this.state.location;
+
+        location.center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+
+        this.setState({
+          ...this.state,
+          location,
+        });
+        this.handleReverseGeocode();
+      },
+      (err) => {
+        this.setState({
+          ...this.state,
+        });
+      }
+    );
   }
+  handleReverseGeocode = () => {
+    let audience = this.state.audience;
+    Geocode.fromLatLng(
+      this.state.location.center.lat,
+      this.state.location.center.lng
+    ).then(
+      (response) => {
+        const address = response.results[5].formatted_address;
+
+        audience.Country = address.includes("Azerbaijan") ? "Azerbaijan" : "US";
+        this.setState({ ...this.state, audience });
+      },
+      (error) => {
+        this.setState({ ...this.state, audience });
+      }
+    );
+  };
   componentWillUnmount() {
     document.body.classList.remove("bg-transparent");
   }
-  
-  componentDidUpdate(props, state){
-        if(state.audience.Country!==this.state.audience.Country){
-          if(this.state.audience.Country!=='Azerbaijan'){
-            this.setState({
-              ...this.state, audience:{
-                ...this.state.audience, location: null
-              }
-            })
-          }else{
-            this.setState({
-              ...this.state, audience:{
-                ...this.state.audience, location: 'nizami'
-              }
-            })
-          }
-        }
+
+  componentDidUpdate(props, state) {
+    if (state.audience.Country !== this.state.audience.Country) {
+      if (this.state.audience.Country !== "Azerbaijan") {
+        this.setState({
+          ...this.state,
+          audience: {
+            ...this.state.audience,
+            location: null,
+          },
+        });
+      } else {
+        this.setState({
+          ...this.state,
+          audience: {
+            ...this.state.audience,
+            location: "nizami",
+          },
+        });
+      }
+    }
   }
   render() {
     console.log(this.state);
-    const {error} = this.state
+    const { error } = this.state;
     return (
       <React.Fragment>
         <header className={classes2.header}>
@@ -149,7 +202,7 @@ class Audience extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Objective
+                    Campaign Objective
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -262,10 +315,7 @@ class Audience extends React.Component {
             <div className={classes.audience_step}>
               <div className={classes.create_step_1}>
                 <h4 className={classes.create_step_h4}>Audience</h4>
-                <p className={classes.create_step_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non
-                  facilisis quis a faucibus.
-                </p>
+
                 <div className={classes.step_max_form}>
                   <form onSubmit={this.submit}>
                     <div className={classes.step_form_item}>
@@ -280,7 +330,7 @@ class Audience extends React.Component {
                           name="age"
                           id="step-aud-age"
                           className={classes.step_select_item}
-                          onChange={e => this.handleChange(e, 'age')}
+                          onChange={(e) => this.handleChange(e, "age")}
                         >
                           <option value="" disabled>
                             Select Age
@@ -312,7 +362,7 @@ class Audience extends React.Component {
                           name="gender"
                           id="step-aud-gender"
                           className={classes.step_select_item}
-                          onChange={e => this.handleChange(e,'gender')}
+                          onChange={(e) => this.handleChange(e, "gender")}
                         >
                           <option value="" disabled>
                             Select Gender
@@ -332,21 +382,31 @@ class Audience extends React.Component {
                     <div className={classes.step_form_item}>
                       <label
                         htmlFor="step-attributes"
-                        className={`${classes.step_label} ${error['specificAttribute']? classes.pass_error_text: ''}`}
+                        className={`${classes.step_label} ${
+                          error["specificAttribute"]
+                            ? classes.pass_error_text
+                            : ""
+                        }`}
                       >
-                        Audience Specific attributes
+                        Audience Specific Attributes
                       </label>
                       <div className={classes.step_relative}>
                         <input
                           type="text"
-                          className={`${classes.step_element} ${error['specificAttribute']? classes.pass_error:''}`}
+                          className={`${classes.step_element} ${
+                            error["specificAttribute"] ? classes.pass_error : ""
+                          }`}
                           name="step-attributes"
                           id="step-attributes"
                           placeholder="For exapmle: Audience wearing"
-                          onChange={e => this.handleChange(e, 'specificAttribute')}
+                          onChange={(e) =>
+                            this.handleChange(e, "specificAttribute")
+                          }
                         />
                         <img
-                          src={error['specificAttribute']? HashtagError: Hashtag}
+                          src={
+                            error["specificAttribute"] ? HashtagError : Hashtag
+                          }
                           alt=""
                           className={classes.step_form_icon}
                         />
@@ -363,15 +423,17 @@ class Audience extends React.Component {
                       <div className={classes.step_relative}>
                         <input
                           type="text"
-                          className={`${classes.step_element} ${error.Country? classes.pass_error: ''}`}
+                          className={`${classes.step_element} ${
+                            error.Country ? classes.pass_error : ""
+                          }`}
                           name="step-aud-country"
                           id="step-aud-country"
                           placeholder="Enter Country"
                           value={this.state.audience.Country}
-                          onChange={e => this.handleChange(e, 'Country')}
+                          onChange={(e) => this.handleChange(e, "Country")}
                         />
                         <img
-                           src={error.Country ? LocationError : Location}
+                          src={error.Country ? LocationError : Location}
                           alt=""
                           className={classes.step_form_icon}
                         />
@@ -391,7 +453,7 @@ class Audience extends React.Component {
                             name="step-aud-location"
                             id="step-aud-location"
                             className={classes.step_select_item}
-                            onChange={e => this.handleChange(e,'location')}
+                            onChange={(e) => this.handleChange(e, "location")}
                           >
                             <option value="nizami">Nizami</option>
                             <option value="nasimi">Nasimi</option>
@@ -409,15 +471,23 @@ class Audience extends React.Component {
                         ) : (
                           <input
                             type="text"
-                            className={`${classes.step_element} ${error.location ? classes.pass_error: ''}`}
+                            className={`${classes.step_element} ${
+                              error.location ? classes.pass_error : ""
+                            }`}
                             name="step-aud-location"
                             id="step-aud-location"
                             placeholder="Enter zip code"
-                            onChange={e => this.handleChange(e, 'location')}
+                            onChange={(e) => this.handleChange(e, "location")}
                           />
                         )}
                         <img
-                          src={this.state.audience.Country==='Azerbaijan'? ArrowDown: error.location ? LocationError : Location}
+                          src={
+                            this.state.audience.Country === "Azerbaijan"
+                              ? ArrowDown
+                              : error.location
+                              ? LocationError
+                              : Location
+                          }
                           alt=""
                           className={`${
                             this.state.audience.Country !== "US"
@@ -448,19 +518,19 @@ class Audience extends React.Component {
               <div className={classes.create_info}>
                 <p className={classes.create_info_icon}>
                   <img src={InfoCircle} alt="" />
-                  <span>Info</span>
+                  <span>Information</span>
                 </p>
                 <ul className={classes.create_info_ul}>
                   <li>
                     <p className={classes.create_ul_p}>Audience Age</p>
                     <div className={classes.create_ul_txt}>
-                      Define the age of who you want to see your ads.
+                      Define the age of your audience for the ad
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Audience Gender</p>
                     <div className={classes.create_ul_txt}>
-                      Define the gender of who you want to see your ads.
+                      Define the gender of your audience for the ad
                     </div>
                   </li>
                   <li>
@@ -468,15 +538,18 @@ class Audience extends React.Component {
                       Audience Specific Attibutes
                     </p>
                     <div className={classes.create_ul_txt}>
-                      Define the some tags/attibution which specific to your
+                      Define tags/attributions which are specific to your
                       audience.
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Audience Location</p>
                     <div className={classes.create_ul_txt}>
-                      Define the location where you want to show your ads. Add
-                      ZipCodes.
+                      Define the location where you show your ad. Do not forget
+                      to put{" "}
+                      {this.state.audience.Country.includes("Azerbaijan")
+                        ? "District Name"
+                        : "Zip Code"}
                     </div>
                   </li>
                 </ul>

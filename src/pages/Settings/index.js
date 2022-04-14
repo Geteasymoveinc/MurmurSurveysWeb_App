@@ -61,6 +61,7 @@ class Settings extends Component {
       wrong_credentials: [],
       user_billing: {
         user_id: "",
+        _id:'',
         hasBilling: false,
         billing: {
           billing_id: "",
@@ -201,6 +202,7 @@ class Settings extends Component {
       formData.append("photo", this.state.profile_photo);
       formData.append("companyAddress", this.state.stng_address);
       formData.append("profilePhoto", this.state.file);
+      //formData.append('billing_id', this.state.user_billing._id)
       axios({
         url: `https://backendapp.murmurcars.com/api/v1/users/update/${this.state.stng_id}`,
         method: "PUT",
@@ -211,7 +213,7 @@ class Settings extends Component {
           sessionStorage.removeItem("profileImage");
           sessionStorage.setItem(
             "profileImage",
-            `https://backendapp.murmurcars.com/advertisers/users/profilePhoto/${this.state.profile_photo}`
+            `http://backendapp.murmurcars.com/advertisers/users/profilePhoto/${this.state.profile_photo}`
           );
           this.setState({ ...this.state, loading: false });
         })
@@ -240,11 +242,11 @@ class Settings extends Component {
           .then((user) => {
             console.log(user);
 
-            const user_billing = this.state.user_billing;
+            /*const user_billing = this.state.user_billing;
             const billing_state = user_billing.billing
             let hasBilling = this.state.user_billing.hasBilling
 
-            if(user.data){
+            if(user.data.length){
               user_billing._id = user.data._id
               const  billing = user.data.billing
               hasBilling = true
@@ -254,6 +256,7 @@ class Settings extends Component {
               billing_state.billing_id = billing[0]._id
             }
           }
+          console.log(user_billing)*/
             this.setState({
               ...this.state,
               stng_id: data._id,
@@ -273,13 +276,13 @@ class Settings extends Component {
                     "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
                   )[1]
                 : null,
-              user_billing: {
+              /*user_billing: {
                 ...user_billing,
                 hasBilling,
                 billing: {
                   ...billing_state
                 }
-              }
+              }*/
             })
             
           })

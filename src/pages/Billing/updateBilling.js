@@ -71,33 +71,36 @@ class UpdateModal extends React.Component{
                             />
                           </svg>
                         </small>
-                        <span>Walk</span>
+                        <span>Walk Plan</span>
                       </p>
                       <p className="plan_month">
                         <span>$10</span>
                         <small>/month</small>
                       </p>
-                      <div className="plan_txt">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Varius.
-                      </div>
+                 
                       <ul className="plan_ul">
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>Number of Street IQ API calls - 20 </span>
                           </p>
                         </li>
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>Limited Street Level Data</span>
                           </p>
                         </li>
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>No discount for advertising</span>
+                          </p>
+                        </li>
+                        <li>
+                          <p className="plan_ul_p">
+                            <img src={check} alt="" />
+                            <span>No access to interest data</span>
                           </p>
                         </li>
                       </ul>
@@ -140,33 +143,30 @@ class UpdateModal extends React.Component{
                             />
                           </svg>
                         </small>
-                        <span>Run</span>
+                        <span>Run Plan</span>
                       </p>
                       <p className="plan_month">
                         <span>$55</span>
                         <small>/month</small>
                       </p>
-                      <div className="plan_txt">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Varius.
-                      </div>
+            
                       <ul className="plan_ul">
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>Number of Street IQ API calls - 60 </span>
                           </p>
                         </li>
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>Advanced Street IQ data</span>
                           </p>
                         </li>
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>The 5% discount for street advertising</span>
                           </p>
                         </li>
                       </ul>
@@ -208,33 +208,36 @@ class UpdateModal extends React.Component{
                             />
                           </svg>
                         </small>
-                        <span>Fly</span>
+                        <span>Fly Plan</span>
                       </p>
                       <p className="plan_month">
                         <span>$75</span>
                         <small>/month</small>
                       </p>
-                      <div className="plan_txt">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Varius.
-                      </div>
+            
                       <ul className="plan_ul">
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>Number of Street IQ API calls - 150</span>
                           </p>
                         </li>
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>Advanced Street IQ Data</span>
                           </p>
                         </li>
                         <li>
                           <p className="plan_ul_p">
                             <img src={check} alt="" />
-                            <span>Feature one</span>
+                            <span>The 10% discount for street advertising</span>
+                          </p>
+                        </li>
+                        <li>
+                          <p className="plan_ul_p">
+                            <img src={check} alt="" />
+                            <span>Help in using a customer journey map</span>
                           </p>
                         </li>
                       </ul>

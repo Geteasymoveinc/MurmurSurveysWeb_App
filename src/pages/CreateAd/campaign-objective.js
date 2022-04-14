@@ -186,11 +186,10 @@ class CampaignObjective extends React.Component {
             <div className={classes.create_objective}>
               <div className={classes.create_step_1}>
                 <h4 className={classes.create_step_h4}>
-                  Choose a Campaing Objective
+                Choose Your Campaign Objective
                 </h4>
                 <p className={classes.create_step_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non
-                  facilisis quis a faucibus.
+                Fill out all the necessary sections in order to create your ad on Murmur
                 </p>
                 <ul className={classes.max_width_step}>
                   <li>
@@ -237,25 +236,25 @@ class CampaignObjective extends React.Component {
               <div className={classes.create_info}>
                 <p className={classes.create_info_icon}>
                   <img src={InfoCircle} alt="" />
-                  <span>Info</span>
+                  <span>Information</span>
                 </p>
                 <ul className={classes.create_info_ul}>
                   <li>
                     <p className={classes.create_ul_p}>Brand awareness</p>
                     <div className={classes.create_ul_txt}>
-                      Show your ads to people who most likely to remember them
+                    Show your ads to people who most likely to remember them
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Reach</p>
                     <div className={classes.create_ul_txt}>
-                      Show your ads to the maximum number of people
+                    Show your ads to the maximum number of people
                     </div>
                   </li>
                   <li>
                     <p className={classes.create_ul_p}>Traffic</p>
                     <div className={classes.create_ul_txt}>
-                      Send people to a destination, like webpage, event, etc
+                    Send people to webpage, event and other destionations
                     </div>
                   </li>
                 </ul>

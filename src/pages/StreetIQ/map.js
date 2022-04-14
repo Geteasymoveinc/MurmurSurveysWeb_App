@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Fragment, Component } from "react";
 
 import {
   Map,
@@ -7,24 +7,17 @@ import {
   Polygon,
   Circle,
   InfoWindow,
+  PlacesService,
+  PlacesServiceStatus,
 } from "google-maps-react";
 
 import Geocode from "react-geocode";
 
 import { MapStyle } from "./mapStyles";
 
-Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+import axios from "axios";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCufaPUqLeJ83iRcMEoq9wZoXxP8jyF2OY",
-  authDomain: "murmurdriverreactnativeapp.firebaseapp.com",
-  databaseURL: "https://murmurdriverreactnativeapp-default-rtdb.firebaseio.com",
-  projectId: "murmurdriverreactnativeapp",
-  storageBucket: "murmurdriverreactnativeapp.appspot.com",
-  messagingSenderId: "476698745619",
-  appId: "1:476698745619:web:32c16fa59b7df52a0818e6",
-  measurementId: "G-B6HKFHXVNN",
-};
+Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
 
 const LoadingContainer = (props) => (
   <div id="preloader">
@@ -42,15 +35,16 @@ const LoadingContainer = (props) => (
 );
 
 class StreetIQMap extends Component {
-  state = {
-    streetIQCardStatus: true,
-    NumberOfDrivers: "",
-
-    activeMarker: {},
-    selectedPlace: {},
-    showingInfoWindow: false,
-  };
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      streetIQCardStatus: true,
+      activeMarker: {},
+      selectedPlace: {},
+      showingInfoWindow: false,
+      coordsResult: [],
+    };
+  }
   onMarkerClick = (props, marker) =>
     this.setState({
       activeMarker: marker,
@@ -154,9 +148,9 @@ class StreetIQMap extends Component {
   };
 
   render() {
-    const { places } = this.props.maping;
-    console.log(places);
-    console.log(this.state)
+
+    const { list_of_places } = this.props;
+
     return (
       <React.Fragment>
         <Map
@@ -169,7 +163,6 @@ class StreetIQMap extends Component {
           fullscreenControl={false}
           mapTypeControl={false}
           disableDefaultUI={true}
-          distanceToMouse={this.distanceToMouse}
         >
           {this.props.maping.coordinates.length &&
             this.props.maping.coordinates.map((coordinate, index) => {
@@ -196,37 +189,34 @@ class StreetIQMap extends Component {
             })}
           {/* {this.handleRenderDriversCoordinates()}*/}
           {/*{this.handleRenderDriversCircleCoordinates()}*/}
-          {places.length &&
-            places.map((place, index) => (
+          {list_of_places &&
+            list_of_places.length &&
+            list_of_places.map((place, index) => {
+
+              return (
+                <Marker
+                key={index}
+                  name={place.name}
+                  rating={place.rating}
+                  position={place.geometry.location}
+                  //icon={require("../../assets/images/placeholder.png")}
+                  icon={require("../../assets/images/placeholder.png")}
+                  //address={place.address}
+                  onMouseover={this.onMarkerClick}
+                />)
+           })}
            
-                
-                  <Marker
-                    key={index}
-                    name={place.name}
-                    rating={place.rating}
-                    position={place.position}
-                    icon={require("../../assets/images/placeholder.png")}
-                    address={place.address}
-          
-                    onMouseover={this.onMarkerClick}
-                    
-                  />
-                
-       
-            ))}
-                     <InfoWindow
-              marker={this.state.activeMarker}
-              onClose={this.onInfoWindowClose}
-              visible={this.state.showingInfoWindow}
-            >
-              <div>
-                <h6>Name: {this.state.selectedPlace.name}</h6>
-                <h6> Rating: {this.state.selectedPlace.rating}</h6>
-                <h6> address: {this.state.selectedPlace.address}</h6>
-              </div>
-              </InfoWindow>
+           <InfoWindow
+                  marker={this.state.activeMarker}
+                  onClose={this.onInfoWindowClose}
+                  visible={this.state.showingInfoWindow}
+                >
+                  <div>
+                    <h6>Name: {this.state.selectedPlace.name}</h6>
+                    <h6> Rating: {this.state.selectedPlace.rating}</h6>
+                  </div>
+                </InfoWindow>
         </Map>
-        )
       </React.Fragment>
     );
   }

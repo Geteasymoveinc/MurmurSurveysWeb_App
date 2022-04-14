@@ -10,3 +10,8 @@ export * from './auth/business/actions'
 export * from './auth/Subscribe/actions'
 
 export * from './helpers/actions'
+
+
+//surveys
+
+export * from './survey/actions'

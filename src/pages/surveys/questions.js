@@ -1,5 +1,10 @@
 import React, { Component } from "react";
 
+import { connect } from "react-redux";
+import { add_survey, add_price, add_title } from "../../store/actions";
+
+import { withRouter } from "react-router-dom";
+
 import classes from "../../assets/css/surveys/index.module.scss";
 import "../../assets/css/surveys/antd.css";
 import Radio from "../../assets/images/surveys/radio.svg";
@@ -25,10 +30,8 @@ class SurveyQuestion extends Component {
         survey_answers_questions: {
           id: 0,
           input: false,
-          //survey_created_input: false,
-          important: true,
-          user_id: "",
           survey: {
+            important: true,
             type: "Multiple choice",
             image: {
               image_url: "",
@@ -105,31 +108,6 @@ class SurveyQuestion extends Component {
 
   //drag and drop
 
-  prepareSurveyForPosting = () => {
-    const {
-      survey_amount_price,
-      survey_title_question_image,
-      survey_answers_questions,
-    } = this.state.form;
-
-    const survey = {
-      survey_earnings: survey_amount_price.survey.price,
-      survey_title: survey_title_question_image.survey.form_title,
-    };
-    const { surveys } = survey_answers_questions;
-    const survey_questions = [];
-    for (let i = 0; i < surveys.length; i++) {
-      const survey_question = {
-        question: surveys[i].question,
-        type: surveys[i].type,
-        answers: surveys[i].answers,
-        important: surveys[i].important,
-      };
-      survey_questions.push(survey_question);
-    }
-    survey[survey_questions] = survey_questions;
-  };
-
   toggleToInputState = (type, input) => {
     this.setState({
       ...this.state,
@@ -150,6 +128,32 @@ class SurveyQuestion extends Component {
         [type]: {
           ...this.state.form[type],
           [input]: false,
+        },
+      },
+    });
+  };
+
+  addInformationToSurvey = (type, segemnt) => {
+    if (type === "price") {
+      const { price, amount } = this.state.form.survey_price_amount.survey;
+      this.props.add_price({ price, amount });
+    } else {
+      const { image, form_caption, form_title } =
+        this.state.form.survey_title_question_image.survey;
+      this.props.add_title({
+        image: { name: image.image_name, file: image.image_file },
+        title: form_title,
+        caption: form_caption,
+      });
+    }
+
+    this.setState({
+      ...this.state,
+      form: {
+        ...this.state.form,
+        [segemnt]: {
+          ...this.state.form[segemnt],
+          input: false,
         },
       },
     });
@@ -199,6 +203,7 @@ class SurveyQuestion extends Component {
   //creating options
   createAnOption = (event, option) => {
     const value = event.target.value;
+    const count = this.state.form.survey_answers_questions.survey.answers.count;
     this.setState({
       ...this.state,
       form: {
@@ -238,6 +243,12 @@ class SurveyQuestion extends Component {
           survey: {
             ...this.state.form[parent].survey,
             [type]: value,
+            answers: {
+              count: 1,
+              options: {
+                option_1: "Answer 1",
+              },
+            },
           },
         },
       },
@@ -246,12 +257,15 @@ class SurveyQuestion extends Component {
 
   //create new survey question
   addNewQuestionAnswer = () => {
-    const { survey, important } = this.state.form.survey_answers_questions;
-    const { image, question, answers, type } = survey;
+    const { survey, surveys } = this.state.form.survey_answers_questions;
+    const { image, question, answers, type, important } = survey;
 
     const options = Object.values(answers.options);
     const id = this.state.form.survey_answers_questions.id;
-
+    this.props.add_survey([
+      ...surveys,
+      { image, question, answers: options, type, important },
+    ]);
     if (question.length > 0) {
       this.setState({
         ...this.state,
@@ -261,8 +275,8 @@ class SurveyQuestion extends Component {
           survey_answers_questions: {
             ...this.state.form.survey_answers_questions,
             id: id + 1,
-            important: true,
             survey: {
+              important: true,
               type: "Multiple choice",
               image: {
                 image_url: "",
@@ -317,22 +331,19 @@ class SurveyQuestion extends Component {
     });
   };
   addNewAnswerOption = () => {
-    console.log("fired");
+    console.log("hey");
+    let count = this.state.form.survey_answers_questions.survey.answers.count;
+    console.log(count);
+
+    const form = this.state.form;
+    form.survey_answers_questions.survey.answers.count = count + 1;
+    form.survey_answers_questions.survey.answers.options[
+      `option_${count + 1}`
+    ] = `Answer ${count + 1}`;
     this.setState({
       ...this.state,
       form: {
-        ...this.state.form,
-        survey_answers_questions: {
-          ...this.state.form.survey_answers_questions,
-          survey: {
-            ...this.state.form.survey_answers_questions.survey,
-            answers: {
-              ...this.state.form.survey_answers_questions.survey.answers,
-              count: this.state.form.survey_answers_questions.survey.answers
-                .count++,
-            },
-          },
-        },
+        ...form,
       },
     });
   };
@@ -349,20 +360,15 @@ class SurveyQuestion extends Component {
             {type !== "Dropdown" && (
               <input
                 id={`answer-${i}`}
-                type={`${
-                  type === "Multiple choice"
-                    ? "radio"
-                    : "checkbox"
-                }`}
+                type={`${type === "Multiple choice" ? "radio" : "checkbox"}`}
                 name={`answer`}
-          
               />
             )}
             {input && type !== "Dropdown" ? (
               <input
                 type="text"
                 className={classes.input_option}
-                //value={answers.options[`option_${i + 1}`]}
+                value={answers.options[`option_${i + 1}`]}
                 onChange={(event) => {
                   this.createAnOption(event, `option_${i + 1}`);
                 }}
@@ -413,7 +419,23 @@ class SurveyQuestion extends Component {
     }
     return answers_array;
   };
-  toggleSurveyImportance = () => {};
+  toggleSurveyImportance = () => {
+    this.setState({
+      ...this.state,
+      form: {
+        ...this.state.form,
+        survey_answers_questions: {
+          ...this.state.form.survey_answers_questions,
+          survey: {
+            ...this.state.form.survey_answers_questions.survey,
+            important:
+              !this.state.form.survey_answers_questions.survey.important,
+          },
+        },
+      },
+    });
+  };
+
   render() {
     const { form, inform_danger } = this.state;
     const {
@@ -431,7 +453,6 @@ class SurveyQuestion extends Component {
       surveys,
       survey: create_answers_questions,
       input,
-      important,
     } = survey_answers_questions;
 
     const { image: expamle_img, answers } = create_answers_questions;
@@ -441,7 +462,7 @@ class SurveyQuestion extends Component {
       image: create_title_caption_image,
     } = create_title_caption;
 
-    const { type: type_dev } = create_answers_questions;
+    const { type: type_dev, important } = create_answers_questions;
 
     console.log(this.state);
     return (
@@ -467,6 +488,7 @@ class SurveyQuestion extends Component {
                     <input
                       type="number"
                       className={classes.survey_amount_price_input}
+                      value={price}
                       onChange={(e) =>
                         this.getUserInput(e, "survey_price_amount", "price")
                       }
@@ -482,6 +504,7 @@ class SurveyQuestion extends Component {
                     <input
                       type="number"
                       className={classes.survey_amount_price_input}
+                      value={amount}
                       onChange={(e) =>
                         this.getUserInput(e, "survey_price_amount", "amount")
                       }
@@ -493,13 +516,15 @@ class SurveyQuestion extends Component {
               </div>
               {price_amount_input && (
                 <div className={classes.user_input_setting_hotisontal}>
-                  <img src={Add_Icon} alt="add plus icon" />
                   <img
-                    src={Close_Icon}
+                    src={Add_Icon}
+                    alt="add plus icon"
                     onClick={() => {
-                      this.togleFromInputState("survey_price_amount", "input");
+                      this.addInformationToSurvey(
+                        "price",
+                        "survey_price_amount"
+                      );
                     }}
-                    alt="close icon"
                   />
                 </div>
               )}
@@ -591,16 +616,15 @@ class SurveyQuestion extends Component {
                 </div>
                 {image_title_active && (
                   <div className={classes.user_input_setting}>
-                    <img src={Add_Icon} alt="add plus icon" />
                     <img
-                      src={Close_Icon}
-                      onClick={() => {
-                        this.togleFromInputState(
-                          "survey_title_question_image",
-                          "input"
-                        );
-                      }}
-                      alt="close icon"
+                      src={Add_Icon}
+                      alt="add plus icon"
+                      onClick={() =>
+                        this.addInformationToSurvey(
+                          "title",
+                          "survey_title_question_image"
+                        )
+                      }
                     />
                   </div>
                 )}
@@ -935,4 +959,6 @@ class SurveyQuestion extends Component {
   }
 }
 
-export default SurveyQuestion;
+export default connect(null, { add_survey, add_price, add_title })(
+  withRouter(SurveyQuestion)
+);

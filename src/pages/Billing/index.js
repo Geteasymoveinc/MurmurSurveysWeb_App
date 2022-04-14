@@ -69,20 +69,20 @@ class Billing extends Component {
 
   checkAllBills = () => {
     const invoices = this.state.invoices.length;
-   
-    if(invoices.length){
-    for (let i = 0; i < invoices; i++) {
-      const name = `invoice-${i + 1}`;
-      console.log(this.state.checked);
-      if (this.state.checked === true) {
-        console.log("checked");
-        this.setState({ [name]: false, checked: false });
-      } else {
-        console.log("second ");
-        this.setState({ [name]: true, checked: true });
+
+    if (invoices.length) {
+      for (let i = 0; i < invoices; i++) {
+        const name = `invoice-${i + 1}`;
+        console.log(this.state.checked);
+        if (this.state.checked === true) {
+          console.log("checked");
+          this.setState({ [name]: false, checked: false });
+        } else {
+          console.log("second ");
+          this.setState({ [name]: true, checked: true });
+        }
       }
-    }
-  }else{
+    } else {
       this.setState({ checked: !this.state.checked });
     }
   };
@@ -103,13 +103,11 @@ class Billing extends Component {
         user: this.state.user_id,
         amount,
         subscription_package: plan,
-        invoice_link:
-          "https://slicedinvoices.com/pdf/wordpress-pdf-invoice-plugin-sample.pdf",
-        invoice_status: "Due",
+        invoice_status: "Pending",
       })
       .then((response) => {
         console.log(response);
-        window.location.reload()
+        window.location.reload();
         this.setState({ ...this.state, modal: false, loading: false });
       })
       .catch((err) => {
@@ -128,7 +126,6 @@ class Billing extends Component {
     });
     const invoices = this.state.invoices.length;
 
-   
     queryForEmail("https://backendapp.murmurcars.com/api/v1/users/checkEmail", {
       email: sessionStorage.getItem("authUser"),
     })
@@ -136,42 +133,41 @@ class Billing extends Component {
         const user_id = user.resp.at(-1)._id;
         this.setState({ ...this.state, user_id });
         axios
-          .get(`http://localhost:4000/api/v1/billing/user/${user_id}`)
+          .get(`https://backendapp.murmurcars.com/api/v1/billing/user/${user_id}`)
           .then((billing) => {
             console.log(billing);
-            const invoices = this.state.invoices
-            if(billing.data.length){
-            const {billing:invoice} = billing.data[0]
-            console.log(invoice)
+            const invoices = this.state.invoices;
+            if (billing.data.length) {
+              const { billing: invoice } = billing.data[0];
+              console.log(invoice);
 
-            for(let i=0; i<invoice.length;i++){
+              for (let i = 0; i < invoice.length; i++) {
+                invoices.push({
+                  invoice_name: "Murmur_Inc",
+                  invoiceAmountPaid: invoice[i].amount,
+                  invoiceDate: invoice[i].invoiceDate,
+                  invoiceData: invoice[i].invoice_status,
+                  billing: invoice[i].subscription_package,
+                  link: new URL(invoice[i].invoice_link),
+                });
+              }
+              for (let i = 0; i < invoices; i++) {
+                const name = `invoice-${i + 1}`;
+                this.setState({ ...this.state, [name]: false });
+              }
 
-            invoices.push({
-              invoice_name: 'Murmur_Inc',
-              invoiceAmountPaid: invoice[i].amount,
-              invoiceDate: invoice[i].invoiceDate,
-              invoiceData: invoice[i].invoice_status,
-              billing: invoice[i].subscription_package,
-              link: new URL(invoice[i].invoice_link)
-            })
+              this.setState({
+                ...this.state,
+                loading: false,
+                invoices,
+                haveInvoices: true,
+              });
+            } else {
+              this.setState({
+                ...this.state,
+                loading: false,
+              });
             }
-            for (let i = 0; i < invoices; i++) {
-              const name = `invoice-${i + 1}`;
-              this.setState({ ...this.state, [name]: false });
-            }
-
-            this.setState({
-              ...this.state,
-              loading: false,
-              invoices,
-              haveInvoices:true
-            })
-          }else{
-            this.setState({
-              ...this.state,
-              loading:false
-            })
-          }
           })
           .catch((err) => {
             console.log(err);
@@ -180,7 +176,6 @@ class Billing extends Component {
               loading: false,
             });
           });
-       
       })
       .catch((err) => {
         console.log(err);
@@ -194,7 +189,7 @@ class Billing extends Component {
   render() {
     console.log(this.state);
     const { loading } = this.state;
-    const {haveInvoices} = this.state
+    const { haveInvoices } = this.state;
     return (
       <React.Fragment>
         {loading && (
@@ -248,8 +243,8 @@ class Billing extends Component {
               <div className={classes.current_plan}>
                 <h4 className={classes.history_h4}>Current Plan</h4>
                 <p className={classes.history_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam
-                  risus mi morbi euismod quisque id.
+                  Choose one of three billing plans which is most comfortable
+                  for you. Start your business journey with Murmur.
                 </p>
                 <div className={classes.plan_row}>
                   <div className={classes.plan_col}>
@@ -277,14 +272,12 @@ class Billing extends Component {
                           </div>
                           <div className={classes.lbl_data}>
                             <p className={classes.lbl_month}>
-                              <span className={classes.lbl_type}>Walk</span>
+                              <span className={classes.lbl_type}>Walk Plan</span>
                               <span className={classes.lbl_price}>
                                 $10 <small>/month</small>
                               </span>
                             </p>
-                            <p className={classes.lbl_p}>
-                              Phasellus nunc purus in diam nibh natoque.
-                            </p>
+                       
                           </div>
                         </div>
                         <div className={classes.check_icon}>
@@ -327,14 +320,12 @@ class Billing extends Component {
                           </div>
                           <div className={classes.lbl_data}>
                             <p className={classes.lbl_month}>
-                              <span className={classes.lbl_type}>Run</span>
+                              <span className={classes.lbl_type}>Run Plan</span>
                               <span className={classes.lbl_price}>
                                 $55 <small>/month</small>
                               </span>
                             </p>
-                            <p className={classes.lbl_p}>
-                              Phasellus nunc purus in diam nibh natoque.
-                            </p>
+                  
                           </div>
                         </div>
                         <div className={classes.check_icon}>
@@ -378,14 +369,12 @@ class Billing extends Component {
                             </div>
                             <div className={classes.lbl_data}>
                               <p className={classes.lbl_month}>
-                                <span className={classes.lbl_type}>Fly</span>
+                                <span className={classes.lbl_type}>Fly Plan</span>
                                 <span className={classes.lbl_price}>
                                   $75 <small>/month</small>
                                 </span>
                               </p>
-                              <p className={classes.lbl_p}>
-                                Phasellus nunc purus in diam nibh natoque.
-                              </p>
+                           
                             </div>
                           </div>
                           <div className={classes.check_icon}>
@@ -411,8 +400,7 @@ class Billing extends Component {
                   <div className={classes.bllng_head_left}>
                     <h4 className={classes.history_h4}>Billing history</h4>
                     <p className={classes.history_p}>
-                      Please reach out to our friendly team via
-                      billing@murmurcars.com with questions
+                    Please reach out to our friendly team via billing@murmurcars.com with any questions
                     </p>
                   </div>
                   <Link
@@ -429,7 +417,6 @@ class Billing extends Component {
                       className={classes.download_img}
                     />
                   </Link>
-
                 </div>
                 <div className={classes.billing_table}>
                   <table>
@@ -529,12 +516,14 @@ class Billing extends Component {
                 </div>
               </div>
             </div>
-           {!haveInvoices && <UpdateModal
-              toggleModal={this.closeModal}
-              selectBilling={this.selectBilling}
-              modal={this.state.modal}
-              billing={this.state.billing}
-            />}
+            {!haveInvoices && (
+              <UpdateModal
+                toggleModal={this.closeModal}
+                selectBilling={this.selectBilling}
+                modal={this.state.modal}
+                billing={this.state.billing}
+              />
+            )}
           </div>
         )}
       </React.Fragment>

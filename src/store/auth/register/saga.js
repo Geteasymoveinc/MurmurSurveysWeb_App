@@ -13,7 +13,7 @@ import { NEW_USER } from "./actionTypes";
 // Is user register successfull then direct plot user in redux.
 function* registerUserFn({ payload: { user, history } }) {
   try {
-    history.push("/business");
+    history.push("/subscribe_package");
   } catch (error) {}
 }
 

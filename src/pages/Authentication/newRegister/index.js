@@ -100,7 +100,10 @@ class Register extends React.Component {
 
   handleInputChange(event) {
     const name = event.target.name;
-    const value = event.target.value.trim()
+    let value = event.target.value
+    if(name === 'email' || name==='password' || name ==='phone_number'){
+       value = event.target.value.trim()
+    }
     this.setState({ ...this.state, [name]: value });
     if (
       this.state.error.includes(name) &&
@@ -122,6 +125,7 @@ class Register extends React.Component {
         value
       )
     ) {
+
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
         ...this.state,
@@ -133,6 +137,7 @@ class Register extends React.Component {
       name === "email" &&
       !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(event.target.value.trim()) 
     ) {
+
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
         ...this.state,
@@ -146,6 +151,7 @@ class Register extends React.Component {
         value
       )
     ) {
+   
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
         ...this.state,

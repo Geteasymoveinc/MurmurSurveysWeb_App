@@ -1,6 +1,5 @@
 
 
-
 /*left*/
 
 .log_reg_left,.log_reg_right{
@@ -279,7 +278,6 @@
   font-weight: bold;
   font-size: 14px;
   /*I added extra margin to bottom to line forgot password and remember me*/
-  margin-bottom: 5.5px;
   text-decoration:none;
   transition:all .4s ease;
 }
