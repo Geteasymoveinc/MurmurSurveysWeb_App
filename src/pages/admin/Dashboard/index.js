@@ -248,7 +248,7 @@ class CampaignAnalytics extends Component {
                         </div>
                         <div>
                           <p className={classes2.margin_bottom_zero}>
-                            <strong>{users_data[users].improvement} </strong>
+                            <strong>{users_data[users].improvement}% </strong>
                             improvement
                           </p>
                           <select
@@ -291,7 +291,7 @@ class CampaignAnalytics extends Component {
                         <spam>
                           <label>Change</label>
                           <p className={classes2.data_change_percent}>
-                            {users_data[chart].improvement}
+                            {users_data[chart].improvement}%
                           </p>
                         </spam>
                       </div>

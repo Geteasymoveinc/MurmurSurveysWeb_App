@@ -264,7 +264,7 @@ class PulledSurveys extends React.Component {
                 </div>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>
+              <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
                     src={campaign.customer.img}
                     alt="avatar"

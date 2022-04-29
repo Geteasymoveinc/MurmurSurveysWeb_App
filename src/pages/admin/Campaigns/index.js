@@ -97,21 +97,21 @@ class Campaigns extends React.Component {
               !this.props.location.search && ( //page where user see all its campaigns
                 <div className={classes.create_ads}>
                   <div className={classes.ads_section}>
-                    <div className={classes.cads_head}>
+                  <div className={`${classes.cads_head} ${classes.cads_head_2}`}>
                       <div className={classes.cads_head_left}>
                         <h4 className={classes.cads_h4}>Current Reuqests</h4>
                         <p className={classes.cads_p}>
                           Here you can view the list of reuests for campaigns
                         </p>
                       </div>
-                    </div>
+                      </div>
                     <PulledRequests
                       data={this.state}
                       approveRequest={this.approveRequest}
                       approveAllRequests={this.approveAllRequests}
                     />
-
-                    <div className={classes.cads_head}>
+                  
+                    <div className={`${classes.cads_head} ${classes.cads_head_2}`}>
                       <div className={classes.cads_head_left}>
                         <h4 className={classes.cads_h4}>Current Campaigns</h4>
                         <p className={classes.cads_p}>
@@ -119,7 +119,7 @@ class Campaigns extends React.Component {
                           have
                         </p>
                       </div>
-                    </div>
+                      </div>
                     <PulledCampaigns
                       getCampaignsLength={this.getCampaignsLength}
                       data={this.state}
@@ -127,6 +127,7 @@ class Campaigns extends React.Component {
                       adds={this.state.adds}
                       mode={this.state.mode}
                     />
+                  
                   </div>
                 </div>
               )}

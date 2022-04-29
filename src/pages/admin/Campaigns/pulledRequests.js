@@ -147,7 +147,7 @@ class PulledRequests extends Component {
                 </div>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>
+              <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
                     src={campaign.customer.img}
                     alt="profile img"
@@ -241,7 +241,7 @@ class PulledRequests extends Component {
           !this.state.loading && ( //list all campaigns
             <div
               className={classes.cads_table}
-              style={{ marginBottom: "100px" }}
+              style={{ marginBottom: "30px" }}
             >
               <table>
                 <thead>
