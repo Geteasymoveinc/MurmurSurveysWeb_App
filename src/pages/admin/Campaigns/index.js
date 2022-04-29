@@ -15,18 +15,163 @@ class Campaigns extends React.Component {
     super(props);
     this.state = {
       modal: false,
-      approvedRequests: [],
-      adds: [],
+      pullledCampaigns: [
+        {
+          _id: "6266d5a307c2ba1274d57108",
+          ab_experiment: [],
+          ad_schedule: "2022-04-26 2022-05-02",
+          advertisers_email: "hemidovcingiz183@gmail.com",
+          area: "khazar",
+          ad_type: "Indoor",
+          customer: {
+            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
+            fullName: "A.Valiyeva",
+          },
+          artWork_url:
+            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
+          audienceAge: "18-25",
+          audienceGender: "Both",
+          campaign_name: "Fiesta",
+          campaign_type: "Automotive",
+          created: "2022-04-25T17:08:51.253Z",
+          daily_budget: "75",
+          display_quantity: "200",
+          hasAnalytics: true,
+        },
+        {
+          _id: "6266d5a307c2ba1274d57100",
+          ad_schedule: "2022-04-26 2022-05-02",
+          advertisers_email: "hemidovcingiz183@gmail.com",
+          area: "khazar",
+          customer: {
+            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
+            fullName: "A.Valiyeva",
+          },
+          ad_type: "Backpack",
+          artWork_url:
+            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
+          audienceAge: "18-25",
+          audienceGender: "Both",
+          campaign_name: "Fiesta",
+          campaign_type: "Automotive",
+          created: "2022-04-25T17:08:51.253Z",
+          daily_budget: "75",
+          display_quantity: "200",
+          hasAnalytics: false,
+        },
+        {
+          _id: "6266d5a307c2ba12uhd57108",
+          customer: {
+            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
+            fullName: "A.Valiyeva",
+          },
+          ad_schedule: "2022-04-26 2022-05-02",
+          advertisers_email: "hemidovcingiz183@gmail.com",
+          area: "khazar",
+          artWork_url:
+            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
+          audienceAge: "18-25",
+          ad_type: "Backpack",
+          audienceGender: "Both",
+          campaign_name: "Fiesta",
+          campaign_type: "Automotive",
+          created: "2022-04-25T17:08:51.253Z",
+          daily_budget: "75",
+          display_quantity: "200",
+          hasAnalytics: false,
+        },
+        {
+          _id: "6278d5a307c2ba1274d57108",
+          customer: {
+            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
+            fullName: "A.Valiyeva",
+          },
+          ad_schedule: "2022-04-26 2022-05-02",
+          advertisers_email: "hemidovcingiz183@gmail.com",
+          area: "khazar",
+          artWork_url:
+            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
+          audienceAge: "18-25",
+          audienceGender: "Both",
+          campaign_name: "Fiesta",
+          ad_type: "Backpack",
+          campaign_type: "Automotive",
+          created: "2022-04-25T17:08:51.253Z",
+          daily_budget: "75",
+          display_quantity: "200",
+          hasAnalytics: false,
+        },
+        {
+          _id: "6266d5a307c2ba12jhld57108",
+          ad_schedule: "2022-04-26 2022-05-02",
+          customer: {
+            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
+            fullName: "A.Valiyeva",
+          },
+          advertisers_email: "hemidovcingiz183@gmail.com",
+          area: "khazar",
+          artWork_url:
+            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
+          audienceAge: "18-25",
+          audienceGender: "Both",
+          ad_type: "Backpack",
+          campaign_name: "Fiesta",
+          campaign_type: "Automotive",
+          created: "2022-04-25T17:08:51.253Z",
+          daily_budget: "75",
+          display_quantity: "200",
+          hasAnalytics: false,
+        },
+      ],
+      adds: [
+        {
+          area: "khazar",
+
+          checked: false,
+          id: "6266d5a307c2ba1274d57108",
+          toggled: false,
+        },
+        {
+          area: "khazar",
+
+          checked: false,
+          id: "6266d5a307c2ba1274d57100",
+          toggled: false,
+        },
+        {
+          area: "khazar",
+
+          checked: false,
+          id: "6266d5a307c2ba12uhd57108",
+          toggled: false,
+        },
+        {
+          area: "khazar",
+
+          checked: false,
+          id: "6278d5a307c2ba1274d57108",
+          toggled: false,
+        },
+        {
+          area: "khazar",
+
+          checked: false,
+          id: "6266d5a307c2ba12jhld57108",
+          toggled: false,
+        },
+      ],
       campaigns: 0,
       mode: "single",
     };
   }
 
+
+
+
   approveRequest = (data) => {
     this.setState({
       ...this.state,
-      mode: "single",
-      approvedRequests: [...this.state.approvedRequests, data],
+      pullledCampaigns: [...this.state.pullledCampaigns, data],
       adds: [
         ...this.state.adds,
         {
@@ -41,18 +186,12 @@ class Campaigns extends React.Component {
   approveAllRequests = (campaigns, adds) => {
     this.setState({
       ...this.state,
-      mode: "multiple",
-      approvedRequests: [...this.state.approvedRequests, ...campaigns],
+      pullledCampaigns: [...this.state.pullledCampaigns, ...campaigns],
       adds: [...this.state.adds, ...adds],
     });
   };
 
-  getCampaignsLength = (length) => {
-    this.setState({
-      ...this.state,
-      campaigns: length,
-    });
-  };
+
 
   render() {
     const url = this.props.location.search;
@@ -121,9 +260,8 @@ class Campaigns extends React.Component {
                       </div>
                       </div>
                     <PulledCampaigns
-                      getCampaignsLength={this.getCampaignsLength}
                       data={this.state}
-                      approvedRequests={this.state.approvedRequests}
+                      campaigns={this.state.pullledCampaigns}
                       adds={this.state.adds}
                       mode={this.state.mode}
                     />
@@ -136,9 +274,9 @@ class Campaigns extends React.Component {
               this.props.location.search.length > 0 &&
               campaign && (
                 <PulledCampaigns
-                  getCampaignsLength={this.getCampaignsLength}
+      
                   data={this.state}
-                  approvedRequests={this.state.approvedRequests}
+                  campaigns={this.state.pullledCampaigns}
                   adds={this.state.adds}
                   mode={this.state.mode}
                 />

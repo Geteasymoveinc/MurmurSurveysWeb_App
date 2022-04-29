@@ -10,6 +10,7 @@ import classes from "../../../assets/css/CreateAd/index.module.css";
 
 import CampaignAnalytics from "./analytics";
 
+
 class PulledCampaigns extends Component {
   constructor(props) {
     super(props);
@@ -17,151 +18,8 @@ class PulledCampaigns extends Component {
       haveCampaigns: true,
       checked: false,
       multiple: false,
-      pullledCampaigns: [
-        {
-          _id: "6266d5a307c2ba1274d57108",
-          ab_experiment: [],
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          ad_type: "Indoor",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: true,
-        },
-        {
-          _id: "6266d5a307c2ba1274d57100",
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_type: "Backpack",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-        },
-        {
-          _id: "6266d5a307c2ba12uhd57108",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          ad_type: "Backpack",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-        },
-        {
-          _id: "6278d5a307c2ba1274d57108",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          ad_type: "Backpack",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-        },
-        {
-          _id: "6266d5a307c2ba12jhld57108",
-          ad_schedule: "2022-04-26 2022-05-02",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          ad_type: "Backpack",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-        },
-      ],
-      adds: [
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba1274d57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba1274d57100",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba12uhd57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6278d5a307c2ba1274d57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba12jhld57108",
-          toggled: false,
-        },
-      ],
+       pullledCampaigns: this.props.campaigns,
+       adds: this.props.adds,
       editable: false,
       loading: false,
     };
@@ -195,61 +53,6 @@ class PulledCampaigns extends Component {
     });
   }
 
-  //Get Campigns from APi call
-  getCampaigns = (auth) => {
-    this.setState({ ...this.state, loading: true });
-    const allCampaigns = `https://backendapp.murmurcars.com/api/v1/campaigns/${auth}/all`;
-    return axios
-      .get(allCampaigns)
-      .then((response) => {
-        if (response.status !== 400 || response.status !== 500) {
-          const adds = [];
-          let item = {};
-          const iterator = response.data.message;
-          const campaigns = [];
-          let index = 0;
-          for (let i = 0; i < iterator.length; i++) {
-            if (iterator[i].ad_schedule) {
-              campaigns.push(iterator[i]);
-              console.log(iterator[i].ad_schedule);
-              const date = iterator[i].ad_schedule.split(" ")[1];
-
-              item = {
-                [`campaign-${index + 1}`]: new Date(date) > new Date(),
-                id: iterator[i]._id,
-                area: iterator[i].area,
-                toggled: false,
-                checked: false,
-              };
-              adds.push(item);
-              index++;
-            }
-          }
-
-          const campaignsLength = campaigns.length;
-          const campaignList = {};
-
-          for (let i = 0; i < campaignsLength; i++) {
-            campaignList[`name-${i + 1}`] = false;
-          }
-
-          this.setState({
-            ...this.state,
-            pullledCampaigns: campaigns,
-            adds: adds,
-            loading: false,
-            haveCampaigns: campaignsLength > 0 ? true : false,
-            ...campaignList,
-          });
-        }
-      })
-      .catch(() => {
-        this.setState({
-          ...this.state,
-          loading: false,
-        });
-      });
-  };
 
 
 
@@ -386,33 +189,22 @@ class PulledCampaigns extends Component {
   };
 
 
-  componentDidMount() {
-    const length = this.state.pullledCampaigns.length;
-    this.props.getCampaignsLength(length);
-  }
+
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.approvedRequests.length !== this.props.approvedRequests.length
+      prevProps.campaigns.length !== this.props.campaigns.length
     ) {
-      if (this.props.mode === "single") {
+
         this.setState({
           ...this.state,
           pullledCampaigns: [
             ...this.state.pullledCampaigns,
-            this.props.approvedRequests[0],
+            ...this.props.campaigns.slice(prevProps.campaigns.length, )
           ],
-          adds: [...this.state.adds, ...this.props.adds[0]],
+          adds: [...this.state.adds, ...this.props.adds.slice(prevProps.adds.length,)]
         });
-      }else{
-        this.setState({
-          ...this.state,
-          pullledCampaigns: [
-            ...this.state.pullledCampaigns,
-            ...this.props.approvedRequests,
-          ],
-          adds: [...this.state.adds, ...this.props.adds],
-        });
-      }
+
+      
     }
 
     
@@ -427,9 +219,7 @@ class PulledCampaigns extends Component {
     if (statusArray.length) {
       status = Object.values(statusArray[0]);
     }
-    const campaigns = this.state.pullledCampaigns.filter(
-      (el) => el._id === params
-    ); //looging for campaign by ad campaign id
+
     const { multiple } = this.state;
    
 
