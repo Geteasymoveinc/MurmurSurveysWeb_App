@@ -22,6 +22,7 @@ class BarHorisontal extends Component {
           }
         }],
         chart: {
+          redrawOnParentResize: true,
           events: {
             mounted: (chart) => {
               chart.windowResizeHandler();

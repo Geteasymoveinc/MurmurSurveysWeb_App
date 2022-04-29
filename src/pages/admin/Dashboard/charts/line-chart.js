@@ -11,7 +11,7 @@ class Statistics_Chart extends Component {
         colors: this.props.colors,
 
         chart: {
-      
+          redrawOnParentResize: true,
             events: {
               mounted: (chart) => {
                 chart.windowResizeHandler();
