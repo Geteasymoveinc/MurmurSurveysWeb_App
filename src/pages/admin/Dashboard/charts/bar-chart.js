@@ -21,7 +21,19 @@ class BarHorisontal extends Component {
             return '#B69EEA'
           }
         }],
-     
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: "100%",
+              },
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
 
         chart: {
           type: "bar",

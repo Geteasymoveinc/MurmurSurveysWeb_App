@@ -18,6 +18,19 @@ class Statistics_Chart extends Component {
             enabled: false,
           }
         },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: "100%",
+              },
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
         dataLabels: {
           enabled: false,
         },
