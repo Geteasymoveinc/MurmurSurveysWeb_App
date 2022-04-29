@@ -308,7 +308,7 @@ class CampaignAnalytics extends Component {
 
                   <div className={classes3.ads_section}>
                     <div
-                      className={`${classes3.cads_head} ${classes4.cads_head_space_between}`}
+                      className={`${classes3.cads_head} `}
                     >
                       <h4 className={classes3.cads_h4}>
                         Most recent Campaigns
