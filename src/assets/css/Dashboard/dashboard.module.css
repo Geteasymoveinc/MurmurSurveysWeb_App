@@ -25,7 +25,7 @@ flex-direction: column;
   background-color: transparent;
   border: transparent;
   outline: none;
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 700;
 font-size: 12px;
@@ -55,7 +55,7 @@ width: 91px;
   height: 80%;
 }
 .card_analytics_data h1{
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 600;
 font-size: 12px;
@@ -69,9 +69,9 @@ opacity: 0.8;
   margin: 0;
   margin-bottom: 10px;
   
-font-family: 'Montserrat';
+font-family: 'Mont';
 font-style: normal;
-font-weight: 600;
+font-weight: 500;
 font-size: 12px;
 line-height: 16px;
 color: #8C62C6;
@@ -81,9 +81,9 @@ color: #8C62C6;
   color: #280d5a;
 }
 .card_analytics_data .data_total_active_ads{
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
-font-weight: 600;
+font-weight: 500;
 font-size: 34px;
 line-height: 40px;
 margin: 0;
@@ -100,7 +100,7 @@ color: #200B46;
 .card_analytics.card_analytics_2 .card_analytics_data p{
 
 
-  font-family: 'Montserrat';
+  font-family: 'Mont';
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
@@ -115,7 +115,7 @@ color: #200B46;
 
 
 .card_analytics.card_analytics_2 .card_analytics_data div h1,p{
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 400;
 font-size: 12px;
@@ -163,7 +163,7 @@ padding: 20px 20px 15px 20px;
 
 .analytics_info_box .flexbox_info_box p {
 
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 400;
 font-size: 12px;
@@ -171,7 +171,7 @@ line-height: 16px;
 color: #A6C249;
 }
 .analytics_info_box .flexbox_info_box >div h1,p {
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 400;
 font-size: 12px;
@@ -190,7 +190,7 @@ letter-spacing: 0.0025em;
 
 
 .analytics_info_box .flexbox_info_box > div select{
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 400;
 font-size: 10px;
@@ -199,7 +199,7 @@ color: #A6C249;
 background-color: transparent;
 border: transparent;
 outline: transparent;
-width: 105px;
+width: 85px;
 }
 
 
@@ -221,14 +221,15 @@ border-radius: 8px;
 .analytics_block_row .chart_and_info_box .header_info_box{
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
+  border-bottom: 1px solid  #EDF1F7;
+  padding: 12px 20px 0 20px;
 }
 .analytics_block_row .chart_and_info_box .chart{
   height: 100%;;
 }
 
 .analytics_block_row .chart_and_info_box .header_info_box label{
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 400;
 font-size: 10px;
@@ -238,7 +239,7 @@ color: #8F9BB3;
 
 
 .analytics_block_row .chart_and_info_box .header_info_box p{
-  font-family: 'Montserrat';
+  font-family: 'Mont';
 font-style: normal;
 font-weight: 400;
 font-size: 24px;
@@ -251,22 +252,21 @@ color: #2E3A59;
 }
 .analytics_block_row .chart_and_info_box .header_info_box select{
 
-  font-family:  'Montserrat';
+  font-family:  'Mont';
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 12px;
   line-height: 12px;
   color: #2E3A59;
   flex: none;
   order: 0;
   flex-grow: 0;
-  margin: 0px 4px;
   background-color: transparent;
   border: transparent;
   outline: none;
   display: block;
-  width: 92px;
-  margin-top: 10px;
+  width: 82px;
+  margin-top: 7px;
 }
 
 

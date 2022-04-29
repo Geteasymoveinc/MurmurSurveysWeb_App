@@ -193,7 +193,8 @@
 }
 
 .cads_table {
-  margin-top: 24px;
+  border: 1px solid #e4e9f2;
+  border-radius: 16px;
 }
 .cads_check input {
   display: none;
@@ -234,9 +235,8 @@
 }
 .cads_table table {
   width: 100%;
-  border-radius: 16px;
   background: #fff;
-  border: 1px solid #e4e9f2;
+  border: transparent;
   border-spacing: 0;
 }
 .cads_table tr th:first-child {

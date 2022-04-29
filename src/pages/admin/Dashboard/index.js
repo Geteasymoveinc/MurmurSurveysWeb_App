@@ -49,19 +49,48 @@ class CampaignAnalytics extends Component {
           total: 1200,
           active: 800,
           improvement: 40,
-          series: [1000, 2000, 4000, 2500, 6000],
+          series: [1000, 2000, 4000, 2500, 6000,8000,7500],
+          categories: ["Mon", " Tue", "Wed", "Thu", "Fri", "Sat", " Sun"],
         },
         month: {
           total: 5000,
           active: 2800,
           improvement: 30,
-          series: [4000, 7000, 5000, 8000, 12000],
+          series: [4000, 7000, 5000, 8000, 12000,9500,11000,12500,13000,112000,12000,125000],
+          categories: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
         },
         year: {
           total: 9000,
           active: 6000,
           improvement: 60,
-          series: [10000, 8700, 12000, 11000, 13000],
+          series: [10000, 8700, 12000, 11000, 13000,15000,10000,11000,13000,9000,11000,11500],
+          categories: [
+            "2000",
+            "2001",
+            "2002",
+            "2003",
+            "2004",
+            "2005",
+            "2006",
+            "2007",
+            "2008",
+            "2009",
+            "2010",
+            "2011",
+          ],
         },
       },
     };
@@ -250,9 +279,9 @@ class CampaignAnalytics extends Component {
                               this.pickTimeFrame(e, "users", "chart")
                             }
                           >
-                            <option value="week">Last week</option>
-                            <option value="month">Last month</option>
-                            <option value="year">Last year</option>
+                            <option value="week">Last Week</option>
+                            <option value="month">Last Month</option>
+                            <option value="year">Last Year</option>
                           </select>
                         </spam>
                         <spam>
@@ -269,6 +298,8 @@ class CampaignAnalytics extends Component {
                       <div className={classes2.chart}>
                         <BarHorisontal
                           series={users_data[chart].series}
+                          heighest={Math.max(...users_data[chart].series)}
+                          categories = {users_data[chart].categories}
                           time={chart}
                         />
                       </div>

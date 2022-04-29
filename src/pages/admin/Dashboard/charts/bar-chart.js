@@ -13,9 +13,9 @@ class BarHorisontal extends Component {
         },
       ],
       options: {
-        colors: [ function({ value, seriesIndex, w }) {
-   
-          if (value ===77) {
+        colors: [ ({ value, seriesIndex, w }) =>  {
+          const heighest = this.props.heighest
+          if (value ===heighest) {
             return '#7356C0'
           } else {
             return '#B69EEA'
@@ -56,14 +56,7 @@ class BarHorisontal extends Component {
         },
         xaxis: {
           type: "number",
-          categories: [
-            "18-24",
-            "25-35",
-            "36-48",
-            "49-55",
-            "56-78",
-            "78+",
-          ],
+          categories: this.props.categories,
           labels: {
             show: true,
             style: {
@@ -94,11 +87,19 @@ class BarHorisontal extends Component {
             name: "Users",
             data: this.props.series
           }
-        ]
+        ],
+        options: {
+          ...this.state.options,
+          xaxis: {
+            ...this.state.options.xaxis,
+          categories: this.props.categories
+          }
+        }
       })
     }
  }
   render() {
+    console.log(this.props)
     return (
   
         <ReactApexChart
