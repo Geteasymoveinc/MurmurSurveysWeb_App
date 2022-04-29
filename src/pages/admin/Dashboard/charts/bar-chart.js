@@ -21,6 +21,13 @@ class BarHorisontal extends Component {
             return '#B69EEA'
           }
         }],
+        chart: {
+          events: {
+            mounted: (chart) => {
+              chart.windowResizeHandler();
+            }
+          }
+        },
         responsive: [
           {
             breakpoint: 480,
@@ -34,18 +41,6 @@ class BarHorisontal extends Component {
             },
           },
         ],
-
-        chart: {
-          type: "bar",
-          stacked: true,
-          toolbar: {
-            show: true,
-          },
-          zoom: {
-            enabled: true,
-          },
-          foreColor: "#ffffff",
-        },
 
         responsive: [
           {
@@ -113,7 +108,7 @@ class BarHorisontal extends Component {
   render() {
     console.log(this.props)
     return (
-  
+
         <ReactApexChart
           options={this.state.options}
           series={this.state.series}

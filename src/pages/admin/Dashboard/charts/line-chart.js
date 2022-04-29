@@ -9,11 +9,14 @@ class Statistics_Chart extends Component {
 
       options: {
         colors: this.props.colors,
-        stroke: {
-          curve: "smooth",
-          width: 2,
-        },
+
         chart: {
+      
+            events: {
+              mounted: (chart) => {
+                chart.windowResizeHandler();
+              }
+            },
           zoom: {
             enabled: false,
           }
