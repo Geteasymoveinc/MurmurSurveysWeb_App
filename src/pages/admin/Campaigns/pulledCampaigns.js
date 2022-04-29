@@ -368,7 +368,7 @@ class PulledCampaigns extends Component {
                   to={`/campaigns?campaign=${campaign._id}`}
                   className={classes.details_link}
                 >
-                  Details
+                  Analytics
                   <img
                     src={ArrowRight}
                     alt=""

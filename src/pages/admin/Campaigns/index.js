@@ -39,13 +39,12 @@ class Campaigns extends React.Component {
   };
 
   approveAllRequests = (campaigns, adds) => {
-
     this.setState({
       ...this.state,
-      mode:'multiple',
-       approvedRequests: [...this.state.approvedRequests, ...campaigns],
-       adds: [...this.state.adds, ...adds]
-    })
+      mode: "multiple",
+      approvedRequests: [...this.state.approvedRequests, ...campaigns],
+      adds: [...this.state.adds, ...adds],
+    });
   };
 
   getCampaignsLength = (length) => {
@@ -56,7 +55,9 @@ class Campaigns extends React.Component {
   };
 
   render() {
-    console.log(this.state);
+    const url = this.props.location.search;
+    const request = url.split("?request=")[1];
+    const campaign = url.split("?campaign=")[1];
     const { modal } = this.state;
     return (
       <React.Fragment>
@@ -107,7 +108,7 @@ class Campaigns extends React.Component {
                     <PulledRequests
                       data={this.state}
                       approveRequest={this.approveRequest}
-                      approveAllRequests = {this.approveAllRequests}
+                      approveAllRequests={this.approveAllRequests}
                     />
 
                     <div className={classes.cads_head}>
@@ -131,13 +132,26 @@ class Campaigns extends React.Component {
               )}
 
             {this.props.match.isExact &&
-              this.props.location.search.length > 0 && ( //details
-                <PulledCampaigns data={this.state} />
+              this.props.location.search.length > 0 &&
+              campaign && (
+                <PulledCampaigns
+                  getCampaignsLength={this.getCampaignsLength}
+                  data={this.state}
+                  approvedRequests={this.state.approvedRequests}
+                  adds={this.state.adds}
+                  mode={this.state.mode}
+                />
+              )}
+            {this.props.match.isExact &&
+              this.props.location.search.length > 0 &&
+              request && (
+                <PulledRequests
+                  data={this.state}
+                  approveRequest={this.approveRequest}
+                  approveAllRequests={this.approveAllRequests}
+                />
               )}
           </div>
-        )}
-        {modal && ( //nesting routes (creat new ad campaign)
-          <></>
         )}
       </React.Fragment>
     );

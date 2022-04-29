@@ -8,7 +8,7 @@ import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
 
 import classes from "../../../assets/css/CreateAd/index.module.css";
 
-import AdDetails from "./ad-details";
+import CampaignAnalytics from "./analytics";
 
 class PulledRequests extends Component {
   constructor(props) {
@@ -78,139 +78,13 @@ class PulledRequests extends Component {
       loading: false,
     };
 
-    this.changeAddStatus = this.changeAddStatus.bind(this);
+
     this.settingInterval = null;
   }
 
-  //Get Campigns from APi call
-  getCampaigns = (auth) => {
-    this.setState({ ...this.state, loading: true });
-    const allCampaigns = `https://backendapp.murmurcars.com/api/v1/campaigns/${auth}/all`;
-    return axios
-      .get(allCampaigns)
-      .then((response) => {
-        if (response.status !== 400 || response.status !== 500) {
-          const adds = [];
-          let item = {};
-          const iterator = response.data.message;
-          const campaigns = [];
-          let index = 0;
-          for (let i = 0; i < iterator.length; i++) {
-            if (iterator[i].ad_schedule) {
-              campaigns.push(iterator[i]);
-              console.log(iterator[i].ad_schedule);
-              const date = iterator[i].ad_schedule.split(" ")[1];
 
-              item = {
-                [`campaign-${index + 1}`]: new Date(date) > new Date(),
-                id: iterator[i]._id,
-                area: iterator[i].area,
-                toggled: false,
-                checked: false,
-              };
-              adds.push(item);
-              index++;
-            }
-          }
 
-          const campaignsLength = campaigns.length;
-          const campaignList = {};
 
-          for (let i = 0; i < campaignsLength; i++) {
-            campaignList[`name-${i + 1}`] = false;
-          }
-
-          this.setState({
-            ...this.state,
-            pullledCampaigns: campaigns,
-            adds: adds,
-            loading: false,
-            haveCampaigns: campaignsLength > 0 ? true : false,
-            ...campaignList,
-          });
-        }
-      })
-      .catch(() => {
-        this.setState({
-          ...this.state,
-          loading: false,
-        });
-      });
-  };
-
-  toggleDeleteAd = (id, type) => {
-    this.setState({ ...this.state, loading: true });
-    axios
-      .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
-      .then(() => {
-        window.location.reload();
-        if (type === "_details") {
-          this.props.history.replace("/ad-manager");
-          this.props.history.go("/ad-manager");
-        }
-        this.setState({ ...this.state, loading: false });
-      })
-
-      .catch((error) => console.log(error));
-  };
-
-  toggleDeleteMultipleAd = () => {
-    const adds = this.state.adds;
-    const list_of_ids = [];
-    this.setState({ ...this.state, loading: true });
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      if (!adds[i][keys[0]]) {
-        list_of_ids.push(adds[i].id);
-      }
-    }
-
-    axios
-      .delete(
-        `https://backendapp.murmurcars.com/api/v1/campaigns/delete/${list_of_ids}`
-      )
-      .then(() => {
-        window.location.reload();
-        this.setState({ ...this.state, loading: false });
-      })
-      .catch((err) => {});
-  };
-
-  checkCampaign = (event) => {
-    const id = event.target.id;
-    console.log(id);
-    const adds = this.state.adds;
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      console.log(keys);
-      if (adds[i][id]) {
-        adds[i].toggled = !adds[i].toggled;
-        adds[i].checked = !adds[i].checked;
-      }
-    }
-    this.setState({
-      ...this.state,
-      adds,
-    });
-  };
-
-  checkAllCampigns = () => {
-    const campaigns = this.state.pullledCampaigns.length;
-    const adds = this.state.adds;
-
-    for (let i = 0; i < campaigns; i++) {
-      if (this.state.checked === true) {
-        adds[i].toggled = false;
-        adds[i].checked = false;
-
-        this.setState({ checked: false, adds });
-      } else {
-        adds[i].toggled = true;
-        adds[i].checked = true;
-        this.setState({ checked: true, adds });
-      }
-    }
-  };
   declineAllRequests = () => {
     this.setState({
       ...this.state,
@@ -309,10 +183,10 @@ class PulledRequests extends Component {
 
               <td className={classes.cads_td}>
                 <Link
-                  to={`/campaigns?campaign=${campaign._id}`}
+                  to={`/campaigns?request=${campaign._id}`}
                   className={classes.details_link}
                 >
-                  Details
+                  Analytics
                   <img
                     src={ArrowRight}
                     alt=""
@@ -329,45 +203,8 @@ class PulledRequests extends Component {
     return murmurCampaigns;
   };
 
-  //activating and disactivating ad campaign
-  changeAddStatus(id) {
-    const target = id;
-    const adds = this.state.adds;
-    let count = 0;
-    let multiple = false;
-    let isSwitchRadiosInctive = false;
-
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      if (!adds[i][keys[0]]) {
-        count++;
-      }
-      if (adds[i]["toggled"]) {
-        count++;
-
-        if (!adds[i][keys[0]]) {
-          isSwitchRadiosInctive = true;
-        }
-        adds[i][keys[0]] = !adds[i][keys[0]];
-      } else if (adds[i]["id"] === target) {
-        console.log("right");
-        count++;
-        if (!adds[i][keys[0]]) {
-          isSwitchRadiosInctive = true;
-        }
-        adds[i][keys[0]] = !adds[i][keys[0]];
-      }
-    }
-    if (count > 1 && !isSwitchRadiosInctive) {
-      multiple = true;
-    }
-    this.setState({
-      ...this.state,
-      adds,
-      multiple,
-    });
-    console.log(target);
-  }
+ 
+ 
 
   render() {
     let status = [];
@@ -447,12 +284,7 @@ class PulledRequests extends Component {
           )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-          <AdDetails
-            campaigns={campaigns}
-            adds={this.state.adds}
-            delete={this.toggleDeleteAd}
-            loading={this.state.loading}
-          />
+        <CampaignAnalytics />
         )}
       </React.Fragment>
     );

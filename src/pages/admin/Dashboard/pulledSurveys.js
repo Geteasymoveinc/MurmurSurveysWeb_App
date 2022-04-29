@@ -183,7 +183,6 @@ class PulledSurveys extends React.Component {
       loading: false,
     };
 
-    this.changeAddStatus = this.changeAddStatus.bind(this);
     this.settingInterval = null;
   }
 
@@ -243,78 +242,6 @@ class PulledSurveys extends React.Component {
       });
   };
 
-  toggleDeleteAd = (id, type) => {
-    this.setState({ ...this.state, loading: true });
-    axios
-      .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
-      .then(() => {
-        window.location.reload();
-        if (type === "_details") {
-          this.props.history.replace("/ad-manager");
-          this.props.history.go("/ad-manager");
-        }
-        this.setState({ ...this.state, loading: false });
-      })
-
-      .catch((error) => console.log(error));
-  };
-
-  toggleDeleteMultipleAd = () => {
-    const adds = this.state.adds;
-    const list_of_ids = [];
-    this.setState({ ...this.state, loading: true });
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      if (!adds[i][keys[0]]) {
-        list_of_ids.push(adds[i].id);
-      }
-    }
-
-    axios
-      .delete(
-        `https://backendapp.murmurcars.com/api/v1/campaigns/delete/${list_of_ids}`
-      )
-      .then(() => {
-        window.location.reload();
-        this.setState({ ...this.state, loading: false });
-      })
-      .catch((err) => {});
-  };
-
-  checkCampaign = (event) => {
-    const id = event.target.id;
-    console.log(id);
-    const adds = this.state.adds;
-    for (let i = 0; i < adds.length; i++) {
-      console.log(adds[i][id]);
-      if (adds[i][id]) {
-        adds[i].toggled = !adds[i].toggled;
-        adds[i].checked = !adds[i].checked;
-      }
-    }
-    this.setState({
-      ...this.state,
-      adds,
-    });
-  };
-
-  checkAllCampigns = () => {
-    const campaigns = this.state.pullledCampaigns.length;
-    const adds = this.state.adds;
-
-    for (let i = 0; i < campaigns; i++) {
-      if (this.state.checked === true) {
-        adds[i].toggled = false;
-        adds[i].checked = false;
-
-        this.setState({ checked: false, adds });
-      } else {
-        adds[i].toggled = true;
-        adds[i].checked = true;
-        this.setState({ checked: true, adds });
-      }
-    }
-  };
 
   //ad-campaign
   handleCampaigns = () => {
@@ -330,7 +257,7 @@ class PulledSurveys extends React.Component {
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
          
-                    <label htmlFor={`campaign-${i + 1}`}>
+                    <label>
                       {campaign.campaign_name}
                     </label>
               
@@ -357,10 +284,10 @@ class PulledSurveys extends React.Component {
               </td>
               <td className={classes.cads_td}>
                 <Link
-                  to={`/campaigns?campaign=${campaign._id}`}
+                  to={`/dashboard?campaign=${campaign._id}`}
                   className={classes.details_link}
                 >
-                  Details
+                  Analytics
                   <img
                     src={ArrowRight}
                     alt=""
@@ -377,45 +304,7 @@ class PulledSurveys extends React.Component {
     return murmurCampaigns;
   };
   
-  //activating and disactivating ad campaign
-  changeAddStatus(id) {
-    const target = id;
-    const adds = this.state.adds;
-    let count = 0;
-    let multiple = false;
-    let isSwitchRadiosInctive = false;
 
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      if (!adds[i][keys[0]]) {
-        count++;
-      }
-      if (adds[i]["toggled"]) {
-        count++;
-
-        if (!adds[i][keys[0]]) {
-          isSwitchRadiosInctive = true;
-        }
-        adds[i][keys[0]] = !adds[i][keys[0]];
-      } else if (adds[i]["id"] === target) {
-        console.log("right");
-        count++;
-        if (!adds[i][keys[0]]) {
-          isSwitchRadiosInctive = true;
-        }
-        adds[i][keys[0]] = !adds[i][keys[0]];
-      }
-    }
-    if (count > 1 && !isSwitchRadiosInctive) {
-      multiple = true;
-    }
-    this.setState({
-      ...this.state,
-      adds,
-      multiple,
-    });
-    console.log(target);
-  }
 
 
   toggleSurveyWindow = (id) => {

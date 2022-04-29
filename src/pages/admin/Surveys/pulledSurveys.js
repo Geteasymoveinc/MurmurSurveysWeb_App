@@ -35,7 +35,7 @@ class PulledSurveys extends React.Component {
             img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
             fullName: "A.Valiyeva",
           },
-          artWork_url:SampleImage,
+          artWork_url: SampleImage,
           audienceAge: "18-25",
           audienceGender: "Both",
           campaign_name: "Fiesta",
@@ -45,8 +45,7 @@ class PulledSurveys extends React.Component {
           display_quantity: "200",
           hasAnalytics: true,
           views: 1000,
-          answers:670,
-
+          answers: 670,
         },
         {
           _id: "6266d5a307c2ba1274d57100",
@@ -58,7 +57,7 @@ class PulledSurveys extends React.Component {
             fullName: "A.Valiyeva",
           },
           ad_type: "Backpack",
-          artWork_url:SampleImage2,
+          artWork_url: SampleImage2,
           audienceAge: "18-25",
           audienceGender: "Both",
           campaign_name: "Fiesta",
@@ -68,7 +67,7 @@ class PulledSurveys extends React.Component {
           display_quantity: "200",
           hasAnalytics: false,
           views: 1000,
-          answers:670,
+          answers: 670,
         },
         {
           _id: "6266d5a307c2ba12uhd57108",
@@ -91,7 +90,7 @@ class PulledSurveys extends React.Component {
           display_quantity: "200",
           hasAnalytics: false,
           views: 1000,
-          answers:670,
+          answers: 670,
         },
         {
           _id: "6278d5a307c2ba1274d57108",
@@ -113,7 +112,7 @@ class PulledSurveys extends React.Component {
           daily_budget: "75",
           display_quantity: "200",
           hasAnalytics: false,
-          answers:670,
+          answers: 670,
           views: 1000,
         },
         {
@@ -136,7 +135,7 @@ class PulledSurveys extends React.Component {
           daily_budget: "75",
           display_quantity: "200",
           hasAnalytics: false,
-          answers:670,
+          answers: 670,
           views: 1000,
         },
       ],
@@ -145,35 +144,35 @@ class PulledSurveys extends React.Component {
       adds: [
         {
           area: "khazar",
-          "campaign-1": true,
+
           checked: false,
           id: "6266d5a307c2ba1274d57108",
           toggled: false,
         },
         {
           area: "khazar",
-          "campaign-2": true,
+
           checked: false,
           id: "6266d5a307c2ba1274d57100",
           toggled: false,
         },
         {
           area: "khazar",
-          "campaign-3": true,
+
           checked: false,
           id: "6266d5a307c2ba12uhd57108",
           toggled: false,
         },
         {
           area: "khazar",
-          "campaign-4": true,
+
           checked: false,
           id: "6278d5a307c2ba1274d57108",
           toggled: false,
         },
         {
           area: "khazar",
-          "campaign-5": true,
+
           checked: false,
           id: "6266d5a307c2ba12jhld57108",
           toggled: false,
@@ -183,138 +182,8 @@ class PulledSurveys extends React.Component {
       loading: false,
     };
 
-    this.changeAddStatus = this.changeAddStatus.bind(this);
     this.settingInterval = null;
   }
-
-  //Get Campigns from APi call
-  getCampaigns = (auth) => {
-    this.setState({ ...this.state, loading: true });
-    const allCampaigns = `https://backendapp.murmurcars.com/api/v1/campaigns/${auth}/all`;
-    return axios
-      .get(allCampaigns)
-      .then((response) => {
-        if (response.status !== 400 || response.status !== 500) {
-          const adds = [];
-          let item = {};
-          const iterator = response.data.message;
-          const campaigns = [];
-          let index = 0;
-          for (let i = 0; i < iterator.length; i++) {
-            if (iterator[i].ad_schedule) {
-              campaigns.push(iterator[i]);
-              console.log(iterator[i].ad_schedule);
-              const date = iterator[i].ad_schedule.split(" ")[1];
-
-              item = {
-                [`campaign-${index + 1}`]: new Date(date) > new Date(),
-                id: iterator[i]._id,
-                area: iterator[i].area,
-                toggled: false,
-                checked: false,
-              };
-              adds.push(item);
-              index++;
-            }
-          }
-
-          const campaignsLength = campaigns.length;
-          const campaignList = {};
-
-          for (let i = 0; i < campaignsLength; i++) {
-            campaignList[`name-${i + 1}`] = false;
-          }
-
-          this.setState({
-            ...this.state,
-            pullledCampaigns: campaigns,
-            adds: adds,
-            loading: false,
-            haveCampaigns: campaignsLength > 0 ? true : false,
-            ...campaignList,
-          });
-        }
-      })
-      .catch(() => {
-        this.setState({
-          ...this.state,
-          loading: false,
-        });
-      });
-  };
-
-  toggleDeleteAd = (id, type) => {
-    this.setState({ ...this.state, loading: true });
-    axios
-      .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
-      .then(() => {
-        window.location.reload();
-        if (type === "_details") {
-          this.props.history.replace("/ad-manager");
-          this.props.history.go("/ad-manager");
-        }
-        this.setState({ ...this.state, loading: false });
-      })
-
-      .catch((error) => console.log(error));
-  };
-
-  toggleDeleteMultipleAd = () => {
-    const adds = this.state.adds;
-    const list_of_ids = [];
-    this.setState({ ...this.state, loading: true });
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      if (!adds[i][keys[0]]) {
-        list_of_ids.push(adds[i].id);
-      }
-    }
-
-    axios
-      .delete(
-        `https://backendapp.murmurcars.com/api/v1/campaigns/delete/${list_of_ids}`
-      )
-      .then(() => {
-        window.location.reload();
-        this.setState({ ...this.state, loading: false });
-      })
-      .catch((err) => {});
-  };
-
-  checkCampaign = (event) => {
-    const id = event.target.id;
-    console.log(id);
-    const adds = this.state.adds;
-    for (let i = 0; i < adds.length; i++) {
-      console.log(adds[i][id]);
-      if (adds[i][id]) {
-        adds[i].toggled = !adds[i].toggled;
-        adds[i].checked = !adds[i].checked;
-      }
-    }
-    this.setState({
-      ...this.state,
-      adds,
-    });
-  };
-
-  checkAllCampigns = () => {
-    const campaigns = this.state.pullledCampaigns.length;
-    const adds = this.state.adds;
-
-    for (let i = 0; i < campaigns; i++) {
-      if (this.state.checked === true) {
-        adds[i].toggled = false;
-        adds[i].checked = false;
-
-        this.setState({ checked: false, adds });
-      } else {
-        adds[i].toggled = true;
-        adds[i].checked = true;
-        this.setState({ checked: true, adds });
-      }
-    }
-  };
 
   //ad-campaign
   handleCampaigns = () => {
@@ -329,11 +198,7 @@ class PulledSurveys extends React.Component {
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
-         
-                    <label htmlFor={`campaign-${i + 1}`}>
-                      {campaign.campaign_name}
-                    </label>
-              
+                  <label>{campaign.campaign_name}</label>
                 </div>
               </td>
               <td className={classes.cads_td}>
@@ -357,10 +222,10 @@ class PulledSurveys extends React.Component {
               </td>
               <td className={classes.cads_td}>
                 <Link
-                  to={`/campaigns?campaign=${campaign._id}`}
+                  to={`/surveys?survey=${campaign._id}`}
                   className={classes.details_link}
                 >
-                  Details
+                  Analytics
                   <img
                     src={ArrowRight}
                     alt=""
@@ -424,64 +289,24 @@ class PulledSurveys extends React.Component {
     }
     return murmurCampaigns;
   };
-  //activating and disactivating ad campaign
-  changeAddStatus(id) {
-    const target = id;
-    const adds = this.state.adds;
-    let count = 0;
-    let multiple = false;
-    let isSwitchRadiosInctive = false;
-
-    for (let i = 0; i < adds.length; i++) {
-      const keys = Object.keys(adds[i]);
-      if (!adds[i][keys[0]]) {
-        count++;
-      }
-      if (adds[i]["toggled"]) {
-        count++;
-
-        if (!adds[i][keys[0]]) {
-          isSwitchRadiosInctive = true;
-        }
-        adds[i][keys[0]] = !adds[i][keys[0]];
-      } else if (adds[i]["id"] === target) {
-        console.log("right");
-        count++;
-        if (!adds[i][keys[0]]) {
-          isSwitchRadiosInctive = true;
-        }
-        adds[i][keys[0]] = !adds[i][keys[0]];
-      }
-    }
-    if (count > 1 && !isSwitchRadiosInctive) {
-      multiple = true;
-    }
-    this.setState({
-      ...this.state,
-      adds,
-      multiple,
-    });
-    console.log(target);
-  }
-
 
   toggleSurveyWindow = (id) => {
-      const active = this.state.active
-      let value = id
-      if(active === id){
-          value = ''
-      }
+    const active = this.state.active;
+    let value = id;
+    if (active === id) {
+      value = "";
+    }
 
-      this.setState({
-          ...this.state,
-          active: value
-      })
-  }
+    this.setState({
+      ...this.state,
+      active: value,
+    });
+  };
 
   render() {
     let status = [];
     const url = this.props.location.search; //extracting billing id
-    const params = url.split("?campaign=")[1]; // geting rid of left side
+    const params = url.split("?survey=")[1]; // geting rid of left side
     const statusArray = this.state.adds.filter((el) => el.id === params); //looking for ad by ad campaign id
 
     if (statusArray.length) {
@@ -517,7 +342,7 @@ class PulledSurveys extends React.Component {
               <thead>
                 <tr className={classes.first_tr}>
                   <th className={`${classes.cads_th}`}>
-                 <span> Name</span>
+                    <span> Name</span>
                   </th>
                   <th className={classes.cads_th}>
                     <span>Customer</span>
@@ -537,13 +362,11 @@ class PulledSurveys extends React.Component {
               <tbody>{this.handleCampaigns()}</tbody>
             </table>
           </div>
-        ) : (
+        ) : !this.props.location.search.length > 0 ? (
           <div className={classes2.surveys_windows_container}>
             {this.handleWindowsView()}
           </div>
-        )}
-
-        {this.props.location.search.length > 0 && ( //when user selects an add to check details
+        ) : (
           <CampaignAnalytics />
         )}
       </React.Fragment>
