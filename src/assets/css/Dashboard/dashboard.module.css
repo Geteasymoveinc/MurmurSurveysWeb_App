@@ -1,0 +1,281 @@
+.flex_analytics_container{
+  display: flex;
+  flex-direction: column;
+}
+.flex_analytics_container .analytics_block_row{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+.card_analytics{
+  position: relative;
+width: 35%;
+padding: 20px 20px 0 20px;
+background: rgba(225, 204, 245, 0.5);
+border-radius: 8px;
+display: flex;
+flex-direction: column;
+}
+
+.time_picker{
+  display: flex;
+  justify-content: flex-end;
+}
+.time_picker select{
+  background-color: transparent;
+  border: transparent;
+  outline: none;
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 700;
+font-size: 12px;
+line-height: 12px;
+color: #8C62C6;
+flex: none;
+order: 0;
+flex-grow: 0;
+margin: 0px 4px;
+width: 91px;
+}
+
+
+.card_analytics_chart{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+ align-self: flex-end;
+}
+
+.card_analytics_data{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  height: 80%;
+}
+.card_analytics_data h1{
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 600;
+font-size: 12px;
+line-height: 16px;
+color: #8C62C6;
+white-space: nowrap;
+opacity: 0.8;
+}
+
+.card_analytics_data p{
+  margin: 0;
+  margin-bottom: 10px;
+  
+font-family: 'Montserrat';
+font-style: normal;
+font-weight: 600;
+font-size: 12px;
+line-height: 16px;
+color: #8C62C6;
+
+}
+.card_analytics_data p strong{
+  color: #280d5a;
+}
+.card_analytics_data .data_total_active_ads{
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 600;
+font-size: 34px;
+line-height: 40px;
+margin: 0;
+letter-spacing: 0.0025em;
+color: #200B46;
+}
+
+.card_analytics:nth-child(2){
+  background: #FFFCDD;
+}
+
+
+
+.card_analytics.card_analytics_2 .card_analytics_data p{
+
+
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #795C10;
+}
+
+
+.card_analytics.card_analytics_2  .card_analytics_data p strong{
+  color: #795C10;
+}
+
+
+.card_analytics.card_analytics_2 .card_analytics_data div h1,p{
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;
+color: #DB9841;
+}
+.card_analytics.card_analytics_2 .card_analytics_data div p{
+
+font-size: 34px;
+line-height: 40px;
+letter-spacing: 0.0025em;
+
+}
+
+
+.card_analytics.card_analytics_2 .time_picker select{
+  color: #DB9841;
+}
+
+
+
+.analytics_info_box{
+width: 208px;
+height: 189px;
+background: #FAFDE2;
+border-radius: 8px;
+padding: 20px 20px 15px 20px;
+}
+
+.analytics_info_box .flexbox_info_box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+
+.analytics_info_box .flexbox_info_box > div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.analytics_info_box .flexbox_info_box p {
+
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;
+color: #A6C249;
+}
+.analytics_info_box .flexbox_info_box >div h1,p {
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;
+color: #A6C249;
+
+}
+
+.analytics_info_box .flexbox_info_box >div:first-child p {
+  font-size: 34px;
+line-height: 40px;
+/* identical to box height, or 118% */
+
+letter-spacing: 0.0025em;
+}
+
+
+.analytics_info_box .flexbox_info_box > div select{
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 12px;
+color: #A6C249;
+background-color: transparent;
+border: transparent;
+outline: transparent;
+width: 105px;
+}
+
+
+.analytics_info_box .flexbox_info_box > div .margin_bottom_zero{
+  margin: 0;
+}
+
+
+
+.analytics_block_row .chart_and_info_box{
+  position: relative;
+width: 70%;
+
+background: #FFFFFF;
+border: 1px solid #EDF1F7;
+box-sizing: border-box;
+border-radius: 8px;
+}
+.analytics_block_row .chart_and_info_box .header_info_box{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+.analytics_block_row .chart_and_info_box .chart{
+  height: 100%;;
+}
+
+.analytics_block_row .chart_and_info_box .header_info_box label{
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 12px;
+color: #8F9BB3;
+}
+
+
+.analytics_block_row .chart_and_info_box .header_info_box p{
+  font-family: 'Montserrat';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 32px;
+color: #2E3A59;
+}
+
+.analytics_block_row .chart_and_info_box .header_info_box .data_change_percent{
+  color: #DBB840;
+}
+.analytics_block_row .chart_and_info_box .header_info_box select{
+
+  font-family:  'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 12px;
+  color: #2E3A59;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin: 0px 4px;
+  background-color: transparent;
+  border: transparent;
+  outline: none;
+  display: block;
+  width: 92px;
+  margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+

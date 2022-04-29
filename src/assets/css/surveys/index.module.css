@@ -1,0 +1,57 @@
+.cads_head_space_between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cads_head_space_between .surveys_view {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 135px;
+}
+
+.cads_head_space_between .surveys_view label{
+    font-family: 'Montserrat';
+font-style: normal;
+font-weight: 500;
+font-size: 16px;
+line-height: 24px;
+letter-spacing: 0.0015em;
+color: #000000;
+}
+
+.cads_head_space_between .surveys_view .surveys_view_menu {
+  display: flex;
+}
+
+.cads_head_space_between .surveys_view .surveys_view_menu .menu_item {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #c5cee0;
+  box-sizing: border-box;
+
+}
+.cads_head_space_between .surveys_view .surveys_view_menu .menu_item:first-child{
+    border-right: transparent;
+    border-radius: 4px 0 0 4px;
+}
+.cads_head_space_between .surveys_view .surveys_view_menu .menu_item:nth-child(2){
+    border-left: transparent;
+    border-radius: 0 4px 4px 0;
+}
+.cads_head_space_between .surveys_view .surveys_view_menu .menu_item_active {
+  background: #edf1f7;
+  border: 1px solid #8f9bb3;
+}
+.cads_head_space_between .surveys_view .surveys_view_menu .menu_item img {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+}
+
+.cads_head_space_between .surveys_view .surveys_view_menu .menu_item:hover{
+    cursor: pointer;
+}

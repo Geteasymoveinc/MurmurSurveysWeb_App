@@ -1,0 +1,25 @@
+.text_carousel .carousel{
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .text_carousel .carousel-indicators{
+    position: static;
+    margin:0;
+    margin-right:auto;
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+  }
+  .text_carousel .slide_h4,.text_carousel .slide_txt{
+    text-align: left;
+  }
+  .text_carousel .carousel-indicators li{
+    border:0;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+  }
+  .text_carousel .carousel-indicators li.active{
+    width:8px;
+    height:8px;
+  }

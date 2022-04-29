@@ -1,0 +1,128 @@
+.modal-backdrop.show{
+    opacity:0.16;
+  }
+  .destionation_modal.modal-dialog{
+    max-width:439px;
+    margin-top:15%;
+  }
+  .destionation_modal .modal-content{
+    border:0;
+    background: #fff;
+    border-radius: 8px;
+  }
+  .destionation_modal .modal-title{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: space-between;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack:space-between;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .destionation_modal .modal-title{
+    width:100%;
+  }
+  .destionation_modal .modal-title span{
+    color:#3F2B89;
+    font-weight: 500;
+    font-size: 14px;
+    line-height:20px;
+  }
+  .destionation_modal .modal-header{
+    border-bottom:1px solid #E4E9F2;
+    padding:16px 24px;
+  }
+  .destionation_modal .modal-header .modal-title .btn_close{
+    border:0 ;
+    padding:0 ;
+    background:transparent; 
+  }
+  .destionation_modal .modal-body{
+    padding:24px;
+  }
+  .destionation_modal .modal_input{
+    height:48px;
+    width:100%;
+    background: #F7F9FC;
+    border: 1px solid #EDF1F7;
+    border-radius: 8px;
+    padding-left:16px;
+    padding-right:16px;
+    color:#2E3A59;
+    font-size: 14px;
+    line-height: 20px;
+    transition:all .4s ease;
+  }
+  .destionation_modal .modal_input:focus{
+    border-color:#7356C0;
+    outline:none;
+  }
+  .destionation_modal .modal-footer{
+    padding:0 24px 24px 24px;
+    border:0;
+  }
+  .destionation_modal .mdl_delete_btn,.destionation_modal .mdl_save_btn{
+    margin:0;
+  }
+  .destionation_modal .mdl_delete_btn{
+    margin-right:32px;
+    color:#F13239;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    padding:0;
+    border:0;
+    background:transparent;
+  }
+  .destionation_modal .mdl_save_btn{
+    min-width:86px;
+    background:#7356C0;
+    border:1px solid #7356C0;
+    height:40px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color:#fff;
+    border-radius: 4px;
+    transition:all .4s ease;
+  }
+  .destionation_modal .mdl_save_btn:hover{
+    color:#7356C0;
+    background:transparent;
+  }
+  .destionation_modal .mdl_delete_btn{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .destionation_modal .mdl_delete_btn span{
+    margin-left:10px;
+  }
+  .destionation_modal .mdl_delete_cancel{
+    min-width:104px;
+    height:40px;
+    border: 1px solid #7356C0;
+    border-radius: 4px;
+    color:#7356C0;
+    background:#fff;
+    text-align:center;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    margin-right:16px;
+    transition:all .4s ease;
+  }
+  .destionation_modal .mdl_delete_cancel:hover{
+    color:#fff;
+    background:#7356C0;
+  }
