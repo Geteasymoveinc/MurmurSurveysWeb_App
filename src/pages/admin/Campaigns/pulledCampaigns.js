@@ -11,6 +11,9 @@ import classes from "../../../assets/css/CreateAd/index.module.css";
 import CampaignAnalytics from "./analytics";
 
 
+
+
+
 class PulledCampaigns extends Component {
   constructor(props) {
     super(props);
@@ -189,7 +192,6 @@ class PulledCampaigns extends Component {
   };
 
 
-
   componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.campaigns.length !== this.props.campaigns.length
@@ -211,14 +213,9 @@ class PulledCampaigns extends Component {
   }
 
   render() {
-    let status = [];
-    const url = this.props.location.search; //extracting billing id
-    const params = url.split("?campaign=")[1]; // geting rid of left side
-    const statusArray = this.state.adds.filter((el) => el.id === params); //looking for ad by ad campaign id
+    const url = this.props.location.search; //search property of history props
+    const id = new URLSearchParams(url).get('campaign') //extracting id 
 
-    if (statusArray.length) {
-      status = Object.values(statusArray[0]);
-    }
 
     const { multiple } = this.state;
    
@@ -299,4 +296,19 @@ class PulledCampaigns extends Component {
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default withRouter(PulledCampaigns);

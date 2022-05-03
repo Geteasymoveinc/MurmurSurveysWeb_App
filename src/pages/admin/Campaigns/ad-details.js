@@ -2,6 +2,7 @@ import React from "react";
 
 import axios from "axios";
 
+
 import { Link, withRouter } from "react-router-dom";
 
 import ArrowDown from "../../../assets/css/common/icons/arrow-down.svg";
@@ -12,7 +13,9 @@ import ArrowLeft from "../../../assets/css/CreateAd/ads-details/arrow-left.svg";
 
 import classes2 from "../../../assets/css/CreateAd/ads-details/index.module.css";
 
+import Geocode from "react-geocode";
 
+Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
 
 
 class AdDetails extends React.Component {
@@ -50,33 +53,111 @@ class AdDetails extends React.Component {
       editable: false,
     };
   }
-  toggleEditMode = () => {
-    this.setState({ ...this.state, editable: true });
-  };
- 
-  handleDetailsUpdate = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    const updates = this.state.updates;
-    updates[0][name] = value;
-    this.setState({ ...this.state, updates });
-  };
-  submitUpdates = () => {
-  
-  };
+  componentDidUpdate(prevProps, prevState) {
+    let area;
+    const { campaigns } = this.props;
+    if (campaigns.length && campaigns.length !== prevProps.campaigns.length) {
+      area = campaigns[0].area;
 
+      let url = "";
+
+      if (area) {
+        if (/[1-9]/i.test(area)) {
+          url =
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords";
+        } else {
+          url =
+            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-polygon-coords";
+        }
+
+        axios
+          .post(url, { postalCode: area, district: area })
+          .then((res) => {
+            console.log(res);
+
+            if (/[1-9]/i.test(area)) {
+              Geocode.fromAddress("" + area)
+                .then((response) => {
+                  const { lat, lng } = response.results[0].geometry.location;
+                  this.setState({
+                    ...this.state,
+                    loaded: true,
+                    map: {
+                      ...this.state.map,
+                      coordinates: [res.data],
+                      postCenter: { lat, lng },
+                      center: { lat, lng },
+                      zoom: 10,
+                    },
+                    updates: [
+                      {
+                        ...this.state.updates,
+                        daily_budget: campaigns[0].daily_budget,
+                        ad_type: campaigns[0].ad_type,
+                        ad_status: campaigns[0].ad_status,
+                        advertisers_email: sessionStorage.getItem("authUser"),
+                        audienceAge: campaigns[0].audienceAge,
+                        audienceGender: campaigns[0].audienceGender,
+                        campaign_name: campaigns[0].campaign_name,
+                        campaign_type: campaigns[0].campaign_type,
+                        image: campaigns[0].artWork_url,
+                        display_quantity: campaigns[0].display_quantity,
+                        area: campaigns[0].area,
+                        artWork_url: campaigns[0].artWork_url.split('https://backendapp.murmurcars.com/advertisers/media/uploads/')[1]
+                      
+                      },
+                    ],
+                  });
+                })
+                .catch((err) => alert(err));
+            } else {
+              this.setState({
+                ...this.state,
+                loaded: true,
+                map: {
+                  ...this.state.map,
+                  coordinates: [res.data.polygons],
+                  postCenter: res.data.center,
+                  center: res.data.center,
+                  zoom: 8,
+                },
+
+                updates: [
+                  {
+                    ...this.state.updates,
+                    daily_budget: campaigns[0].daily_budget,
+                    ad_type: campaigns[0].ad_type,
+                    ad_status: campaigns[0].ad_status,
+                    advertisers_email: sessionStorage.getItem("authUser"),
+                    audienceAge: campaigns[0].audienceAge,
+                    audienceGender: campaigns[0].audienceGender,
+                    campaign_name: campaigns[0].campaign_name,
+                    campaign_type: campaigns[0].campaign_type,
+                    image: campaigns[0].artWork_url,
+                    display_quantity: campaigns[0].display_quantity,
+                    area: campaigns[0].area,
+                    artWork_url: campaigns[0].artWork_url.split('https://backendapp.murmurcars.com/advertisers/media/uploads/')[1]
+                  },
+                ],
+              });
+            }
+          })
+          .catch((err) => alert(err));
+      }
+    }
+  }
 
   render() {
     const { editable } = this.state;
-    const url = this.props.location.search;
-    const params = url.split("?campaign=")[1];
-    const statusArray = this.props.adds.filter((el) => el.id === params);
+    const url = this.props.location.search; //search property of history props
+    const id = new URLSearchParams(url).get('request') //extracting id 
+    const campaign = this.props.campaigns.filter((el) => el._id === id);
     let status = [];
 
-    if (statusArray.length) {
-      status = Object.values(statusArray[0]);
+    if (campaign.length) {
+      status =  campaign[0].active
     }
-    console.log(this.state);
+    console.log(this.props);
     return (
       <React.Fragment>
         {!this.state.loaded && (
@@ -96,7 +177,7 @@ class AdDetails extends React.Component {
         {this.state.loaded &&
           this.state.updates.map((campaign, index) => (
             <div className={classes2.ads_details_section} key={index}>
-              <Link to="/ad-manager" className={classes2.ads_back_icon}>
+              <Link to="/campaigns" className={classes2.ads_back_icon}>
                 <img src={ArrowLeft} alt="" className={classes2.ads_left_img} />
                 <span>Back</span>
               </Link>
@@ -116,21 +197,7 @@ class AdDetails extends React.Component {
                   </span>
                   {/*<!-- <span class="cads_deactive_dot"><span class="cads_dot"></span>Deactive</span> -->*/}
                 </div>
-                <button
-                  type={editable ? "submit" : "button"}
-                  className={classes2.crrnt_edit}
-                  onClick={() => {
-                    if (editable) {
-                      this.submitUpdates();
-                    } else {
-                      this.toggleEditMode();
-                    }
-                  }}
-                >
-                  <span>{`${editable ? "Done" : "Edit"}`}</span>
-
-                  <img src={Edit} alt="" className={classes2.crrnt_edit_img} />
-                </button>
+     
               </div>
               <div
                 className={`${classes2.ads_detail_info} ${classes2.ads_detail_row}`}
@@ -422,7 +489,7 @@ class AdDetails extends React.Component {
                 <button
                   type="button"
                   className={classes2.delete_ads_btn}
-                  onClick={() => this.props.delete(params, "_details")}
+                  onClick={() => this.props.delete(id, "_details")}
                 >
                   <span>Delete Ad</span>
                   <img src={Trash2} alt="" />

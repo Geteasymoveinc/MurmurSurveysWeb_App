@@ -56,7 +56,7 @@ class Statistics_Chart extends Component {
 
 
   componentDidUpdate(prevProps){
-     if(prevProps.time !== this.props.time){
+    if(prevProps.time !== this.props.time || this.props.loaded !== prevProps.loaded){
        this.setState({
          ...this.state,
          series: [

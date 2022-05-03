@@ -16,7 +16,7 @@ import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
 import CampaignAnalytics from "./analytics";
 
-class PulledSurveys extends React.Component {
+class PulledCampaigns extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -367,7 +367,7 @@ class PulledSurveys extends React.Component {
                     <span>View</span>
                   </th>
                   <th className={`${classes.cads_th} ${classes.cads_budget}`}>
-                    <span>answers</span>
+                    <span>Answers</span>
                   </th>
                   <th className={`${classes.cads_th} ${classes.cads_budget}`}>
                     <span>Budget</span>
@@ -388,4 +388,4 @@ class PulledSurveys extends React.Component {
   }
 }
 
-export default withRouter(PulledSurveys);
+export default withRouter(PulledCampaigns);

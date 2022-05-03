@@ -15,8 +15,8 @@ import ArrowRight from "../../../assets/css/analitics/Vector.svg";
 //import classes
 import classes from "../../../assets/css/analitics/index.module.css";
 import "../../../assets/css/app.css";
-import axios from "axios";
 
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 class CampaignAnalytics extends Component {
