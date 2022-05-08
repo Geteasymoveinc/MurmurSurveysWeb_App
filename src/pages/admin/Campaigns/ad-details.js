@@ -14,8 +14,12 @@ import ArrowLeft from "../../../assets/css/CreateAd/ads-details/arrow-left.svg";
 import classes2 from "../../../assets/css/CreateAd/ads-details/index.module.css";
 
 import Geocode from "react-geocode";
+import { GOOGLE_MAP_KEY } from "../../../api";
 
-Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+import GoogleMap from './google-map'
+
+
+Geocode.setApiKey(GOOGLE_MAP_KEY);
 
 
 class AdDetails extends React.Component {
@@ -53,12 +57,12 @@ class AdDetails extends React.Component {
       editable: false,
     };
   }
-  componentDidUpdate(prevProps, prevState) {
+  componentDidMount(){
     let area;
     const { campaigns } = this.props;
-    if (campaigns.length && campaigns.length !== prevProps.campaigns.length) {
-      area = campaigns[0].area;
 
+      area = campaigns[0].area;
+      console.log(area)
       let url = "";
 
       if (area) {
@@ -144,7 +148,7 @@ class AdDetails extends React.Component {
           })
           .catch((err) => alert(err));
       }
-    }
+    
   }
 
   render() {
@@ -209,14 +213,6 @@ class AdDetails extends React.Component {
                     </div>
                     <div className={classes2.detail_img_title}>
                       <span>Current Image</span>
-                      {!editable  &&
-                        <button
-                          type="button"
-                          className={classes2.detail_img_edit}
-                        >
-                          <img src={ImgEdit} alt="" />
-                        </button>
-                          }
                     </div>
                   </div>
                 </div>
@@ -423,8 +419,11 @@ class AdDetails extends React.Component {
                 </div>
                 <div className={classes2.ads_detail_area}>
                   <div className={classes2.ads_detail_col}>
-                    <div className={classes2.detail_img}>
-                
+                  <div className={classes2.detail_img}>
+                      <GoogleMap
+                        state={this.state.map}
+                        location={campaign.area}
+                      />
                     </div>
                     <div className={classes2.detail_map_title}>
                       <span>Targer Area</span>
@@ -485,19 +484,7 @@ class AdDetails extends React.Component {
                   </div>
                 </div>
               </div>
-              <div className={classes2.delete_ads}>
-                <button
-                  type="button"
-                  className={classes2.delete_ads_btn}
-                  onClick={() => this.props.delete(id, "_details")}
-                >
-                  <span>Delete Ad</span>
-                  <img src={Trash2} alt="" />
-                </button>
-                <span className={classes2.delete_ads_note}>
-                  *There is no backup for deleted AD’s
-                </span>
-              </div>
+
             </div>
           ))}
       </React.Fragment>

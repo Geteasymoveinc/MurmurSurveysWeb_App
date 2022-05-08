@@ -2,8 +2,8 @@
 
 /*left*/
 
-.log_reg_left,.log_reg_right{
-  width:50%;
+.log_reg_right{
+  width:100% !important;
 }
 .login_register{
   display: -webkit-box;

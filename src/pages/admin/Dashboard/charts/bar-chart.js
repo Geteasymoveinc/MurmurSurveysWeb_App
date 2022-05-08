@@ -87,6 +87,7 @@ class BarHorisontal extends Component {
     };
   }
   componentDidUpdate(prevProps){
+    console.log(this.props.loaded, prevProps.loaded)
     if(prevProps.time !== this.props.time || this.props.loaded !== prevProps.loaded){
       this.setState({
         ...this.state,
@@ -107,7 +108,7 @@ class BarHorisontal extends Component {
     }
  }
   render() {
-    console.log(this.props)
+
     return (
 
         <ReactApexChart

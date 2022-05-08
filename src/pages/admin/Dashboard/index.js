@@ -27,6 +27,7 @@ class CampaignAnalytics extends Component {
       campaigns: this.props.campaigns,
       surveys: this.props.surveys,
       users: this.props.users,
+      partners: this.props.partners
     };
     this.async = null
   }
@@ -38,20 +39,25 @@ if(this.props.loading !==prevProps.loading){
   const users = this.props.users;
   const campaigns = this.props.campaigns;
   const surveys = this.props.surveys
+  const partners = this.props.partners
 
   this.setState({
     ...this.state,
+    loaded:false,
     users,
     campaigns,
-    surveys
+    surveys,
+    partners
   });
 
   this.async = setTimeout(() => {
+    if(!this.state.loaded){
     this.setState({
       ...this.state,
       loaded:true
     })
-  }, 2000)
+  }}, 2000)
+
 }
   }
   componentDidMount() {
@@ -80,14 +86,16 @@ if(this.props.loading !==prevProps.loading){
 
     const { campaigns } = this.state.campaigns;
     const { surveys } = this.state.surveys;
+    const {partners} = this.state.partners
     const {
       campaigns: campaigns_data,
       users: users_data,
       surveys: survey_data,
+      partners: partners_data,
       loaded
     } = this.state;
     const { users, chart } = this.state.users;
-
+console.log(this.state)
     return (
       <Fragment>
         {(this.props.loading || !loaded ) && (
@@ -139,9 +147,9 @@ if(this.props.loading !==prevProps.loading){
             {this.props.match.isExact && !this.props.location.search && (
               <>
                 <div
-                  className={`${classes.analytics_block} ${classes.no_analytics_block} ${classes2.flex_analytics_container}`}
+                  className={`${classes.analytics_block} ${classes2.flex_analytics_container}`}
                 >
-                  <div className={classes2.analytics_block_row}>
+                  <div className={classes2.analytics_block_grid}>
                     <div className={classes2.card_analytics}>
                       <div className={classes2.card_analytics_data}>
                         <div>
@@ -172,8 +180,10 @@ if(this.props.loading !==prevProps.loading){
                         <Statistics_Chart
                           colors={["#3F2B89"]}
                           series={campaigns_data[campaigns].series}
+                          categories={campaigns_data[campaigns].categories}
+                          name={'Campaigns'}
                           time={campaigns}
-                          loaded={this.props.loading}
+                          loaded={this.state.loaded}
                         />
                       </div>
                     </div>
@@ -208,8 +218,10 @@ if(this.props.loading !==prevProps.loading){
                         <Statistics_Chart
                           colors={["#DB9841"]}
                           series={survey_data[surveys].series}
+                          categories={survey_data[surveys].categories}
                           time={surveys}
-                          loaded={this.props.loading}
+                          name={'Surveys'}
+                          loaded={this.state.loaded}
                         />
                       </div>
                     </div>
@@ -239,9 +251,7 @@ if(this.props.loading !==prevProps.loading){
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className={classes2.analytics_block_row}>
+           
                     <div className={classes2.chart_and_info_box}>
                       <div className={classes2.header_info_box}>
                         <span>
@@ -277,8 +287,33 @@ if(this.props.loading !==prevProps.loading){
                           heighest={Math.max(...users_data[chart].series)}
                           categories={users_data[chart].categories}
                           time={chart}
-                          loaded={this.props.loading}
+                          loaded={this.state.loaded}
                         />
+                      </div>
+                    </div>
+                    <div className={classes2.analytics_info_box_partners}>
+                      <div className={classes2.flexbox_info_box}>
+                        <div>
+                          <h1>Total Partners.</h1>
+                          <p className={classes2.data_total_active_ads}>
+                            {partners_data[partners].total}
+                          </p>
+                        </div>
+                        <div>
+                          <p className={classes2.margin_bottom_zero}>
+                            <strong>{partners_data[partners].improvement} </strong>
+                            improvement
+                          </p>
+                          <select
+                            onChange={(e) =>
+                              this.pickTimeFrame(e, "partners", "partners")
+                            }
+                          >
+                            <option value="week"> Week</option>
+                            <option value="month">Month</option>
+                            <option value="year">Year</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -306,8 +341,8 @@ if(this.props.loading !==prevProps.loading){
 }
 
 const mapstatetoprops = (state) => {
-  const { users, campaigns, surveys, loading } = state.Users;
+  const { users, campaigns, surveys,partners, loading } = state.Users;
 
-  return { users, campaigns, surveys,loading };
+  return { users, campaigns, surveys,partners, loading };
 };
 export default connect(mapstatetoprops, {fetchUserAnalytics})(CampaignAnalytics);

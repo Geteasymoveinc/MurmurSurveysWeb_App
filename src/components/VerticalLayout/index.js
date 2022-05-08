@@ -86,7 +86,6 @@ class Layout extends Component {
   };
 
   render() {
-    console.log(this.props);
     return (
       <React.Fragment>
         {this.props.isSideBarVisible && (
@@ -103,16 +102,10 @@ class Layout extends Component {
             </div>
           </div>
         )}
-
-        {/*} <Header
-            toggleMenuCallback={this.toggleMenuCallback}
-            toggleRightSidebar={this.toggleRightSidebar}
-          />*/}
         <div
           className={`${
-            (this.props.location.pathname === "/dashboard" ||
-            this.props.location.pathname === "/streetIQ") &&
-              classes2.dashboard_page
+            (this.props.location.pathname === "/dashboard" &&
+              classes2.dashboard_page)
           }`}
         >
           <div
@@ -126,12 +119,8 @@ class Layout extends Component {
               />
             )}
             {this.props.children}
-            {/*<LanguageDropdown/>*/}
           </div>{" "}
         </div>
-        {/*className="main-content"*/}
-        {/* <Footer /> */}
-
         <Rightbar />
       </React.Fragment>
     );

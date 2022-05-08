@@ -60,6 +60,53 @@ const initialState = {
         ],
       },
     },
+    partners:{
+      partners: "week",
+      week: {
+          total: 0,
+          improvement: 0,
+          series: [],
+          categories: ["Mon", " Tue", "Wed", "Thu", "Fri", "Sat", " Sun"],
+        },
+        month: {
+          total: 0,
+          improvement: 0,
+          series: [],
+          categories: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+        },
+        year: {
+          total: 0,
+          improvement: 0,
+          series: [],
+          categories: [
+            "2000",
+            "2001",
+            "2002",
+            "2003",
+            "2004",
+            "2005",
+            "2006",
+            "2007",
+            "2008",
+            "2009",
+            "2010",
+            "2011",
+          ],
+        },
+    },
     surveys: {
         surveys: "week",
         week: {
@@ -115,6 +162,10 @@ const Users = (state=initialState, actions) => {
                 users: {
                 ...state.users,
                  ...actions.payload.users
+                },
+                partners: {
+                  ...state.partners,
+                  ...actions.payload.partners
                 },
                 surveys: {
                     ...state.surveys,

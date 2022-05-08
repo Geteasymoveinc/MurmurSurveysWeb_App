@@ -42,12 +42,15 @@ class Statistics_Chart extends Component {
           width: 2,
         },
 
+
         xaxis: {
           show:false,
+          categories: this.props.categories
         },
       },
       series: [
         {
+          name: this.props.name,
           data: this.props.series,
         },
       ],
@@ -57,11 +60,22 @@ class Statistics_Chart extends Component {
 
   componentDidUpdate(prevProps){
     if(prevProps.time !== this.props.time || this.props.loaded !== prevProps.loaded){
+      let series = this.props.series
+      let categories = this.props.categories
+      
+
        this.setState({
          ...this.state,
+         options: {
+          ...this.state.options,
+          xaxis: {
+            ...this.state.options.xaxis,
+            categories: categories
+          },
+         },
          series: [
            {
-             data: this.props.series
+             data: series
            }
          ]
        })
@@ -76,7 +90,7 @@ class Statistics_Chart extends Component {
           series={this.state.series}
           type= "area"
           width="100%"
-         height='100%'
+          height='100%'
         />
       </div>
     );

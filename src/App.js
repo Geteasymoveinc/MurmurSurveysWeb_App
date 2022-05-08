@@ -3,16 +3,15 @@ import { Switch, BrowserRouter as Router } from "react-router-dom";
 import { connect } from "react-redux";
 
 // Import Routes
-import { authProtectedRoutes } from "./routes/";
+import { authProtectedRoutes,publicPages } from "./routes/";
 import AppRoute from "./routes/route";
 
 // layouts
 import VerticalLayout from "./components/VerticalLayout/";
+import NonAuthLayout from "./components/NonAuthLayout";
 
 // Import scss
 import "./assets/scss/theme.scss";
-
-
 
 class App extends Component {
   constructor(props) {
@@ -45,8 +44,6 @@ class App extends Component {
       <React.Fragment>
         <Router>
           <Switch>
-     
-
             {authProtectedRoutes.map((route, idx) => (
               <AppRoute
                 path={route.path}
@@ -56,6 +53,16 @@ class App extends Component {
                 isAuthProtected={true}
               />
             ))}
+     {publicPages.map((route, idx) => (
+              <AppRoute
+                path={route.path}
+                layout={NonAuthLayout}
+                component={route.component}
+                key={idx}
+                isAuthProtected={false}
+              />
+            ))}
+    
           </Switch>
         </Router>
       </React.Fragment>

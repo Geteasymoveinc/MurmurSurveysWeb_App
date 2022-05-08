@@ -18,7 +18,7 @@ class Campaigns extends React.Component {
     super(props);
     this.state = {
       modal: false,
-      pullledCampaigns: [],
+      pulledCampaigns: [],
       pulledRequests: [],
       adds: [],
       mode: "single",
@@ -26,9 +26,9 @@ class Campaigns extends React.Component {
     };
   }
 
-  componentWillUnmount(){
-    clearTimeout(this.timeout)
- }
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
   componentDidMount() {
     console.log("parent mounted");
     this.props.fetchCampaigns(
@@ -36,26 +36,37 @@ class Campaigns extends React.Component {
     );
   }
   componentDidUpdate(prevProps) {
-    console.log(this.props.requests);
-    if (prevProps.requests.length !== this.props.requests.length) {
-      const pulledRequests = this.props.requests;
-      console.log(pulledRequests);
+    const { requests, campaigns, campaign_adds, request_adds, loading } =
+      this.props;
+    if (
+      prevProps.requests.length !== requests.length ||
+      prevProps.campaigns.length !== campaigns.length ||
+      loading !== prevProps.loading
+    ) {
+      const pulledRequests = requests;
+      const pulledCampaigns = campaigns;
+
       this.setState({
         ...this.state,
         pulledRequests,
+        pulledCampaigns,
+        campaign_adds,
+        request_adds,
       });
     }
     this.timeout = setTimeout(() => {
-      this.setState({
-        ...this.state,
-        loaded: true,
-      });
-    }, 4000);
+      if (!this.state.loaded) {
+        this.setState({
+          ...this.state,
+          loaded: true,
+        });
+      }
+    }, 5000);
   }
   approveRequest = (data) => {
     this.setState({
       ...this.state,
-      pullledCampaigns: [...this.state.pullledCampaigns, data],
+      pulledCampaigns: [...this.state.pulledCampaigns, data],
       adds: [
         ...this.state.adds,
         {
@@ -70,7 +81,7 @@ class Campaigns extends React.Component {
   approveAllRequests = (campaigns, adds) => {
     this.setState({
       ...this.state,
-      pullledCampaigns: [...this.state.pullledCampaigns, ...campaigns],
+      pulledCampaigns: [...this.state.pulledCampaigns, ...campaigns],
       adds: [...this.state.adds, ...adds],
     });
   };
@@ -80,6 +91,9 @@ class Campaigns extends React.Component {
     const request = url.split("?request=")[1];
     const campaign = url.split("?campaign=")[1];
     const { modal } = this.state;
+
+    console.log(this.props);
+
     return (
       <React.Fragment>
         {!this.state.loaded && (
@@ -146,7 +160,8 @@ class Campaigns extends React.Component {
                       <PulledRequests
                         approveRequest={this.approveRequest}
                         approveAllRequests={this.approveAllRequests}
-                        requests = {this.state.pulledRequests}
+                        adds={this.state.request_adds}
+                        requests={this.state.pulledRequests}
                       />
 
                       <div
@@ -161,8 +176,8 @@ class Campaigns extends React.Component {
                         </div>
                       </div>
                       <PulledCampaigns
-                        campaigns={this.state.pullledCampaigns}
-                        adds={this.state.adds}
+                        campaigns={this.state.pulledCampaigns}
+                        adds={this.state.campaign_adds}
                         mode={this.state.mode}
                       />
                     </div>
@@ -173,8 +188,8 @@ class Campaigns extends React.Component {
                 this.props.location.search.length > 0 &&
                 campaign && (
                   <PulledCampaigns
-                    campaigns={this.state.pullledCampaigns}
-                    adds={this.state.adds}
+                    campaigns={this.state.pulledCampaigns}
+                    adds={this.state.campaign_adds}
                     mode={this.state.mode}
                   />
                 )}
@@ -184,7 +199,8 @@ class Campaigns extends React.Component {
                   <PulledRequests
                     approveRequest={this.approveRequest}
                     approveAllRequests={this.approveAllRequests}
-                    requests = {this.state.pulledRequests}
+                    adds={this.state.request_adds}
+                    requests={this.state.pulledRequests}
                   />
                 )}
             </div>
@@ -194,10 +210,11 @@ class Campaigns extends React.Component {
   }
 }
 const mapstatetoprops = (state) => {
-  const {requests,loading} = state.Campaigns
-  return{requests, loading}
-}
+  const { requests, campaigns, request_adds, campaign_adds, loading } =
+    state.Campaigns;
+  return { requests, loading, campaigns, request_adds, campaign_adds };
+};
 
-
-
-export default connect(mapstatetoprops, { fetchCampaigns })(withRouter(Campaigns));
+export default connect(mapstatetoprops, {
+  fetchCampaigns,
+})(withRouter(Campaigns));

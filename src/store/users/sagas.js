@@ -10,13 +10,13 @@ import {fetch_user_analytics} from '../../helpers/fakebackend_helper'
 
 function* UsersAnalytics ({payload: {url}}){
    try{
-    console.log(url)
+  
     const response =  yield call(fetch_user_analytics, url)
   
-    const {campaigns, surveys,users} = response.data
+    const {campaigns, surveys,users, partners} = response.data
    
 
-    yield put(fetchUserAnalyticsSuccess(campaigns,surveys,users))
+    yield put(fetchUserAnalyticsSuccess(campaigns,surveys,users, partners))
    }catch(err){
 
    }

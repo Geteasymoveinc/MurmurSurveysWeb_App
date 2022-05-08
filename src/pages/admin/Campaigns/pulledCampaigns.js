@@ -23,7 +23,6 @@ class PulledCampaigns extends Component {
       multiple: false,
        pullledCampaigns: this.props.campaigns,
        adds: this.props.adds,
-      editable: false,
       loading: false,
     };
 
@@ -63,35 +62,68 @@ class PulledCampaigns extends Component {
   checkCampaign = (event) => {
     const id = event.target.id;
     const adds = this.state.adds;
-     let multiple = false
-    let count = 0
+    let multiple = false;
+    let count = 0;
     for (let i = 0; i < adds.length; i++) {
-      if(adds[i].checked){
-        count++
+      if (adds[i].checked && adds[i].id!==id) {
+        count++;
       }
       if (adds[i].id === id) {
-        adds[i].toggled = !adds[i].toggled;
+        
         adds[i].checked = !adds[i].checked;
-        if(adds[i].checked){
-          count++
+        if (adds[i].checked) {
+          count++;
         }
       }
     }
-
-    if(count>1){
-      multiple =  true
-    }else{
-      multiple = false
-    }
+    console.log(count)
+    if (count > 1) {
+      multiple = true;
+    } 
     this.setState({
       ...this.state,
       adds,
-      multiple
+      multiple,
     });
+
   };
 
   checkAllCampigns = () => {
-    const campaigns = this.state.pullledCampaigns.length;
+    const adds = this.state.adds;
+    let count = 0;
+    let multiple = false;
+    const checked = !this.state.checked;
+
+    for (let i = 0; i < adds.length; i++) {
+      if (
+        (this.state.multiple && this.state.checked) ||
+        (!this.state.multiple && !this.state.checked)
+      ) {
+        if (adds[i].checked === true && this.state.checked) {
+          adds[i].checked = false;
+        } else if(!this.state.checked){
+          count++;
+          adds[i].checked = true;
+        }
+      } else if (!this.state.checked) {
+        count++;
+        adds[i].checked = true;
+      }else{
+        adds[i].checked = false
+      }
+    }
+
+    if (count > 1 && checked) {
+      multiple = true;
+    }
+
+    this.setState({
+      ...this.state,
+      adds,
+      multiple,
+      checked,
+    });
+    /*const campaigns = this.state.pullledCampaigns.length;
     const adds = this.state.adds;
 
     for (let i = 0; i < campaigns; i++) {
@@ -105,7 +137,7 @@ class PulledCampaigns extends Component {
         adds[i].checked = true;
         this.setState({ checked: true, adds, multiple: true });
       }
-    }
+    }*/
   };
 
   
@@ -134,7 +166,7 @@ class PulledCampaigns extends Component {
                         this.state.haveCampaigns &&
                         this.state.adds[i].checked
                       }
-                      onChange={this.checkCampaign}
+                      onChange={e => this.checkCampaign(e)}
                     />
                     <label htmlFor={campaign._id}>
                       {campaign.campaign_name}

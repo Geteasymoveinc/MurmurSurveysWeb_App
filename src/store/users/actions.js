@@ -9,10 +9,10 @@ const fetchUserAnalytics = (url) => {
 }
 
 
-const fetchUserAnalyticsSuccess = (campaigns,surveys,users) => {
+const fetchUserAnalyticsSuccess = (campaigns,surveys,users, partners) => {
        return {
            type: FETCHUSERANALYTICSSUCCESS,
-           payload: {campaigns,surveys,users}
+           payload: {campaigns,surveys,users, partners}
        }
 
 }

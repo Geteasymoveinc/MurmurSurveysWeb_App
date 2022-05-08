@@ -1,151 +1,164 @@
-.flex_analytics_container{
+.flex_analytics_container {
   display: flex;
   flex-direction: column;
 }
-.flex_analytics_container .analytics_block_row{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
-}
-.card_analytics{
-  position: relative;
-width: 35%;
-padding: 20px 20px 0 20px;
-background: rgba(225, 204, 245, 0.5);
-border-radius: 8px;
-display: flex;
-flex-direction: column;
+.flex_analytics_container .analytics_block_grid {
+  display: grid;
+  grid-template-areas:
+    "campaigns campaigns campaigns campaigns "
+    "surveys surveys surveys surveys"
+    "users users users  users-1"
+    "users users users  users-2";
+
+  grid-gap: 10px;
+ margin-bottom: 2rem;
 }
 
-.time_picker{
+.card_analytics:first-child {
+  grid-area: campaigns;
+  max-width: 100%;
+  overflow: hidden;
+}
+.card_analytics:nth-child(2) {
+  grid-area: surveys;
+  max-width: 100%;
+  overflow: hidden;
+}
+.analytics_info_box {
+  grid-area: users-1;
+}
+.chart_and_info_box {
+  grid-area: users;
+  max-width: 100%;
+  overflow: hidden;
+}
+.analytics_info_box_partners {
+  grid-area: users-2;
+}
+.card_analytics {
+  position: relative;
+  padding: 20px 20px 0 20px;
+  background: rgba(225, 204, 245, 0.5);
+  border-radius: 8px;
+  display: flex;
+}
+
+.time_picker {
   display: flex;
   justify-content: flex-end;
 }
-.time_picker select{
+.time_picker select {
   background-color: transparent;
   border: transparent;
   outline: none;
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 700;
-font-size: 12px;
-line-height: 12px;
-color: #8C62C6;
-flex: none;
-order: 0;
-flex-grow: 0;
-margin: 0px 4px;
-width: 91px;
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 12px;
+  color: #8c62c6;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin: 0px 4px;
+  width: 91px;
 }
 
-
-.card_analytics_chart{
-  width: 70%;
+.card_analytics_chart {
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
- align-self: flex-end;
+  align-self: flex-end;
 }
 
-.card_analytics_data{
+.card_analytics_data {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: absolute;
-  height: 80%;
+  height: 90%;
+  position: relative;
 }
-.card_analytics_data h1{
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 600;
-font-size: 12px;
-line-height: 16px;
-color: #8C62C6;
-white-space: nowrap;
-opacity: 0.8;
+.card_analytics_data h1 {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #8c62c6;
+  white-space: nowrap;
+  opacity: 0.8;
 }
 
-.card_analytics_data p{
+.card_analytics_data p {
   margin: 0;
   margin-bottom: 10px;
-  
-font-family: 'Mont';
-font-style: normal;
-font-weight: 500;
-font-size: 12px;
-line-height: 16px;
-color: #8C62C6;
 
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #8c62c6;
 }
-.card_analytics_data p strong{
+.card_analytics_data p strong {
   color: #280d5a;
 }
-.card_analytics_data .data_total_active_ads{
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 500;
-font-size: 34px;
-line-height: 40px;
-margin: 0;
-letter-spacing: 0.0025em;
-color: #200B46;
+.card_analytics_data .data_total_active_ads {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 40px;
+  margin: 0;
+  letter-spacing: 0.0025em;
+  color: #200b46;
 }
 
-.card_analytics:nth-child(2){
-  background: #FFFCDD;
+.card_analytics:nth-child(2) {
+  background: #fffcdd;
 }
 
-
-
-.card_analytics.card_analytics_2 .card_analytics_data p{
-
-
-  font-family: 'Mont';
+.card_analytics.card_analytics_2 .card_analytics_data p {
+  font-family: "Mont";
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
   line-height: 16px;
-  color: #795C10;
+  color: #795c10;
 }
 
-
-.card_analytics.card_analytics_2  .card_analytics_data p strong{
-  color: #795C10;
+.card_analytics.card_analytics_2 .card_analytics_data p strong {
+  color: #795c10;
 }
 
-
-.card_analytics.card_analytics_2 .card_analytics_data div h1,p{
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-color: #DB9841;
+.card_analytics.card_analytics_2 .card_analytics_data div h1,
+p {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #db9841;
 }
-.card_analytics.card_analytics_2 .card_analytics_data div p{
-
-font-size: 34px;
-line-height: 40px;
-letter-spacing: 0.0025em;
-
+.card_analytics.card_analytics_2 .card_analytics_data div p {
+  font-size: 34px;
+  line-height: 40px;
+  letter-spacing: 0.0025em;
 }
 
-
-.card_analytics.card_analytics_2 .time_picker select{
-  color: #DB9841;
+.card_analytics.card_analytics_2 .time_picker select {
+  color: #db9841;
 }
 
-
-
-.analytics_info_box{
-width: 208px;
-height: 189px;
-background: #FAFDE2;
-border-radius: 8px;
-padding: 20px 20px 15px 20px;
+.analytics_info_box {
+  background: #fafde2;
+  border-radius: 8px;
+  padding: 20px 20px 15px 20px;
 }
 
-.analytics_info_box .flexbox_info_box{
+.analytics_info_box .flexbox_info_box,
+.analytics_info_box_partners .flexbox_info_box {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -153,111 +166,126 @@ padding: 20px 20px 15px 20px;
   height: 100%;
 }
 
-
-.analytics_info_box .flexbox_info_box > div{
+.analytics_info_box .flexbox_info_box > div,
+.analytics_info_box_partners .flexbox_info_box > div {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
 }
 
-.analytics_info_box .flexbox_info_box p {
-
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-color: #A6C249;
-}
-.analytics_info_box .flexbox_info_box >div h1,p {
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-color: #A6C249;
-
+.analytics_info_box .flexbox_info_box p,
+.analytics_info_box_partners .flexbox_info_box p {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #a6c249;
 }
 
-.analytics_info_box .flexbox_info_box >div:first-child p {
+.analytics_info_box .flexbox_info_box > div h1,
+.analytics_info_box .flexbox_info_box > div p,
+.analytics_info_box_partners .flexbox_info_box > div h1,
+.analytics_info_box_partners .flexbox_info_box > div p {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #a6c249;
+}
+
+.analytics_info_box_partners .flexbox_info_box > div h1,
+.analytics_info_box_partners .flexbox_info_box > div p {
+  color: #8f9bb3;
+}
+
+.analytics_info_box .flexbox_info_box > div:first-child p,
+.analytics_info_box_partners .flexbox_info_box > div:first-child p {
   font-size: 34px;
-line-height: 40px;
-/* identical to box height, or 118% */
-
-letter-spacing: 0.0025em;
+  line-height: 40px;
+  letter-spacing: 0.0025em;
 }
 
-
-.analytics_info_box .flexbox_info_box > div select{
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 400;
-font-size: 10px;
-line-height: 12px;
-color: #A6C249;
-background-color: transparent;
-border: transparent;
-outline: transparent;
-width: 85px;
+.analytics_info_box .flexbox_info_box > div select,
+.analytics_info_box_partners .flexbox_info_box > div select {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  color: #a6c249;
+  background-color: transparent;
+  border: transparent;
+  outline: transparent;
+  width: 55px;
 }
 
+.analytics_info_box_partners .flexbox_info_box > div select {
+  color: #8f9bb3;
+}
 
-.analytics_info_box .flexbox_info_box > div .margin_bottom_zero{
+.analytics_info_box .flexbox_info_box > div .margin_bottom_zero,
+.analytics_info_box_partners .flexbox_info_box > div .margin_bottom_zero {
   margin: 0;
 }
-
-
-
-.analytics_block_row .chart_and_info_box{
-  position: relative;
-width: 70%;
-
-background: #FFFFFF;
-border: 1px solid #EDF1F7;
-box-sizing: border-box;
-border-radius: 8px;
+.analytics_info_box_partners {
+  background: #F7F9FC;
+  border-radius: 8px;
+  padding: 20px 20px 15px 20px;
+  width: 170px;
 }
-.analytics_block_row .chart_and_info_box .header_info_box{
+
+.analytics_block_grid .chart_and_info_box {
+  position: relative;
+
+  background: #ffffff;
+  border: 1px solid #edf1f7;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+.analytics_block_grid .chart_and_info_box .header_info_box {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid  #EDF1F7;
+  border-bottom: 1px solid #edf1f7;
   padding: 12px 20px 0 20px;
 }
-.analytics_block_row .chart_and_info_box .chart{
-  height: 100%;;
+.analytics_block_grid .chart_and_info_box .chart {
+  height: 100%;
 }
 
-.analytics_block_row .chart_and_info_box .header_info_box label{
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 400;
-font-size: 10px;
-line-height: 12px;
-color: #8F9BB3;
+.analytics_block_grid .chart_and_info_box .header_info_box label {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  color: #8f9bb3;
 }
 
-
-.analytics_block_row .chart_and_info_box .header_info_box p{
-  font-family: 'Mont';
-font-style: normal;
-font-weight: 400;
-font-size: 24px;
-line-height: 32px;
-color: #2E3A59;
+.analytics_block_grid .chart_and_info_box .header_info_box p {
+  font-family: "Mont";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 32px;
+  color: #2e3a59;
 }
 
-.analytics_block_row .chart_and_info_box .header_info_box .data_change_percent{
-  color: #DBB840;
+  
+  .chart_and_info_box
+  .header_info_box
+  .data_change_percent {
+  color: #dbb840;
 }
-.analytics_block_row .chart_and_info_box .header_info_box select{
-
-  font-family:  'Mont';
+.analytics_block_grid .chart_and_info_box .header_info_box select {
+  font-family: "Mont";
   font-style: normal;
   font-weight: 500;
   font-size: 12px;
   line-height: 12px;
-  color: #2E3A59;
+  color: #2e3a59;
   flex: none;
   order: 0;
   flex-grow: 0;
@@ -268,14 +296,3 @@ color: #2E3A59;
   width: 82px;
   margin-top: 7px;
 }
-
-
-
-
-
-
-
-
-
-
-

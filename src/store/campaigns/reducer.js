@@ -10,7 +10,9 @@ import {FETCHCAMPAIGNS,FETCHCAMPAIGNSSUCCESS} from './actionTypes'
 const initialState = {
     loading:false,
    campaigns: [],
+   campaign_adds:[],
    requests: [],
+   request_adds: []
 }
 
 
@@ -27,14 +29,10 @@ const Campaigns = (state=initialState, actions) => {
             state={
                 ...state,
                 loading:false,
-                campaigns: [
-                    ...state.campaigns,
-                    ...actions.payload.campaigns,
-                ],
-                requests: [
-                  ...state.requests,
-                  ...actions.payload.requests,
-                ]
+                campaigns: actions.payload.campaigns,
+                campaign_adds: actions.payload.campaign_adds,
+                requests: actions.payload.requests,
+                request_adds: actions.payload.request_adds
             }
             break;
 

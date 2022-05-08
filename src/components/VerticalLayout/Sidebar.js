@@ -20,19 +20,17 @@ class Sidebar extends Component {
       <React.Fragment>
      
       
-          {/*className=''*/}
-          {/* <div data-simplebar className="h-100">*/}
+
           {this.props.type !== "condensed" ? (
-            /* <SimpleBar style={{ maxHeight: "100%" }}>*/
+
             <SidebarContent type={this.props.type}/>
           ) : (
-            /*</SimpleBar>*/
+
             <SidebarContent type={this.props.type}/>
           )}
 
    
-      
-        {/* </div>*/}
+
       </React.Fragment>
     );
   }
