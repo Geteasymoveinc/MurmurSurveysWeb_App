@@ -1,20 +1,22 @@
 import { combineReducers } from "redux";
 
-// Front
-import Layout from "./layout/reducer";
+
 import Users from "./users/reducer";
 import Campaigns from "./campaigns/reducer";
+import Surveys from "./surveys/reducer";
 
 
-//auth
 import Login from './auth/login/reducer'
+import Layout from "./layout/reducer";
 
 const rootReducer = combineReducers({
+  //public
   Login,
   Layout,
+  //auth
   Users,
-  Campaigns
-  
+  Campaigns,
+  Surveys
 });
 
 export default rootReducer;

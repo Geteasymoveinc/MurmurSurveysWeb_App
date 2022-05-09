@@ -19,12 +19,8 @@ const fetchCampaignsSuccess = (campaigns, campaign_adds, requests, request_adds)
   };
 };
 
-const postUpdateToBackend = (id, ad_status) => {
-  return {
-    type: POSTUPDATECAMPAIGNSTATUSTOBACKEND,
-    payload: { id, ad_status },
-  };
-};
+
+
 const postUpdateCampaignStatusToBackend = (id, ad_status) => {
   return {
     type: POSTUPDATECAMPAIGNSTATUSTOBACKEND,

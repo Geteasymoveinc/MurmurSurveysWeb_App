@@ -19,7 +19,6 @@ class Campaigns extends React.Component {
     this.state = {
       modal: false,
       pulledCampaigns: [],
-      pulledRequests: [],
       adds: [],
       mode: "single",
       loaded: false,
@@ -36,22 +35,20 @@ class Campaigns extends React.Component {
     );
   }
   componentDidUpdate(prevProps) {
-    const { requests, campaigns, campaign_adds, request_adds, loading } =
+    const { campaigns, campaign_adds, loading } =
       this.props;
     if (
-      prevProps.requests.length !== requests.length ||
       prevProps.campaigns.length !== campaigns.length ||
       loading !== prevProps.loading
     ) {
-      const pulledRequests = requests;
+
       const pulledCampaigns = campaigns;
 
       this.setState({
         ...this.state,
-        pulledRequests,
         pulledCampaigns,
-        campaign_adds,
-        request_adds,
+        adds: campaign_adds,
+
       });
     }
     this.timeout = setTimeout(() => {
@@ -79,6 +76,7 @@ class Campaigns extends React.Component {
   };
 
   approveAllRequests = (campaigns, adds) => {
+  
     this.setState({
       ...this.state,
       pulledCampaigns: [...this.state.pulledCampaigns, ...campaigns],
@@ -160,8 +158,6 @@ class Campaigns extends React.Component {
                       <PulledRequests
                         approveRequest={this.approveRequest}
                         approveAllRequests={this.approveAllRequests}
-                        adds={this.state.request_adds}
-                        requests={this.state.pulledRequests}
                       />
 
                       <div
@@ -177,7 +173,7 @@ class Campaigns extends React.Component {
                       </div>
                       <PulledCampaigns
                         campaigns={this.state.pulledCampaigns}
-                        adds={this.state.campaign_adds}
+                        adds={this.state.adds}
                         mode={this.state.mode}
                       />
                     </div>
@@ -189,7 +185,7 @@ class Campaigns extends React.Component {
                 campaign && (
                   <PulledCampaigns
                     campaigns={this.state.pulledCampaigns}
-                    adds={this.state.campaign_adds}
+                    adds={this.state.adds}
                     mode={this.state.mode}
                   />
                 )}
@@ -199,8 +195,6 @@ class Campaigns extends React.Component {
                   <PulledRequests
                     approveRequest={this.approveRequest}
                     approveAllRequests={this.approveAllRequests}
-                    adds={this.state.request_adds}
-                    requests={this.state.pulledRequests}
                   />
                 )}
             </div>

@@ -15,20 +15,22 @@ import { connect } from "react-redux";
 import { postUpdateCampaignStatusToBackend, postUpdateCampaignsStatusToBackend } from "../../../store/campaigns/actions";
 
 const declineRequest = (pulledRequests,adds, id) => {
-  pulledRequests = pulledRequests.filter((campaign) => {
+  let requests = []
+  let adds_mod= []
+  requests = pulledRequests.filter((campaign) => {
     if (campaign._id !== id) {
       return campaign;
     }
   });
 
-  adds = adds.filter((campaign) => {
-    if (campaign._id !== id) {
+  adds_mod = adds.filter((campaign) => {
+    if (campaign.id !== id) {
       return campaign;
     }
   });
   
 
-  return {pulledRequests,adds}
+  return {pulledRequests: requests,adds: adds_mod}
 
 }
 
@@ -42,11 +44,28 @@ class PulledRequests extends Component {
       haveCampaigns: true,
       checked: false,
       pulledRequests: this.props.requests,
-      adds: this.props.adds,
+      adds: this.props.request_adds,
       multiple: false,
     };
   }
+  componentDidUpdate(prevProps) {
+    const { requests, request_adds, loading } =
+      this.props;
+    if (
+      prevProps.requests.length !== requests.length ||
+      loading !== prevProps.loading
+    ) {
 
+      const pulledRequests = requests;
+
+      this.setState({
+        ...this.state,
+        pulledRequests,
+        adds: request_adds,
+
+      });
+    }
+  }
 
   declineMultipleRequests = (ids) => {
   
@@ -57,8 +76,11 @@ class PulledRequests extends Component {
     this.setState({
       ...this.state,
       pulledRequests,
-      adds
+      adds,
+      multiple: false,
+      checked: false,
     });
+ 
   }
   declineAllRequests = () => {
     console.log('declyning')
@@ -70,6 +92,7 @@ class PulledRequests extends Component {
     for(let i=0;i< adds.length; i++){
       
       if(adds[i].checked){
+      
       const id = adds[i].id
       ids.push(id)
       }
@@ -79,7 +102,7 @@ class PulledRequests extends Component {
 
     this.declineMultipleRequests(ids)
 
-    //this.props.postUpdateCampaignsStatusToBackend(ids, 'Declined')
+    this.props.postUpdateCampaignsStatusToBackend(ids, 'Declined')
   };
   declineRequest = (id) => {
     let { pulledRequests, adds } = this.state;
@@ -103,13 +126,13 @@ class PulledRequests extends Component {
       daily_budget: campaign.daily_budget,
       ad_type: campaign.ad_type,
     });
-    let { pulledRequests,adds } = this.state;
+  let { pulledRequests,adds } = this.state;
     const obj = declineRequest(pulledRequests,adds,campaign._id)
-    
+    console.log(obj)
     this.setState({
       ...this.state,
-      pulledRequests: obj[pulledRequests],
-      adds: obj[adds],
+      pulledRequests: obj['pulledRequests'],
+      adds:obj['adds'],
     });
 
     this.props.postUpdateCampaignStatusToBackend(campaign._id, 'Approved');
@@ -128,12 +151,13 @@ class PulledRequests extends Component {
     if(adds[i].checked){
      const id = adds[i].id
      ids.push(id)
+     adds[i].checked = false
     Adds.push(adds[i])
     requests.push(pulledRequests[i])
     }
    }
 
-    this.props.approveAllRequests(Adds, requests);
+    this.props.approveAllRequests(requests,Adds);
     this.declineMultipleRequests(ids)
 
   
@@ -388,4 +412,11 @@ class PulledRequests extends Component {
   }
 }
 
-export default connect(null,{postUpdateCampaignStatusToBackend,postUpdateCampaignsStatusToBackend})(withRouter(PulledRequests));
+
+const mapstatetoprops = (state) => {
+  const { requests, request_adds, loading } =
+    state.Campaigns;
+  return { requests, loading,  request_adds };
+};
+
+export default connect(mapstatetoprops,{postUpdateCampaignStatusToBackend,postUpdateCampaignsStatusToBackend})(withRouter(PulledRequests));

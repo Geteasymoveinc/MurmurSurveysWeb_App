@@ -62,10 +62,24 @@ const post_updated_campaigns_status = (url, data) => {
     });
 };
 
+
+const fetch_surveys = (url) => {
+  return axios
+    .get(url)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      throw new Error("Something went wrong");
+    });
+};
+
+
 export {
   postLogin,
   fetch_user_analytics,
   fetch_campaigns,
   post_updated_campaign_status,
   post_updated_campaigns_status,
+  fetch_surveys
 };

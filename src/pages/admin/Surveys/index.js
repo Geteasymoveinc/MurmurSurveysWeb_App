@@ -12,6 +12,9 @@ import classes2 from "../../../assets/css/surveys/index.module.css";
 import MenuDefault from "../../../assets/images/surveys/menu-default.svg";
 import MenuWindows from "../../../assets/images/surveys/menu-windows.svg";
 
+import { connect } from "react-redux";
+import {fetchSurveys} from '../../../store/surveys/actions'
+
 class Surveys extends React.Component {
   constructor(props) {
     super(props);
@@ -30,6 +33,12 @@ class Surveys extends React.Component {
               [toggleOff]:false
           }
       })
+  }
+
+
+
+  componentDidMount(){
+     this.props.fetchSurveys('http://localhost:4000/api/v1/admin/get-surveys')
   }
   render() {
     console.log(this.state);
@@ -110,4 +119,4 @@ class Surveys extends React.Component {
   }
 }
 
-export default withRouter(Surveys);
+export default connect(null, {fetchSurveys})(withRouter(Surveys));

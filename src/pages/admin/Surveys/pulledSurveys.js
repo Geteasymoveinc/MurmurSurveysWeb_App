@@ -16,169 +16,21 @@ import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
 import CampaignAnalytics from "./analytics";
 
+
+
+import { connect } from "react-redux";
+
+
 class PulledSurveys extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      haveCampaigns: true,
+      haveCampaigns: false,
       checked: false,
-      active: "6266d5a307c2ba1274d57108",
-      pullledCampaigns: [
-        {
-          _id: "6266d5a307c2ba1274d57108",
-          ab_experiment: [],
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          ad_type: "Indoor",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          artWork_url: SampleImage,
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: true,
-          views: 1000,
-          answers: 670,
-        },
-        {
-          _id: "6266d5a307c2ba1274d57100",
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_type: "Backpack",
-          artWork_url: SampleImage2,
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          views: 1000,
-          answers: 670,
-        },
-        {
-          _id: "6266d5a307c2ba12uhd57108",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          ad_type: "Backpack",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          views: 1000,
-          answers: 670,
-        },
-        {
-          _id: "6278d5a307c2ba1274d57108",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          ad_type: "Backpack",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          answers: 670,
-          views: 1000,
-        },
-        {
-          _id: "6266d5a307c2ba12jhld57108",
-          ad_schedule: "2022-04-26 2022-05-02",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          ad_type: "Backpack",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          answers: 670,
-          views: 1000,
-        },
-      ],
-      modalViewDetailsStatus: false,
-      viewCampaign: {},
-      adds: [
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba1274d57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba1274d57100",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba12uhd57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6278d5a307c2ba1274d57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-
-          checked: false,
-          id: "6266d5a307c2ba12jhld57108",
-          toggled: false,
-        },
-      ],
-      editable: false,
+      active: "",
+      pulledSurveys: this.props.surveys,
+  
+      adds: this.props.adds,
       loading: false,
     };
 
@@ -186,19 +38,19 @@ class PulledSurveys extends React.Component {
   }
 
   //ad-campaign
-  handleCampaigns = () => {
+  handleSurveys = () => {
     const { multiple } = this.state;
 
     let murmurCampaigns = [];
 
-    if (this.state.pullledCampaigns.length !== 0) {
+    if (this.state.pulledSurveys.length !== 0) {
       {
-        this.state.pullledCampaigns.map((campaign, i) => {
+        this.state.pulledSurveys.map((campaign, i) => {
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
-                  <label>{campaign.campaign_name}</label>
+                  <label>{campaign.survey_title}</label>
                 </div>
               </td>
               <td className={classes.cads_td}>
@@ -215,10 +67,10 @@ class PulledSurveys extends React.Component {
                 <span className={classes.td_data}> {campaign.views}</span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.answers}</span>
+                <span className={classes.td_data}>{campaign.answeredBy.length}</span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.daily_budget}</span>
+                <span className={classes.td_data}>{campaign.survey_earnings}</span>
               </td>
               <td className={classes.cads_td}>
                 <Link
@@ -243,9 +95,9 @@ class PulledSurveys extends React.Component {
   };
   handleWindowsView = () => {
     const murmurCampaigns = [];
-    const { pullledCampaigns } = this.state;
-    if (pullledCampaigns.length !== 0) {
-      pullledCampaigns.map((campaign, i) => {
+    const { pulledSurveys } = this.state;
+    if (pulledSurveys.length !== 0) {
+      pulledSurveys.map((campaign, i) => {
         murmurCampaigns.push(
           <div
             className={`${classes2.window_container} ${
@@ -257,7 +109,7 @@ class PulledSurveys extends React.Component {
           >
             <div className={classes2.survey_image_container}>
               <img
-                src={campaign.artWork_url}
+                src={campaign.survey_image}
                 alt="survey"
                 className={classes2.survey_image}
               />
@@ -277,10 +129,10 @@ class PulledSurveys extends React.Component {
                 <img src={SurveyEye} alt="eye icon" /> {campaign.views}
               </span>
               <span>
-                <img src={SurveyEdit} alt="eye icon" /> {campaign.answers}
+                <img src={SurveyEdit} alt="eye icon" /> {campaign.answeredBy.length}
               </span>
               <span>
-                <img src={SurveyPrice} alt="eye icon" /> {campaign.daily_budget}
+                <img src={SurveyPrice} alt="eye icon" /> {campaign.survey_earnings}
               </span>
             </div>
           </div>
@@ -303,20 +155,26 @@ class PulledSurveys extends React.Component {
     });
   };
 
-  render() {
-    let status = [];
-    const url = this.props.location.search; //extracting billing id
-    const params = url.split("?survey=")[1]; // geting rid of left side
-    const statusArray = this.state.adds.filter((el) => el.id === params); //looking for ad by ad campaign id
 
-    if (statusArray.length) {
-      status = Object.values(statusArray[0]);
+  componentDidUpdate(prevProps){
+       
+    const {loading, adds, surveys } = this.props
+  
+    if(adds.length!==prevProps.adds.length || surveys.length!==prevProps.surveys.length){
+    
+      this.setState({
+        ...this.state,
+        adds,
+        pulledSurveys: surveys,
+        haveCampaigns: true
+      })
     }
-    const campaigns = this.state.pullledCampaigns.filter(
-      (el) => el._id === params
-    ); //looging for campaign by ad campaign id
-    const { multiple } = this.state;
+  }
 
+  render() {
+    const url = this.props.location.search;
+    const id = url.split("surveys")[1];
+  console.log(this.state)
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -359,7 +217,7 @@ class PulledSurveys extends React.Component {
                   <th></th>
                 </tr>
               </thead>
-              <tbody>{this.handleCampaigns()}</tbody>
+              <tbody>{this.handleSurveys()}</tbody>
             </table>
           </div>
         ) : !this.props.location.search.length > 0 ? (
@@ -374,4 +232,10 @@ class PulledSurveys extends React.Component {
   }
 }
 
-export default withRouter(PulledSurveys);
+
+const mapStateToProps = (state) => {
+  const {surveys, adds, loading} = state.Surveys 
+  return {surveys, adds, loading }
+}
+
+export default connect(mapStateToProps, null)(withRouter(PulledSurveys));
