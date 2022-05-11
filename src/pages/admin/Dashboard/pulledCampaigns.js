@@ -15,6 +15,7 @@ import classes from "../../../assets/css/CreateAd/index.module.css";
 import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
 import CampaignAnalytics from "./analytics";
+import { connect } from "react-redux";
 
 class PulledCampaigns extends React.Component {
   constructor(props) {
@@ -22,225 +23,15 @@ class PulledCampaigns extends React.Component {
     this.state = {
       haveCampaigns: true,
       checked: false,
-      active: "6266d5a307c2ba1274d57108",
-      pullledCampaigns: [
-        {
-          _id: "6266d5a307c2ba1274d57108",
-          ab_experiment: [],
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          ad_type: "Indoor",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          artWork_url:SampleImage,
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: true,
-          views: 1000,
-          answers:670,
-
-        },
-        {
-          _id: "6266d5a307c2ba1274d57100",
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_type: "Backpack",
-          artWork_url:SampleImage2,
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          views: 1000,
-          answers:670,
-        },
-        {
-          _id: "6266d5a307c2ba12uhd57108",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          ad_type: "Backpack",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          views: 1000,
-          answers:670,
-        },
-        {
-          _id: "6278d5a307c2ba1274d57108",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          ad_schedule: "2022-04-26 2022-05-02",
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          campaign_name: "Fiesta",
-          ad_type: "Backpack",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          answers:670,
-          views: 1000,
-        },
-        {
-          _id: "6266d5a307c2ba12jhld57108",
-          ad_schedule: "2022-04-26 2022-05-02",
-          customer: {
-            img: "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/20191106_122151[1].jpg",
-            fullName: "A.Valiyeva",
-          },
-          advertisers_email: "hemidovcingiz183@gmail.com",
-          area: "khazar",
-          artWork_url:
-            "https://backendapp.murmurcars.com/advertisers/media/uploads/logo-create.png",
-          audienceAge: "18-25",
-          audienceGender: "Both",
-          ad_type: "Backpack",
-          campaign_name: "Fiesta",
-          campaign_type: "Automotive",
-          created: "2022-04-25T17:08:51.253Z",
-          daily_budget: "75",
-          display_quantity: "200",
-          hasAnalytics: false,
-          answers:670,
-          views: 1000,
-        },
-      ],
-      modalViewDetailsStatus: false,
-      viewCampaign: {},
-      adds: [
-        {
-          area: "khazar",
-          "campaign-1": true,
-          checked: false,
-          id: "6266d5a307c2ba1274d57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-          "campaign-2": true,
-          checked: false,
-          id: "6266d5a307c2ba1274d57100",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-          "campaign-3": true,
-          checked: false,
-          id: "6266d5a307c2ba12uhd57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-          "campaign-4": true,
-          checked: false,
-          id: "6278d5a307c2ba1274d57108",
-          toggled: false,
-        },
-        {
-          area: "khazar",
-          "campaign-5": true,
-          checked: false,
-          id: "6266d5a307c2ba12jhld57108",
-          toggled: false,
-        },
-      ],
-      editable: false,
+      pullledCampaigns: this.props.surveys,
+      adds: this.props.adds,
       loading: false,
     };
 
     this.settingInterval = null;
   }
 
-  //Get Campigns from APi call
-  getCampaigns = (auth) => {
-    this.setState({ ...this.state, loading: true });
-    const allCampaigns = `https://backendapp.murmurcars.com/api/v1/campaigns/${auth}/all`;
-    return axios
-      .get(allCampaigns)
-      .then((response) => {
-        if (response.status !== 400 || response.status !== 500) {
-          const adds = [];
-          let item = {};
-          const iterator = response.data.message;
-          const campaigns = [];
-          let index = 0;
-          for (let i = 0; i < iterator.length; i++) {
-            if (iterator[i].ad_schedule) {
-              campaigns.push(iterator[i]);
-              console.log(iterator[i].ad_schedule);
-              const date = iterator[i].ad_schedule.split(" ")[1];
 
-              item = {
-                [`campaign-${index + 1}`]: new Date(date) > new Date(),
-                id: iterator[i]._id,
-                area: iterator[i].area,
-                toggled: false,
-                checked: false,
-              };
-              adds.push(item);
-              index++;
-            }
-          }
-
-          const campaignsLength = campaigns.length;
-          const campaignList = {};
-
-          for (let i = 0; i < campaignsLength; i++) {
-            campaignList[`name-${i + 1}`] = false;
-          }
-
-          this.setState({
-            ...this.state,
-            pullledCampaigns: campaigns,
-            adds: adds,
-            loading: false,
-            haveCampaigns: campaignsLength > 0 ? true : false,
-            ...campaignList,
-          });
-        }
-      })
-      .catch(() => {
-        this.setState({
-          ...this.state,
-          loading: false,
-        });
-      });
-  };
 
 
   //ad-campaign
@@ -258,7 +49,7 @@ class PulledCampaigns extends React.Component {
                 <div className={classes.cads_flex_th}>
          
                     <label>
-                      {campaign.campaign_name}
+                      {campaign.survey_title}
                     </label>
               
                 </div>
@@ -277,10 +68,10 @@ class PulledCampaigns extends React.Component {
                 <span className={classes.td_data}> {campaign.views}</span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.answers}</span>
+                <span className={classes.td_data}>{campaign.answeredBy.length}</span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.daily_budget}</span>
+                <span className={classes.td_data}>{campaign.survey_earnings}</span>
               </td>
               <td className={classes.cads_td}>
                 <Link
@@ -320,19 +111,28 @@ class PulledCampaigns extends React.Component {
       })
   }
 
+  
+  componentDidUpdate(prevProps){
+       
+    const {loading, adds, surveys } = this.props
+  
+    if(adds.length!==prevProps.adds.length || surveys.length!==prevProps.surveys.length){
+    
+      this.setState({
+        ...this.state,
+        adds,
+        pulledSurveys: surveys,
+        haveCampaigns: true
+      })
+    }
+  }
+
   render() {
     let status = [];
     const url = this.props.location.search; //extracting billing id
     const params = url.split("?campaign=")[1]; // geting rid of left side
     const statusArray = this.state.adds.filter((el) => el.id === params); //looking for ad by ad campaign id
 
-    if (statusArray.length) {
-      status = Object.values(statusArray[0]);
-    }
-    const campaigns = this.state.pullledCampaigns.filter(
-      (el) => el._id === params
-    ); //looging for campaign by ad campaign id
-    const { multiple } = this.state;
 
     return (
       <React.Fragment>
@@ -388,4 +188,10 @@ class PulledCampaigns extends React.Component {
   }
 }
 
-export default withRouter(PulledCampaigns);
+const mapStateToProps = (state) => {
+  const {surveys, adds, loading} = state.Surveys 
+  return {surveys, adds, loading }
+}
+
+
+export default connect(mapStateToProps, null)(withRouter(PulledCampaigns));

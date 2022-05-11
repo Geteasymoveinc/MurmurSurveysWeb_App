@@ -2,7 +2,8 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 
-import Login from '../pages/admin/LoginPage/index.'
+import Login from '../pages/admin/AuthPage/index.'
+import Logout from "../pages/admin/AuthPage/Logout";
 
 
 import Dashboard from "../pages/admin/Dashboard/index";
@@ -11,6 +12,7 @@ import Surveys from '../pages/admin/Surveys/index'
 
 const publicPages = [
   { path: '/login', component: Login },
+  { path: '/logout', component: Logout },
   { path: "/", exact: true, component: () => <Redirect to="/login" /> }
 ]
 

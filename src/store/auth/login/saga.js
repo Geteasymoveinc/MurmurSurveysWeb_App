@@ -46,6 +46,7 @@ function* loginUser({ payload: { user, history } }) {
 
 function* logoutUser({ payload: { history } }) {
   try {
+    
     sessionStorage.removeItem("fullName");
     sessionStorage.removeItem("profileImage");
     sessionStorage.removeItem("authUser");

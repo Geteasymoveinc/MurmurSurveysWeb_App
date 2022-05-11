@@ -29,7 +29,7 @@ function* UpdateCampaignStatus({ payload: { id, ad_status } }) {
   try {
     yield call(
       post_updated_campaign_status,
-      `http://localhost:4000/api/v1/admin/update-ad-status/${id}`,
+      `https://backendapp.murmurcars.com/api/v1/admin/update-ad-status/${id}`,
       ad_status
     );
   } catch (err) {}
@@ -39,7 +39,7 @@ function* UpdateCampaignsStatus({ payload: { ids, ad_status } }) {
   try {
     yield call(
       post_updated_campaigns_status,
-      `http://localhost:4000/api/v1/admin/update-multiple-ad-status/${ids}`,
+      `https://backendapp.murmurcars.com/api/v1/admin/update-multiple-ad-status/${ids}`,
       ad_status
     );
   } catch (err) {}
