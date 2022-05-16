@@ -7,7 +7,7 @@ class SeenByWeekDay extends Component {
     series: [
       {
         name: "reach",
-        data: [54, 255, 841, 867, 522, 343, 1102],
+        data: [],
       },
     ],
     options: {
@@ -43,14 +43,7 @@ class SeenByWeekDay extends Component {
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "01/01/2011 GMT",
-          "01/02/2011 GMT",
-          "01/03/2011 GMT",
-          "01/04/2011 GMT",
-          "01/05/2011 GMT",
-          "01/06/2011 GMT",
-        ],
+        categories: []
       },
       legend: {
         position: "right",

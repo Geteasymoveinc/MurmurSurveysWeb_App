@@ -225,7 +225,7 @@ class CampaignAnalytics extends Component {
     this.setState({ ...this.state, loaded: false });
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/campaignanalytics/allcampaignAnalytics/${"hemidovcingiz183@gmail.com"}`
+        `https://backendapp.murmurcars.com/api/v1/campaignanalytics/allcampaignAnalytics/${this.props.email}`
       )
       .then((analytics) => {
         console.log(analytics);
@@ -260,9 +260,9 @@ class CampaignAnalytics extends Component {
           audience_android_total += Number.parseInt(
             ad_analytics[i].audience_platformType.android
           );
-          people_reached.push(Number.parseInt(ad_analytics[i].people_reached));
+          people_reached.push(Number.parseInt(ad_analytics[i].people_reached_Impressions));
           people_reached_total += Number.parseInt(
-            ad_analytics[i].people_reached
+            ad_analytics[i].people_reached_Impressions
           );
           people_reached_categories.push(ad_analytics[i].date);
           audience_female.push(ad_analytics[i].audience_female);
@@ -542,7 +542,7 @@ class CampaignAnalytics extends Component {
   };
 
   render() {
-    console.log(this.props);
+    console.log(this.state);
     const { haveAnalytics, loaded, audience } = this.state;
     const {
       audience_male_total,
@@ -553,6 +553,7 @@ class CampaignAnalytics extends Component {
       people_reached_categories,
       ad_campaign_name,
       advertisers_email,
+      people_reached
     } = audience;
     return (
       <Fragment>
@@ -659,6 +660,7 @@ class CampaignAnalytics extends Component {
                     >
                       <PeopleReachedByWeekDay
                         categories={people_reached_categories}
+                        series = {people_reached}
                       />
                     </div>
                   </div>
@@ -668,7 +670,7 @@ class CampaignAnalytics extends Component {
                   >
                     <div className={classes.analytic_col_span}>
                       <h1>Avarage time seen</h1>
-                      <span>10h</span>
+                      <span>0</span>
                       <a href="#">
                         View Details <img src={ArrowRight} />
                       </a>
@@ -680,7 +682,7 @@ class CampaignAnalytics extends Component {
                     </div>
                   </div>
                 </div>
-                <div
+                {/*<div
                   className={`${classes.week_block} ${classes.analytics_item}`}
                 >
                   <Chart
@@ -718,7 +720,7 @@ class CampaignAnalytics extends Component {
                       </svg>
                     </div>
                   </div>
-                </div>
+                      </div>*/}
                 <div className={classes.audience_row}>
                   <div className={classes.audience_col}>
                     <div className={classes.audience_item}>
@@ -763,8 +765,8 @@ class CampaignAnalytics extends Component {
                       <p className={classes.audience_p}>Audience Engagements</p>
                       <div className={classes.audience_chart}>
                         <AdEngagements
-                          engagements_campaign1={5000}
-                          engagements_campaign2={10000}
+                          engagements_campaign1={0}
+                          engagements_campaign2={0}
                           campaign1={"Ad_A"}
                           campaign2={"Ad_B"}
                         />

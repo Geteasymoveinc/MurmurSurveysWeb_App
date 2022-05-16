@@ -6,7 +6,7 @@ class PeopleReachedByWeekDay extends Component {
     series: [
       {
         name: "reach",
-        data: [44, 55, 41, 67, 22, 43, 102],
+        data: this.props.series,
       },
       
     ],

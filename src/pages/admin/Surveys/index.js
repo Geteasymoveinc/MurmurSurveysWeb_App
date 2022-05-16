@@ -71,7 +71,7 @@ class Surveys extends React.Component {
     );
   }
   render() {
-  
+  console.log(this.state.loading)
     const { windnows, table } = this.state.menu;
     return (
       <React.Fragment>
@@ -90,7 +90,7 @@ class Surveys extends React.Component {
           </div>
         )}
 
-        {!this.props.loading && (
+        {!this.state.loading && (
           <div className={classes.dash_right}>
             <div className={classes.head_search}>
               <h1 className={classes.dash_h1}>Surveys</h1>
@@ -129,7 +129,7 @@ class Surveys extends React.Component {
                     <div
                       className={`${classes.cads_head} ${classes2.cads_head_space_between}`}
                     >
-                      <h4 className={classes.cads_h4}>Number of Surveys 5</h4>
+                      <h4 className={classes.cads_h4}>Number of Surveys {this.state.surveys.length}</h4>
                       <div className={classes2.surveys_view}>
                         <label>View:</label>
                         <div className={classes2.surveys_view_menu}>

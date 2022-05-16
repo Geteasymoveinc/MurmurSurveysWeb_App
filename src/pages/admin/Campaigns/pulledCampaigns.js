@@ -288,7 +288,7 @@ class PulledCampaigns extends Component {
 
     const { multiple } = this.state;
    
-
+    const campaign = this.state.pullledCampaigns.filter(campaign => campaign._id===id)[0]
   
     return (
       <React.Fragment>
@@ -359,7 +359,7 @@ class PulledCampaigns extends Component {
           )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-          <CampaignAnalytics />
+          <CampaignAnalytics email ={campaign.advertisers_email}/>
         )}
       </React.Fragment>
     );
