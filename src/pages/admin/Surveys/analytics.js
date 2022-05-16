@@ -13,10 +13,11 @@ class SurveyAnswers extends Component {
   }
 
   render() {
+    const {analytics } = this.props
     return (
     
         <div className={` ${classes.flexbox} `}>
-          {this.state.analytics.map((el, i) => {
+          {analytics.length ? analytics.map((el, i) => {
             const question = Object.keys(el);
             const categories = Object.keys(el[question]);
             const series = Object.values(el[question]);
@@ -32,7 +33,7 @@ class SurveyAnswers extends Component {
                 </div>
               </div>
             );
-          })}
+          }) : <div className="w-100 "><h1 className="text-center">No Analytics found </h1></div>}
         </div>
 
     );
