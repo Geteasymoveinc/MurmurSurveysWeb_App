@@ -128,12 +128,18 @@ class PulledCampaigns extends React.Component {
   }
 
   render() {
-    let status = [];
-    const url = this.props.location.search; //extracting billing id
-    const params = url.split("?campaign=")[1]; // geting rid of left side
-    const statusArray = this.state.adds.filter((el) => el.id === params); //looking for ad by ad campaign id
+    const url = this.props.location.search; //search property of history props
+    const id = new URLSearchParams(url).get('campaign') //extracting id 
+   let survey = []
+   if(id){
+    survey = this.state.pullledCampaigns.filter(survey => {
+     if(survey._id===id){
+       return survey.analytics
+     }
+   })[0]
+  }
 
-
+  console.log(survey)
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -181,7 +187,7 @@ class PulledCampaigns extends React.Component {
         )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-          <CampaignAnalytics />
+          <CampaignAnalytics analytics={survey.analytics}/>
         )}
       </React.Fragment>
     );

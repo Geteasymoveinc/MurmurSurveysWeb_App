@@ -18,9 +18,6 @@ import CampaignAnalytics from "./analytics";
 
 
 
-import { connect } from "react-redux";
-
-
 class PulledSurveys extends React.Component {
   constructor(props) {
     super(props);
@@ -31,10 +28,9 @@ class PulledSurveys extends React.Component {
       pulledSurveys: this.props.surveys,
   
       adds: this.props.adds,
-      loading: false,
     };
 
-    this.settingInterval = null;
+    this.async = null;
   }
 
   //ad-campaign
@@ -155,45 +151,39 @@ class PulledSurveys extends React.Component {
     });
   };
 
+componentDidUpdate(prevProps){
+  const prevLength = prevProps.adds.length
+  const this_length = this.props.adds.length
 
-  componentDidUpdate(prevProps){
-       
-    const {loading, adds, surveys } = this.props
-  
-    if(adds.length!==prevProps.adds.length || surveys.length!==prevProps.surveys.length){
-    
-      this.setState({
-        ...this.state,
-        adds,
-        pulledSurveys: surveys,
-        haveCampaigns: true
-      })
-    }
+  if(prevLength !== this_length){
+    this.setState({
+      ...this.state,
+      pulledSurveys: this.props.surveys,
+      adds: this.props.adds
+    })
   }
+}
 
   render() {
-    const url = this.props.location.search;
-    const id = url.split("surveys")[1];
-  console.log(this.state)
+
+    const url = this.props.location.search; //search property of history props
+    const id = new URLSearchParams(url).get('survey') //extracting id 
+    let survey = []
+   if(id){
+     survey = this.state.pulledSurveys.filter(survey => {
+     if(survey._id===id){
+       return survey.analytics
+     }
+   })[0]
+
+  }
+  
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
-        {this.state.loading && (
-          <div id="preloader">
-            <div id="status">
-              <div className="spinner-chase">
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-              </div>
-            </div>
-          </div>
-        )}
+ 
         {!this.props.location.search.length > 0 &&
-        !this.state.loading &&
+        
         this.props.view.table ? ( //list all campaigns
           <div className={classes.cads_table} style={{ marginBottom: "100px" }}>
             <table>
@@ -225,7 +215,7 @@ class PulledSurveys extends React.Component {
             {this.handleWindowsView()}
           </div>
         ) : (
-          <CampaignAnalytics />
+          <CampaignAnalytics analytics = {survey.analytics} />
         )}
       </React.Fragment>
     );
@@ -233,9 +223,5 @@ class PulledSurveys extends React.Component {
 }
 
 
-const mapStateToProps = (state) => {
-  const {surveys, adds, loading} = state.Surveys 
-  return {surveys, adds, loading }
-}
 
-export default connect(mapStateToProps, null)(withRouter(PulledSurveys));
+export default withRouter(PulledSurveys);

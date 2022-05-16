@@ -90,7 +90,7 @@ class Campaigns extends React.Component {
     const campaign = url.split("?campaign=")[1];
     const { modal } = this.state;
 
-    console.log(this.props);
+  
 
     return (
       <React.Fragment>

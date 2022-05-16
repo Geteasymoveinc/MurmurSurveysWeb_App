@@ -2,27 +2,29 @@
   display: flex;
   flex-direction: column;
 }
-.flex_analytics_container .analytics_block_grid {
+ .analytics_block_grid {
   display: grid;
   grid-template-areas:
-    "campaigns campaigns campaigns campaigns "
-    "surveys surveys surveys surveys"
-    "users users users  users-1"
-    "users users users  users-2";
+
+    "users users  users-1"
+    "users users users-2";
 
   grid-gap: 10px;
  margin-bottom: 2rem;
 }
-
-.card_analytics:first-child {
-  grid-area: campaigns;
-  max-width: 100%;
-  overflow: hidden;
+.flex_analytics_container .analytics_block_flex{
+  display: flex;
+  justify-content: space-between;
 }
-.card_analytics:nth-child(2) {
-  grid-area: surveys;
-  max-width: 100%;
-  overflow: hidden;
+.analytics_block_flex .card_analytics:first-child {
+
+  width:49%;
+  
+}
+.analytics_block_flex .card_analytics:last-child {
+
+  width:49%;
+  
 }
 .analytics_info_box {
   grid-area: users-1;

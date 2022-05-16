@@ -26,7 +26,7 @@ class Statistics_Chart extends Component {
             breakpoint: 480,
             options: {
               chart: {
-                width: "100%",
+                 height: 200
               },
               legend: {
                 position: "bottom",
@@ -44,10 +44,11 @@ class Statistics_Chart extends Component {
 
 
         xaxis: {
-          show:false,
-          categories: this.props.categories
-        },
+          labels: {
+            show: false
+        }
       },
+    },
       series: [
         {
           name: this.props.name,
@@ -70,7 +71,7 @@ class Statistics_Chart extends Component {
           ...this.state.options,
           xaxis: {
             ...this.state.options.xaxis,
-            categories: categories
+           // categories: categories
           },
          },
          series: [
@@ -90,7 +91,7 @@ class Statistics_Chart extends Component {
           series={this.state.series}
           type= "area"
           width="100%"
-          height='100%'
+          height={200}
         />
       </div>
     );

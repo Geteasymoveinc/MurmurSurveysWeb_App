@@ -97,7 +97,7 @@ if(this.props.loading !==prevProps.loading){
       loaded
     } = this.state;
     const { users, chart } = this.state.users;
-console.log(this.state)
+
     return (
       <Fragment>
         {(this.props.loading || !loaded ) && (
@@ -151,7 +151,7 @@ console.log(this.state)
                 <div
                   className={`${classes.analytics_block} ${classes2.flex_analytics_container}`}
                 >
-                  <div className={classes2.analytics_block_grid}>
+                  <div className={classes2.analytics_block_flex}>
                     <div className={classes2.card_analytics}>
                       <div className={classes2.card_analytics_data}>
                         <div>
@@ -226,8 +226,10 @@ console.log(this.state)
                           loaded={this.state.loaded}
                         />
                       </div>
+                   
                     </div>
-
+                    </div>
+                    <div className={classes2.analytics_block_grid}>
                     <div className={classes2.analytics_info_box}>
                       <div className={classes2.flexbox_info_box}>
                         <div>
@@ -319,7 +321,6 @@ console.log(this.state)
                       </div>
                     </div>
                   </div>
-
                   <div className={classes3.ads_section}>
                     <div className={`${classes3.cads_head} `}>
                       <h4 className={classes3.cads_h4}>

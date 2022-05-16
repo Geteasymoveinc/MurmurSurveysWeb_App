@@ -326,7 +326,7 @@ class PulledRequests extends Component {
  
     const campaign = this.state.pulledRequests.filter(campaign => campaign._id ===id)
    
-   console.log(this.state)
+  
 
     return (
       <React.Fragment>

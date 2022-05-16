@@ -1,0 +1,26 @@
+
+
+
+.rows.rows_2{
+    display: flex;
+    justify-content: center !important;
+    box-shadow: none !important;
+}
+
+
+.rows.rows_2 .pies .chart_contaioner_2{
+    width:80%;
+}
+
+
+.pies{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flexbox{
+    background-color: white;
+    margin-top: 20px;
+}

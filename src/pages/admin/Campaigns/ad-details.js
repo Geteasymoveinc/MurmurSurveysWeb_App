@@ -152,16 +152,15 @@ class AdDetails extends React.Component {
   }
 
   render() {
-    const { editable } = this.state;
-    const url = this.props.location.search; //search property of history props
-    const id = new URLSearchParams(url).get('request') //extracting id 
-    const campaign = this.props.campaigns.filter((el) => el._id === id);
-    let status = [];
+   const campaign = this.props.campaigns[0]
+   let status = false
+   const expiration = campaign.ad_schedule.split(' ')[1]
 
-    if (campaign.length) {
-      status =  campaign[0].active
-    }
-    console.log(this.props);
+  const today = new Date()
+  if(today< new Date(expiration)){
+    status = true
+  }
+  
     return (
       <React.Fragment>
         {!this.state.loaded && (
@@ -191,13 +190,13 @@ class AdDetails extends React.Component {
                   <p>{campaign.campaign_name}</p>
                   <span
                     className={`${
-                      status[0]
+                      status
                         ? classes2.cads_active_dot
                         : classes2.cads_deactive_dot
                     }`}
                   >
                     <span className={classes2.cads_dot}></span>
-                    {status[0] ? "Active" : "Deactive"}
+                    {status ? "Active" : "Deactive"}
                   </span>
                   {/*<!-- <span class="cads_deactive_dot"><span class="cads_dot"></span>Deactive</span> -->*/}
                 </div>
@@ -227,91 +226,27 @@ class AdDetails extends React.Component {
                       }`}
                     >
                       <ul className={classes2.ads_detail_age}>
-                        {!editable ? (
+              
                           <li>
                             <span>Age</span>
                             <p className={classes2.detail_content_p}>
                               {campaign.audienceAge}
                             </p>
                           </li>
-                        ) : (
-                          <li>
-                            <span>Age</span>
-                            <div
-                              className={`${classes2.details_edit_select} ${classes2.mt_8}`}
-                            >
-                              <select
-                                name="audienceAge"
-                                onChange={this.handleDetailsUpdate}
-                              >
-                                <option value={campaign.audienceAge}>
-                                  {campaign.audienceAge}
-                                </option>
-                                {[
-                                  "18-25",
-                                  "26-35",
-                                  "36-45",
-                                  "46-55",
-                                  "56-65",
-                                  "66+",
-                                ].map(
-                                  (age, index) =>
-                                    age !== campaign.audienceAge && (
-                                      <option key={index} value={age}>
-                                        {age}
-                                      </option>
-                                    )
-                                )}
-                              </select>
-                              <img
-                                src={ArrowDown}
-                                alt="arrow"
-                                className={classes2.details_edit_arrow}
-                              />
-                            </div>
-                          </li>
-                        )}
+                     
+                   
+                        
                         <li>
                           <span className={classes2.age_gender_line}></span>
                         </li>
-                        {!editable ? (
+                        
                           <li>
                             <span>Gender</span>
                             <p className={classes2.detail_content_p}>
                               {campaign.audienceGender}
                             </p>
                           </li>
-                        ) : (
-                          <li>
-                            {" "}
-                            <span>Gender</span>
-                            <div
-                              className={`${classes2.details_edit_select} ${classes2.mt_8}`}
-                            >
-                              <select
-                                name="audienceGender"
-                                onChange={this.handleDetailsUpdate}
-                              >
-                                <option value={campaign.audienceGender}>
-                                  {campaign.audienceGender}
-                                </option>
-                                {["Male", "Female", "Both"].map(
-                                  (gender, index) =>
-                                    gender !== campaign.audienceGender && (
-                                      <option value={gender} key={index}>
-                                        {gender}
-                                      </option>
-                                    )
-                                )}
-                              </select>
-                              <img
-                                src={ArrowDown}
-                                alt="arrow"
-                                className={classes2.details_edit_arrow}
-                              />
-                            </div>
-                          </li>
-                        )}
+                     
                       </ul>
                     </div>
                   </div>
@@ -328,19 +263,11 @@ class AdDetails extends React.Component {
                         this.state.editable && classes2.edit_inline_flex
                       }`}
                     >
-                      {!editable ? (
+                  
                         <p className={classes2.detail_content_p}>
                           {campaign.display_quantity}
                         </p>
-                      ) : (
-                        <input
-                          type="text"
-                          name="display_quantity"
-                          className={classes2.ads_edit_input}
-                          value={campaign.display_quantity}
-                          onChange={this.handleDetailsUpdate}
-                        />
-                      )}
+                
                     </div>
                   </div>
                 </div>
@@ -354,19 +281,11 @@ class AdDetails extends React.Component {
                       <h5 className={classes2.detail_top_h5}>Daily Budget</h5>
                     </div>
                     <div className={classes2.ads_details_content}>
-                      {!editable ? (
+                    
                         <p className={classes2.detail_content_p}>
                           ${campaign.daily_budget}
                         </p>
-                      ) : (
-                        <input
-                          type="text"
-                          name="daily_budget"
-                          className={classes2.ads_edit_input}
-                          value={campaign.daily_budget}
-                          onChange={this.handleDetailsUpdate}
-                        />
-                      )}
+                  
                     </div>
                   </div>
                 </div>
@@ -376,44 +295,11 @@ class AdDetails extends React.Component {
                       <h5 className={classes2.detail_top_h5}>Category</h5>
                     </div>
                     <div className={classes2.ads_details_content}>
-                      {!editable ? (
+                  
                         <p className={classes2.detail_content_p}>
                           {campaign.campaign_type}
                         </p>
-                      ) : (
-                        <div className={classes2.details_edit_select}>
-                          <select
-                            name="campaign_type"
-                            onChange={this.handleDetailsUpdate}
-                          >
-                            <option>{campaign.campaign_type}</option>
-                            {[
-                              "Consumer Services",
-                              "Consumer Products",
-                              "Business Service",
-                              "Business Products",
-                              "Real-Estate",
-                              "Insurance",
-                              "Mortgage",
-                              "Home Services",
-                              "Professional Services",
-                              "Automotive",
-                            ].map(
-                              (type, index) =>
-                                type !== campaign.campaign_type && (
-                                  <option key={index} value={type}>
-                                    {type}
-                                  </option>
-                                )
-                            )}
-                          </select>
-                          <img
-                            src={ArrowDown}
-                            alt="arrow"
-                            className={classes2.details_edit_arrow}
-                          />
-                        </div>
-                      )}
+                
                     </div>
                   </div>
                 </div>
@@ -427,59 +313,9 @@ class AdDetails extends React.Component {
                     </div>
                     <div className={classes2.detail_map_title}>
                       <span>Targer Area</span>
-                      {!editable ? (
+                    
                         <small>{campaign.area}</small>
-                      ) : /[1-9]/i.test(campaign.area) ? (
-                        <input
-                          type="text"
-                          value={campaign.area}
-                          size="2"
-                          name="area"
-                          onChange={this.handleDetailsUpdate}
-                        />
-                      ) : (
-                        <div className={classes2.details_edit_select}>
-                          {" "}
-                          <select
-                            name="area"
-                            onChange={this.handleDetailsUpdate}
-                          >
-                            <option value={campaign.area}>
-                              {campaign.area}
-                            </option>
-                            {[
-                              "Nizami",
-                              "Nasimi",
-                              "Khazar",
-                              "Sabunchu",
-                              "Qaradaq",
-                              "Binaqadi",
-                              "Narimanov",
-                              "Sabayil",
-                              "Pirallahı",
-                              "Xətai",
-                              "Yasamal",
-                              "Suraxanı",
-                            ].map((district, i) => {
-                              if (district !== campaign.area) {
-                                return (
-                                  <option
-                                    value={district.toLowerCase()}
-                                    key={i}
-                                  >
-                                    {district}
-                                  </option>
-                                );
-                              }
-                            })}
-                          </select>
-                          <img
-                            src={ArrowDown}
-                            alt="arrow"
-                            className={classes2.details_edit_arrow}
-                          />
-                        </div>
-                      )}
+                      
                     </div>
                   </div>
                 </div>

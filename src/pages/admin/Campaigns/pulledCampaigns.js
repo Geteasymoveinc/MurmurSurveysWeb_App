@@ -177,7 +177,7 @@ class PulledCampaigns extends Component {
                       <button
                         type="button"
                         className={`${classes.check_remove}`}
-                        onClick={() => this.deleteCampaign(campaign._id)}
+                        onClick={() => this.toggleDeleteAd(campaign._id)}
                       >
                         <img src={Trash} alt="" />
                       </button>
@@ -243,7 +243,44 @@ class PulledCampaigns extends Component {
 
     
   }
+  toggleDeleteAd = (id, type) => {
+    this.setState({ ...this.state, loading: true });
+    axios
+      .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
+      .then(() => {
+        window.location.reload();
+        if (type === 'from_details') {
+          this.props.history.replace("/ad-manager");
+          this.props.history.go("/ad-manager");
+        }
+        this.setState({ ...this.state, loading: false });
+      })
 
+      .catch((error) => console.log(error));
+  };
+
+  toggleDeleteMultipleAd = () => {
+    const adds = this.state.adds;
+    const list_of_ids = [];
+    this.setState({ ...this.state, loading: true });
+    for (let i = 0; i < adds.length; i++) {
+      if (!adds[i].toggled) {
+        list_of_ids.push(adds[i].id);
+      }
+    }
+   
+    axios
+      .delete(
+        `https://backendapp.murmurcars.com/api/v1/campaigns/delete/${list_of_ids}`
+      )
+      .then(() => {
+        window.location.reload();
+        this.setState({ ...this.state, loading: false });
+      })
+      .catch((err) => this.setState({
+        ...this.state, loading: false
+      }));
+  };
   render() {
     const url = this.props.location.search; //search property of history props
     const id = new URLSearchParams(url).get('campaign') //extracting id 
@@ -252,7 +289,7 @@ class PulledCampaigns extends Component {
     const { multiple } = this.state;
    
 
-    console.log(this.state)
+  
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
