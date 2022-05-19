@@ -17,7 +17,7 @@ import Statistics_Chart from "./charts/line-chart";
 import BarHorisontal from "./charts/bar-chart";
 
 import { connect } from "react-redux";
-import {fetchUserAnalytics,fetchSurveys} from '../../../store/actions'
+import {fetchUserAnalytics,fetchCampaigns} from '../../../store/actions'
 
 
 class CampaignAnalytics extends Component {
@@ -64,7 +64,9 @@ if(this.props.loading !==prevProps.loading){
   componentDidMount() {
 
     this.props.fetchUserAnalytics('https://backendapp.murmurcars.com/api/v1/admin/get-users-statistic')
-    this.props.fetchSurveys('https://backendapp.murmurcars.com/api/v1/admin/get-resent-surveys')
+    this.props.fetchCampaigns(
+      "https://backendapp.murmurcars.com/api/v1/admin/get-campaigns"
+    );
    
   }
 
@@ -322,7 +324,7 @@ if(this.props.loading !==prevProps.loading){
                     </div>
                   </div>
                   <div className={classes3.ads_section}>
-                    <div className={`${classes3.cads_head} `}>
+                    <div className={`${classes3.cads_head} ${classes3.cads_head_2}`}>
                       <h4 className={classes3.cads_h4}>
                         Most recent Campaigns
                       </h4>
@@ -348,4 +350,4 @@ const mapstatetoprops = (state) => {
 
   return { users, campaigns, surveys,partners, loading };
 };
-export default connect(mapstatetoprops, {fetchUserAnalytics, fetchSurveys})(CampaignAnalytics);
+export default connect(mapstatetoprops, {fetchUserAnalytics, fetchCampaigns})(CampaignAnalytics);

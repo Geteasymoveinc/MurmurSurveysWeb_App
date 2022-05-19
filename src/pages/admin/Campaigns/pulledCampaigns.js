@@ -8,7 +8,7 @@ import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
 
 import classes from "../../../assets/css/CreateAd/index.module.css";
 
-import CampaignAnalytics from "./analytics";
+import CampaignAnalytics from "../../../components/analytics/analytics";
 
 
 
@@ -21,7 +21,7 @@ class PulledCampaigns extends Component {
       haveCampaigns: true,
       checked: false,
       multiple: false,
-       pullledCampaigns: this.props.campaigns,
+       pulledCampaigns: this.props.campaigns,
        adds: this.props.adds,
       loading: false,
     };
@@ -33,10 +33,10 @@ class PulledCampaigns extends Component {
 
   deleteCampaign = (id) => {
 
-    console.log(id)
-    let { pullledCampaigns, adds } = this.state;
+  
+    let { pulledCampaigns, adds } = this.state;
 
-    pullledCampaigns = pullledCampaigns.filter((campaign) => {
+    pulledCampaigns = pulledCampaigns.filter((campaign) => {
       if (campaign._id !== id) {
         return campaign;
       }
@@ -50,7 +50,7 @@ class PulledCampaigns extends Component {
 
     this.setState({
       ...this.state,
-      pullledCampaigns,
+      pulledCampaigns,
       adds,
     });
   }
@@ -76,7 +76,6 @@ class PulledCampaigns extends Component {
         }
       }
     }
-    console.log(count)
     if (count > 1) {
       multiple = true;
     } 
@@ -148,9 +147,9 @@ class PulledCampaigns extends Component {
 
     let murmurCampaigns = [];
 
-    if (this.state.pullledCampaigns.length !== 0) {
+    if (this.state.pulledCampaigns.length !== 0) {
       {
-        this.state.pullledCampaigns.map((campaign, i) => {
+        this.state.pulledCampaigns.map((campaign, i) => {
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
@@ -231,8 +230,8 @@ class PulledCampaigns extends Component {
 
         this.setState({
           ...this.state,
-          pullledCampaigns: [
-            ...this.state.pullledCampaigns,
+          pulledCampaigns: [
+            ...this.state.pulledCampaigns,
             ...this.props.campaigns.slice(prevProps.campaigns.length, )
           ],
           adds: [...this.state.adds, ...this.props.adds.slice(prevProps.adds.length,)]
@@ -287,9 +286,13 @@ class PulledCampaigns extends Component {
 
 
     const { multiple } = this.state;
-   
-    const campaign = this.state.pullledCampaigns.filter(campaign => campaign._id===id)[0]
-  
+   let campaign = {} 
+   if(id){
+   campaign = this.state.pulledCampaigns.filter(campaign => campaign._id===id)[0]
+   }
+
+
+    
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -365,16 +368,6 @@ class PulledCampaigns extends Component {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

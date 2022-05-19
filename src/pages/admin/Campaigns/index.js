@@ -29,7 +29,7 @@ class Campaigns extends React.Component {
     clearTimeout(this.timeout);
   }
   componentDidMount() {
-    console.log("parent mounted");
+
     this.props.fetchCampaigns(
       "https://backendapp.murmurcars.com/api/v1/admin/get-campaigns"
     );

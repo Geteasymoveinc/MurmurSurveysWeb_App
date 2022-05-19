@@ -7,7 +7,7 @@ class SeenByWeekDay extends Component {
     series: [
       {
         name: "reach",
-        data: [54, 255, 841, 867, 522, 343, 1102],
+        data: [],
       },
     ],
     options: {

@@ -15,10 +15,7 @@ import {
 function* Surveys({ payload: { url } }) {
   try {
     const response = yield call(fetch_surveys, url);
-
     const { surveys,adds} = response.data;
-
-    console.log(surveys,adds)
     yield put(
       fetchSurveysSuccess(surveys,adds)
     );

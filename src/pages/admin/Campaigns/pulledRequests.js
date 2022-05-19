@@ -3,12 +3,12 @@ import React, { Component } from "react";
 
 import { Link, withRouter } from "react-router-dom";
 
-import Trash from "../../../assets/css/CreateAd/trash.svg";
+
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
 
 import classes from "../../../assets/css/CreateAd/index.module.css";
 
-import CampaignAnalytics from "./analytics";
+
 import AdDetails from "./ad-details";
 
 import { connect } from "react-redux";

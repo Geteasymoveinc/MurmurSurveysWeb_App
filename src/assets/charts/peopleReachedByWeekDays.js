@@ -5,8 +5,8 @@ class PeopleReachedByWeekDay extends Component {
   state = {
     series: [
       {
-        name: "reach",
-        data: [44, 55, 41, 67, 22, 43, 102],
+        name: "People Reached",
+        data: this.props.series,
       },
       
     ],
@@ -68,6 +68,7 @@ class PeopleReachedByWeekDay extends Component {
     },
   };
   render() {
+    console.log(this.state)
     return (
       <div id="chart">
         <ReactApexChart

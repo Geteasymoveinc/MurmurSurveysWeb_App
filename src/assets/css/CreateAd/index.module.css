@@ -220,6 +220,7 @@
   border-radius: 3px;
   position: relative;
   top: -1px;
+  height: 20px;
 }
 .cads_check input:checked + label:after {
   content: "";
@@ -595,3 +596,31 @@ input:checked + .slider:before {
 }
 
 
+.pagination_element{
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  padding: 0 10px;
+  outline: none;
+  border-color: black;
+  width: 44px;
+}
+.pagination_element.page_active{
+  border-color: #3f2b89;
+  color: #7356c0;
+}
+
+.cads_flex_th > label{
+  margin-bottom: 0;
+}
+
+.cads_check > label{
+  display: flex;
+  align-items: center;
+}
+
+.td_data.td_data_2{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -4,17 +4,10 @@ import axios from "axios";
 
 import { Link, withRouter } from "react-router-dom";
 
-import Trash from "../../../assets/css/CreateAd/trash.svg";
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
-import SurveyEye from "../../../assets/images/surveys/survey-eye.svg";
-import SurveyEdit from "../../../assets/images/surveys/survey-edit.svg";
-import SurveyPrice from "../../../assets/images/surveys/survey-price.svg";
-import SampleImage from "../../../assets/images/surveys/sample-image.png";
-import SampleImage2 from "../../../assets/images/surveys/sample-image2.png";
 import classes from "../../../assets/css/CreateAd/index.module.css";
-import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
-import CampaignAnalytics from "./analytics";
+import CampaignAnalytics from "../../../components/analytics/analytics";
 import { connect } from "react-redux";
 
 class PulledCampaigns extends React.Component {
@@ -23,55 +16,47 @@ class PulledCampaigns extends React.Component {
     this.state = {
       haveCampaigns: true,
       checked: false,
-      pullledCampaigns: this.props.surveys,
-      adds: this.props.adds,
+      pulledCampaigns: this.props.campaigns,
+      adds: this.props.campaign_adds,
       loading: false,
     };
 
     this.settingInterval = null;
   }
 
-
-
-
   //ad-campaign
   handleCampaigns = () => {
-    const { multiple } = this.state;
-
     let murmurCampaigns = [];
 
-    if (this.state.pullledCampaigns.length !== 0) {
+    if (this.state.pulledCampaigns.length !== 0) {
       {
-        this.state.pullledCampaigns.map((campaign, i) => {
+        this.state.pulledCampaigns.map((campaign, i) => {
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
-         
-                    <label>
-                      {campaign.survey_title}
+            
+                    <label htmlFor={campaign._id}>
+                      {campaign.campaign_name}
                     </label>
-              
+                  
                 </div>
               </td>
               <td className={classes.cads_td}>
-              <span className={`${classes.td_data} ${classes.td_data_2}`}>
+                <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
                     src={campaign.customer.img}
-                    alt="avatar"
+                    alt="profile img"
                     className={classes.partner_profile_img}
                   />
                   {campaign.customer.fullName}
                 </span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}> {campaign.views}</span>
+                <span className={classes.td_data}> {campaign.ad_type}</span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.answeredBy.length}</span>
-              </td>
-              <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.survey_earnings}</span>
+                <span className={classes.td_data}>{campaign.daily_budget}</span>
               </td>
               <td className={classes.cads_td}>
                 <Link
@@ -94,52 +79,48 @@ class PulledCampaigns extends React.Component {
 
     return murmurCampaigns;
   };
-  
-
-
 
   toggleSurveyWindow = (id) => {
-      const active = this.state.active
-      let value = id
-      if(active === id){
-          value = ''
-      }
+    const active = this.state.active;
+    let value = id;
+    if (active === id) {
+      value = "";
+    }
 
-      this.setState({
-          ...this.state,
-          active: value
-      })
-  }
+    this.setState({
+      ...this.state,
+      active: value,
+    });
+  };
 
-  
-  componentDidUpdate(prevProps){
-       
-    const {loading, adds, surveys } = this.props
-  
-    if(adds.length!==prevProps.adds.length || surveys.length!==prevProps.surveys.length){
-    
+  componentDidUpdate(prevProps) {
+    const { loading, campaign_adds, campaigns } = this.props;
+
+    if (
+      campaign_adds.length !== prevProps.campaign_adds.length ||
+      campaigns.length !== prevProps.campaigns.length
+    ) {
       this.setState({
         ...this.state,
-        adds,
-        pulledSurveys: surveys,
-        haveCampaigns: true
-      })
+        adds: campaign_adds,
+        pulledCampaigns: campaigns,
+        haveCampaigns: true,
+      });
     }
   }
 
   render() {
     const url = this.props.location.search; //search property of history props
-    const id = new URLSearchParams(url).get('campaign') //extracting id 
-   let survey = []
-   if(id){
-    survey = this.state.pullledCampaigns.filter(survey => {
-     if(survey._id===id){
-       return survey.analytics
-     }
-   })[0]
-  }
-
-  console.log(survey)
+    const id = new URLSearchParams(url).get("campaign"); //extracting id
+    let campaign = {};
+    if (id) {
+      campaign = this.state.pulledCampaigns.filter((campaign) => {
+        if (campaign._id === id) {
+          return campaign;
+        }
+      })[0];
+    }
+  
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -157,27 +138,28 @@ class PulledCampaigns extends React.Component {
             </div>
           </div>
         )}
-        {(!this.props.location.search.length > 0 &&
-        !this.state.loading) &&(
+        {!this.props.location.search.length > 0 && !this.state.loading && (
           <div className={classes.cads_table} style={{ marginBottom: "100px" }}>
             <table>
               <thead>
                 <tr className={classes.first_tr}>
                   <th className={`${classes.cads_th}`}>
-                 <span> Name</span>
+                  <div
+                        className={`${classes.invoice_th}`}
+                      >
+                      <label htmlFor="campaigns">Name</label>
+                    </div>
                   </th>
                   <th className={classes.cads_th}>
                     <span>Customer</span>
                   </th>
                   <th className={`${classes.cads_th} ${classes.cads_quantity}`}>
-                    <span>View</span>
+                    <span>Type</span>
                   </th>
                   <th className={`${classes.cads_th} ${classes.cads_budget}`}>
-                    <span>Answers</span>
+                    <span>Daily Budget</span>
                   </th>
-                  <th className={`${classes.cads_th} ${classes.cads_budget}`}>
-                    <span>Budget</span>
-                  </th>
+
                   <th></th>
                 </tr>
               </thead>
@@ -187,7 +169,7 @@ class PulledCampaigns extends React.Component {
         )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-          <CampaignAnalytics analytics={survey.analytics}/>
+    <CampaignAnalytics email ={campaign.advertisers_email}/>
         )}
       </React.Fragment>
     );
@@ -195,9 +177,8 @@ class PulledCampaigns extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  const {surveys, adds, loading} = state.Surveys 
-  return {surveys, adds, loading }
-}
-
+  const { campaigns, campaign_adds, loading } = state.Campaigns;
+  return { campaigns, campaign_adds, loading };
+};
 
 export default connect(mapStateToProps, null)(withRouter(PulledCampaigns));

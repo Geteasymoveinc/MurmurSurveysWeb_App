@@ -4,7 +4,7 @@ import {
 } from "./actionTypes";
 
 const fetchSurveys = (url) => {
-  console.log(url)
+  
   return {
     type: FETCHSURVEYS,
     payload: { url },

@@ -64,7 +64,7 @@ class SidebarContent extends Component {
                       <span>{"Dashboard"}</span>
                     </Link>
                   </li>
-                  {/*<li name='/customers'
+                  <li name='/customers'
                     onClick={this.menuItemActive}
                     className={`${
                       this.state.matchingMenuItem === "/customers"
@@ -87,7 +87,7 @@ class SidebarContent extends Component {
                       </div>
                       <span>{"Customers"}</span>
                     </Link>
-                  </li>*/}
+                  </li>
                   <li name='/campaigns'
                     onClick={this.menuItemActive}
                     className={`${
