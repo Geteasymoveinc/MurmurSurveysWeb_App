@@ -11,6 +11,7 @@
 
   grid-gap: 10px;
  margin-bottom: 2rem;
+ margin-top: 20px;
 }
 .flex_analytics_container .analytics_block_flex{
   display: flex;
@@ -236,7 +237,6 @@ p {
   background: #F7F9FC;
   border-radius: 8px;
   padding: 20px 20px 15px 20px;
-  width: 170px;
 }
 
 .analytics_block_grid .chart_and_info_box {
