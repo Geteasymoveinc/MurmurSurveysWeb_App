@@ -62,7 +62,6 @@ class AdDetails extends React.Component {
     const { campaigns } = this.props;
 
       area = campaigns[0].area;
-      console.log(area)
       let url = "";
 
       if (area) {
@@ -160,7 +159,7 @@ class AdDetails extends React.Component {
   if(today< new Date(expiration)){
     status = true
   }
-  console.log(this.props.campaigns)
+  
     return (
       <React.Fragment>
         {!this.state.loaded && (

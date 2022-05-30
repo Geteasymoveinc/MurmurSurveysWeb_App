@@ -71,7 +71,7 @@ class Surveys extends React.Component {
     );
   }
   render() {
-  console.log(this.state.loading)
+  console.log(this.state)
     const { windnows, table } = this.state.menu;
     return (
       <React.Fragment>

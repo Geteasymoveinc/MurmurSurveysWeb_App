@@ -3,15 +3,17 @@ import React, { Component, Fragment } from "react";
 //Import Breadcrumb
 
 import Chart from "react-apexcharts";
+import HeadSearch from '../CommonForBoth/Headsearch'
 
 import PieChart from "../../assets/charts/pieChart";
 import PeopleReachedByWeekDay from "../../assets/charts/peopleReachedByWeekDays";
 import SeenByWeekDay from "../../assets/charts/seenbyWeekDay";
 import AudienceDemographicsPieChart from "../../assets/charts/audienceDemographics";
+import Impressions_and_Views from "../../assets/charts/impressionsAndViews";
 import AgeOfReachedDemographics from "../../assets/charts/ageChartReachedDemographics";
 import AdEngagements from "../../assets/charts/adEngagements";
 
-import ArrowRight from "../../assets/css/analitics/Vector.svg";
+
 //import classes
 import classes from "../../assets/css/analitics/index.module.css";
 import "../../assets/css/app.css";
@@ -34,14 +36,16 @@ class CampaignAnalytics extends Component {
         audience_android_total: 0,
         audience_ios_total: 0,
         people_reached_total: 0,
+        views_total:0,
         analytics_date: [],
         impressions: [],
+        views:[],
         audience_female: [],
         audience_male: [],
         audience_platformType: [],
         weekly_driven_mileage: [],
         weekly_driven_mileage_cat: [],
-        people_reached: [],
+        people_reached: []
       },
       rasberry: [],
       seriesRadialBar: [76],
@@ -224,17 +228,19 @@ class CampaignAnalytics extends Component {
 
   getAnbalyticsfromApi = () => {
     this.setState({ ...this.state, loaded: false });
+    const {email} = this.props
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/campaignanalytics/allcampaignAnalytics/${this.props.email}`
+        `http://localhost:4000/api/v1/admin/allcampaignAnalytics/${email}`
       )
       .then((analytics) => {
-      console.log(analytics)
-        const data = analytics["data"];
+        const data = analytics.data;
+      
         const {
           people_reached,
           analytics_date,
           impressions,
+          views,
           audience_female,
           audience_male,
           ios,
@@ -242,6 +248,7 @@ class CampaignAnalytics extends Component {
           ad_campaign_name,
           people_reached_total,
           advertisers_email,
+          people_reached_views_total
         } = data;
          
         this.setState({
@@ -258,9 +265,11 @@ class CampaignAnalytics extends Component {
             audience_female_total: audience_female,
             audience_male_total: audience_male,
             people_reached_total: people_reached_total,
+            views_total: people_reached_views_total,
             people_reached,
             analytics_date,
-            impressions
+            impressions,
+            views
           },
           series: [
             {
@@ -408,238 +417,266 @@ class CampaignAnalytics extends Component {
       audience_android_total,
       audience_ios_total,
       people_reached_total,
+      views_total,
       analytics_date,
       ad_campaign_name,
-      advertisers_email,
       impressions,
+      views
     } = audience;
 
+ const {campaign} = this.props
+ const {customer} = campaign
 
-
-    console.log(impressions, analytics_date)
     return (
-      <Fragment>
-        {!loaded && (
-          <div id="preloader" style={{ opacity: 0.7 }}>
-            <div id="status">
-              <div className="spinner-chase">
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-              </div>
-            </div>
-          </div>
-        )}
-        {loaded && (
-          <div
-            className={`${classes.analytics_block} ${
-              !haveAnalytics && classes.no_analytics_block
-            }`}
-          >
-            {!haveAnalytics && (
-              <React.Fragment>
-                <div className={classes.no_analytics_alert}>
-                  <h1>No active campaign was found! Please create an ad!</h1>
-                  <Link to="/ad-manager/campaign-objective">Create Ad +</Link>
+            <Fragment>
+            {!loaded && (
+              <div id="preloader" style={{ opacity: 0.7 }}>
+                <div id="status">
+                  <div className="spinner-chase">
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                  </div>
                 </div>
-              </React.Fragment>
+              </div>
             )}
-            {haveAnalytics && (
-              <React.Fragment>
-                <h1 className={classes.analytics_campaign_name}>
+            {loaded && (
+              
+               <div
+                  className={`${classes.analytics_block} ${
+                    !haveAnalytics && classes.no_analytics_block
+                  }`}
+                >
+                  {!haveAnalytics && (
+                    <React.Fragment>
+                      <div className={classes.no_analytics_alert}>
+                        <h1>No active campaign was found! Please create an ad!</h1>
+                        <Link to="/ad-manager/campaign-objective">Create Ad +</Link>
+                      </div>
+                    </React.Fragment>
+                  )}
+                  {haveAnalytics && (
+                    <React.Fragment>
+                                      <h1 className={classes.analytics_campaign_name}>
                   {" "}
                   {`${ad_campaign_name} By
-                  ${advertisers_email}`}
+                  ${customer.fullName}`}
                 </h1>
-                <div
-                  className={`${classes.week_block} ${classes.analytics_item} ${classes.hide_toolbar}`}
-                >
-                  <Chart
-                    options={this.state.options}
-                    series={this.state.series}
-                    type="area"
-                    width="100%"
-                    height={400}
-                  />
-                  <span
-                    style={{
-                      width: "100px",
-                      height: "30px",
-                      backgroundColor: "white",
-                      position: "absolute",
-                      top: "5px",
-                      right: 0,
-                      zIndex: 100,
-                    }}
-                  ></span>
-                  <div className={classes.weekly_select}>
-                    <div className="position-relative">
-                      <select
-                        name="adCategory"
-                        id="step-categories"
-                        className={classes.analytics_select_item}
-                        onChange={(event) =>
-                          this.handleTimeFilter(event, "options")
-                        }
+                       <div
+                        className={`${classes.week_block} ${classes.analytics_item} ${classes.hide_toolbar}`}
                       >
-                        <option value="Weekly">Weekly</option>
-                        <option value="Monthly">Monthly</option>
-                        <option value="Annualy">Annualy</option>
-                      </select>
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 16.8C11.3 16.8 10.6 16.53 10.07 16L3.55002 9.48001C3.26002 9.19001 3.26002 8.71001 3.55002 8.42001C3.84002 8.13001 4.32002 8.13001 4.61002 8.42001L11.13 14.94C11.61 15.42 12.39 15.42 12.87 14.94L19.39 8.42001C19.68 8.13001 20.16 8.13001 20.45 8.42001C20.74 8.71001 20.74 9.19001 20.45 9.48001L13.93 16C13.4 16.53 12.7 16.8 12 16.8Z"
-                          fill="#2E3A59"
+                        <Chart
+                          options={this.state.options}
+                          series={this.state.series}
+                          type="area"
+                          width="100%"
+                          height={400}
                         />
-                      </svg>
-                    </div>
-                  </div>
-                  {/*<img src={ArrowDown} alt="" className={classes.step_select_icon} />*/}
+                        <span
+                          style={{
+                            width: "100px",
+                            height: "30px",
+                            backgroundColor: "white",
+                            position: "absolute",
+                            top: "5px",
+                            right: 0,
+                            zIndex: 100,
+                          }}
+                        ></span>
+                        <div className={classes.weekly_select}>
+                          <div className="position-relative">
+                            <select
+                              name="adCategory"
+                              id="step-categories"
+                              className={classes.analytics_select_item}
+                              onChange={(event) =>
+                                this.handleTimeFilter(event, "options")
+                              }
+                            >
+                               <option value="Weekly">Weekly</option> <option value="Monthly">Monthly</option> <option value="Annualy">Annualy</option> 
+                            </select>
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M12 16.8C11.3 16.8 10.6 16.53 10.07 16L3.55002 9.48001C3.26002 9.19001 3.26002 8.71001 3.55002 8.42001C3.84002 8.13001 4.32002 8.13001 4.61002 8.42001L11.13 14.94C11.61 15.42 12.39 15.42 12.87 14.94L19.39 8.42001C19.68 8.13001 20.16 8.13001 20.45 8.42001C20.74 8.71001 20.74 9.19001 20.45 9.48001L13.93 16C13.4 16.53 12.7 16.8 12 16.8Z"
+                                fill="#2E3A59"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                     
+                      </div> 
+                      <div className={classes.analytics_row}>
+                        <div
+                          className={`${classes.analytic_col} ${classes.analytic_col_2}`}
+                        >
+                          <div className={classes.analytic_col_span}>
+                            <h1>Impressions</h1>
+                            <span>{people_reached_total}</span>
+                            {/* <a>
+                              View Details <img src={ArrowRight} />
+                            </a> */}
+                          </div>
+                          <div
+                            className={`${classes.analytics_item} ${classes.reach_item}`}
+                          >
+                            <PeopleReachedByWeekDay
+                               categories={analytics_date}
+                               series={impressions}
+                             
+                            />
+                          </div>
+                        </div>
+                        <div
+                          className={`${classes.analytic_col} ${classes.analytic_col_2}`}
+                        >
+                          <div className={classes.analytic_col_span}>
+                            <h1>Views</h1>
+                            <span>{views_total}</span>
+                            {/* <a>
+                              View Details <img src={ArrowRight} />
+                            </a> */}
+                          </div>
+                          <div
+                            className={`${classes.analytics_item} ${classes.reach_item}`}
+                          >
+                            <PeopleReachedByWeekDay
+                              categories={analytics_date}
+                              series={views}
+                            />
+                          </div>
+                        </div>
+    
+                        {/* <div
+                          className={`${classes.analytic_col} ${classes.analytic_col_2}`}
+                        >
+                          <div className={classes.analytic_col_span}>
+                            <h1>Avarage time seen</h1>
+                            <span>10h</span>
+                            <a href="#">
+                              View Details <img src={ArrowRight} />
+                            </a>
+                          </div>
+                          <div
+                            className={`${classes.analytics_item} ${classes.reach_item}`}
+                          >
+                            <SeenByWeekDay />
+                          </div>
+                        </div> */}
+                      </div>
+                      {/* <div
+                        className={`${classes.week_block} ${classes.analytics_item}`}
+                      >
+                         <Chart
+                          options={this.state.optionsMileage}
+                          series={this.state.optionsMileage.seriesMileage}
+                          type="bar"
+                          width="100%"
+                          height={400}
+                        /> 
+                        <div className={classes.weekly_select}>
+                          <div className="position-relative">
+                            <select
+                              name="adCategory"
+                              id="step-categories"
+                              className={classes.analytics_select_item}
+                              onChange={(event) =>
+                                this.handleTimeFilter(event, "optionsMileage")
+                              }
+                            >
+                              <option value="Weekly">Weekly</option>
+                              <option value="Monthly">Monthly</option>
+                              <option value="Annualy">Annualy</option>
+                            </select>
+                            <svg
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M12 16.8C11.3 16.8 10.6 16.53 10.07 16L3.55002 9.48001C3.26002 9.19001 3.26002 8.71001 3.55002 8.42001C3.84002 8.13001 4.32002 8.13001 4.61002 8.42001L11.13 14.94C11.61 15.42 12.39 15.42 12.87 14.94L19.39 8.42001C19.68 8.13001 20.16 8.13001 20.45 8.42001C20.74 8.71001 20.74 9.19001 20.45 9.48001L13.93 16C13.4 16.53 12.7 16.8 12 16.8Z"
+                                fill="#2E3A59"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div> */}
+                      <div className={classes.audience_row}>
+                        <div className={classes.audience_col}>
+                          <div className={classes.audience_item}>
+                            <p className={classes.audience_p}>
+                              Audience Demographics
+                            </p>
+                            <div className={classes.audience_chart}>
+                              <AudienceDemographicsPieChart
+                                Male={audience_male_total}
+                                Female={audience_female_total}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className={classes.audience_col}>
+                          <div className={classes.audience_item}>
+                            <p className={classes.audience_p}>
+                              Audience by Platform
+                            </p>
+                            <div className={classes.audience_chart}>
+                              <PieChart
+                                Android={audience_android_total}
+                                IOS={audience_ios_total}
+                              />
+                            </div>
+                          </div>
+                        </div>
+    
+                        <div className={classes.audience_col}>
+                          <div className={classes.audience_item}>
+                            <p className={classes.audience_p}>
+                              Audience Engagements
+                            </p>
+                            <div className={classes.audience_chart}>
+                              <Impressions_and_Views
+                                Impressions={Number(people_reached_total)}
+                                Views={Number(views)}
+                              />
+                              {/* <AdEngagements
+                               
+                                campaign1={"Impressions"}
+                                campaign2={"Views"}
+                              />{" "} */}
+                            </div>
+                          </div>
+                        </div>
+                        {/* <div className={classes.audience_col}>
+                          <div className={classes.audience_item}>
+                            <p className={classes.audience_p}>Audience by Age</p>
+                            <div className={classes.audience_chart}>
+                              <AgeOfReachedDemographics
+                                a={0}
+                                b={0}
+                                c={0}
+                                d={0}
+                                e={0}
+                              />
+                            </div>
+                          </div>
+                        </div> */}
+                      </div>
+                    </React.Fragment>
+                  )}
                 </div>
-                <div className={classes.analytics_row}>
-                  <div
-                    className={`${classes.analytic_col} ${classes.analytic_col_2}`}
-                  >
-                    <div className={classes.analytic_col_span}>
-                      <h1>People Reached</h1>
-                      <span>{people_reached_total}</span>
-                      <a>
-                        View Details <img src={ArrowRight} />
-                      </a>
-                    </div>
-                    <div
-                      className={`${classes.analytics_item} ${classes.reach_item}`}
-                    >
-                   <PeopleReachedByWeekDay
-                        categories={analytics_date}
-                        series={impressions}
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    className={`${classes.analytic_col} ${classes.analytic_col_2}`}
-                  >
-                    <div className={classes.analytic_col_span}>
-                      <h1>Avarage time seen</h1>
-                      <span>0</span>
-                      <a href="#">
-                        View Details <img src={ArrowRight} />
-                      </a>
-                    </div>
-                    <div
-                      className={`${classes.analytics_item} ${classes.reach_item}`}
-                    >
-                      <SeenByWeekDay />
-                    </div>
-                  </div>
-                </div>
-                {/*<div
-                  className={`${classes.week_block} ${classes.analytics_item}`}
-                >
-                  <Chart
-                    options={this.state.optionsMileage}
-                    series={this.state.optionsMileage.seriesMileage}
-                    type="bar"
-                    width="100%"
-                    height={400}
-                  />
-                  <div className={classes.weekly_select}>
-                    <div className="position-relative">
-                      <select
-                        name="adCategory"
-                        id="step-categories"
-                        className={classes.analytics_select_item}
-                        onChange={(event) =>
-                          this.handleTimeFilter(event, "optionsMileage")
-                        }
-                      >
-                        <option value="Weekly">Weekly</option>
-                        <option value="Monthly">Monthly</option>
-                        <option value="Annualy">Annualy</option>
-                      </select>
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M12 16.8C11.3 16.8 10.6 16.53 10.07 16L3.55002 9.48001C3.26002 9.19001 3.26002 8.71001 3.55002 8.42001C3.84002 8.13001 4.32002 8.13001 4.61002 8.42001L11.13 14.94C11.61 15.42 12.39 15.42 12.87 14.94L19.39 8.42001C19.68 8.13001 20.16 8.13001 20.45 8.42001C20.74 8.71001 20.74 9.19001 20.45 9.48001L13.93 16C13.4 16.53 12.7 16.8 12 16.8Z"
-                          fill="#2E3A59"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                      </div>*/}
-                <div className={classes.audience_row}>
-                  <div className={classes.audience_col}>
-                    <div className={classes.audience_item}>
-                      <p className={classes.audience_p}>
-                        Audience Demographics
-                      </p>
-                      <div className={classes.audience_chart}>
-                        <AudienceDemographicsPieChart
-                          Male={audience_male_total}
-                          Female={audience_female_total}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={classes.audience_col}>
-                    <div className={classes.audience_item}>
-                      <p className={classes.audience_p}>Audience by Platform</p>
-                      <div className={classes.audience_chart}>
-                        <PieChart
-                          Android={audience_android_total}
-                          IOS={audience_ios_total}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={classes.audience_col}>
-                    <div className={classes.audience_item}>
-                      <p className={classes.audience_p}>Audience by Age</p>
-                      <div className={classes.audience_chart}>
-                        <AgeOfReachedDemographics
-                          a={0}
-                          b={0}
-                          c={0}
-                          d={0}
-                          e={0}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className={classes.audience_col}>
-                    <div className={classes.audience_item}>
-                      <p className={classes.audience_p}>Audience Engagements</p>
-                      <div className={classes.audience_chart}>
-                        <AdEngagements
-                          engagements_campaign1={0}
-                          engagements_campaign2={0}
-                          campaign1={"Ad_A"}
-                          campaign2={"Ad_B"}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </React.Fragment>
             )}
-          </div>
-        )}
-      </Fragment>
+          </Fragment>
     );
   }
 }

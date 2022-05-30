@@ -10,6 +10,7 @@ import Dashboard from "../pages/admin/Dashboard/index";
 import Campaigns from '../pages/admin/Campaigns/index'
 import Surveys from '../pages/admin/Surveys/index'
 import Customers from "../pages/admin/Customers/index";
+import GPSTracking from '../pages/admin/GPSTracking/index'
 
 const publicPages = [
   { path: '/login', component: Login },
@@ -22,7 +23,8 @@ const authProtectedRoutes = [
   { path: '/campaigns', component: Campaigns },
   { path: "/dashboard", component: Dashboard },
   { path: "/surveys", component: Surveys},
-  { path: '/customers', component: Customers}
+  { path: '/customers', component: Customers},
+  { path: "/gps-tracking", component: GPSTracking }
   //{ path: "/", exact: true, component: () => <Redirect to="/dashboard" /> }
 ];
 

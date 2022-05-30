@@ -14,9 +14,9 @@ function* Customers ({payload: {url}}){
     const response =  yield call(fetch_customers, url)
   
     const {customers, length, page} = response.data
-   
+  
 
-    yield put( fetchCustomersSuccess(customers, length))
+    yield put( fetchCustomersSuccess(customers, length, page))
    }catch(err){
 
    }

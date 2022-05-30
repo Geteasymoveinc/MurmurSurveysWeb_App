@@ -20,8 +20,9 @@ class Customers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading:false,
+      loading:true,
       length: this.props.length,
+      customers: this.props.customers,
       page: 1,
     };
     this.async = null;
@@ -33,8 +34,8 @@ class Customers extends Component {
 
       this.setState({
         ...this.state,
-        loading: true,
-        length
+        length,
+        customers: this.props.customers
       });
 
       this.async = setTimeout(() => {
@@ -44,11 +45,15 @@ class Customers extends Component {
             loading: false
           });
         }
-      }, 2000);
+      }, 3000);
     }
   }
   componentDidMount() {
-    const { page } = this.state;
+    const url = this.props.location.search
+    let page = new URLSearchParams(url).get("page")
+    if(!page){
+      page = this.state.page
+    } //extracting id)
     this.props.fetchCustomers(
       `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
     );
@@ -106,7 +111,7 @@ class Customers extends Component {
   };
 
   render() {
-    console.log(this.state)
+    const {customers} = this.state
     return (
       <Fragment>
         {this.state.loading && (
@@ -164,7 +169,7 @@ class Customers extends Component {
                     <div className={`${classes3.cads_head} ${classes3.cads_head_2}`}>
                       <h4 className={classes3.cads_h4}>Customers</h4>
                     </div>
-                    <PulledCustomers />
+                    <PulledCustomers  loading={this.props.loading} customers={customers}/>
 
                     <div className={classes3.pagination_container}>
                       {this.createPages()}
@@ -175,7 +180,7 @@ class Customers extends Component {
             )}
             {this.props.match.isExact &&
               this.props.location.search.length > 0 && ( //details
-              <PulledCustomers />
+              <PulledCustomers  loading={this.props.loading} customers={customers}/>
               )}
           </div>
         )}

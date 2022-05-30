@@ -34,23 +34,31 @@ class PulledCustomers extends React.Component {
 
   //ad-campaign
   handleCampaigns = () => {
-    const { multiple } = this.state;
+    const { pulledCustomers,page } = this.state;
 
     let murmurCampaigns = [];
 
-    if (this.state.pulledCustomers.length !== 0) {
+    if (pulledCustomers.length !== 0) {
       {
-        this.state.pulledCustomers.map((customer, i) => {
+        pulledCustomers.map((customer, i) => {
+          let image = customer.profilePhoto;
+          const hasImage =
+            image &&
+            image.split(
+              "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+            )[1]
+          if (hasImage === 'null' || hasImage === 'undefined' ) image = Avatar;
+
           murmurCampaigns.push(
             <tr key={customer._id}>
               <td className={classes.cads_td}>
                 <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
-                    src={customer.profilePhoto ? customer.profilePhoto : Avatar}
+                    src={image ? image : Avatar}
                     alt="avatar"
                     className={classes.partner_profile_img}
                   />
-                  {customer.fullName}
+                  <span>{customer.fullName}</span>
                 </span>
               </td>
               <td className={classes.cads_td}>
@@ -73,7 +81,7 @@ class PulledCustomers extends React.Component {
               </td>
               <td className={classes.cads_td}>
                 <Link
-                  to={`/customers?customer=${customer._id}`}
+                  to={`/customers?customer=${customer._id}&page=${page}`}
                   className={classes.details_link}
                 >
                   Details
@@ -112,8 +120,10 @@ class PulledCustomers extends React.Component {
     if (
       customers.length !== prevProps.customers.length ||
       this.state.page !== this.props.page ||
-      (customers.length &&customers[0]._id !== prevProps.customers[0]._id)
+      (customers.length && customers[0]._id !== prevProps.customers[0]._id)
     ) {
+
+      console.log(this.props.page)
       this.setState({
         ...this.state,
         pulledCustomers: customers,
@@ -134,9 +144,7 @@ class PulledCustomers extends React.Component {
         }
       })[0];
     }
-
-    console.log(this.state);
-
+  
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -170,7 +178,7 @@ class PulledCustomers extends React.Component {
         )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-          <Details customer={customer} />
+          <Details customer={customer} loading={this.props.loading}/>
         )}
       </React.Fragment>
     );

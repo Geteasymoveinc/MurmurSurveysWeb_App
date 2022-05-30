@@ -26,28 +26,41 @@ class Details extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading:false,
+      loading:this.props.loading,
       customer:[this.props.customer],
     };
   }
   componentDidMount(){
-    let area;
+  
+    
     const { customer } = this.props;
     
-
+   
     this.setState({
       ...this.state,
-      customer: [customer]
+      customer: [customer],
+      loading:this.props.loading
     })
  
 
   }
+ 
+  componentDidUpdate(prevProps){
+    if(prevProps.loading !== this.props.loading){
+      this.setState({
+        ...this.state,
+        loading: this.props.loading
+      })
+    }
+  }
+
+  
 
   render() {
-
+   const {loading,customer} = this.state
     return (
       <React.Fragment>
-        {this.state.loading && (
+        {loading && (
           <div id="preloader">
             <div id="status">
               <div className="spinner-chase">
@@ -62,9 +75,17 @@ class Details extends React.Component {
           </div>
         )}
         {!this.state.loading &&
-          this.state.customer.map((customer, index) => (
-            <div className={classes2.ads_details_section} key={index}>
-              <Link to="/customers" className={classes2.ads_back_icon}>
+          customer.length && customer.map((customer, index) => {
+            let image = customer.profilePhoto;
+            const hasImage =
+              image &&
+              image.split(
+                "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+              )[1]
+            if (hasImage === 'null' || hasImage === 'undefined' ) image = Avatar;
+  
+           return( <div className={classes2.ads_details_section} key={index}>
+              <Link to="/customers" className={`${classes2.ads_back_icon}`}>
                 <img src={ArrowLeft} alt="" className={classes2.ads_left_img} />
                 <span>Back</span>
               </Link>
@@ -88,10 +109,10 @@ class Details extends React.Component {
               <div
                 className={`${classes2.ads_detail_info} ${classes2.ads_detail_row}`}
               >
-                <div className={classes2.ads_detail_image}>
+                <div className={`${classes2.ads_detail_image} ${classes2.ads_detail_image_contentSize}` }>
                   <div className={classes2.ads_detail_col}>
                     <div className={classes2.detail_img}>
-                      <img src={customer.profilePhoto ? customer.profilePhoto : Avatar} alt="" />
+                      <img src={image ? image : Avatar} alt="" />
                     </div>
                     <div className={classes2.detail_img_title}>
                       <span>Current Image</span>
@@ -192,7 +213,8 @@ class Details extends React.Component {
                     </div>
 
             </div>
-          ))}
+          )}
+          )}
       </React.Fragment>
     );
   }

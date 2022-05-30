@@ -10,7 +10,6 @@ import ProfileMenu from "../../../components/CommonForBoth/TopbarDropdown/Profil
 import classes from "../../../assets/css/analitics/index.module.css";
 import classes2 from "../../../assets/css/Dashboard/dashboard.module.css";
 import classes3 from "../../../assets/css/CreateAd/index.module.css";
-
 import "../../../assets/css/app.css";
 
 import Statistics_Chart from "./charts/line-chart";
@@ -119,7 +118,7 @@ if(this.props.loading !==prevProps.loading){
         {!this.props.loading && loaded && (
           <div className={classes.dash_right}>
             <div className={classes.head_search}>
-              <h1 className={classes.dash_h1}>Analytics</h1>
+              <h1 className={classes.dash_h1}>Dashboard</h1>
               <form onSubmit={this.submitLocationToZoomIn}>
                 <div
                   className={`${classes.dash_relative} ${classes.search_box}`}

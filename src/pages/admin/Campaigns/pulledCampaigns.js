@@ -191,7 +191,7 @@ class PulledCampaigns extends Component {
                     alt="profile img"
                     className={classes.partner_profile_img}
                   />
-                  {campaign.customer.fullName}
+                           <span>{campaign.customer.fullName}</span>
                 </span>
               </td>
               <td className={classes.cads_td}>
@@ -362,7 +362,7 @@ class PulledCampaigns extends Component {
           )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-          <CampaignAnalytics email ={campaign.advertisers_email}/>
+          <CampaignAnalytics email ={campaign.advertisers_email} campaign={campaign}/>
         )}
       </React.Fragment>
     );

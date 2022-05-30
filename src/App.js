@@ -12,6 +12,7 @@ import NonAuthLayout from "./components/NonAuthLayout";
 
 // Import scss
 import "./assets/scss/theme.scss";
+import './App.css'
 
 class App extends Component {
   constructor(props) {

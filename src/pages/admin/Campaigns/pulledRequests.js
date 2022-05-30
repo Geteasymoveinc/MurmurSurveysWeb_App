@@ -198,7 +198,7 @@ class PulledRequests extends Component {
                     alt="profile img"
                     className={classes.partner_profile_img}
                   />
-                  {campaign.customer.fullName}
+                        <span>{campaign.customer.fullName}</span>
                 </span>
               </td>
               <td className={classes.cads_td}>
@@ -270,7 +270,6 @@ class PulledRequests extends Component {
         }
       }
     }
-    console.log(count)
     if (count > 1) {
       multiple = true;
     } 

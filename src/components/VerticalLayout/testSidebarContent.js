@@ -136,6 +136,30 @@ class SidebarContent extends Component {
                       <span>{"Surveys"}</span>
                     </Link>
                   </li>
+                  <li name='/gps-tracking'
+                    onClick={this.menuItemActive}
+                    className={`${
+                      this.state.matchingMenuItem === "/gps-tracking"
+                        ? classes.active
+                        : ""
+                    }`}
+                  >
+                    <Link to="/gps-tracking">
+                      <div className={classes.dash_imgs}>
+                      <img
+                        src={Surveys}
+                        alt=""
+                        className={classes.dash_img_1}
+                      />
+                      <img
+                        src={SurveysActive}
+                        alt=""
+                        className={classes.dash_img_2}
+                      />
+                      </div>
+                      <span>{"Tracking"}</span>
+                    </Link>
+                  </li>
                 </ul>
               </div> 
           </div>

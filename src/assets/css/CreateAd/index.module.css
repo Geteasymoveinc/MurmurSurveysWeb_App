@@ -624,3 +624,7 @@ input:checked + .slider:before {
   justify-content: space-between;
   align-items: center;
 }
+.td_data.td_data_2 span{
+  width:100px;
+  text-align: end;
+}

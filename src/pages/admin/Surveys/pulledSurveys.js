@@ -16,8 +16,6 @@ import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
 import CampaignAnalytics from "./analytics";
 
-
-
 class PulledSurveys extends React.Component {
   constructor(props) {
     super(props);
@@ -26,8 +24,8 @@ class PulledSurveys extends React.Component {
       checked: false,
       active: "",
       pulledSurveys: this.props.surveys,
-  
       adds: this.props.adds,
+      mode: "Answers",
     };
 
     this.async = null;
@@ -35,13 +33,13 @@ class PulledSurveys extends React.Component {
 
   //ad-campaign
   handleSurveys = () => {
-    const { multiple } = this.state;
+    const { pulledSurveys, mode } = this.state;
 
     let murmurCampaigns = [];
 
-    if (this.state.pulledSurveys.length !== 0) {
+    if (pulledSurveys.length !== 0) {
       {
-        this.state.pulledSurveys.map((campaign, i) => {
+        pulledSurveys.map((campaign, i) => {
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
@@ -50,30 +48,38 @@ class PulledSurveys extends React.Component {
                 </div>
               </td>
               <td className={classes.cads_td}>
-              <span className={`${classes.td_data} ${classes.td_data_2}`}>
+                <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
                     src={campaign.customer.img}
                     alt="avatar"
                     className={classes.partner_profile_img}
                   />
-                  {campaign.customer.fullName}
+
+                  <span>{campaign.customer.fullName}</span>
                 </span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}> {campaign.views}</span>
+                <span className={classes.td_data}>
+                  {" "}
+                  {campaign.answeredBy.length}
+                </span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.answeredBy.length}</span>
+                <span className={classes.td_data}>
+                  {campaign.survey_earnings}
+                </span>
               </td>
               <td className={classes.cads_td}>
-                <span className={classes.td_data}>{campaign.survey_earnings}</span>
+                <span className={classes.td_data}>
+                  {campaign.survey_status}
+                </span>
               </td>
               <td className={classes.cads_td}>
                 <Link
                   to={`/surveys?survey=${campaign._id}`}
                   className={classes.details_link}
                 >
-                  Analytics
+                  {mode}
                   <img
                     src={ArrowRight}
                     alt=""
@@ -96,6 +102,7 @@ class PulledSurveys extends React.Component {
       pulledSurveys.map((campaign, i) => {
         murmurCampaigns.push(
           <div
+            key={i}
             className={`${classes2.window_container} ${
               this.state.active === campaign._id
                 ? classes2.window_container_active
@@ -125,10 +132,12 @@ class PulledSurveys extends React.Component {
                 <img src={SurveyEye} alt="eye icon" /> {campaign.views}
               </span>
               <span>
-                <img src={SurveyEdit} alt="eye icon" /> {campaign.answeredBy.length}
+                <img src={SurveyEdit} alt="eye icon" />{" "}
+                {campaign.answeredBy.length}
               </span>
               <span>
-                <img src={SurveyPrice} alt="eye icon" /> {campaign.survey_earnings}
+                <img src={SurveyPrice} alt="eye icon" />{" "}
+                {campaign.survey_earnings}
               </span>
             </div>
           </div>
@@ -151,40 +160,46 @@ class PulledSurveys extends React.Component {
     });
   };
 
-componentDidUpdate(prevProps){
-  const prevLength = prevProps.adds.length
-  const this_length = this.props.adds.length
+  componentDidUpdate(prevProps) {
+    const prevLength = prevProps.adds.length;
+    const this_length = this.props.adds.length;
 
-  if(prevLength !== this_length){
+    if (prevLength !== this_length) {
+      this.setState({
+        ...this.state,
+        pulledSurveys: this.props.surveys,
+        adds: this.props.adds,
+      });
+    }
+  }
+
+  switchBetweenAnalyticsAndDetals = (e) => {
+    const mode = e.target.value;
     this.setState({
       ...this.state,
-      pulledSurveys: this.props.surveys,
-      adds: this.props.adds
-    })
-  }
-}
+      mode,
+    });
+  };
 
   render() {
-
     const url = this.props.location.search; //search property of history props
-    const id = new URLSearchParams(url).get('survey') //extracting id 
-    let survey = []
-   if(id){
-     survey = this.state.pulledSurveys.filter(survey => {
-     if(survey._id===id){
-       return survey.analytics
-     }
-   })[0]
+    const id = new URLSearchParams(url).get("survey"); //extracting id
+    let survey = [];
+    if (id) {
+      survey = this.state.pulledSurveys.filter((survey) => {
+        if (survey._id === id) {
+          return survey.analytics;
+        }
+      })[0];
+    }
+    const { mode } = this.state;
 
-  }
-  
+    console.log(mode)
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
- 
-        {!this.props.location.search.length > 0 &&
-        
-        this.props.view.table ? ( //list all campaigns
+
+        {!this.props.location.search.length > 0 && this.props.view.table ? ( //list all campaigns
           <div className={classes.cads_table} style={{ marginBottom: "100px" }}>
             <table>
               <thead>
@@ -196,15 +211,24 @@ componentDidUpdate(prevProps){
                     <span>Customer</span>
                   </th>
                   <th className={`${classes.cads_th} ${classes.cads_quantity}`}>
-                    <span>View</span>
-                  </th>
-                  <th className={`${classes.cads_th} ${classes.cads_budget}`}>
-                    <span>answers</span>
+                    <span>Answers</span>
                   </th>
                   <th className={`${classes.cads_th} ${classes.cads_budget}`}>
                     <span>Budget</span>
                   </th>
-                  <th></th>
+                  <th className={`${classes.cads_th} ${classes.cads_budget}`}>
+                    <span>Status</span>
+                  </th>
+                  <th>
+                    <select onChange={this.switchBetweenAnalyticsAndDetals}>
+                      <option value={mode}>{mode}</option>
+                      {["Analytics", "Answers", "Details"].map((el, i) => {
+                        if (el !== mode) {
+                          return <option value={el}>{el}</option>;
+                        }
+                      })}
+                    </select>
+                  </th>
                 </tr>
               </thead>
               <tbody>{this.handleSurveys()}</tbody>
@@ -215,13 +239,11 @@ componentDidUpdate(prevProps){
             {this.handleWindowsView()}
           </div>
         ) : (
-          <CampaignAnalytics analytics = {survey.analytics} />
+          <CampaignAnalytics analytics={survey.analytics} />
         )}
       </React.Fragment>
     );
   }
 }
-
-
 
 export default withRouter(PulledSurveys);

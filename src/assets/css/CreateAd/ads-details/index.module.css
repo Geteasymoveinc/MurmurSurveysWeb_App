@@ -5,6 +5,7 @@
   margin-top:24px;
   padding:32px;
 }
+.ads_detail_image
 .ads_back_icon,.crrnt_ads_title,.crrnt_edit,.detail_img_edit{
   display: -webkit-box;
   display: -webkit-inline-flex;
@@ -17,6 +18,7 @@
 }
 .ads_back_icon{
   text-decoration:none;
+  display: flex;
 }
 .ads_back_icon span{
   color: #192038;
@@ -103,6 +105,9 @@
   margin-top:40px;
   margin-left:-8px;
   margin-right:-8px;
+}
+.ads_detail_image.ads_detail_image_contentSize{
+  width: fit-content
 }
 .ads_detail_image,.ads_detail_audience,.ads_detail_quantity{
   padding-left:8px;
@@ -389,3 +394,4 @@
 .ads_detail_quantity.customer_email{
   width:330px
 }
+

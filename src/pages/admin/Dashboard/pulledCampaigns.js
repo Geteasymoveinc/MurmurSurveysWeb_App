@@ -6,9 +6,11 @@ import { Link, withRouter } from "react-router-dom";
 
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
 import classes from "../../../assets/css/CreateAd/index.module.css";
+import Avatar from "../../../assets/images/avatar.png";
 
 import CampaignAnalytics from "../../../components/analytics/analytics";
 import { connect } from "react-redux";
+
 
 class PulledCampaigns extends React.Component {
   constructor(props) {
@@ -23,30 +25,36 @@ class PulledCampaigns extends React.Component {
 
     this.settingInterval = null;
   }
-
+  
+  addDefaultSrc(ev){
+    console.log('backend does not have the image')
+    ev.target.src = Avatar
+  }
   //ad-campaign
   handleCampaigns = () => {
+    const {pulledCampaigns} = this.state
     let murmurCampaigns = [];
-
-    if (this.state.pulledCampaigns.length !== 0) {
+  
+    if (pulledCampaigns.length !== 0) {
       {
-        this.state.pulledCampaigns.map((campaign, i) => {
+        pulledCampaigns.map((campaign, i) => {
+          let image = campaign.customer.img 
+
+            
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
-            
-                    <label htmlFor={campaign._id}>
-                      {campaign.campaign_name}
-                    </label>
-                  
+                  <label htmlFor={campaign._id}>{campaign.campaign_name}</label>
                 </div>
               </td>
               <td className={classes.cads_td}>
                 <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
-                    src={campaign.customer.img}
-                    alt="profile img"
+                    src={image ? image : Avatar}
+            
+                    onError={this.addDefaultSrc}
+                    alt="Avatar"
                     className={classes.partner_profile_img}
                   />
                   {campaign.customer.fullName}
@@ -120,7 +128,7 @@ class PulledCampaigns extends React.Component {
         }
       })[0];
     }
-  
+
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -144,9 +152,7 @@ class PulledCampaigns extends React.Component {
               <thead>
                 <tr className={classes.first_tr}>
                   <th className={`${classes.cads_th}`}>
-                  <div
-                        className={`${classes.invoice_th}`}
-                      >
+                    <div className={`${classes.invoice_th}`}>
                       <label htmlFor="campaigns">Name</label>
                     </div>
                   </th>
@@ -169,7 +175,10 @@ class PulledCampaigns extends React.Component {
         )}
 
         {this.props.location.search.length > 0 && ( //when user selects an add to check details
-    <CampaignAnalytics email ={campaign.advertisers_email}/>
+          <CampaignAnalytics
+            email={campaign.advertisers_email}
+            campaign={campaign}
+          />
         )}
       </React.Fragment>
     );
