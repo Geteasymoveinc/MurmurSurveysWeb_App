@@ -4,15 +4,9 @@ import axios from "axios";
 
 import { Link, withRouter } from "react-router-dom";
 
-import Trash from "../../../assets/css/CreateAd/trash.svg";
+
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
-import SurveyEye from "../../../assets/images/surveys/survey-eye.svg";
-import SurveyEdit from "../../../assets/images/surveys/survey-edit.svg";
-import SurveyPrice from "../../../assets/images/surveys/survey-price.svg";
-import SampleImage from "../../../assets/images/surveys/sample-image.png";
-import SampleImage2 from "../../../assets/images/surveys/sample-image2.png";
 import classes from "../../../assets/css/CreateAd/index.module.css";
-import classes2 from "../../../assets/css/surveys/surveys.module.css";
 import Avatar from "../../../assets/images/avatar.png";
 
 import { connect } from "react-redux";

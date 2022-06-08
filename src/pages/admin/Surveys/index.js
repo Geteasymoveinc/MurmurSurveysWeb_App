@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { withRouter, Link, Switch, Route, Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import PulledSurveys from "./pulledSurveys";
 
@@ -53,7 +53,7 @@ class Surveys extends React.Component {
       });
     }
     this.async = setTimeout(() => {
-      if (!this.state.loaded) {
+      if (this.state.loading) {
         this.setState({
           ...this.state,
           loading: false,
@@ -67,7 +67,7 @@ class Surveys extends React.Component {
 
   componentDidMount() {
     this.props.fetchSurveys(
-      "https://backendapp.murmurcars.com/api/v1/admin/get-surveys"
+      "http://localhost:4000/api/v1/admin/get-surveys"
     );
   }
   render() {

@@ -54,7 +54,7 @@ componentDidMount(){
     return (
       <React.Fragment>
         <Dropdown
-          isOpen={this.state.menu && this.props.scope!=='local'}
+          isOpen={this.state.menu}
           toggle={this.toggle}
         >
           <DropdownToggle
@@ -89,7 +89,7 @@ componentDidMount(){
             />
 
           </DropdownToggle>
-          <DropdownMenu end>
+          <DropdownMenu end='true'>
             <Link to="/logout" className="dropdown-item">
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger"></i>
               <span>{"Logout"}</span>

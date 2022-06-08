@@ -4,17 +4,18 @@ import axios from "axios";
 
 import { Link, withRouter } from "react-router-dom";
 
-import Trash from "../../../assets/css/CreateAd/trash.svg";
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
 import SurveyEye from "../../../assets/images/surveys/survey-eye.svg";
 import SurveyEdit from "../../../assets/images/surveys/survey-edit.svg";
 import SurveyPrice from "../../../assets/images/surveys/survey-price.svg";
-import SampleImage from "../../../assets/images/surveys/sample-image.png";
 import SampleImage2 from "../../../assets/images/surveys/sample-image2.png";
+import Avatar from "../../../assets/images/avatar.png";
 import classes from "../../../assets/css/CreateAd/index.module.css";
 import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
 import CampaignAnalytics from "./analytics";
+import Details from "./details";
+import View from "./question-answers";
 
 class PulledSurveys extends React.Component {
   constructor(props) {
@@ -40,6 +41,14 @@ class PulledSurveys extends React.Component {
     if (pulledSurveys.length !== 0) {
       {
         pulledSurveys.map((campaign, i) => {
+          let profile = campaign.customer.img;
+          const hasImage =
+            profile &&
+            profile.split(
+              "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+            )[1];
+          if (hasImage === "null" || hasImage === "undefined") profile = Avatar;
+
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
@@ -50,7 +59,7 @@ class PulledSurveys extends React.Component {
               <td className={classes.cads_td}>
                 <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
-                    src={campaign.customer.img}
+                    src={profile ? profile : Avatar}
                     alt="avatar"
                     className={classes.partner_profile_img}
                   />
@@ -76,7 +85,7 @@ class PulledSurveys extends React.Component {
               </td>
               <td className={classes.cads_td}>
                 <Link
-                  to={`/surveys?survey=${campaign._id}`}
+                  to={`/surveys?survey=${campaign._id}&mode=${mode}`}
                   className={classes.details_link}
                 >
                   {mode}
@@ -100,6 +109,24 @@ class PulledSurveys extends React.Component {
     const { pulledSurveys } = this.state;
     if (pulledSurveys.length !== 0) {
       pulledSurveys.map((campaign, i) => {
+        let profile = campaign.customer.img;
+        let survey = campaign.survey_img;
+
+        const hasImage =
+          profile &&
+          profile.split(
+            "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+          )[1];
+        if (hasImage === "null" || hasImage === "undefined") profile = Avatar;
+        const hasSurveyImage =
+          survey &&
+          survey.split(
+            "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+          )[1];
+        if (hasSurveyImage === "null" || hasSurveyImage === "undefined")
+          survey = SampleImage2;
+
+
         murmurCampaigns.push(
           <div
             key={i}
@@ -112,7 +139,7 @@ class PulledSurveys extends React.Component {
           >
             <div className={classes2.survey_image_container}>
               <img
-                src={campaign.survey_image}
+                src={survey ? survey : SampleImage2}
                 alt="survey"
                 className={classes2.survey_image}
               />
@@ -120,7 +147,7 @@ class PulledSurveys extends React.Component {
               <span className={classes2.customer_personal_data}>
                 by
                 <img
-                  src={campaign.customer.img}
+                  src={profile ? profile : Avatar}
                   slt="avatar"
                   className={classes.partner_profile_img_smaller}
                 />
@@ -175,11 +202,36 @@ class PulledSurveys extends React.Component {
 
   switchBetweenAnalyticsAndDetals = (e) => {
     const mode = e.target.value;
+
     this.setState({
       ...this.state,
       mode,
     });
   };
+
+
+  returnComponent = () => {
+    const {pulledSurveys} = this.state
+
+    const url = this.props.location.search; //search property of history props
+    const id = new URLSearchParams(url).get("survey"); //extracting id
+    const mode = new URLSearchParams(url).get('mode')
+    let survey = [];
+    if (id) {
+      survey = pulledSurveys.filter((survey) => {
+        if (survey._id === id) {
+          return survey.analytics;
+        }
+      })[0];
+    }
+    
+    let component  
+    if(mode === 'Answers') component = <CampaignAnalytics analytics={survey.analytics} />
+    else if(mode === 'Details') component = <Details survey ={survey}/>
+    else if(mode === 'survey-view') component = <View surveys={survey.survey_questions}/>
+
+    return component
+  }
 
   render() {
     const url = this.props.location.search; //search property of history props
@@ -193,13 +245,13 @@ class PulledSurveys extends React.Component {
       })[0];
     }
     const { mode } = this.state;
+    const { view } = this.props;
 
-    console.log(mode)
+
+    console.log(this.state)
     return (
       <React.Fragment>
-        {/* this part is ad-manager STARTING*/}
-
-        {!this.props.location.search.length > 0 && this.props.view.table ? ( //list all campaigns
+        {!this.props.location.search.length && view.table ? (
           <div className={classes.cads_table} style={{ marginBottom: "100px" }}>
             <table>
               <thead>
@@ -224,7 +276,7 @@ class PulledSurveys extends React.Component {
                       <option value={mode}>{mode}</option>
                       {["Analytics", "Answers", "Details"].map((el, i) => {
                         if (el !== mode) {
-                          return <option value={el}>{el}</option>;
+                          return <option key={i} value={el}>{el}</option>;
                         }
                       })}
                     </select>
@@ -234,13 +286,12 @@ class PulledSurveys extends React.Component {
               <tbody>{this.handleSurveys()}</tbody>
             </table>
           </div>
-        ) : !this.props.location.search.length > 0 ? (
+        ) : !this.props.location.search.length ? (
           <div className={classes2.surveys_windows_container}>
             {this.handleWindowsView()}
           </div>
-        ) : (
-          <CampaignAnalytics analytics={survey.analytics} />
-        )}
+        ):
+          this.returnComponent()}
       </React.Fragment>
     );
   }

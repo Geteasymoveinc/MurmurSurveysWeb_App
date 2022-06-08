@@ -1,12 +1,5 @@
 import React, { Component } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Modal,
-  ModalBody,
-  ModalHeader,
-} from "reactstrap";
+import { Row, Col, Card, Modal, ModalBody, ModalHeader } from "reactstrap";
 import {
   Map,
   GoogleApiWrapper,
@@ -19,6 +12,7 @@ import ReactStars from "react-rating-stars-component";
 import classes from "../../../assets/css/Dashboard/index.module.css";
 import classes2 from "../../../assets/css/gps-tracking/index.module.css";
 import "../../../assets/css/app.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { Google_Map_Styles } from "./map_styles";
 import { GOOGLE_MAP_KEY } from "../../../api";
@@ -234,10 +228,10 @@ class GPS_TRACKING extends Component {
         <Modal
           isOpen={this.state.modalStatus}
           //toggle={this.props.toggleModal}
-          className="setting_cancel_modal"
+          className={`setting_cancel_modal`}
         >
-          <ModalHeader>
-            <div className='position-relative max_343'>
+          <ModalHeader className={` ${classes2.modal_header}`}>
+            <div className={`position-relative max_343`}>
               <Col>
                 {/* <img
                   //className="rounded-circle header-profile-user"
@@ -329,7 +323,7 @@ class GPS_TRACKING extends Component {
               </div>
             </form>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className={classes2.modal_footer}>
             <Row>
               <Col></Col>
             </Row>

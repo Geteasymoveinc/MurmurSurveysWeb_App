@@ -16,6 +16,8 @@ import Customers from "../../assets/css/layout/customers.svg";
 import CustomersActive from "../../assets/css/layout/customers-active.svg";
 import Surveys from "../../assets/css/layout/surveys.svg";
 import SurveysActive from "../../assets/css/layout/surveys-active.svg";
+import GPSActive from "../../assets/css/layout/gps.svg";
+import GPS from "../../assets/css/layout/gps-inactive.svg";
 
 class SidebarContent extends Component {
   constructor(props) {
@@ -147,12 +149,12 @@ class SidebarContent extends Component {
                     <Link to="/gps-tracking">
                       <div className={classes.dash_imgs}>
                       <img
-                        src={Surveys}
+                        src={GPS}
                         alt=""
                         className={classes.dash_img_1}
                       />
                       <img
-                        src={SurveysActive}
+                        src={GPSActive}
                         alt=""
                         className={classes.dash_img_2}
                       />

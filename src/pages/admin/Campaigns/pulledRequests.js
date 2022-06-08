@@ -5,9 +5,8 @@ import { Link, withRouter } from "react-router-dom";
 
 
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
-
 import classes from "../../../assets/css/CreateAd/index.module.css";
-
+import Avatar from "../../../assets/images/avatar.png";
 
 import AdDetails from "./ad-details";
 
@@ -17,6 +16,7 @@ import { postUpdateCampaignStatusToBackend, postUpdateCampaignsStatusToBackend }
 const declineRequest = (pulledRequests,adds, id) => {
   let requests = []
   let adds_mod= []
+
   requests = pulledRequests.filter((campaign) => {
     if (campaign._id !== id) {
       return campaign;
@@ -29,7 +29,6 @@ const declineRequest = (pulledRequests,adds, id) => {
     }
   });
   
-
   return {pulledRequests: requests,adds: adds_mod}
 
 }
@@ -83,7 +82,7 @@ class PulledRequests extends Component {
  
   }
   declineAllRequests = () => {
-    console.log('declyning')
+    
   
     let {adds} = this.state
     const ids = []
@@ -112,8 +111,8 @@ class PulledRequests extends Component {
     
     this.setState({
       ...this.state,
-      pulledRequests: obj[pulledRequests],
-      adds: obj[adds],
+      pulledRequests: obj.pulledRequests,
+      adds: obj.adds,
     });
     this.props.postUpdateCampaignStatusToBackend(id, "Declined")
   };
@@ -128,11 +127,11 @@ class PulledRequests extends Component {
     });
   let { pulledRequests,adds } = this.state;
     const obj = declineRequest(pulledRequests,adds,campaign._id)
-    console.log(obj)
+    
     this.setState({
       ...this.state,
-      pulledRequests: obj['pulledRequests'],
-      adds:obj['adds'],
+      pulledRequests: obj.pulledRequests,
+      adds:obj.adds,
     });
 
     this.props.postUpdateCampaignStatusToBackend(campaign._id, 'Approved');
@@ -170,6 +169,16 @@ class PulledRequests extends Component {
     if (this.state.pulledRequests.length !== 0) {
       {
         this.state.pulledRequests.map((campaign, i) => {
+
+                 
+            let profile = campaign.customer.img
+            const hasImage =
+            profile &&
+            profile.split(
+              "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+            )[1]
+          if (hasImage === 'null' || hasImage === 'undefined' ) profile = Avatar;
+    
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
@@ -194,7 +203,7 @@ class PulledRequests extends Component {
               <td className={classes.cads_td}>
                 <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
-                    src={campaign.customer.img}
+                    src={profile ? profile : Avatar}
                     alt="profile img"
                     className={classes.partner_profile_img}
                   />

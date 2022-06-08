@@ -235,7 +235,7 @@ class CampaignAnalytics extends Component {
       )
       .then((analytics) => {
         const data = analytics.data;
-      
+       console.log(data)
         const {
           people_reached,
           analytics_date,

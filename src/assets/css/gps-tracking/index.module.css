@@ -2,3 +2,38 @@
     position:relative;
     height:200px
 }
+
+
+.modal_header{
+     display: flex !important;
+     flex-direction: column !important;
+    align-items: center !important;
+}
+.modal_header span{
+    color: #7356C0;
+font-weight: 500;
+font-size: 20px;
+line-height: 28px;
+}
+
+.modal_footer button{
+    background: #7356C0;
+border-radius: 4px;
+min-width: 174px;
+text-align: center;
+padding: 13px 24px;
+color: #fff;
+font-weight: 500;
+font-size: 16px;
+line-height: 20px;
+border: 1px solid #7356C0;
+transition: all .4s ease;
+
+}
+
+
+.modal_footer button:hover{
+    color: #7356C0;
+    border-color: #7356C0;
+    background-color: white;
+}

@@ -273,6 +273,8 @@
   margin-top:24px;
   text-align:right;
 }
+
+
 .delete_ads_btn{
   border: 1px solid #F13239;
   border-radius: 4px;
@@ -288,6 +290,17 @@
   cursor:pointer;
   transition:all .4s ease;
 }
+
+.suspend_customer .delete_ads_btn{
+  border-color:orange;
+  color: orange;
+}
+
+.activate_customer .delete_ads_btn{
+  border-color: green;
+  color: green;
+}
+
 .delete_ads_btn img{
   position:relative;
   top:-3px;
@@ -311,7 +324,13 @@
   margin-left:auto;
   text-align:left;
 }
+.suspend_customer .delete_ads_note{
+  color:orange
+}
 
+.activate_customer .delete_ads_note{
+  color: green
+}
 
 /* ads edit style */
 .ads_edit_input{
@@ -395,3 +414,8 @@
   width:330px
 }
 
+
+
+.hover_button{
+  cursor: pointer;
+}

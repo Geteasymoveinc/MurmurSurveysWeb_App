@@ -35,17 +35,17 @@ class Details extends React.Component {
     super(props);
     this.state = {
       loading: this.props.loading,
-      customer: [this.props.customer],
+      survey: [this.props.survey],
       updates: {},
       editable: false,
     };
   }
   componentDidMount() {
-    const { customer } = this.props;
+    const { survey } = this.props;
 
     this.setState({
       ...this.state,
-      customer: [customer],
+      survey: [survey],
       loading: this.props.loading,
     });
   }
@@ -57,7 +57,7 @@ class Details extends React.Component {
     reader.readAsDataURL(info.file);
 
     reader.onload = (e) => {
-      updates.profilePhoto =`https://backendapp.murmurcars.com/advertisers/users/profilePhoto/${info.file.name}`;
+      updates.profilePhoto =`https://backendapp.murmurcars.com/advertisers/surveys/${info.file.name}`;
       updates.file = info.file;
       updates.image = e.target.result;
 
@@ -77,7 +77,7 @@ class Details extends React.Component {
     });
   };
 
-  suspendOrRestoreCustomerAccount = (id, operation_type) => {
+  /*suspendOrRestoreCustomerAccount = (id, operation_type) => {
     this.setState({
       ...this.state,
       loading: true,
@@ -111,53 +111,18 @@ class Details extends React.Component {
           loading: false,
         });
       });
-  };
+  };*/
 
   toggleEditMode = () => {
     this.setState({ ...this.state, editable: true });
   };
 
   submitUpdates = () => {
-    const { updates, customer } = this.state;
-    const { email } = customer[0];
-
-    const formData = new FormData();
-
-    const keys = Object.keys(updates);
-
-    for (let key of keys) {
-      if(key === 'image') break
-      formData.append([key], updates[key]);
-    }
-    this.setState({
-      ...this.state,
-      loading:true
-    })
-    axios.put(`http://localhost:4000/api/v1/admin/update-customer/${email}`, formData)
-    .then(() => {
-    this.setState({
-      ...this.state,
-      loading: false,
-      editable: false,
-      customer: [{ ...this.state.customer[0], ...updates }],
-      updates: {},
-    })
-  })
-  .catch(err => {
-    this.setState({
-      ...this.state,
-      editable: false,
-      loading: false
-    })
-  })
+ 
   };
 
   render() {
-    const { loading, customer, updates, editable } = this.state;
-
-    const url = this.props.location.search;
-    const id = new URLSearchParams(url).get("customer");
-    console.log(this.state.customer);
+    const { loading, survey, updates, editable } = this.state;
     return (
       <React.Fragment>
         {loading && (
@@ -174,27 +139,27 @@ class Details extends React.Component {
             </div>
           </div>
         )}
-        {!this.state.loading &&
-          customer.length &&
-          customer.map((customer, index) => {
-            let profile = customer.profilePhoto;
-            if (customer.image) {
-              const { image } = customer;
-              profile = image;
+        {!loading &&
+          survey.length &&
+          survey.map((survey, index) => {
+            let survey_img = survey.survey_img;
+            if (survey.image) {
+              const { image } = updates;
+              survey_img = image;
             } else {
               const hasImage =
-                profile &&
-                profile.split(
+                survey_img &&
+                survey_img.split(
                   "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
                 )[1];
               if (hasImage === "null" || hasImage === "undefined")
-                profile = Avatar;
+                survey_img = Avatar;
             }
 
             return (
               <div className={classes2.ads_details_section} key={index}>
                 <div className="d-flex justify-content-between">
-                  <Link to="/customers" className={`${classes2.ads_back_icon}`}>
+                  <Link to={`/surveys`} className={`${classes2.ads_back_icon}`}>
                     <img
                       src={ArrowLeft}
                       alt=""
@@ -202,6 +167,12 @@ class Details extends React.Component {
                     />
                     <span>Back</span>
                   </Link>
+                  <span>
+                  <Link
+                     to={`/surveys?survey=${survey._id}&mode=survey-view`}
+                  >
+                    <span>View</span>
+                    </Link>
                   <button
                     type={editable ? "submit" : "button"}
                     className={classes2.crrnt_edit}
@@ -213,6 +184,7 @@ class Details extends React.Component {
                       }
                     }}
                   >
+                
                     <span>{`${editable ? "Update" : "Edit"}`}</span>
 
                     <img
@@ -221,6 +193,7 @@ class Details extends React.Component {
                       className={classes2.crrnt_edit_img}
                     />
                   </button>
+                  </span>
                 </div>
                 {/* <div className={classes2.current_ads_name}>
                 <div className={classes2.crrnt_ads_title}>
@@ -248,13 +221,11 @@ class Details extends React.Component {
                       <div className={classes2.detail_img}>
                         <img
                           src={
-                            updates.image
-                              ? updates.image
-                              : profile
-                              ? profile
+                            survey_img
+                              ? survey_img
                               : Avatar
                           }
-                          alt=""
+                          alt="survey"
                         />
                       </div>
                       <div className={classes2.detail_img_title}>
@@ -282,61 +253,45 @@ class Details extends React.Component {
                       <div className={classes2.ads_detail_top}>
                         <h5 className={classes2.detail_top_h5}>
                           {" "}
-                          {customer.fullName}
-                        </h5>
-                      </div>
-                      <div className={`${classes2.ads_details_content} `}>
-                        <ul className={classes2.ads_detail_age}>
-                          <li>
-                            <span>Phone Number</span>
-                            <p className={classes2.detail_content_p}>
-                              {customer.phone_number}
-                            </p>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={classes2.ads_detail_audience}>
-                    <div className={classes2.ads_detail_col}>
-                      <div className={classes2.ads_detail_top}>
-                        <h5 className={classes2.detail_top_h5}>
-                          {" "}
-                          Subscription
+                          Survey Status
                         </h5>
                       </div>
                       <div className={`${classes2.ads_details_content} `}>
                         {!editable ? (
                           <p className={classes2.detail_content_p}>
-                            {customer.subscribedToMurmurNewsettler
-                              ? "Subscribed"
-                              : "Not Subscribed"}
+                            {survey.status}
                           </p>
                         ) : (
                           <div
-                            className={`${classes2.details_edit_select} ${classes2.mt_8}`}
+                          className={`${classes2.details_edit_select} ${classes2.mt_8}`}
+                        >
+                          <select
+                          
+                            onChange={(event) =>
+                              this.handleDetailsUpdate(
+                                event,
+                                "status"
+                              )
+                            }
                           >
-                            <label className={classes.switch}>
-                              <input
-                                type="checkbox"
-                                checked={
-                                  updates.subscribedToMurmurNewsettler
-                                    ? updates.subscribedToMurmurNewsettler
-                                    : customer.subscribedToMurmurNewsettler
-                                }
-                                onChange={() =>
-                                  this.handleDetailsUpdate(null, null, {
-                                    subscribedToMurmurNewsettler:
-                                      !customer.subscribedToMurmurNewsettler,
-                                  })
-                                }
-                              />
-                              <div
-                                className={`${classes.slider} ${classes.round}`}
-                                //  onClick={() => this.changeAddStatus(campaign._id, this.state.adds[i].checked)}
-                              ></div>
-                            </label>
-                          </div>
+                            <option value={survey.status}>
+                              {survey.status}
+                            </option>
+                            {['Approve', 'Need Attention'].map(
+                              (status, index) =>
+                                status !== survey.status && (
+                                  <option key={index} value={status}>
+                                    {status}
+                                  </option>
+                                )
+                            )}
+                          </select>
+                          <img
+                            src={ArrowDown}
+                            alt="arrow"
+                            className={classes2.details_edit_arrow}
+                          />
+                        </div>
                         )}
                       </div>
                     </div>
@@ -348,12 +303,12 @@ class Details extends React.Component {
                   <div className={classes2.ads_detail_budget}>
                     <div className={classes2.ads_detail_col}>
                       <div className={classes2.ads_detail_top}>
-                        <h5 className={classes2.detail_top_h5}>Company</h5>
+                        <h5 className={classes2.detail_top_h5}>Title</h5>
                       </div>
                       <div className={classes2.ads_details_content}>
                         {!editable ? (
                           <p className={classes2.detail_content_p}>
-                            ${customer.company}
+                            {survey.survey_title}
                           </p>
                         ) : null}
                       </div>
@@ -362,19 +317,18 @@ class Details extends React.Component {
                   <div className={classes2.ads_detail_category}>
                     <div className={classes2.ads_detail_col}>
                       <div className={classes2.ads_detail_top}>
-                        <h5 className={classes2.detail_top_h5}>Ad Type</h5>
+                        <h5 className={classes2.detail_top_h5}>Price</h5>
                       </div>
                       <div className={classes2.ads_details_content}>
                         {!editable ? (
                           <p className={classes2.detail_content_p}>
-                            {customer.advertise_options}
+                            {survey.survey_earnings} USD
                           </p>
                         ) : (
-                          <div
+                         {/* <div
                             className={`${classes2.details_edit_select} ${classes2.mt_8}`}
                           >
                             <select
-                              name="audienceAge"
                               onChange={(event) =>
                                 this.handleDetailsUpdate(
                                   event,
@@ -401,7 +355,7 @@ class Details extends React.Component {
                               alt="arrow"
                               className={classes2.details_edit_arrow}
                             />
-                          </div>
+                                  </div>*/}
                         )}
                       </div>
                     </div>
@@ -427,15 +381,15 @@ class Details extends React.Component {
                   >
                     <div className={classes2.ads_detail_col}>
                       <div className={classes2.ads_detail_top}>
-                        <h5 className={classes2.detail_top_h5}>Email</h5>
+                        <h5 className={classes2.detail_top_h5}>Total Answered Users</h5>
                       </div>
                       <div
                         className={`${classes2.ads_details_content} ${
-                          this.state.editable && classes2.edit_inline_flex
+                          editable && classes2.edit_inline_flex
                         }`}
                       >
                         <p className={classes2.detail_content_p}>
-                          {customer.email}
+                          {survey.survey_audience_number}
                         </p>
                       </div>
                     </div>
@@ -447,10 +401,10 @@ class Details extends React.Component {
                       type="button"
                       className={classes2.delete_ads_btn}
                       onClick={() =>
-                        this.suspendOrRestoreCustomerAccount(id, "delete")
+                        this.suspendOrRestoreCustomerAccount(survey._id)
                       }
                     >
-                      <span>Delete Customer</span>
+                      <span>Delete Survey</span>
                       <img src={Trash2} alt="" />
                     </button>
                     <span className={classes2.delete_ads_note}>
@@ -459,32 +413,11 @@ class Details extends React.Component {
                   </div>
                   <div
                     className={`${classes2.delete_ads} ${
-                      customer.accaunt_status === "suspend"
-                        ? classes2.activate_customer
-                        : classes2.suspend_customer
+                  
+                         classes2.activate_customer
+                        
                     }`}
                   >
-                    <button
-                      type="button"
-                      className={classes2.delete_ads_btn}
-                      onClick={() =>
-                        this.suspendOrRestoreCustomerAccount(
-                          id,
-                          `${
-                            customer.accaunt_status === "suspend"
-                              ? "active"
-                              : "suspend"
-                          }`
-                        )
-                      }
-                    >
-                      <span>
-                        {customer.accaunt_status === "suspend"
-                          ? "Activate"
-                          : "Suspend"}{" "}
-                        Customer
-                      </span>
-                    </button>
                   </div>
                 </div>
               </div>

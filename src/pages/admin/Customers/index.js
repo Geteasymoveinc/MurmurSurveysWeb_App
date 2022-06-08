@@ -1,5 +1,9 @@
 import React, { Component, Fragment } from "react";
 
+import { Pagination } from 'antd';
+import 'antd/dist/antd.css'
+import '../../../assets/css/antd/custom-antd.css'
+
 import PulledCustomers from "./pulledCustomers";
 
 import SearchNormal from "../../../assets/css/Settings/search-normal.svg";
@@ -20,7 +24,7 @@ class Customers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading:true,
+      loading:this.props.loading,
       length: this.props.length,
       customers: this.props.customers,
       page: 1,
@@ -55,7 +59,7 @@ class Customers extends Component {
       page = this.state.page
     } //extracting id)
     this.props.fetchCustomers(
-      `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
+      `http://localhost:4000/api/v1/admin/customers?page=${page}`
     );
   }
 
@@ -97,11 +101,12 @@ class Customers extends Component {
     return buttons;
   };
 
-  changeToAnotherPage = (e) => {
-    const page =Number.parseInt(e.target.value) 
+  changeToAnotherPage = (page) => {
+  
+    console.log(page)
     
     this.props.fetchCustomers(
-      `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
+      `http://localhost:4000/api/v1/admin/customers?page=${page}`
     );
 
     this.setState({
@@ -111,7 +116,9 @@ class Customers extends Component {
   };
 
   render() {
-    const {customers} = this.state
+    const {customers, length} = this.state
+
+    console.log(length)
     return (
       <Fragment>
         {this.state.loading && (
@@ -171,8 +178,8 @@ class Customers extends Component {
                     </div>
                     <PulledCustomers  loading={this.props.loading} customers={customers}/>
 
-                    <div className={classes3.pagination_container}>
-                      {this.createPages()}
+                   <div>
+                    <Pagination defaultCurrent={1} total={length/5 * 10} onChange={this.changeToAnotherPage} />
                     </div>
                   </div>
                 </div>

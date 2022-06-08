@@ -5,7 +5,7 @@ import { Link, withRouter } from "react-router-dom";
 
 import Trash from "../../../assets/css/CreateAd/trash.svg";
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
-
+import Avatar from "../../../assets/images/avatar.png";
 import classes from "../../../assets/css/CreateAd/index.module.css";
 
 import CampaignAnalytics from "../../../components/analytics/analytics";
@@ -150,6 +150,14 @@ class PulledCampaigns extends Component {
     if (this.state.pulledCampaigns.length !== 0) {
       {
         this.state.pulledCampaigns.map((campaign, i) => {
+          let profile = campaign.customer.img
+          const hasImage =
+          profile &&
+          profile.split(
+            "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+          )[1]
+        if (hasImage === 'null' || hasImage === 'undefined' ) profile = Avatar;
+  
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
@@ -187,7 +195,7 @@ class PulledCampaigns extends Component {
               <td className={classes.cads_td}>
                 <span className={`${classes.td_data} ${classes.td_data_2}`}>
                   <img
-                    src={campaign.customer.img}
+                    src={profile ? profile : Avatar}
                     alt="profile img"
                     className={classes.partner_profile_img}
                   />
