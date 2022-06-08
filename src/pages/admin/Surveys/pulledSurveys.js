@@ -121,7 +121,7 @@ class PulledSurveys extends React.Component {
         const hasSurveyImage =
           survey &&
           survey.split(
-            "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+            "https://backendapp.murmurcars.com/advertisers/surveys/"
           )[1];
         if (hasSurveyImage === "null" || hasSurveyImage === "undefined")
           survey = SampleImage2;
@@ -188,10 +188,10 @@ class PulledSurveys extends React.Component {
   };
 
   componentDidUpdate(prevProps) {
-    const prevLength = prevProps.adds.length;
-    const this_length = this.props.adds.length;
-
-    if (prevLength !== this_length) {
+    const prev_props= prevProps.loading;
+    const this_props = this.props.loading;
+   console.log(prev_props, this_props)
+    if (this.props.surveys.length !== this.state.pulledSurveys.length) {
       this.setState({
         ...this.state,
         pulledSurveys: this.props.surveys,
@@ -247,7 +247,7 @@ class PulledSurveys extends React.Component {
     const { mode } = this.state;
     const { view } = this.props;
 
-
+     
     console.log(this.state)
     return (
       <React.Fragment>
@@ -271,10 +271,10 @@ class PulledSurveys extends React.Component {
                   <th className={`${classes.cads_th} ${classes.cads_budget}`}>
                     <span>Status</span>
                   </th>
-                  <th>
+                  <th className={classes.select_mode}>
                     <select onChange={this.switchBetweenAnalyticsAndDetals}>
                       <option value={mode}>{mode}</option>
-                      {["Analytics", "Answers", "Details"].map((el, i) => {
+                      {[ "Answers", "Details"].map((el, i) => {
                         if (el !== mode) {
                           return <option key={i} value={el}>{el}</option>;
                         }

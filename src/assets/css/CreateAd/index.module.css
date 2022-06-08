@@ -628,3 +628,11 @@ input:checked + .slider:before {
   width:100px;
   text-align: end;
 }
+
+
+.select_mode select{
+  border-color: transparent;
+  outline: none;
+  background-color: transparent;
+  color: #8f9bb3;
+}

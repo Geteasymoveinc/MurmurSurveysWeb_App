@@ -19,8 +19,8 @@ class DeclineSurvey extends Component {
   }
 
   submitReasonForDelination = () => {
-    const {reason} = this.state 
-    this.props.declineSurvey(reason)
+    const {reason, id} = this.state 
+    this.props.declineSurvey(id, 'Declined', reason)
   }
   render() {
     return (
@@ -70,7 +70,7 @@ class DeclineSurvey extends Component {
                 ></textarea>
               </div>
               <div className="form_element_btn text-center">
-                <button type="button" className="reason_cancel_btn">
+                <button type="submit" className="reason_cancel_btn">
                   Decline
                 </button>
               </div>

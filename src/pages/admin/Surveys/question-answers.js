@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 
 import { Link, withRouter } from "react-router-dom";
 
@@ -8,6 +8,7 @@ import Chevron_Down from "../../../assets/images/surveys/chevron-down.svg";
 import Trash2 from "../../../assets/css/CreateAd/ads-details/trash.svg";
 
 import DeclineSurvey from "./modals/decline-survey";
+import axios from "axios";
 
 class View extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class View extends Component {
       surveys: this.props.surveys,
       survey: {},
       modal:false,
+      loading:false
     };
   }
 
@@ -37,15 +39,46 @@ class View extends Component {
       modal: !this.state.modal
     })
   }
+  
 
+  putChangedStatusToBackend = (id, status, reason) => {
+     const data = {survey_status: status}
+      if(reason){
+           data.declining_reason = reason
+      }
+  
+       axios.put(`http://localhost:4000/api/v1/admin/change-survey-status/${id}`, {
+         ...data
+       })
+       .then(() => {
+         window.location.reload()
+
+       })
+       .catch( err => console.log(err))
+  }
 
   render() {
-    const { surveys, modal } = this.state;
+    const { surveys, modal, loading } = this.state;
 
     const url = this.props.location.search; //search property of history props
     const id = new URLSearchParams(url).get("survey"); //extracting id
     return (
-      <div className={` ${classes.flexbox} `}>
+      <Fragment>
+       {loading && (
+        <div id="preloader">
+          <div id="status">
+            <div className="spinner-chase">
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+              <div className="chase-dot"></div>
+            </div>
+          </div>
+        </div>
+      )}
+      {!loading && <div className={` ${classes.flexbox} `}>
         <div className={`${classes.rows} ${classes.rows_2}`}>
           <div className={`${classes.pies}`}>
             <div className={classes.survey_info}></div>
@@ -168,9 +201,10 @@ class View extends Component {
               type="button"
               className={classes2.delete_ads_btn}
               onClick={() =>
-                this.suspendOrRestoreCustomerAccount(
+                this.putChangedStatusToBackend(
                   id,
-                  "Approve"
+                  "Approved",
+                  null
                 )
               }
             >
@@ -179,7 +213,8 @@ class View extends Component {
           </div>
         </div>
         <DeclineSurvey modal={modal} toggleModal={this.toggleDeclineSurveyReasoningModal} id={id}/>
-      </div>
+      </div>}
+      </Fragment>
     );
   }
 }

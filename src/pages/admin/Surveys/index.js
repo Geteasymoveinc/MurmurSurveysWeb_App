@@ -39,12 +39,11 @@ class Surveys extends React.Component {
     });
   };
 
-  componentDidUpdate(prevProps) {
-    const { loading, adds, surveys } = this.props;
+  componentDidUpdate(prevProps, prevState) {
+    const { adds, surveys } = this.props;
 
     if (
-      adds.length !== prevProps.adds.length ||
-      surveys.length !== prevProps.surveys.length
+        this.state.loading !== prevState.loading
     ) {
       this.setState({
         ...this.state,
@@ -71,11 +70,13 @@ class Surveys extends React.Component {
     );
   }
   render() {
-  console.log(this.state)
-    const { windnows, table } = this.state.menu;
+    const {menu, loading} = this.state
+    const { windnows, table } = menu;
+
+    console.log(this.state)
     return (
       <React.Fragment>
-        {this.state.loading && (
+        {loading && (
           <div id="preloader">
             <div id="status">
               <div className="spinner-chase">
@@ -90,7 +91,7 @@ class Surveys extends React.Component {
           </div>
         )}
 
-        {!this.state.loading && (
+        {!loading && (
           <div className={classes.dash_right}>
             <div className={classes.head_search}>
               <h1 className={classes.dash_h1}>Surveys</h1>
@@ -160,6 +161,7 @@ class Surveys extends React.Component {
                       surveys={this.state.surveys}
                       adds={this.state.adds}
                       view={{ windnows, table }}
+                      loading={loading}
                     />
                   </div>
                 </div>
@@ -171,6 +173,7 @@ class Surveys extends React.Component {
                   surveys={this.state.surveys}
                   adds={this.state.adds}
                   view={{ windnows, table }}
+                  loading={loading}
                 />
               )}
           </div>
@@ -180,8 +183,8 @@ class Surveys extends React.Component {
   }
 }
 const mapStateToProps = (state) => {
-  const { surveys, adds, loading } = state.Surveys;
-  return { surveys, adds, loading };
+  const { surveys, adds } = state.Surveys;
+  return { surveys, adds };
 };
 
 export default connect(mapStateToProps, { fetchSurveys })(withRouter(Surveys));
