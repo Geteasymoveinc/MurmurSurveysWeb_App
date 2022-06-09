@@ -66,14 +66,14 @@ class Surveys extends React.Component {
 
   componentDidMount() {
     this.props.fetchSurveys(
-      "http://localhost:4000/api/v1/admin/get-surveys"
+      "https://backendapp.murmurcars.com/api/v1/admin/get-surveys"
     );
   }
   render() {
     const {menu, loading} = this.state
     const { windnows, table } = menu;
 
-    console.log(this.state)
+    
     return (
       <React.Fragment>
         {loading && (

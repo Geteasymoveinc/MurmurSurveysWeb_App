@@ -86,7 +86,7 @@ class Details extends React.Component {
       loading: true,
     });
     axios
-      .delete(`http://localhost:4000/api/v1/admin/delete-survey/${id}`)
+      .delete(`https://backendapp.murmurcars.com/api/v1/admin/delete-survey/${id}`)
       .then(() => {
         this.setState({
           ...this.state,
@@ -118,7 +118,7 @@ class Details extends React.Component {
     });
     axios
       .put(
-        `http://localhost:4000/api/v1/admin/update-survey/${email}`,
+        `https://backendapp.murmurcars.com/api/v1/admin/update-survey/${email}`,
         formData
       )
       .then(() => {

@@ -59,7 +59,7 @@ class Customers extends Component {
       page = this.state.page
     } //extracting id)
     this.props.fetchCustomers(
-      `http://localhost:4000/api/v1/admin/customers?page=${page}`
+      `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
     );
   }
 
@@ -106,7 +106,7 @@ class Customers extends Component {
     console.log(page)
     
     this.props.fetchCustomers(
-      `http://localhost:4000/api/v1/admin/customers?page=${page}`
+      `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
     );
 
     this.setState({
@@ -118,7 +118,7 @@ class Customers extends Component {
   render() {
     const {customers, length} = this.state
 
-    console.log(length)
+  
     return (
       <Fragment>
         {this.state.loading && (

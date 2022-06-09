@@ -18,11 +18,14 @@ class DeclineSurvey extends Component {
     })
   }
 
-  submitReasonForDelination = () => {
-    const {reason, id} = this.state 
-    this.props.declineSurvey(id, 'Declined', reason)
+
+  submitReasonForDelination = (e) => {
+    e.preventDefault()
+    const {reason, survey_id} = this.state 
+    this.props.declineSurvey(survey_id, 'Declined', reason)
   }
   render() {
+
     return (
       <React.Fragment>
         <Modal

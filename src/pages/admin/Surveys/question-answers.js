@@ -16,8 +16,8 @@ class View extends Component {
     this.state = {
       surveys: this.props.surveys,
       survey: {},
-      modal:false,
-      loading:false
+      modal: false,
+      loading: false,
     };
   }
 
@@ -36,26 +36,30 @@ class View extends Component {
   toggleDeclineSurveyReasoningModal = () => {
     this.setState({
       ...this.state,
-      modal: !this.state.modal
-    })
-  }
-  
+      modal: !this.state.modal,
+    });
+  };
 
   putChangedStatusToBackend = (id, status, reason) => {
-     const data = {survey_status: status}
-      if(reason){
-           data.declining_reason = reason
-      }
-  
-       axios.put(`http://localhost:4000/api/v1/admin/change-survey-status/${id}`, {
-         ...data
-       })
-       .then(() => {
-         window.location.reload()
+    const data = { survey_status: status };
+    if (reason) {
+      data.declining_reason = reason;
+    }
 
-       })
-       .catch( err => console.log(err))
-  }
+    axios
+      .put(
+        `https://backendapp.murmurcars.com/api/v1/admin/change-survey-status/${id}`,
+        {
+          ...data,
+        }
+      )
+      .then((response) => {
+        console.log(response)
+        this.props.history.push('/surveys')
+        window.location.reload();
+      })
+      .catch((err) => console.log(err));
+  };
 
   render() {
     const { surveys, modal, loading } = this.state;
@@ -64,156 +68,167 @@ class View extends Component {
     const id = new URLSearchParams(url).get("survey"); //extracting id
     return (
       <Fragment>
-       {loading && (
-        <div id="preloader">
-          <div id="status">
-            <div className="spinner-chase">
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
+        {loading && (
+          <div id="preloader">
+            <div id="status">
+              <div className="spinner-chase">
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+                <div className="chase-dot"></div>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {!loading && <div className={` ${classes.flexbox} `}>
-        <div className={`${classes.rows} ${classes.rows_2}`}>
-          <div className={`${classes.pies}`}>
-            <div className={classes.survey_info}></div>
-            <div className={classes.chart_contaioner_2}>
-              {surveys.length > 0 &&
-                surveys.map((survey, i) => {
-                  return (
-                    <div className={`${classes.item1}`}>
-                      {/*container for survey*/}
-                      <div className={classes.question_answer}>
-                        {/*image*/}
-                        {survey.image && survey.image.image_url && (
-                          <div className={` ${classes.survey_image_container}`}>
-                            {survey.image.image_url && (
-                              <img
-                                src={survey.image.image_url}
-                                alt="survey question image"
-                                className={` ${classes.survey_image_img}`}
-                              />
-                            )}
-                          </div>
-                        )}
-                        {/*question*/}
-                        <h4
-                          className={`${
-                            survey.image &&
-                            survey.image.image_url &&
-                            classes.margin_top
-                          }`}
-                        >
-                          {survey.question}
-                        </h4>
-
-                        {/*answers ---options*/}
-                        <span className={classes.question_answers_container}>
-                          {survey.type === "dropdown" ? (
-                            <span
-                              className={classes.selection_options_container}
-                            >
-                              <select
-                                className={`${classes.survey_input} ${classes.survey_selection}`}
+        )}
+        {!loading && (
+          <div className={` ${classes.flexbox} `}>
+            <div className={`${classes.rows} ${classes.rows_2}`}>
+              <div className={`${classes.pies}`}>
+                <div className={classes.survey_info}></div>
+                <div className={classes.chart_contaioner_2}>
+                  {surveys.length > 0 &&
+                    surveys.map((survey, i) => {
+                      return (
+                        <div className={`${classes.item1}`} key={i}>
+                          {/*container for survey*/}
+                          <div className={classes.question_answer}>
+                            {/*image*/}
+                            {survey.image && survey.image.image_url && (
+                              <div
+                                className={` ${classes.survey_image_container}`}
                               >
-                                {survey.answers.map((answer, index) => (
-                                  <option key={index} value={answer}>
-                                    {answer}
-                                  </option>
-                                ))}
-                              </select>
-                              <img
-                                src={Chevron_Down}
-                                alt="arrow"
-                                className={classes.select_icon}
-                              />
-                            </span>
-                          ) : (
-                            survey.answers.map((answer, index) => {
-                              return (
-                                <span
-                                  className={classes.question_answer_span}
-                                  key={index}
-                                >
-                                  <input
-                                    id={`answer${i + 1}-${index + 1}`}
-                                    type={`${
-                                      survey.type === "radio"
-                                        ? "radio"
-                                        : survey.type === "checkbox"
-                                        ? "checkbox"
-                                        : survey.type === "text"
-                                        ? "text"
-                                        : null
-                                    }`}
-                                    className={`${
-                                      survey.type === "text" &&
-                                      classes.survey_input
-                                    } ${
-                                      survey.type === "text" &&
-                                      classes.survey_input_2
-                                    }`}
-                                    name={`options${i + 1}`}
-                                    placeholder={`${
-                                      survey.type === "text" && "Answer"
-                                    }`}
+                                {survey.image.image_url && (
+                                  <img
+                                    src={survey.image.image_url}
+                                    alt="survey question image"
+                                    className={` ${classes.survey_image_img}`}
                                   />
-                                  {survey.type !== "text" && (
-                                    <label
-                                      htmlFor={`answer${i + 1}-${index + 1}`}
-                                    >
-                                      {" "}
-                                      {answer}
-                                    </label>
-                                  )}
-                                </span>
-                              );
-                            })
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
+                                )}
+                              </div>
+                            )}
+                            {/*question*/}
+                            <h4
+                              className={`${
+                                survey.image &&
+                                survey.image.image_url &&
+                                classes.margin_top
+                              }`}
+                            >
+                              {survey.question}
+                            </h4>
 
-        <div className="d-flex justify-content-end">
-          <div className={classes2.delete_ads}>
-            <button
-              type="button"
-              className={classes2.delete_ads_btn}
-              onClick={this.toggleDeclineSurveyReasoningModal}
-            >
-              <span>Decline Survey</span>
-            </button>
+                            {/*answers ---options*/}
+                            <span
+                              className={classes.question_answers_container}
+                            >
+                              {survey.type === "dropdown" ? (
+                                <span
+                                  className={
+                                    classes.selection_options_container
+                                  }
+                                >
+                                  <select
+                                    className={`${classes.survey_input} ${classes.survey_selection}`}
+                                  >
+                                    {survey.answers.map((answer, index) => (
+                                      <option key={index} value={answer}>
+                                        {answer}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <img
+                                    src={Chevron_Down}
+                                    alt="arrow"
+                                    className={classes.select_icon}
+                                  />
+                                </span>
+                              ) : (
+                                survey.answers.map((answer, index) => {
+                                  return (
+                                    <span
+                                      className={classes.question_answer_span}
+                                      key={index}
+                                    >
+                                      <input
+                                        id={`answer${i + 1}-${index + 1}`}
+                                        type={`${
+                                          survey.type === "radio"
+                                            ? "radio"
+                                            : survey.type === "checkbox"
+                                            ? "checkbox"
+                                            : survey.type === "text"
+                                            ? "text"
+                                            : null
+                                        }`}
+                                        className={`${
+                                          survey.type === "text" &&
+                                          classes.survey_input
+                                        } ${
+                                          survey.type === "text" &&
+                                          classes.survey_input_2
+                                        }`}
+                                        name={`options${i + 1}`}
+                                        placeholder={`${
+                                          survey.type === "text" && "Answer"
+                                        }`}
+                                      />
+                                      {survey.type !== "text" && (
+                                        <label
+                                          htmlFor={`answer${i + 1}-${
+                                            index + 1
+                                          }`}
+                                        >
+                                          {" "}
+                                          {answer}
+                                        </label>
+                                      )}
+                                    </span>
+                                  );
+                                })
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            </div>
+
+            <div className="d-flex justify-content-end">
+              <div className={classes2.delete_ads}>
+                <button
+                  type="button"
+                  className={classes2.delete_ads_btn}
+                  onClick={this.toggleDeclineSurveyReasoningModal}
+                >
+                  <span>Decline Survey</span>
+                </button>
+              </div>
+              <div
+                className={`${classes2.delete_ads} ${classes2.activate_customer}`}
+              >
+                <button
+                  type="button"
+                  className={classes2.delete_ads_btn}
+                  onClick={() =>
+                    this.putChangedStatusToBackend(id, "Approved", null)
+                  }
+                >
+                  <span>Approve Survey</span>
+                </button>
+              </div>
+            </div>
+            <DeclineSurvey
+              modal={modal}
+              toggleModal={this.toggleDeclineSurveyReasoningModal}
+              declineSurvey={this.putChangedStatusToBackend}
+              id={id}
+            />
           </div>
-          <div
-            className={`${classes2.delete_ads} ${classes2.activate_customer}`}
-          >
-            <button
-              type="button"
-              className={classes2.delete_ads_btn}
-              onClick={() =>
-                this.putChangedStatusToBackend(
-                  id,
-                  "Approved",
-                  null
-                )
-              }
-            >
-              <span>Approve Survey</span>
-            </button>
-          </div>
-        </div>
-        <DeclineSurvey modal={modal} toggleModal={this.toggleDeclineSurveyReasoningModal} id={id}/>
-      </div>}
+        )}
       </Fragment>
     );
   }

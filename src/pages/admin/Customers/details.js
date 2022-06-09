@@ -84,7 +84,7 @@ class Details extends React.Component {
     });
     axios
       .put(
-        `http://localhost:4000/api/v1/admin/customer-account-status?id=${id}&status=${operation_type}`,
+        `https://backendapp.murmurcars.com/api/v1/admin/customer-account-status?id=${id}&status=${operation_type}`,
         {
           accaunt_status: operation_type,
         }
@@ -133,7 +133,7 @@ class Details extends React.Component {
       ...this.state,
       loading:true
     })
-    axios.put(`http://localhost:4000/api/v1/admin/update-customer/${email}`, formData)
+    axios.put(`https://backendapp.murmurcars.com/api/v1/admin/update-customer/${email}`, formData)
     .then(() => {
     this.setState({
       ...this.state,
