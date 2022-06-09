@@ -1,0 +1,107 @@
+
+
+.dash_relative{
+    position: relative;
+  }
+  .head_search{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: space-between;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack:space-between;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .dash_h1{
+    color:#3F2B89;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 28px;
+    margin-top:0;
+    margin-bottom:0;
+  }
+  .search_box input{
+    width:450px;
+    height:48px;
+    background: #fff;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.16);
+    border-radius: 48px;
+    border:0;
+    color:#2E3A59;
+    font-size: 14px;
+    line-height: 20px;
+    font-family: 'Montserrat', sans-serif;
+    padding-left:16px;
+  }
+  .search_box input:focus{
+    outline:none;
+  }
+  .search_box input::placeholder {
+    color:#8F9BB3;
+    opacity: 1;
+  }
+  .search_box input:-ms-input-placeholder {
+    color: #8F9BB3;
+  }
+  .search_box input::-ms-input-placeholder {
+    color: #8F9BB3;
+  }
+  .search_box_flex{
+    position: absolute;
+    right: 2px;
+    top: 3px;
+  }
+  .search_box_flex,.search_icon,.search_maximize{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  .search_icon,.search_maximize{
+    width:24px;
+    height:24px;
+    border:0;
+    background:transparent;
+    cursor:pointer;
+    transition:all .4s ease;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  .search_icon:hover,.search_maximize:hover,.profil_img:hover{
+    transform:scale(1.1);
+  }
+  .search_profil{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border-color: transparent;
+    overflow:hidden;
+    padding:0;
+  }
+  .profil_img{
+    width:100%;
+    height:100%;
+    border-radius: 50%;
+    position: relative;
+    right:0.03rem;
+    bottom: 0.02rem;
+    object-fit:cover;
+    margin:0;
+  }
+  .search_icon,.search_maximize{
+    margin-right:24px;
+  }
+  .profil_img{
+    transition:all .4s ease;
+  }

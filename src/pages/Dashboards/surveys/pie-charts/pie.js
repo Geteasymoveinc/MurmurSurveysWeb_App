@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ReactApexChart from "react-apexcharts";
 
 
-import '../../../assets/css/surveys/apexchart/index.css'
+import '../../../../assets/css/surveys/apexchart/index.css'
 
 
 class Pie extends Component{

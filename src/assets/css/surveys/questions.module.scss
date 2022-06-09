@@ -360,9 +360,11 @@
     align-items: center;
     flex-wrap: wrap;
     position: relative;
-
+   background-color: white;
   }
-
+ .item1:not(:first-child){
+   margin-top: 20px;
+ }
   .item1.active{
     border-left:2px solid #2E3A59;
   }
@@ -371,10 +373,31 @@
      cursor: pointer;
    }
 
+   .item1 .question_answer_setting_flex_end{
+     width:100%;
+     position: relative;
+     margin-top: 10px;
+     display: flex;
+     justify-content: flex-end;
+   }
+
   .item1 .survey_trash{
-    position: absolute;
-    top:0;
-    right:10px;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .item1 .survey_trash img:hover{
+    cursor: pointer;
+  }
+  .item1 .survey_trash p{
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    color: #8F9BB3;
+    margin: 0;
+    margin-left: 20px;
   }
   .question_answer{
     margin-left: 25px;
@@ -860,3 +883,7 @@ color: #2E3A59;
     border-radius: 50%;
   }
   
+
+ .dragable_container{
+   background-color: transparent !important;
+ }

@@ -19,6 +19,8 @@ import classes from "../../assets/css/Dashboard/dashboard.module.css";
 import "../../assets/css/app.css";
 import axios from "axios";
 
+//import Socket from './SocketBackpackers/index'
+
 Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
 
 class GoogleMaps extends Component {
@@ -27,7 +29,8 @@ class GoogleMaps extends Component {
     this.state = {
       NumberOfDrivers: "",
       address: "",
-      postalCode: "",
+      country: "",
+      location: "",
       alert_status: false,
       permission: false,
       errorZipCode: false, //false
@@ -36,8 +39,8 @@ class GoogleMaps extends Component {
       toggleCartWithAreaInformation: false, //false
 
       center: {
-        lat:0,
-        lng:0,
+        lat: 0,
+        lng: 0,
       },
       zoom: 11,
       drivers: [],
@@ -58,112 +61,95 @@ class GoogleMaps extends Component {
   }
 
   onChangeLocationToZoomIn(e) {
-    this.setState({ ...this.state, postalCode: e.target.value });
+    const location = e.target.value
+    this.setState({ ...this.state, location});
   }
 
   submitLocationToZoomIn(e) {
     e.preventDefault();
-    if (
-      this.state.address.includes("Azerbaijan") ||
-      this.state.address.includes("US")
-    ) {
-      if (this.state.address.includes("US")) {
-        this.setState({ ...this.state, loaded: false });
-        axios
-          .post(
-            "https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords",
-            { postalCode: this.state.postalCode }
-          )
-          .then((res) => {
-            console.log(res.data);
-            if (res.data.status !== 204) {
-              Geocode.fromAddress("" + this.state.postalCode)
-                .then((response) => {
-                  const { lat, lng } = response.results[0].geometry.location;
-                  const areaStatistic = [];
-
-                  areaStatistic.push({
-                    General: res.data.areaStatistic.Population.General,
-                    population_age:
-                      res.data.areaStatistic.Population.population_age,
-                  });
-                  const statistic = this.state.statistic;
-
-                  statistic.location = this.state.postalCode;
-                  statistic.areaStatistic = areaStatistic;
-                  this.setState({
-                    ...this.state,
-                    coordinates: res.data.polygon,
-                    zoom: 13,
-                    loaded: true,
-                    postCenter: { lat, lng },
-                    errorZipCode: false,
-                    statistic,
-                    toggleCartWithAreaInformation: true,
-                  });
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            } else {
-              this.setState({
-                ...this.state,
-                errorMessage: res.data.message,
-                errorZipCode: true,
-                hint: res.data.hints,
-                loaded: true,
-              });
-            }
-          })
-          .catch((err) => console.log(err));
-      } else {
-        this.setState({ ...this.state, loaded: false });
-        axios
-          .post(
-            "https://backendapp.murmurcars.com/api/v1/zipcode/get-district-information",
-            {
-              district: this.state.postalCode,
-            }
-          )
-          .then((res) => {
-            if (res.data.status !== 204) {
-              const statistic = this.state.statistic;
-              statistic.areaStatistic = [res.data.areaStatistic["Population"]];
-              statistic.location = this.state.postalCode;
-
-              this.setState({
-                ...this.state,
-                errorZipCode: false,
-                errorMessage: "",
-                postalCode: "",
-                hint: "",
-                loaded: true,
-                coordinates: res.data.polygons,
-                postCenter: res.data.center,
-                center: res.data.center,
-                zoom: 12,
-                toggleCartWithAreaInformation: true,
-                statistic,
-              });
-            } else {
-              this.setState({
-                ...this.state,
-                errorZipCode: true,
-                errorMessage: res.data.message,
-                loaded: true,
-                hint: res.data.hints,
-              });
-            }
-          })
-          .catch((err) => console.log(err));
-      }
-    } else {
+    const statistic = this.state.statistic;
+    statistic.location = this.state.location;
+    const location = this.state.location;
+    const country = this.state.country;
+    if (!this.state.address.length) {
       this.setState({ ...this.state, alert_status: true });
       return;
     }
+    this.setState({ ...this.state, loaded: false });
+    if (this.state.address.includes("US")) {
+      axios
+        .post(
+          `https://backendapp.murmurcars.com/api/v1/zipcode/get-zipcode-polygon-coords/${country}`,
+          { postalCode: location }
+        )
+        .then((res) => {
+          if (res.data.status === 204) {
+            this.setState({
+              ...this.state,
+              errorMessage: res.data.message,
+              errorZipCode: true,
+              hint: res.data.hints,
+              loaded: true,
+            });
+            return;
+          }
+          const areaStatistic = [];
+
+          areaStatistic.push({
+            General: res.data.areaStatistic.Population.General,
+            population_age: res.data.areaStatistic.Population.population_age,
+          });
+
+          statistic.areaStatistic = areaStatistic;
+          const polygons = res.data.polygons;
+          this.handleGeocode(location, statistic, polygons);
+        })
+        .catch((err) => {
+          this.setState({
+            ...this.state,
+            errorZipCode: true,
+            toggleCartWithAreaInformation: false,
+            loaded: true,
+          });
+        });
+    } else {
+      axios
+        .post(
+          `http://localhost:4000/api/v1/zipcode/get-district-information/${country}`,
+          {
+            district: location,
+          }
+        )
+        .then((res) => {
+          if (res.data.status === 204) {
+            this.setState({
+              ...this.state,
+              errorZipCode: true,
+              errorMessage: res.data.messag,
+              toggleCartWithAreaInformation: false,
+              loaded: true,
+              hint: res.data.hints,
+            });
+
+            return;
+          }
+          statistic.areaStatistic = [res.data.areaStatistic["Population"]];
+
+          const polygons = res.data.polygons;
+          this.handleGeocode(location, statistic, polygons);
+        })
+        .catch((err) => {
+          this.setState({
+            ...this.state,
+            errorZipCode: true,
+            toggleCartWithAreaInformation: false,
+            loaded: true,
+          });
+        });
+    }
   }
+
   toggleCard() {
-    console.log("run");
     this.setState({
       ...this.state,
       toggleCartWithAreaInformation: !this.state.toggleCartWithAreaInformation,
@@ -176,23 +162,57 @@ class GoogleMaps extends Component {
       this.state.postCenter.lng
     ).then(
       (response) => {
-        console.log(response);
+        let country;
         const address = response.results[5].formatted_address;
-       
-        this.setState({ ...this.state, address, loaded: true });
-  
+
+        if (address.includes("Azerbaijan")) country = "Azerbaijan";
+        else if (address.includes("Georgia")) country = "Georgia";
+        else country = "US";
+
+        this.setState({ ...this.state, address, country, loaded: true });
       },
       (error) => {
         this.setState({ ...this.state, loaded: true });
       }
     );
   };
+  handleGeocode = (location, statistic, polygons) => {
+    const { country } = this.state;
+    let city;
+    if (country === "Azerbaijan") city = "Baku";
+    else city = "Tbilisi";
+    Geocode.fromAddress(city + " " + location)
+      .then((response) => {
+        const { lat, lng } = response.results[0].geometry.location;
 
+        this.setState({
+          ...this.state,
+          loaded: true,
+          zoom: 13,
+          toggleCartWithAreaInformation: true,
+          errorZipCode: false,
+          errorMessage: "",
+          hint: "",
+          postCenter: { lat, lng },
+          center: { lat, lng },
+          location: "",
+          statistic,
+          coordinates: polygons,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          ...this.state,
+          loaded: true,
+          toggleCartWithAreaInformation: false,
+          errorZipCode: true,
+          errorMessage: "invalid location name",
+        });
+      });
+  };
   componentDidMount() {
-    
     navigator.geolocation.getCurrentPosition(
       (position) => {
-
         this.setState({
           ...this.state,
           postCenter: {
@@ -211,15 +231,41 @@ class GoogleMaps extends Component {
         this.setState({
           ...this.state,
           loaded: true,
-          alert_status: true,
-          permission: false,
+          alert_status: false,
+          permission: true,
         });
       }
     );
   }
 
+  toggleFullscreen() {
+    if (
+      !document.fullscreenElement &&
+      /* alternative standard method */ !document.mozFullScreenElement &&
+      !document.webkitFullscreenElement
+    ) {
+      // current working methods
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen(
+          Element.ALLOW_KEYBOARD_INPUT
+        );
+      }
+    } else {
+      if (document.cancelFullScreen) {
+        document.cancelFullScreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen();
+      }
+    }
+  }
   render() {
-    console.log(this.state);
+    
     const { loaded, alert_status, permission, statistic, address } = this.state;
     const { areaStatistic } = statistic;
     let male,
@@ -266,7 +312,11 @@ class GoogleMaps extends Component {
 
         <div className={classes.dash_right}>
           <div className={classes.map}>
-            <GoogleMap state={this.state} location={address} toggle={this.toggleCard} />
+            <GoogleMap
+              state={this.state}
+              location={address}
+              toggle={this.toggleCard}
+            />
           </div>
 
           {loaded && (
@@ -281,7 +331,7 @@ class GoogleMaps extends Component {
                         type="text"
                         placeholder="Search"
                         value={`${
-                          this.state.postalCode && this.state.postalCode
+                          this.state.location && this.state.location
                         }`}
                         onChange={this.onChangeLocationToZoomIn}
                       />
@@ -296,6 +346,7 @@ class GoogleMaps extends Component {
                         <button
                           type="button"
                           className={classes.search_maximize}
+                          onClick={this.toggleFullscreen}
                         >
                           <img
                             src={SearchMaximize}
@@ -322,7 +373,7 @@ class GoogleMaps extends Component {
                             onClick={() => {
                               this.setState({
                                 ...this.state,
-                                postalCode: el,
+                                location: el,
                                 errorZipCode: false,
                                 toggleCartWithAreaInformation: false,
                               });

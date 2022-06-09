@@ -10,21 +10,21 @@ import classes from "../../assets/css/Authentication/Login/Login.module.css";
 
 const items = [
   {
-    text: "Grow Business By Getting In Front of Your Ideal Customers",
+    text: "Advertise via Murmur",
     paragraph:
-      "Explore audience on streets via real-time street-level data and connect with them via smart digital car-top billboards, engage with viewers in real-time, collect data in exchange of rewards and discounts and retarget them via retargeting online Ads dynamically.",
+      "Create your own ad via our digital platform and show it to the world via car-top, backpacks and online ways of advertising",
     id: "1",
   },
   {
-    text: "Grow Business By Getting In Front of Your Ideal Customers",
+    text: "Work with Us",
     paragraph:
-      "Explore audience on streets via real-time street-level data and connect with them via smart digital car-top billboards, engage with viewers in real-time, collect data in exchange of rewards and discounts and retarget them via retargeting online Ads dynamically.",
+      "Become Murmur’s backpack carrier and customized car driver and start to earn additional income",
     id: "2",
   },
   {
-    text: "Grow Business By Getting In Front of Your Ideal Customers",
+    text: "Improve trade industry via Murmur’s Survey Rewards App",
     paragraph:
-      "Explore audience on streets via real-time street-level data and connect with them via smart digital car-top billboards, engage with viewers in real-time, collect data in exchange of rewards and discounts and retarget them via retargeting online Ads dynamically.",
+      "Become Murmur’s Survey taker, fill out as many surveys as you want, get rewards from each of it",
     id: "3",
   },
 ];

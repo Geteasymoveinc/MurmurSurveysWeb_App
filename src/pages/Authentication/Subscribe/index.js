@@ -41,9 +41,9 @@ class Subscribe extends React.Component {
 
   finishRegister() {
     if (this.state.subscribe) {
-      this.props.subscribeFn(this.props.user, this.props.history);
+      this.props.subscribeFn(true, this.props.user, this.props.history);
     } else {
-      //this.props.history.replace('/Dashboard')
+      this.props.subscribeFn(false, this.props.user, this.props.history);
     }
   }
 
@@ -55,7 +55,7 @@ class Subscribe extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    console.log(this.state);
     return (
       <React.Fragment>
         {this.props.loading && (

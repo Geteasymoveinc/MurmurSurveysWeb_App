@@ -4,10 +4,10 @@ import {
   SUBSCRIBE_USER_FAILED,
 } from "./actionTypes";
 
-export const subscribeFn = (subscriber, history) => {
+export const subscribeFn = (subscribe, subscriber, history) => {
   return {
     type: SUBSCRIBE,
-    payload: { subscriber, history },
+    payload: {subscribe, subscriber, history },
   };
 };
 

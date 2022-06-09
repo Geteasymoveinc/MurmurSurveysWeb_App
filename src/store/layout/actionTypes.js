@@ -14,6 +14,7 @@ export const HIDE_RIGHT_SIDEBAR = "HIDE_RIGHT_SIDEBAR";
 
 export const CHANGE_SIDEBAR_VISIBILITY = 'change_sidebar_visibility'
 
+
 // Preloader
 export const CHANGE_PRELOADER = "CHANGE_PRELOADER";
 

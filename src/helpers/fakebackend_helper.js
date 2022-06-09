@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 // Gets the logged in user data from local session
 const getLoggedInUser = () => {
   const user = localStorage.getItem("user");
@@ -19,13 +18,13 @@ const postRegister = (url, data) => {
   return axios
     .post(url, data)
     .then((response) => {
-      console.log(response)
+      console.log(response);
       if (response.status >= 200 || response.status <= 299)
         return response.data;
       throw response.data;
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
       var message;
       if (err.response && err.response.status) {
         switch (err.response.status) {
@@ -47,16 +46,12 @@ const postRegister = (url, data) => {
       throw message;
     });
 };
-const subscribe = (url, data) => {
+const subscribeBackend = (url, data) => {
   console.log(url);
   return axios
     .post(url, data)
 
     .then((response) => {
-
-
- 
-
       if (response.status >= 200 || response.status <= 299)
         return response.data;
       throw response.data;
@@ -86,76 +81,113 @@ const subscribe = (url, data) => {
 };
 // Login Method
 const postLogin = (url, data) => {
-  console.log(url, data)
+  console.log(url, data);
   return axios
     .post(url, data)
     .then((response) => {
-      if (response.data.status!==204 && response.status===200){
-       
-        return  response.data;
+      if (response.data.status !== 204 && response.status === 200) {
+        return response.data;
       }
-  
+
       throw response.data;
     })
     .catch((err) => {
-      throw err
+      throw err;
     });
 };
 
 const queryForEmail = (url, data) => {
-  console.log(url,data)
+  console.log(url, data);
   return axios
     .post(url, data)
     .then((response) => {
-
-      console.log(response)
+      console.log(response);
       return response.data;
     })
     .catch((err) => {
-
-      throw {message: "COuld not find your email please rigister"}
+      throw { message: "COuld not find your email please rigister" };
     });
 };
-
-
-
 
 // postForgetPwd
 const postForgetPwd = (url, data) => {
-
   return axios
     .post(url, data)
     .then((response) => {
-      if(response.status===200 && response.data.status!==204){
-           return response.data
-      }else{
-           throw response.data
+      if (response.status === 200 && response.data.status !== 204) {
+        return response.data;
+      } else {
+        throw response.data;
       }
     })
     .catch((err) => {
-      throw err
+      throw err;
     });
 };
 
-
-
-const post_surveys = (url, data) => {
-  return axios.post(url, data)
-  .then(response => {
-      return response
+const post_surveys = (url, data, method) => {
+  console.log(url, data, method);
+  const options = {
+    method,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json;charset=UTF-8",
+    },
+    body: data,
+  };
+  return axios({
+    url,
+    data,
+    method,
   })
-  .catch(err => console.log(err))
-}
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => console.log(err));
+};
 
+const get_survey = (url) => {
+  return axios
+    .get(url)
+    .then((response) => {
+      const { survey } = response.data;
+      console.log(survey);
+      const {
+        survey_questions,
+        survey_audience_number,
+        survey_earnings,
+        survey_title,
+        survey_caption,
+        target_audience,
+        survey_active,
+        survey_image,
+        analytics,
+      } = survey;
+      return {
+        survey_questions,
+        survey_audience_number,
+        survey_earnings,
+        survey_title,
+        survey_caption,
+        target_audience,
+        survey_image,
+        survey_active,
+        analytics,
+      };
+    })
+    .catch((err) => {
+      throw new Error("something went wrong");
+    });
+};
 export {
   getLoggedInUser,
   isUserAuthenticated,
   postRegister,
   postLogin,
   postForgetPwd,
-  subscribe,
+  subscribeBackend,
   queryForEmail,
- //surveys
-  post_surveys
-
+  //surveys
+  post_surveys,
+  get_survey,
 };

@@ -9,7 +9,6 @@ import { queryForEmail } from "../../helpers/fakebackend_helper";
 
 
 function* loginUser({ payload: { profile, history } }) {
-     console.log(profile.email)
 
   try {
     const response = yield call(
@@ -21,8 +20,6 @@ function* loginUser({ payload: { profile, history } }) {
       }
     );
     const data = response.resp;
-    console.log('this is the status')
-    console.log(data)
 
     if(data.status!==204){
     sessionStorage.setItem("authUser", data.email);

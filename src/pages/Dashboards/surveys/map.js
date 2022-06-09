@@ -2,10 +2,10 @@ import React, { Component } from "react";
 
 import { Map, GoogleApiWrapper, Marker, Polygon, InfoWindow } from "google-maps-react";
 
-import googleMapStyles from "../../assets/google/google-styles";
+import googleMapStyles from "../../../assets/google/google-styles";
 
 import Geocode from "react-geocode";
-import { GOOGLE_MAP_KEY } from "../../api";
+import { GOOGLE_MAP_KEY } from "../../../api";
 
 Geocode.setApiKey(GOOGLE_MAP_KEY);
 

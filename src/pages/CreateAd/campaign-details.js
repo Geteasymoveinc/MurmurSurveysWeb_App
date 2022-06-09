@@ -10,7 +10,7 @@ import TextError from "../../assets/css/CreateAd/text-error.svg";
 import ArrowDown from "../../assets/css/CreateAd/arrow-down.svg";
 import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 import { connect } from "react-redux";
 
 import { Link, withRouter } from "react-router-dom";
@@ -67,7 +67,7 @@ class CampaignDetails extends React.Component {
     });
   };
   canselNewCampaign() {
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.history.replace("/ad-manager");
     this.props.history.go("/ad-manager");
   }
@@ -121,7 +121,7 @@ class CampaignDetails extends React.Component {
               <ul className={classes.create_nav_ul}>
                 <li className={`${classes.nav_ul_item} ${classes.passed_step}`}>
                   <a href="#" className={classes.nav_item_name}>
-                    Campaing Objective
+                    Campaign Objective
                   </a>
                   <div className={classes.step_number_cover}>
                     <div className={classes.number_dot}>
@@ -211,7 +211,7 @@ class CampaignDetails extends React.Component {
                 </li>
                 <li className={classes.nav_ul_item}>
                   <a href="#" className={classes.nav_item_name}>
-                    Ad creative
+                  Ad Media
                   </a>
                   <div className={classes.step_number_cover}>
                     <div className={classes.number_dot}>
@@ -284,7 +284,7 @@ class CampaignDetails extends React.Component {
                           <option value="Consumer Services">
                             Consumer Services
                           </option>
-                          <option value="Consumer Products<">
+                          <option value="Consumer Products">
                             Consumer Products
                           </option>
                           <option value="Business Service">
@@ -377,4 +377,4 @@ class CampaignDetails extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(CampaignDetails));
+export default connect(null, { toggleSideBar })(withRouter(CampaignDetails));

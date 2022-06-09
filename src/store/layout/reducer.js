@@ -10,6 +10,7 @@ import {
   CHANGE_PRELOADER,
   HIDE_RIGHT_SIDEBAR,
   CHANGE_SIDEBAR_VISIBILITY,
+  TOGGLEADMINNAVBAR
 } from "./actionTypes";
 
 const INIT_STATE = {
@@ -21,7 +22,7 @@ const INIT_STATE = {
   isPreloader: false,
   showRightSidebar: false,
   isMobile: false,
-  isSideBarVisible: true,
+  isSideBarVisible: true
 };
 
 const Layout = (state = INIT_STATE, action) => {
@@ -57,6 +58,7 @@ const Layout = (state = INIT_STATE, action) => {
         ...state,
         isSideBarVisible: action.payload,
       };
+
     case CHANGE_TOPBAR_THEME:
       return {
         ...state,

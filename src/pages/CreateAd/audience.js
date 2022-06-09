@@ -13,7 +13,7 @@ import HashtagError from "../../assets/css/CreateAd/hashtag-error.svg";
 import Location from "../../assets/css/CreateAd/location.svg";
 import LocationError from "../../assets/css/CreateAd/location-error.svg";
 
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 import { connect } from "react-redux";
 
 import { Link, withRouter } from "react-router-dom";
@@ -87,7 +87,7 @@ class Audience extends React.Component {
   };
 
   canselNewCampaign() {
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.history.replace("/ad-manager");
     this.props.history.go("/ad-manager");
   }
@@ -222,7 +222,7 @@ class Audience extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Details
+                    Campaign Details
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -294,7 +294,7 @@ class Audience extends React.Component {
                 </li>
                 <li className={classes2.nav_ul_item}>
                   <a href="#" className={classes2.nav_item_name}>
-                    Ad creative
+                  Ad Media
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -582,4 +582,4 @@ class Audience extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(Audience));
+export default connect(null, { toggleSideBar })(withRouter(Audience));

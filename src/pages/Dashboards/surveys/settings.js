@@ -1,58 +1,53 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { add_settings } from "../../store/actions";
+import { add_settings, fetch_map_position} from "../../../store/actions";
 
 import { withRouter } from "react-router-dom";
 
-import classes from "../../assets/css/surveys/index.module.scss";
-import Map from "../../assets/images/surveys/map.png";
-import Chevron_Down from "../../assets/images/surveys/chevron-down.svg";
-import Location from "../../assets/images/surveys/marker.svg";
+import classes from "../../../assets/css/surveys/index.module.scss";
+import Location from "../../../assets/images/surveys/marker.svg";
+import Chevron_Down from "../../../assets/images/surveys/chevron-down.svg";
 import GoogleMap from "./map";
-import "../../assets/css/common/css/google-map.css";
+import "../../../assets/css/common/css/google-map.css";
 
 
-import axios from 'axios'
+import axios from "axios";
 
+import { GOOGLE_MAP_KEY } from "../../../api";
 import Geocode from "react-geocode";
-Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+Geocode.setApiKey(GOOGLE_MAP_KEY);
 
 class SurveySettings extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       map: {
-        center: {
-          lat: 0,
-          lng: 0,
-        },
-        coordinates: [],
+        address: this.props.map.address,
+        center: this.props.map.center,
         zoom: 12,
-        postCenter: {
-          lat: 0,
-          lng: 0,
-        },
-        address: "",
+        postCenter:  this.props.map.center,
         marker: {
-          position: {
-            lat: 0,
-            lng: 0,
-          },
-          name: "",
+          position: this.props.map.center,
+          name: this.props.survey_location,
           image: Location,
         },
       },
       survey_settings: {
-        active: true,
+        active: this.props.survey_active,
+        hasSurvey: false,
         target_audience: {
-          gender: "Male",
-          age: "18-25",
-          location: "",
+          gender:  this.props.survey_gender,
+            
+          age: this.props.survey_age,
+          location: this.props.survey_location
+            
         },
       },
     };
   }
+
   toggleSurveyImportance = () => {
     let active = !this.state.survey_settings.active;
     this.setState({
@@ -78,125 +73,85 @@ class SurveySettings extends Component {
     });
   };
 
-  handleLocationChange = (event) => {
-    const location = event.target.value;
-    console.log(location)
-    let address = this.state.map.address;
-    let url = ''
-    if (address.includes("Azerbaijan")) {
-      url =  `http://localhost:4000/api/v1/zipcode/get-location?city=${'Baku'}`
-    
-    } else {
-       url = `http://localhost:4000/api/v1/zipcode/get-location?city=${'Chikago'}`
-    }
-    axios({
-      url,
-      method:'POST',
-      data: {location}
-    })
-    .then(response => {
-      const {center} = response.data.location_center
-      this.setState({
-        ...this.state,
-        map:{
-          ...this.state.map,
-          center: center,
-          postCenter: center,
-          marker: {
-            ...this.state.map.marker,
-            name: location,
-            position: center
-          }
-        },
-        survey_settings: {
-          ...this.state.survey_settings,
-          target_audience: {
-            ...this.state.survey_settings.target_audience,
-            location
-          }
-        }
-      })
-    })
-    .catch(err => console.log(err))
-  };
-
   componentDidUpdate(prevProps, prevState) {
-    const { survey_settings } = this.state;
-    const { target_audience, active } = survey_settings;
 
-    const { active: prev_active, survey_settings: prev_survey_settings } =
-      prevState;
-    const { target_audience: prev_target_audience } = prev_survey_settings;
+
+    const { target_audience, active } = this.state.survey_settings;
+
+    const { active: prev_active, target_audience: prev_target_audience } =
+      prevState.survey_settings;
+
     if (
       active !== prev_active ||
       target_audience.gender !== prev_target_audience.gender ||
       target_audience.age !== prev_target_audience.age ||
       target_audience.location !== prev_target_audience.location
     ) {
-      this.props.add_settings({
-        active,
-        settings: target_audience,
-      });
+
+
+    
+        this.props.add_settings({
+          active,
+          settings: target_audience,
+        });
+      
     }
   }
-
-  componentDidMount() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.setState({
-          ...this.state,
-          map: {
-            ...this.state.map,
-            loaded: true,
-            postCenter: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            },
-            center: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            },
-          },
-        });
-        this.handleReverseGeocode();
+  getLocationForSurvey = (event) => {
+    const location = event.target.value;
+    this.setState({
+      survey_settings: {
+        ...this.state.survey_settings,
+        target_audience: {
+          ...this.state.survey_settings.target_audience,
+          location,
+        },
       },
-      (err) => {
-        this.setState({
-          ...this.state,
-          map: {
-            ...this.state.map,
-            loaded: true,
-          },
-        });
-      }
-    );
-  }
-  handleReverseGeocode = () => {
-    Geocode.fromLatLng(
-      this.state.map.postCenter.lat,
-      this.state.map.postCenter.lng
-    ).then(
-      (response) => {
-        console.log(response);
-        const address = response.results[5].formatted_address;
-        this.setState({ ...this.state, map: { ...this.state.map, address } });
-      },
-      (error) => {
-        this.setState({
-          ...this.state,
-          map: {
-            ...this.state.map,
-            loading: false,
-          },
-        });
-      }
-    );
+    });
+    this.handleLocationChange(location);
   };
 
+
+  handleLocationChange = (location) => {
+    let address = this.state.map.address;
+    let url = "";
+    if (address.includes("Azerbaijan")) {
+      url = `https://backendapp.murmurcars.com/api/v1/zipcode/get-location?city=${"Baku"}`;
+    } else {
+      url = `https://backendapp.murmurcars.com/api/v1/zipcode/get-location?city=${"Chikago"}`;
+    }
+    axios({
+      url,
+      method: "POST",
+      data: { location },
+    })
+      .then((response) => {
+        const { center } = response.data.location_center;
+        console.log(center);
+        this.props.fetch_map_position(address,center)
+        this.setState({
+          ...this.state,
+          map: {
+            ...this.state.map,
+            center: center,
+            postCenter: center,
+            marker: {
+              ...this.state.map.marker,
+              name: location,
+              position: center,
+            },
+          },
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
+
+
   render() {
-    const { active } = this.state.survey_settings;
+    const { active, target_audience } = this.state.survey_settings;
     const { address } = this.state.map;
-    console.log(this.state);
+    const { location, age, gender } = target_audience;
     return (
       <div className={classes.container_center}>
         <div
@@ -237,21 +192,31 @@ class SurveySettings extends Component {
                       name="step-aud-location"
                       id="step-aud-location"
                       className={classes.location_select}
-                      onChange={(e) => this.handleLocationChange(e)}
+                      onChange={(e) => this.getLocationForSurvey(e)}
                     >
-                      <option value="Select"> Select</option>
-                      <option value="nizami">Nizami</option>
-                      <option value="nasimi">Nasimi</option>
-                      <option value="khazar">Khazar</option>
-                      <option value="sabunchu">Sabunchu</option>
-                      <option value="qaradaq">Qaradaq</option>
-                      <option value="binaqadi">Binaqadi</option>
-                      <option value="narimanov">Narimanov</option>
-                      <option value="sabayil">Sabayil</option>
-                      <option value="pirallahı">Pirallahı</option>
-                      <option value="xətai">Xətai</option>
-                      <option value="yasamal">Yasamal</option>
-                      <option value="suraxanı">Suraxanı</option>
+                      <option value={location.toLowerCase()}>{location}</option>
+                      {[
+                        "Nizami",
+                        "Nasimi",
+                        "Khazar",
+                        "Sabunchu",
+                        "Qaradaq",
+                        "Binaqadi",
+                        "Narimanov",
+                        "Sabayil",
+                        "Pirallahı",
+                        "Xətai",
+                        "Yasamal",
+                        "Suraxanı",
+                      ].map((loc, i) => {
+                        if (loc !== location) {
+                          return (
+                            <option value={loc.toLowerCase()} key={i}>
+                              {loc}
+                            </option>
+                          );
+                        }
+                      })}
                     </select>
                     <img
                       src={Chevron_Down}
@@ -277,12 +242,17 @@ class SurveySettings extends Component {
                     this.onTargetAudienceChange(event, "age")
                   }
                 >
+                  <option value={age}>{age}</option>
                   {["18-25", "26-35", "36-45", "46-55", "56-65", "66+"].map(
-                    (age, index) => (
-                      <option key={index} value={age}>
-                        {age}
-                      </option>
-                    )
+                    (Age, index) => {
+                      if (Age !== age) {
+                        return (
+                          <option key={index} value={Age}>
+                            {Age}
+                          </option>
+                        );
+                      }
+                    }
                   )}
                 </select>
                 <img
@@ -299,11 +269,18 @@ class SurveySettings extends Component {
                     this.onTargetAudienceChange(event, "gender")
                   }
                 >
-                  {["Male", "Female", "Both"].map((gender, index) => (
-                    <option value={gender} key={index}>
-                      {gender}
-                    </option>
-                  ))}
+                  <option value={gender}>
+                    {gender[0].toUpperCase() + gender.substring(1)}
+                  </option>
+                  {["Male", "Female", "Both"].map((Gender, index) => {
+                    if (gender !== Gender) {
+                      return (
+                        <option value={Gender} key={index}>
+                          {Gender}
+                        </option>
+                      );
+                    }
+                  })}
                 </select>
                 <img
                   src={Chevron_Down}
@@ -319,4 +296,4 @@ class SurveySettings extends Component {
   }
 }
 
-export default connect(null, { add_settings })(withRouter(SurveySettings));
+export default connect(null, { add_settings, fetch_map_position})(withRouter(SurveySettings));

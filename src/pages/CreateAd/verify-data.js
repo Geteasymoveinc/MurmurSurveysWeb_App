@@ -11,7 +11,7 @@ import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 import { Link, withRouter } from "react-router-dom";
 
 import { connect } from "react-redux";
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 
 class VerifyData extends React.Component {
   constructor(props) {
@@ -23,13 +23,11 @@ class VerifyData extends React.Component {
   submit(event) {
     event.preventDefault();
 
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.sendToBackEnd();
   }
 
   componentDidMount() {
-    //this.props.apiError("");
-
     document.body.classList.add("bg-transparent");
   }
   componentWillUnmount() {
@@ -37,8 +35,6 @@ class VerifyData extends React.Component {
   }
 
   render() {
-    console.log(this.state, this.props);
-
     return (
       <React.Fragment>
         <header className={classes2.header}>
@@ -58,7 +54,7 @@ class VerifyData extends React.Component {
                     <ul className={classes.verify_ul} key={id}>
                       <li className={classes.verify_li}>
                         <span className={classes.verify_li_span}>
-                          Campaing Objective
+                          Campaign Objective
                         </span>
                         <p className={classes.verify_li_p}>{el.objective}</p>
                       </li>
@@ -76,13 +72,13 @@ class VerifyData extends React.Component {
                       </li>
                       <li className={classes.verify_li}>
                         <span className={classes.verify_li_span}>
-                          Audience Specific Attibuties
+                          Audience Specific Attributs
                         </span>
                         <p className={classes.verify_li_p}>{el.attribute}</p>
                       </li>
                       <li className={classes.verify_li}>
                         <span className={classes.verify_li_span}>
-                          Campaing Name
+                          Campaign Name
                         </span>
                         <p className={classes.verify_li_p}>{el.name}</p>
                       </li>
@@ -103,7 +99,7 @@ class VerifyData extends React.Component {
                           Campaing Duration
                         </span>
                         <p className={classes.verify_li_p}>
-                          15.12.2021 - 25.02.2022
+                          {el.duration}
                         </p>
                       </li>
                       <li className={classes.verify_li}>
@@ -122,7 +118,7 @@ class VerifyData extends React.Component {
                         <span className={classes.verify_li_span}>
                           Type of Ad
                         </span>
-                        <p className={classes.verify_li_p}>Placerat.</p>
+                        <p className={classes.verify_li_p}>{el.type}</p>
                       </li>
                       <li className={classes.verify_li}>
                         <div
@@ -140,7 +136,7 @@ class VerifyData extends React.Component {
                   </button>
                   <div className={classes.step_center}>
                     <Link
-                      to="/ad-manager/ad-creative"
+                      to="/ad-manager/ad-media"
                       className={classes.publish_back_link}
                     >
                       <img src={ArrowLeft} alt="" />
@@ -177,4 +173,4 @@ class VerifyData extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(VerifyData));
+export default connect(null, { toggleSideBar })(withRouter(VerifyData));

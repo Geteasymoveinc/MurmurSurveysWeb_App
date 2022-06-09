@@ -1,9 +1,9 @@
 import React from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
-import '../../assets/css/surveys/dropdown.css'
+import '../../../assets/css/surveys/dropdown.css'
 
-import Chevron_Down from "../../assets/images/surveys/chevron-down.svg";
+import Chevron_Down from "../../../assets/images/surveys/chevron-down.svg";
 
  class SurveyType extends React.Component {
   constructor(props) {

@@ -5,8 +5,6 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { queryForEmail } from "../../helpers/fakebackend_helper";
 
-import SearchNormal from "../../assets/css/Settings/search-normal.svg";
-import SearchMaximize from "../../assets/css/Settings/search-maximize.svg";
 import EditProfileImage from "../../assets/css/Settings/edit.svg";
 import SMS from "../../assets/css/common/icons/sms.svg";
 import Location from "../../assets/css/layout/location.svg";
@@ -24,6 +22,7 @@ import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMe
 import Modal from "./settingsModal";
 
 import { Upload } from "antd";
+import HeadSearch from "../../components/CommonForBoth/Headsearch";
 const { Dragger } = Upload;
 
 const propsD = {
@@ -60,13 +59,14 @@ class Settings extends Component {
       loading: false,
       wrong_credentials: [],
       user_billing: {
-        user_id: "",
-        _id:'',
+        _id: "",
         hasBilling: false,
+        hasSubscription: false,
         billing: {
           billing_id: "",
           billing_package: "",
           billing_price: 0,
+          billing_status: "",
         },
       },
     };
@@ -107,36 +107,65 @@ class Settings extends Component {
 
   //update billing
   updateBilling = (billing, amount) => {
-    const { invoice_link, invoice_status, _id: id } = this.state.Billing;
+    const { hasBilling, billing: bill } = this.state.user_billing;
+    const { billing_id: id } = bill;
+
+    console.log(billing, amount);
     this.setState({ ...this.state, loading: true });
-    axios
-      .put(
-        `https://backendapp.murmurcars.com/api/v1/billing/update-billing/${id}`,
-        {
-          amount,
-          invoice_link,
-          invoice_status,
-          subscription_package: billing,
-        }
-      )
+    let url = "";
+
+    if (hasBilling) {
+      url = `https://backendapp.murmurcars.com/api/v1/billing/update-active-billing/${this.state.stng_id}`;
+    } else {
+      url = `https://backendapp.murmurcars.com/api/v1/billing/create-billing`;
+    }
+    axios({
+      url: url,
+      method: hasBilling ? "PUT" : "POST",
+
+      data: {
+        amount,
+        invoice_package: billing,
+        user: !hasBilling ? this.state.stng_id : null,
+        id: hasBilling ? id : null,
+      },
+    })
       .then((res) => {
-        this.setState({ ...this.state, loading: false, updateModal: false });
-        console.log(res);
+        this.setState({
+          ...this.state,
+          loading: false,
+          updateModal: false,
+          user_billing: {
+            hasBilling: true,
+            hasSubscription: true,
+            billing: {
+              billing_package: billing,
+              billing_id: id,
+              billing_price: amount,
+              billing_status: "Pending",
+            },
+          },
+        });
       })
       .catch((err) => {
         this.setState({ ...this.state, loading: false, updateModal: false });
-        console.log(err);
       });
   };
   //cansel billing
   canselBilling = () => {
+    const { billing } = this.state.user_billing;
+    const { billing_id: id } = billing;
     this.setState({ ...this.state, loading: true });
-    axios
-      .delete(
-        `https://backendapp.murmurcars.com/api/v1/billing/delete-invoice/${this.state.stng_id}`
-      )
+    axios({
+      url: `https://backendapp.murmurcars.com/api/v1/billing/delete-active-billing/${this.state.stng_id}`,
+      method: "DELETE",
+      data: {
+        id,
+      },
+    })
       .then((res) => {
-        window.location.reload();
+        console.log(res);
+        //window.location.reload();
         this.setState({
           ...this.state,
           loading: false,
@@ -199,7 +228,9 @@ class Settings extends Component {
       );
       formData.append("fullName", this.state.stng_fullName);
       formData.append("subscription_status", this.state.subscription_status);
+      if(this.state.profile_photo){
       formData.append("photo", this.state.profile_photo);
+      }
       formData.append("companyAddress", this.state.stng_address);
       formData.append("profilePhoto", this.state.file);
       //formData.append('billing_id', this.state.user_billing._id)
@@ -234,62 +265,92 @@ class Settings extends Component {
     )
       .then((res) => {
         const data = res.resp;
-        console.log(data);
+
         axios
           .get(
             `https://backendapp.murmurcars.com/api/v1/billing/user/${data._id}`
           )
           .then((user) => {
-            console.log(user);
+            let hasBilling = false;
+            if (user.data.status !== 204) {
+              console.log(user);
+              const user_billing = this.state.user_billing;
+              const billing_state = user_billing.billing;
+              let hasSubscription = false;
+              hasBilling = true;
 
-            /*const user_billing = this.state.user_billing;
-            const billing_state = user_billing.billing
-            let hasBilling = this.state.user_billing.hasBilling
+              const billing = user.data.billing;
+              user_billing._id = user.data._id;
 
-            if(user.data.length){
-              user_billing._id = user.data._id
-              const  billing = user.data.billing
-              hasBilling = true
-            if (billing.length) {
-              billing_state.billing_package = billing[0].subscription_package
-              billing_state.billing_price = billing[0].amount
-              billing_state.billing_id = billing[0]._id
+              if (billing.length) {
+                hasSubscription = true;
+                billing_state.billing_package = billing[0].invoice_package;
+                billing_state.billing_price = billing[0].amount;
+                billing_state.billing_id = billing[0]._id;
+                billing_state.billing_status = billing[0].invoice_status;
+              }
+
+              this.setState({
+                ...this.state,
+                stng_id: data._id,
+                stng_company: data.company,
+                stng_phone: data.phone_number,
+                stng_advertise_options: data.advertise_options,
+                stng_subscribedToMurmurNewsettler:
+                  data.subscribedToMurmurNewsettler,
+                stng_fullName: data.fullName,
+                stng_address: data.companyAddress,
+                stng_city: data.city,
+                stng_state: data.state,
+                subscription_status: data.subscription_status,
+                loading: false,
+                profile_photo: data.profilePhoto
+                  ? data.profilePhoto.split(
+                      "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+                    )[1]
+                  : null,
+                user_billing: {
+                  ...user_billing,
+                  hasBilling,
+                  hasSubscription,
+                  billing: {
+                    ...billing_state,
+                  },
+                },
+              });
+            } else {
+              this.setState({
+                ...this.state,
+                stng_id: data._id,
+                stng_company: data.company,
+                stng_phone: data.phone_number,
+                stng_advertise_options: data.advertise_options,
+                stng_subscribedToMurmurNewsettler:
+                  data.subscribedToMurmurNewsettler,
+                stng_fullName: data.fullName,
+                stng_address: data.companyAddress,
+                stng_city: data.city,
+                stng_state: data.state,
+                subscription_status: data.subscription_status,
+                loading: false,
+                profile_photo: data.profilePhoto
+                  ? data.profilePhoto.split(
+                      "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+                    )[1]
+                  : null,
+                user_billing: {
+                  ...this.state.user_billing,
+                  hasBilling: false,
+                },
+              });
             }
-          }
-          console.log(user_billing)*/
+          })
+          .catch((err) =>
             this.setState({
               ...this.state,
-              stng_id: data._id,
-              stng_company: data.company,
-              stng_phone: data.phone_number,
-              stng_advertise_options: data.advertise_options,
-              stng_subscribedToMurmurNewsettler:
-                data.subscribedToMurmurNewsettler,
-              stng_fullName: data.fullName,
-              stng_address: data.companyAddress,
-              stng_city: data.city,
-              stng_state: data.state,
-              subscription_status: data.subscription_status,
               loading: false,
-              profile_photo: data.profilePhoto
-                ? data.profilePhoto.split(
-                    "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
-                  )[1]
-                : null,
-              /*user_billing: {
-                ...user_billing,
-                hasBilling,
-                billing: {
-                  ...billing_state
-                }
-              }*/
             })
-            
-          })
-          .catch((err) => this.setState({
-            ...this.state,
-            loading:false
-          }));
+          );
       })
       .catch((err) =>
         this.setState({
@@ -300,10 +361,8 @@ class Settings extends Component {
   }
 
   render() {
-    console.log(this.state);
-
     const { user_billing, wrong_credentials } = this.state;
-
+    const { hasBilling, hasSubscription } = user_billing;
     let email,
       password = false;
 
@@ -316,6 +375,7 @@ class Settings extends Component {
         }
       }
     }
+    console.log(this.state);
     return (
       <React.Fragment>
         {this.state.loading && (
@@ -334,31 +394,7 @@ class Settings extends Component {
         )}
         {!this.state.loading && (
           <div className={classes.dash_right}>
-            <form className={classes.head_search}>
-              <h1 className={classes.dash_h1}>Settings</h1>
-
-              <div className={`${classes.dash_relative} ${classes.search_box}`}>
-                <input type="text" placeholder="Search" />
-                <div className={classes.search_box_flex}>
-                  <button type="submit" className={classes.search_icon}>
-                    <img
-                      src={SearchNormal}
-                      alt=""
-                      className={classes.search_img}
-                    />
-                  </button>
-                  <button type="button" className={classes.search_maximize}>
-                    <img
-                      src={SearchMaximize}
-                      alt=""
-                      className={classes.maximize_img}
-                    />
-                  </button>
-
-                  <ProfileMenu scope={"global"} />
-                </div>
-              </div>
-            </form>
+            <HeadSearch />
             {/*<!-- settings block -->*/}
             <div className={classes.setting_block}>
               <div className={classes.setting_left}>
@@ -713,15 +749,20 @@ class Settings extends Component {
                 <h4 className={classes.subc_plan}>Subscription Plan</h4>
                 <div
                   className={`${
-                    !user_billing.hasBilling && classes.subc_block_no_billing
+                    (!hasSubscription || !hasSubscription) &&
+                    classes.subc_block_no_billing
                   } ${classes.subc_block}`}
                 >
-                  {user_billing.hasBilling && (
+                  {hasSubscription && (
                     <div className={classes.subcrb_top}>
                       <div className={classes.ads_subtype}>
                         <p>{`${user_billing.billing.billing_package} Package`}</p>
                         <span>30 Days remaining</span>
                         <span>Type {this.state.stng_advertise_options}</span>
+                        <span>
+                          Status{" "}
+                          {this.state.user_billing.billing.billing_status}
+                        </span>
                       </div>
                       <p className={classes.subc_price}>
                         {user_billing.billing.billing_price}$<span>/month</span>
@@ -733,9 +774,9 @@ class Settings extends Component {
                       className={classes.subc_upgrade_plan}
                       onClick={() => this.openModal("updateModal")}
                     >
-                      Upgrade plan
+                      {`${hasBilling ? "Upgrade plan" : "Create plan"}`}
                     </button>
-                    {user_billing.hasBilling && (
+                    {hasSubscription && (
                       <button
                         type="button"
                         className={classes.subc_cancel}

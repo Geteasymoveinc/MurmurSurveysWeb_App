@@ -14,7 +14,7 @@ import DollarCircleError from "../../assets/css/CreateAd/dollar-circle-error.svg
 import Clock from "../../assets/css/CreateAd/clock.svg";
 import ClockError from "../../assets/css/CreateAd/clock-error.svg";
 
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 import { connect } from "react-redux";
 
 import "./ant-picker.css";
@@ -102,7 +102,7 @@ class BudgetAndSchedule extends React.Component {
   }
 
   canselNewCampaign() {
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.history.replace("/ad-manager");
     this.props.history.go("/ad-manager");
   }
@@ -175,7 +175,7 @@ class BudgetAndSchedule extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Objective
+                    Campaign Objective
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -195,7 +195,7 @@ class BudgetAndSchedule extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Details
+                    Campaign Details
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -269,7 +269,7 @@ class BudgetAndSchedule extends React.Component {
                 </li>
                 <li className={classes2.nav_ul_item}>
                   <a href="#" className={classes2.nav_item_name}>
-                    Ad creative
+                  Ad Media
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -289,11 +289,8 @@ class BudgetAndSchedule extends React.Component {
             </div>
             <div className={classes.budget_step}>
               <div className={classes.create_step_1}>
-                <h4 className={classes.create_step_h4}>Budget & Schelude</h4>
-                <p className={classes.create_step_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non
-                  facilisis quis a faucibus.
-                </p>
+                <h4 className={classes.create_step_h4}>Budget & Schedule</h4>
+         
                 <div className={classes.step_max_form}>
                   <form onSubmit={this.submit}>
                     <div className={classes.step_form_item}>
@@ -313,7 +310,7 @@ class BudgetAndSchedule extends React.Component {
                           }`}
                           name="daily-budget"
                           id="daily-budget"
-                          placeholder="Type max Budget"
+                          placeholder="Type maximum budget for advertising"
                           onChange={this.onBudgetValueChange}
                         />
                         <img
@@ -365,7 +362,7 @@ class BudgetAndSchedule extends React.Component {
                           error["timeRange"] ? classes.pass_error : ""
                         }`}
                       >
-                        Campaing Time
+                        Campaign Time
                       </label>
                       <div
                         className={`${classes.step_relative} ${classes.duration_step}`}
@@ -417,7 +414,7 @@ class BudgetAndSchedule extends React.Component {
               <div className={classes.create_info}>
                 <p className={classes.create_info_icon}>
                   <img src={InfoCircle} alt="" />
-                  <span>Info</span>
+                  <span>Information</span>
                 </p>
                 <ul className={classes.create_info_ul}>
                   <li>
@@ -427,9 +424,9 @@ class BudgetAndSchedule extends React.Component {
                     </div>
                   </li>
                   <li>
-                    <p className={classes.create_ul_p}>Campaing Duration</p>
+                    <p className={classes.create_ul_p}>Campaign Duration</p>
                     <div className={classes.create_ul_txt}>
-                      Define how long you want to run your ad campaign.
+                    How long you want to run your ad campaign.
                     </div>
                   </li>
                 </ul>
@@ -462,4 +459,4 @@ class BudgetAndSchedule extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(BudgetAndSchedule));
+export default connect(null, { toggleSideBar })(withRouter(BudgetAndSchedule));

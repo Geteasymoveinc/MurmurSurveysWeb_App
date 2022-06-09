@@ -7,7 +7,7 @@ import Check from "../../assets/css/CreateAd/check.svg";
 import ArrowRight from "../../assets/css/CreateAd/arrow-right.svg";
 import InfoCircle from "../../assets/css/CreateAd/info-circle.svg";
 
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 import { connect } from "react-redux";
 
 import { Link, withRouter } from "react-router-dom";
@@ -18,7 +18,7 @@ class CampaignObjective extends React.Component {
     this.canselNewCampaign = this.canselNewCampaign.bind(this)
   }
   canselNewCampaign(){
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.history.replace('/ad-manager')
     this.props.history.go('/ad-manager')
   }
@@ -72,7 +72,7 @@ class CampaignObjective extends React.Component {
               <ul className={classes.create_nav_ul}>
                 <li className={`${classes.nav_ul_item} ${classes.active}`}>
                   <a href="#" className={classes.nav_item_name}>
-                    Campaing Objective
+                    Campaign Objective
                   </a>
                   <div className={classes.step_number_cover}>
                     <div className={classes.number_dot}>
@@ -90,7 +90,7 @@ class CampaignObjective extends React.Component {
                 </li>
                 <li className={`${classes.nav_ul_item}`}>
                   <a href="#" className={classes.nav_item_name}>
-                    Campaing Details
+                    Campaign Details
                   </a>
                   <div className={classes.step_number_cover}>
                     <div className={classes.number_dot}>
@@ -161,12 +161,9 @@ class CampaignObjective extends React.Component {
                   </div>
                 </li>
                 <li className={classes.nav_ul_item}>
-                  <Link
-                    to='/ad-manager/ad-creative'
-                    className={classes.nav_item_name}
-                  >
-                    Ad creative
-                  </Link>
+                <a href="#" className={classes.nav_item_name}>
+                        Ad Media
+                   </a>
                   <div className={classes.step_number_cover}>
                     <div className={classes.number_dot}>
                       <span className={classes.step_number}>6</span>
@@ -287,4 +284,4 @@ class CampaignObjective extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(CampaignObjective));
+export default connect(null, { toggleSideBar })(withRouter(CampaignObjective));

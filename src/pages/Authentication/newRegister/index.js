@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { FirebaseAuth } from "../../../helpers/firebaseAuth/firebaseAuth";
 
 // action
-import { addUser } from "../../../store/actions";
+import { addUser} from "../../../store/actions";
 
 //router
 import { withRouter, Link } from "react-router-dom";
@@ -405,5 +405,5 @@ const mapStatetoProps = (state) => {
 
 export default connect(mapStatetoProps, {
   addUser,
-  google_signup,
+  google_signup
 })(withRouter(Register));

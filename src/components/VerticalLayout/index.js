@@ -9,16 +9,13 @@ import {
   toggleRightSidebar,
   changeTopbarTheme,
   changeLayoutWidth,
-  changeSideBar,
+  toggleSideBar,
 } from "../../store/actions";
 
 // Layout Related Components
-import Header from "./Header";
 import Sidebar from "./Sidebar";
-import Footer from "./Footer";
 import Rightbar from "../CommonForBoth/Rightbar";
 
-import LanguageDropdown from '../CommonForBoth/TopbarDropdown/LanguageDropdown' ;
 
 import classes from "../../assets/css/common/css/common.module.css";
 import classes2 from "../../assets/css/layout/sidebar-content.module.css";
@@ -89,7 +86,6 @@ class Layout extends Component {
   };
 
   render() {
-    console.log(this.props);
     return (
       <React.Fragment>
         {this.props.isSideBarVisible && (
@@ -107,10 +103,6 @@ class Layout extends Component {
           </div>
         )}
 
-        {/*} <Header
-            toggleMenuCallback={this.toggleMenuCallback}
-            toggleRightSidebar={this.toggleRightSidebar}
-          />*/}
         <div
           className={`${
             (this.props.location.pathname === "/dashboard" ||
@@ -121,20 +113,18 @@ class Layout extends Component {
           <div
             className={`${this.props.isSideBarVisible && classes.dash_cover}`}
           >
-            {this.props.isSideBarVisible && (
+            {this.props.isSideBarVisible  && 
+         
               <Sidebar
                 theme={this.props.leftSideBarTheme}
                 type={this.props.leftSideBarType}
                 isMobile={this.state.isMobile}
-              />
-            )}
+              /> 
+            }
             {this.props.children}
-            {/*<LanguageDropdown/>*/}
+
           </div>{" "}
         </div>
-        {/*className="main-content"*/}
-        {/* <Footer /> */}
-
         <Rightbar />
       </React.Fragment>
     );
@@ -153,5 +143,5 @@ export default connect(mapStatetoProps, {
   toggleRightSidebar,
   changeTopbarTheme,
   changeLayoutWidth,
-  changeSideBar,
+  toggleSideBar,
 })(withRouter(Layout));

@@ -8,13 +8,11 @@ import { connect } from "react-redux";
 
 import { FirebaseAuth } from "../../../helpers/firebaseAuth/firebaseAuth";
 
-import axios from "axios";
-
 // action
 import { addUser } from "../../../store/actions";
 
 //router
-import { withRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 //import assets
 
@@ -291,7 +289,7 @@ class Register extends React.Component {
           </button>
           <div className={classes.toLogIn}>
             <p>
-              Have an account ? <Link to="/login"> Login here</Link>{" "}
+              Have an account ? <Link to="/login"> Login here</Link>
             </p>
           </div>
         </div>

@@ -23,12 +23,14 @@ function* resetPassword({ payload: { token, password, history } }) {
         yield put(resetPwdSuccess({ message: response.message, password }));
       }
     } else {
+
       const response = yield call(
         postForgetPwd,
-        //"https://backendapp.murmurcars.com/api/v1/users/reset-password",
-        "http://localhost:4000/api/v1/users/reset-password",
+        "https://backendapp.murmurcars.com/api/v1/users/reset-password",
+        //"http://localhost:4000/api/v1/users/reset-password",
         { password, token }
       );
+      
       if (response) {
         yield put(resetPwdSuccess({ message: response.message, password }));
         history.push("/login");

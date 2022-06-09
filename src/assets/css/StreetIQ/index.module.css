@@ -12,17 +12,7 @@
   -ms-flex-pack: space-between;
   justify-content: space-between;
 }
-.choose_search_section{
-  padding:24px;
-  max-height: 335px;
-  overflow:hidden
-}
-.choose_modal_section{
-  
-  max-height: 490px;
-  overflow-y: scroll !important;
-  overflow-x: hidden !important;
-}
+
 .stc_h5{
   font-weight: 500;
   font-size: 14px;
@@ -364,16 +354,17 @@
 }
 
 
-.button_fixed button{
-  padding: 9px 20px;
 
-}
 .button_fixed button{
   position: absolute;
   bottom: 430px;
-
+  padding: 9px 20px;
 }
-
+.button_fixed_2 button{
+  position: absolute;
+  bottom: 130px;
+  padding: 9px 20px;
+}
 
 .streetIQ{
   box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
@@ -424,4 +415,12 @@
 .stc_list_li_height.stc_list_li{
   margin-bottom: 60px;
 
+}
+
+
+
+.no_data{
+  font-size: 16px;
+  color:#3F2B89;
+  margin-top: 20px;
 }

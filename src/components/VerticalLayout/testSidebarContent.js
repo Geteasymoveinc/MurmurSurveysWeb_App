@@ -43,7 +43,7 @@ class SidebarContent extends Component {
   }
 
   render() {
-    console.log(this.props);
+
     return (
       <React.Fragment>
         <div className={classes.dash_menu}>
@@ -157,6 +157,27 @@ class SidebarContent extends Component {
                     <span>{this.props.t("Analytics")}</span>
                   </Link>
                 </li>
+                <li
+                  name="/tracking"
+                  onClick={this.menuItemActive}
+                  className={`${
+                    this.state.matchingMenuItem === "/tracking"
+                      ? classes.active
+                      : ""
+                  }`}
+                >
+                  <Link to="/gps-tracking">
+                    <div className={classes.dash_imgs}>
+                      <img
+                        src={GpsInactive}
+                        alt=""
+                        className={classes.dash_img_1}
+                      />
+                      <img src={Gps} alt="" className={classes.dash_img_2} />
+                    </div>
+                    <span>{this.props.t("Tracking")}</span>
+                  </Link>
+                </li>
                 {/* <li
                   name="/testing"
                   onClick={this.menuItemActive}
@@ -181,63 +202,60 @@ class SidebarContent extends Component {
               </ul>
             </div>
             {/* <div className={classes.menu_block}>
-                <ul className={classes.dash_menu_ul}>
-                  <li className={classes.menu_p}>
-                    {this.props.t("Integrations")}
-                  </li>
-                  <li name='/destination'
-                    onClick={this.menuItemActive}
-                    className={`${
-                      this.state.matchingMenuItem === "/destination"
-                        ? classes.active
-                        : ""
-                    }`}
-                  >
-                    <Link to="/destination">
-                      <div className={classes.dash_imgs}>
-                        <img
-                          src={Routing2}
-                          alt=""
-                          className={classes.dash_img_1}
-                        />
-                        <img
-                          src={DestinationActive}
-                          alt=""
-                          className={classes.dash_img_2}
-                        />
-                      </div>
-                      <span>{this.props.t("Destination")}</span>
-                    </Link>
-                  </li>
-                  <li name='/tracking'
-                    onClick={this.menuItemActive}
-                    className={`${
-                      this.state.matchingMenuItem === "/tracking"
-                        ? classes.active
-                        : ""
-                    }`}
-                  >
-                    <Link to="/tracking">
-                      <div className={classes.dash_imgs}>
-                        <img
-                          src={GpsInactive}
-                          alt=""
-                          className={classes.dash_img_1}
-                        />
-                        <img
-                          src={Gps}
-                          alt=""
-                          className={classes.dash_img_2}
-                        />
-                      </div>
-                      <span>{this.props.t("Tracking")}</span>
-                    </Link>
-                  </li>
-
-                </ul>
-              </div> */}
-            <div className={classes.menu_block}>
               <ul className={classes.dash_menu_ul}>
+                <li className={classes.menu_p}>
+                  {this.props.t("Integrations")}
+                </li>
+                <li
+                  name="/destination"
+                  onClick={this.menuItemActive}
+                  className={`${
+                    this.state.matchingMenuItem === "/destination"
+                      ? classes.active
+                      : ""
+                  }`}
+                >
+                  <Link to="/destination">
+                    <div className={classes.dash_imgs}>
+                      <img
+                        src={Routing2}
+                        alt=""
+                        className={classes.dash_img_1}
+                      />
+                      <img
+                        src={DestinationActive}
+                        alt=""
+                        className={classes.dash_img_2}
+                      />
+                    </div>
+                    <span>{this.props.t("Destination")}</span>
+                  </Link>
+                </li>
+                <li
+                  name="/tracking"
+                  onClick={this.menuItemActive}
+                  className={`${
+                    this.state.matchingMenuItem === "/tracking"
+                      ? classes.active
+                      : ""
+                  }`}
+                >
+                  <Link to="/tracking">
+                    <div className={classes.dash_imgs}>
+                      <img
+                        src={GpsInactive}
+                        alt=""
+                        className={classes.dash_img_1}
+                      />
+                      <img src={Gps} alt="" className={classes.dash_img_2} />
+                    </div>
+                    <span>{this.props.t("Tracking")}</span>
+                  </Link>
+                </li>
+              </ul>
+            </div> */}
+            <div className={classes.menu_block}>
+              {/* <ul className={classes.dash_menu_ul}>
                 <li className={classes.menu_p}>{this.props.t("Services")}</li>
                 <li
                   name="/settings"
@@ -289,7 +307,7 @@ class SidebarContent extends Component {
                     <span>{this.props.t("Billing History")}</span>
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
             </div>
           </div>
           <div className={classes.dash_copy}>

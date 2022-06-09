@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import classes from "../../assets/css/surveys/index.module.scss";
+import classes from "../../../assets/css/surveys/index.module.scss";
 
 import Pie from "./pie-charts/pie";
 import Bar from './pie-charts/bar'

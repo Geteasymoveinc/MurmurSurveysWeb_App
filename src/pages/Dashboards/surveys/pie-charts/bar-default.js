@@ -8,7 +8,7 @@ class BarDefault extends Component {
       series: [
         {
           name: "All",
-          data: [44, 55, 41, 67, 22, 43],
+          data: this.props.series,
         },
       ],
       options: {
@@ -50,9 +50,9 @@ class BarDefault extends Component {
         },
         xaxis: {
           type: "number",
-          categories: ["18-24", "25-35", "36-48", "49-55", "56-78", "78+"],
+          categories: this.props.categories,
           labels: {
-            show: false,
+            show: true,
             style: {
               colors: ["#ffffff"],
               fontSize: "12px",

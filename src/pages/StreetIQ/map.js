@@ -7,8 +7,6 @@ import {
   Polygon,
   Circle,
   InfoWindow,
-  PlacesService,
-  PlacesServiceStatus,
 } from "google-maps-react";
 
 import Geocode from "react-geocode";

@@ -15,7 +15,7 @@
   align-items: center;
 }
 .ads_row{
-  display: -webkit-box;
+  /*display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -29,7 +29,12 @@
   align-items: center;
   margin-left:-16px;
   margin-right:-16px;
-  margin-top:16px;
+  margin-top:16px;*/
+
+  display: grid;
+  grid-template-areas: "outdoor backpack indoor";
+  position: relative;
+  grid-gap: 20px;
 }
 .ads_section .slash_detail1, .ads_section .slash_detail2{
   position:absolute;
@@ -38,13 +43,14 @@
 .ads_section .slash_detail1{
   left:108px;
   top:143px;
+  
 }
 .ads_section .slash_detail2{
-  right:242px;
+  right:192px;
   bottom:133px;
 }
 .ads_cover{
-  max-width:620px;
+  max-width:700px;
   margin-left:auto;
   margin-right:auto;
 }
@@ -86,8 +92,31 @@
   background:transparent;
 }
 .ads_col{
-  padding-left:16px;
-  padding-right:16px;
+
+  position: relative;
+  height: 100%;
+}
+
+.ads_col:nth-child(1){
+  grid-area: outdoor;
+}
+.ads_col:nth-child(1) .ads_item label{
+  height: 194px;
+  max-width: 220px
+}
+.ads_col:nth-child(2){
+  grid-area: backpack;
+}
+.ads_col:nth-child(2) .ads_item label{
+  height: 194px;
+  max-width: 220px
+}
+.ads_col:nth-child(3){
+  grid-area: indoor
+}
+.ads_col:nth-child(3) .ads_item label{
+  height: 194px;
+  max-width: 220px
 }
 .ads_item{
   margin-top:16px;
@@ -103,6 +132,13 @@
   padding:24px;
   cursor:pointer;
   transition:all .4s ease;
+
+}
+/*.ads_item .outdoor_ad{
+  padding-inline: 45px;
+}*/
+.ads_item .outdoor_ad p{
+   white-space: nowrap
 }
 .ads_item label span{
   color:#8F9BB3;
@@ -133,11 +169,11 @@
   position: relative;
   left: 4px;
 }
-.ads_form{
+/*.ads_form{
   max-width:400px;
   margin-left:auto;
   margin-right:auto;
-}
+}*/
 @media screen and (max-width:1320px){
   .reset_contain{
       padding-top:0;
@@ -153,7 +189,7 @@
   box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.08);
 }
 .ads_cover,.ads_form{
-  max-width:620px;
+  max-width:700px;
 }
 .ads_item:hover label{
   border-color:#3F2B89;
@@ -228,3 +264,5 @@
 .footer_link:hover {
   text-decoration: none;
 }
+
+

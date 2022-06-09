@@ -61,7 +61,8 @@ function* addPackageFn({ payload: { option, history } }) {
 
     setTimeout(() => {
       history.replace("/register")
-    }, 1000);
+      window.location.reload()
+    }, 2000);
   }
 }
 

@@ -23,17 +23,13 @@ function FirebaseAuth(value, props) {
       .auth()
       .signInWithPopup(providerGoogle)
       .then((result) => {
-        console.log(result);
+      
         const credential = result.credential;
         const additionalUserInfo = result.additionalUserInfo;
-       
 
+       
         props.login({profile: additionalUserInfo.profile, history: props.history})
 
-      
-   
-   
-      
         // This gives you a Google Access Token. You can use it to access the Google API.
         var token = credential.accessToken;
         // The signed-in user info.

@@ -12,17 +12,16 @@ import AudienceDemographicsPieChart from "./audienceDemographics";
 import AgeOfReachedDemographics from "./ageChartReachedDemographics";
 import AdEngagements from "./adEngagements";
 
-import SearchNormal from "../../assets/css/Settings/search-normal.svg";
-import SearchMaximize from "../../assets/css/Settings/search-maximize.svg";
-import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import ArrowRight from "../../assets/css/analitics/Vector.svg";
 //import classes
 import classes from "../../assets/css/analitics/index.module.css";
 import "../../assets/css/app.css";
 import axios from "axios";
 
-import { Alert } from "reactstrap";
 import { Link } from "react-router-dom";
+import Impressions_and_Views from "./peopleImpressionsAndViews";
+
+import HeadSearch from '../../components/CommonForBoth/Headsearch'
 
 const firebaseConfig = {
   apiKey: "AIzaSyCufaPUqLeJ83iRcMEoq9wZoXxP8jyF2OY",
@@ -47,10 +46,14 @@ class CampaignAnalytics extends Component {
         audience_android_total: 0,
         audience_ios_total: 0,
         people_reached_total: 0,
+        people_reached_total_Views: 0,
         people_reached_categories: "",
         audience_female: [],
         audience_male: [],
         audience_platformType: [],
+        weekly_driven_mileage: [],
+        weekly_driven_mileage_cat: [],
+        people_reached: []
       },
       rasberry: [],
       seriesRadialBar: [76],
@@ -255,18 +258,18 @@ class CampaignAnalytics extends Component {
   };
 
   getAnbalyticsfromApi = () => {
+
+    const email = sessionStorage.getItem('authUser')
     this.setState({ ...this.state, loaded: false });
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/campaignanalytics/allcampaignAnalytics/${sessionStorage.getItem(
-          "authUser"
-        )}`
+        `https://backendapp.murmurcars.com/api/v1/campaignanalytics/allcampaignAnalytics/${email}`
       )
       .then((analytics) => {
-        console.log(analytics);
+        
         const { resp } = analytics["data"];
         const { ad_analytics } = resp;
-        console.log(ad_analytics);
+        
         let audience_female = [];
         let audience_male = [];
         let audience_platformType = [];
@@ -277,8 +280,9 @@ class CampaignAnalytics extends Component {
         let people_reached_total = 0;
         let people_reached = [];
         let people_reached_categories = [];
+        let people_reached_total_Views = [];
         const categories = [];
-        const weekly_driven_mileage = []
+        const weekly_driven_mileage = [];
         for (let i = 0; i < ad_analytics.length; i++) {
           audience_female_total += Number.parseInt(
             ad_analytics[i].audience_female.count
@@ -295,22 +299,30 @@ class CampaignAnalytics extends Component {
           audience_android_total += Number.parseInt(
             ad_analytics[i].audience_platformType.android
           );
-          people_reached.push(Number.parseInt(ad_analytics[i].people_reached));
+          people_reached.push(
+            Number.parseInt(ad_analytics[i].people_reached_Impressions)
+          );
           people_reached_total += Number.parseInt(
-            ad_analytics[i].people_reached
+            ad_analytics[i].people_reached_Impressions
+          );
+          people_reached_total_Views += Number.parseInt(
+            ad_analytics[i].people_reached_Views
           );
           people_reached_categories.push(ad_analytics[i].date);
           audience_female.push(ad_analytics[i].audience_female);
           audience_male.push(ad_analytics[i].audience_male);
           audience_platformType.push(ad_analytics[i].audience_platformType);
 
-          const category = new Date(ad_analytics[i].date).toDateString().split(' ')[0]
-          
-          weekly_driven_mileage.push(Number.parseInt(ad_analytics[i].driven_mileage))
-          categories.push(category)
+          const category = new Date(ad_analytics[i].date)
+            .toDateString()
+            .split(" ")[0]
+
+          weekly_driven_mileage.push(
+            Number.parseInt(ad_analytics[i].driven_mileage)
+          );
+          categories.push(category);
         }
 
-        console.log(weekly_driven_mileage, categories)
 
         this.setState({
           ...this.state,
@@ -326,6 +338,10 @@ class CampaignAnalytics extends Component {
             audience_male_total,
             people_reached_total,
             people_reached_categories,
+            weekly_driven_mileage,
+            weekly_driven_mileage_cat: categories,
+            people_reached,
+
           },
           series: [
             {
@@ -335,18 +351,17 @@ class CampaignAnalytics extends Component {
           ],
           optionsMileage: {
             ...this.state.optionsMileage,
-            xaxis:{
+            xaxis: {
               ...this.state.optionsMileage.xaxis,
               categories,
-     
             },
             seriesMileage: [
               {
                 name: "Driven Mileage",
                 data: weekly_driven_mileage,
-              }
-            ]
-          }
+              },
+            ],
+          },
         });
       })
       .catch((err) => {
@@ -355,13 +370,16 @@ class CampaignAnalytics extends Component {
   };
 
   handleTimeFilter = (event, type) => {
+    let seriesMileage = []
+    let series = []
+    let series_type =''
     let filter = event.target.value;
     let categories,
       colors = [];
     let text,
       subtext = "";
     if (filter === "Weekly") {
-      categories = ["Mon", " Tue", "Wed", "Thu", "Fri", "Sat", " Sun"];
+      categories = this.state.audience.weekly_driven_mileage_cat;
       colors = [
         "#8F9BB3",
         "#8F9BB3",
@@ -374,10 +392,23 @@ class CampaignAnalytics extends Component {
       if (type === "options") {
         text = "Weekly people reach Report";
         subtext = "Campaign Weekly Performance";
+        series = [
+          {
+            name: "Reached People",
+            data: this.state.audience.people_reached,
+          },
+        ]
       } else {
         text = "Weekly driven miles report";
         subtext = "How many miles weekly driven";
+        seriesMileage = [
+          {
+            name: "Driven Mileage",
+            data: this.state.audience.weekly_driven_mileage
+          }
+        ]
       }
+  
     } else if (filter === "Monthly") {
       categories = [
         "Jan",
@@ -410,10 +441,53 @@ class CampaignAnalytics extends Component {
       if (type === "options") {
         text = "Monthly people reach Report";
         subtext = "Campaign Monthly Performance";
+        series = [
+          {
+            name: "Reached People",
+            data: 
+            [
+              this.state.audience.people_reached.reduce(
+                (t, el) => t + el
+              ),
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+            ]
+          },
+        ]
       } else {
         text = "Monthly driven miles report";
         subtext = "How many miles monthly driven";
+        seriesMileage = [
+          {
+            name: "Driven Mileage",
+            data:
+                [
+                    this.state.audience.weekly_driven_mileage.reduce(
+                      (t, el) => t + el
+                    ),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                  ]
+          }
+        ]
       }
+
     } else if (filter === "Annualy") {
       categories = [
         "2000",
@@ -446,10 +520,55 @@ class CampaignAnalytics extends Component {
       if (type === "options") {
         text = "Annualy people reach Report";
         subtext = "Campaign Annualy Performance";
+        series = [
+          {
+            name: "Reached People",
+            data: 
+            [
+              this.state.audience.people_reached.reduce(
+                (t, el) => t + el
+              ),
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+            ]
+          },
+        ]
       } else {
         text = "Annualy driven miles report";
         subtext = "How many miles annualy driven";
+        seriesMileage = [
+          {
+            name: "Driven Mileage",
+            data:
+             
+                [
+                    this.state.audience.weekly_driven_mileage.reduce(
+                      (t, el) => t + el
+                    ),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                  ]
+                
+          }
+        ]
       }
+  
     }
     this.setState({
       ...this.state,
@@ -471,7 +590,10 @@ class CampaignAnalytics extends Component {
           ...this.state[type].subtitle,
           text: subtext,
         },
+        seriesMileage,
+     
       },
+      series
     });
   };
 
@@ -484,6 +606,7 @@ class CampaignAnalytics extends Component {
       audience_android_total,
       audience_ios_total,
       people_reached_total,
+      people_reached_total_Views,
       people_reached_categories,
     } = audience;
     return (
@@ -504,34 +627,7 @@ class CampaignAnalytics extends Component {
         )}
         {loaded && (
           <div className={classes.dash_right}>
-            <div className={classes.head_search}>
-              <h1 className={classes.dash_h1}>Analytics</h1>
-              <form onSubmit={this.submitLocationToZoomIn}>
-                <div
-                  className={`${classes.dash_relative} ${classes.search_box}`}
-                >
-                  <input type="text" placeholder="Search" />
-                  <div className={classes.search_box_flex}>
-                    <button type="submit" className={classes.search_icon}>
-                      <img
-                        src={SearchNormal}
-                        alt=""
-                        className={classes.search_img}
-                      />
-                    </button>
-                    <button type="button" className={classes.search_maximize}>
-                      <img
-                        src={SearchMaximize}
-                        alt=""
-                        className={classes.maximize_img}
-                      />
-                    </button>
-
-                    <ProfileMenu scope={"global"} />
-                  </div>
-                </div>
-              </form>
-            </div>
+            <HeadSearch/>
 
             {/* <!-- analytics block -->*/}
             <div
@@ -549,7 +645,7 @@ class CampaignAnalytics extends Component {
               )}
               {haveAnalytics && (
                 <React.Fragment>
-                  <div
+                  {/* <div
                     className={`${classes.week_block} ${classes.analytics_item} ${classes.hide_toolbar}`}
                   >
                     <Chart
@@ -580,9 +676,7 @@ class CampaignAnalytics extends Component {
                             this.handleTimeFilter(event, "options")
                           }
                         >
-                          <option value="Weekly">Weekly</option>
-                          <option value="Monthly">Monthly</option>
-                          <option value="Annualy">Annualy</option>
+                           <option value="Weekly">Weekly</option> <option value="Monthly">Monthly</option> <option value="Annualy">Annualy</option> 
                         </select>
                         <svg
                           width="24"
@@ -598,18 +692,36 @@ class CampaignAnalytics extends Component {
                         </svg>
                       </div>
                     </div>
-                    {/*<img src={ArrowDown} alt="" className={classes.step_select_icon} />*/}
-                  </div>
+                    <img src={ArrowDown} alt="" className={classes.step_select_icon} />
+                  </div> */}
                   <div className={classes.analytics_row}>
                     <div
                       className={`${classes.analytic_col} ${classes.analytic_col_2}`}
                     >
                       <div className={classes.analytic_col_span}>
-                        <h1>People Reached</h1>
+                        <h1>Impressions</h1>
                         <span>{people_reached_total}</span>
-                        <a>
+                        {/* <a>
                           View Details <img src={ArrowRight} />
-                        </a>
+                        </a> */}
+                      </div>
+                      <div
+                        className={`${classes.analytics_item} ${classes.reach_item}`}
+                      >
+                        <PeopleReachedByWeekDay
+                          categories={people_reached_categories}
+                        />
+                      </div>
+                    </div>
+                    <div
+                      className={`${classes.analytic_col} ${classes.analytic_col_2}`}
+                    >
+                      <div className={classes.analytic_col_span}>
+                        <h1>Views</h1>
+                        <span>{people_reached_total_Views}</span>
+                        {/* <a>
+                          View Details <img src={ArrowRight} />
+                        </a> */}
                       </div>
                       <div
                         className={`${classes.analytics_item} ${classes.reach_item}`}
@@ -620,7 +732,7 @@ class CampaignAnalytics extends Component {
                       </div>
                     </div>
 
-                    <div
+                    {/* <div
                       className={`${classes.analytic_col} ${classes.analytic_col_2}`}
                     >
                       <div className={classes.analytic_col_span}>
@@ -635,18 +747,18 @@ class CampaignAnalytics extends Component {
                       >
                         <SeenByWeekDay />
                       </div>
-                    </div>
+                    </div> */}
                   </div>
-                  <div
+                  {/* <div
                     className={`${classes.week_block} ${classes.analytics_item}`}
                   >
-                    <Chart
+                     <Chart
                       options={this.state.optionsMileage}
                       series={this.state.optionsMileage.seriesMileage}
                       type="bar"
                       width="100%"
                       height={400}
-                    />
+                    /> 
                     <div className={classes.weekly_select}>
                       <div className="position-relative">
                         <select
@@ -675,7 +787,7 @@ class CampaignAnalytics extends Component {
                         </svg>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className={classes.audience_row}>
                     <div className={classes.audience_col}>
                       <div className={classes.audience_item}>
@@ -703,35 +815,39 @@ class CampaignAnalytics extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className={classes.audience_col}>
-                      <div className={classes.audience_item}>
-                        <p className={classes.audience_p}>Audience by Age</p>
-                        <div className={classes.audience_chart}>
-                          <AgeOfReachedDemographics
-                            a={30}
-                            b={45}
-                            c={56}
-                            d={65}
-                            e={24}
-                          />
-                        </div>
-                      </div>
-                    </div>
+
                     <div className={classes.audience_col}>
                       <div className={classes.audience_item}>
                         <p className={classes.audience_p}>
                           Audience Engagements
                         </p>
                         <div className={classes.audience_chart}>
-                          <AdEngagements
-                            engagements_campaign1={5000}
-                            engagements_campaign2={10000}
-                            campaign1={"Ad_A"}
-                            campaign2={"Ad_B"}
+                          <Impressions_and_Views
+                            Impressions={Number(people_reached_total)}
+                            Views={Number(people_reached_total_Views)}
                           />
+                          {/* <AdEngagements
+                           
+                            campaign1={"Impressions"}
+                            campaign2={"Views"}
+                          />{" "} */}
                         </div>
                       </div>
                     </div>
+                    {/* <div className={classes.audience_col}>
+                      <div className={classes.audience_item}>
+                        <p className={classes.audience_p}>Audience by Age</p>
+                        <div className={classes.audience_chart}>
+                          <AgeOfReachedDemographics
+                            a={0}
+                            b={0}
+                            c={0}
+                            d={0}
+                            e={0}
+                          />
+                        </div>
+                      </div>
+                    </div> */}
                   </div>
                 </React.Fragment>
               )}

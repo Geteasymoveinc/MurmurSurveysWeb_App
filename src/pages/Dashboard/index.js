@@ -8,6 +8,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      markerCorrds: null,
     };
   }
 
@@ -16,16 +17,17 @@ class Dashboard extends Component {
       .query({ name: "geolocation" })
       .then(function (permissionStatus) {
         if (permissionStatus.state === "granted") {
-  
-        }else{
-          console.log('permission denied')
+        } else {
+          console.log("permission denied");
         }
         permissionStatus.onchange = function () {};
       });
   };
 
-  componentDidMount(){
-       this.handleGeoLocationPermission()
+  componentDidMount() {
+    this.handleGeoLocationPermission();
+        //Socket();
+
   }
 
   render() {

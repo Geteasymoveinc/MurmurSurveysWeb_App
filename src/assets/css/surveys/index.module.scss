@@ -56,20 +56,28 @@ color: #FFFFFF;
   }
   .menu_self_flex{
     align-self: flex-end;
-    width:412px;
+    width:272px;
   
    
   }
-
+.menu_self_flex.menu_self_flex_hasSurvey{
+  align-self: flex-end;
+  width:412px;
+}
   
 
 .menu_flex{
+  width: 206px;
+
+  display: flex;
+ 
+}
+.menu_flex.menu_flex_hasSurvey{
   width: 276px;
 
   display: flex;
   justify-content: space-between;
 }
-
 
 @media (max-width: 900px) {
 .menu_self_flex{
@@ -126,7 +134,14 @@ width:69px
 }
   /*header----- end*/
 
-
+.publish_update_success{
+  color: green;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+  top:20px
+}
 
 /*-----body-containers------*/
 /*---questions -- start*/
@@ -152,4 +167,38 @@ width:69px
 
 
 
-@import './answers.module.scss'
+@import './answers.module.scss';
+
+
+.search_box_flex_end{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width:180px;
+}
+.surveys_container{
+  position: relative;
+  width:100%;
+  display: flex;
+  justify-content: center;
+}
+
+.surveys_container .create_ads{
+  background: #fff;
+box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.08);
+border-radius: 16px;
+margin-top: 24px;
+padding: 32px;
+  width:80% 
+}
+
+
+
+.cads_head{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

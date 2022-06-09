@@ -1,20 +1,12 @@
 import React, { Component } from "react";
-import {
-
-  Button,
-
-  Badge,
-
-  Alert,
-
-} from "reactstrap";
+import { Button, Badge, Alert } from "reactstrap";
 
 import axios from "axios";
 import { connect } from "react-redux";
 import { withRouter, Link, Switch, Route, Redirect } from "react-router-dom";
 import FormData from "form-data";
 
-import Pullcampaigns, { getCampaigns } from "./pullCampign";
+import Pullcampaigns from "./pullCampign";
 import CampaignObjective from "./campaign-objective";
 import CampaignDetails from "./campaign-details";
 import Audience from "./audience";
@@ -23,16 +15,10 @@ import PlacementType from "./placement-type";
 import AdMedia from "./ad-creative";
 import VerifyData from "./verify-data";
 
-//import CreateAddForm from "./createAdTabs";
-
-import SearchNormal from "../../assets/css/Settings/search-normal.svg";
-import SearchMaximize from "../../assets/css/Settings/search-maximize.svg";
-import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
-
-import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import classes from "../../assets/css/CreateAd/index.module.css";
 
-import { addPackage, changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
+import HeadSearch from "../../components/CommonForBoth/Headsearch";
 
 class CreateAdDashboard extends Component {
   constructor(props) {
@@ -93,7 +79,7 @@ class CreateAdDashboard extends Component {
       campaign_name: "",
       artWork_url: "",
       images: [],
-      verify_img:'',
+      verify_img: "",
       daily_budget: "",
       ad_schedule_time: "",
     };
@@ -108,72 +94,30 @@ class CreateAdDashboard extends Component {
   }
 
   componentDidMount() {
-    if (!this.props.match.isExact) { //if user on create add page and accidentaly refrash page then react will render first step of ad creation to start all over again
+    if (!this.props.match.isExact) {
+      //if user on create add page and accidentaly refrash page then react will render first step of ad creation to start all over again
       this.toggle();
     }
   }
   toggle = () => {
-    const modal = !this.state.modal;
-
     this.setState({
       ...this.state,
-      modal,
+      modal: true,
       brandAwareness: false,
       reach: false,
       traffic: false,
     });
-    this.props.changeSideBar(false); //geting rid of left navbar for creating ad 
+    this.props.toggleSideBar(false); //geting rid of left navbar for creating ad
     this.props.history.push("/ad-manager/campaign-objective");
   };
 
   //objectives
   selectCampaignObjective(objective) {
     this.setState({
-      ...this.state, [objective]:true
-    })
+      ...this.state,
+      [objective]: true,
+    });
   }
-
-  /*handleInputDisplayChange = (e) => {
-    const displayQuantity = e.target.value;
-    this.setState({ ...this.state, display_quantity: displayQuantity });
-
-    if (displayQuantity === "10") {
-      this.setState({ speedometerValue: 150000, speedometerMaxValue: 250000 });
-    }
-    if (displayQuantity === "5") {
-      this.setState({ speedometerValue: 450000, speedometerMaxValue: 650000 });
-    }
-    if (displayQuantity === "25") {
-      this.setState({
-        speedometerValue: 1500000,
-        speedometerMaxValue: 2500000,
-      });
-    }
-    if (displayQuantity === "50") {
-      this.setState({
-        speedometerValue: 3000000,
-        speedometerMaxValue: 4500000,
-      });
-    }
-    if (displayQuantity === "85") {
-      this.setState({
-        speedometerValue: 8300000,
-        speedometerMaxValue: 11500000,
-      });
-    }
-    if (displayQuantity === "150") {
-      this.setState({
-        speedometerValue: 12500000,
-        speedometerMaxValue: 2250000,
-      });
-    }
-    if (displayQuantity === "350") {
-      this.setState({
-        speedometerValue: 11500000,
-        speedometerMaxValue: 4250000,
-      });
-    }
-  };*/
 
   handleCreateDetails({ campaign_name, adCategory }) {
     this.setState({
@@ -204,15 +148,6 @@ class CreateAdDashboard extends Component {
     this.props.history.push("/ad-manager/budget-schedule");
   }
 
-  /*toggleCreateAd = () => {
-    const createAdStatus = !this.state.createAdStatus;
-    this.setState({
-      ...this.state,
-      createAdStatus,
-      modal: false,
-    });
-  };*/
-
   toggleCancelCreateAd = () => {
     this.setState({ ...this.state, createAdStatus: false });
   };
@@ -230,29 +165,33 @@ class CreateAdDashboard extends Component {
 
   handleDisplayAmountAndType({ campaign_type, display_quantity }) {
     this.setState({ ...this.state, campaign_type, display_quantity });
-    this.props.history.push("/ad-manager/ad-creative");
+    this.props.history.push("/ad-manager/ad-media");
   }
-  handleImage({  files,verify_img }) {
-    
-    this.setState({ ...this.state, artWork_url: files[0].name, images: files, verify_img });
+  handleImage({ files, verify_img }) {
+    this.setState({
+      ...this.state,
+      artWork_url: files[0].name,
+      images: files,
+      verify_img,
+    });
     this.props.history.push("/ad-manager/verify-data");
   }
 
   toggleCompleteCreateAd() {
-    console.log(this.state.artWork_url);
     const formData = new FormData();
-    formData.append("advertisers_email",this.state.advertisers_email)
-    formData.append("campaign_type",this.state.adCategory)
-    formData.append("campaign_name", this.state.campaign_name)
-    formData.append("ad_schedule",this.state.duration)
-    formData.append("area", this.state.area)
-    formData.append("daily_budget", this.state.daily_budget)
-    formData.append("display_quantity",this.state.display_quantity)
+    formData.append("advertisers_email", this.state.advertisers_email);
+    formData.append("campaign_type", this.state.adCategory);
+    formData.append('ad_type', this.state.campaign_type)
+    formData.append("campaign_name", this.state.campaign_name);
+    formData.append("ad_schedule", this.state.duration);
+    formData.append("area", this.state.area);
+    formData.append("daily_budget", this.state.daily_budget);
+    formData.append("display_quantity", this.state.display_quantity);
 
-    formData.append("audienceAge", this.state.audienceAge)
-    formData.append("audienceGender", this.state.audienceGender)
-    formData.append("ad_schedule_time",this.state.ad_schedule_time)
-    formData.append('artWork_url', this.state.artWork_url)
+    formData.append("audienceAge", this.state.audienceAge);
+    formData.append("audienceGender", this.state.audienceGender);
+    formData.append("ad_schedule_time", this.state.ad_schedule_time);
+    formData.append("artWork_url", this.state.artWork_url);
     for (const image of this.state.images) {
       formData.append("images", image);
     }
@@ -261,31 +200,15 @@ class CreateAdDashboard extends Component {
       method: "POST",
       data: formData,
     })
-     .then((res) => {
-        this.setState({ ...this.state, alertStatus: false });
+      .then((res) => {
+        this.setState({ ...this.state, alertStatus: true, modal: false });
         this.props.history.replace("/ad-manager");
         this.props.history.go("/ad-manager");
+        this.setState({ ...this.state, alertStatus: false });
+        
       })
-      .catch((err) => console.log(err));
-    this.setState({ ...this.state, createAdStatus: false, alertStatus: true });
+      .catch((err) => {});
   }
-
-  /*handleOnChange = (event) => {
-    this.setState({ ...this.state, campaign_type: event.target.name });
-  };*/
-
-  handleDateChange = (date, dateString) => {
-    console.log("Date", date.dateString);
-    this.setState({
-      ...this.state,
-      startCampaignDate: date.dateString[0],
-      endCampaignDate: date.dateString[1],
-      scheduleCampaignDate: date.dateString[0] + " " + date.dateString[1],
-    });
-    console.log("this is schedule state", this.state.scheduleCampaignDate);
-  };
-
-
 
   handleCampaigns = () => {
     let murmurCampaigns = [];
@@ -328,14 +251,7 @@ class CreateAdDashboard extends Component {
                   {campaign.campaignData}
                 </Badge>
               </td>
-              <td>
-                {/* <i
-              className={
-                "fab " + transaction.methodIcon + " mr-1"
-              }
-            ></i>{" "} */}
-                {campaign.reach}
-              </td>
+              <td>{campaign.reach}</td>
               <td>
                 <Button
                   type="button"
@@ -356,13 +272,12 @@ class CreateAdDashboard extends Component {
   };
 
   render() {
-    console.log(this.state);
     const { modal } = this.state;
     return (
       <React.Fragment>
-        {!this.state.modal && (  //page where user see all its campaigns and can create new one
+        {!this.state.modal && ( //page where user see all its campaigns and can create new one
           <div className={classes.dash_right}>
-            {this.state.alertStatus ? ( 
+            {this.state.alertStatus ? (
               <Alert color="success">
                 We received your Ad Request and Reviewing it. Usually it takes
                 15 min for approval.
@@ -371,99 +286,71 @@ class CreateAdDashboard extends Component {
               </Alert>
             ) : null}
 
+            <HeadSearch />
 
-          
-            <div className={classes.head_search}>
-              <h1 className={classes.dash_h1}>Ads manager</h1>
-
-              <form>
-                <div
-                  className={`${classes.dash_relative} ${classes.search_box}`}
-                >
-                  <input type="text" placeholder="Search" />
-                  <div className={classes.search_box_flex}>
-                    <button type="submit" className={classes.search_icon}>
-                      <img
-                        src={SearchNormal}
-                        alt=""
-                        className={classes.search_img}
-                      />
-                    </button>
-                    <button type="button" className={classes.search_maximize}>
-                      <img
-                        src={SearchMaximize}
-                        alt=""
-                        className={classes.maximize_img}
-                      />
-                    </button>
-
-                    <ProfileMenu scope={"global"} />
-                  </div>
-                </div>
-              </form>
-            </div>
-        
-            {this.props.match.isExact && !this.props.location.search && (  //page where user see all its campaigns
-              <div className={classes.create_ads}>
-                <div className={classes.ads_section}>
-                  <div className={classes.cads_head}>
-                    <div className={classes.cads_head_left}>
-                      <h4 className={classes.cads_h4}>Your Current Ads</h4>
-                      <p className={classes.cads_p}>
-                      Here you can view the status of your ads with all the necessary details
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className={classes.create_ads_btn}
-                      onClick={this.toggle}
-                    >
-                      Create Ad
-                      <svg
-                        width="20"
-                        height="20"
-                        className={classes.create_ads_img}
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+            {this.props.match.isExact &&
+              !this.props.location.search && ( //page where user see all its campaigns
+                <div className={classes.create_ads}>
+                  <div className={classes.ads_section}>
+                    <div className={classes.cads_head}>
+                      <div className={classes.cads_head_left}>
+                        <h4 className={classes.cads_h4}>Your Current Ads</h4>
+                        <p className={classes.cads_p}>
+                          Here you can view the status of your ads with all the
+                          necessary details
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className={classes.create_ads_btn}
+                        onClick={this.toggle}
                       >
-                        <path
-                          d="M5 10H15"
-                          stroke="white"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M10 15V5"
-                          stroke="white"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
+                        Create Ad
+                        <svg
+                          width="20"
+                          height="20"
+                          className={classes.create_ads_img}
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5 10H15"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M10 15V5"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <Pullcampaigns data={this.state} />
                   </div>
-                  <Pullcampaigns data={this.state} />
                 </div>
-              </div>
-        
-        )}
+              )}
 
-        {this.props.match.isExact && this.props.location.search.length>0 && ( //details
-          <Pullcampaigns data={this.state} />
-          )}
+            {this.props.match.isExact &&
+              this.props.location.search.length > 0 && ( //details
+                <Pullcampaigns data={this.state} />
+              )}
           </div>
         )}
         {modal && ( //nesting routes (creat new ad campaign)
           <Switch>
             <Route path="/ad-manager/campaign-objective">
-              <CampaignObjective toggleObjective={this.selectCampaignObjective} />
+              <CampaignObjective
+                toggleObjective={this.selectCampaignObjective}
+              />
             </Route>
             <Route path="/ad-manager/campaign-details">
-              <CampaignDetails
-                createAdDetails={this.handleCreateDetails}
-              />
+              <CampaignDetails createAdDetails={this.handleCreateDetails} />
             </Route>
             <Route path="/ad-manager/audience">
               <Audience createAudience={this.handleAudience} />
@@ -480,7 +367,7 @@ class CreateAdDashboard extends Component {
                 }
               />
             </Route>
-            <Route path="/ad-manager/ad-creative">
+            <Route path="/ad-manager/ad-media">
               <AdMedia createAdImage={this.handleImage} />
             </Route>
             <Route path="/ad-manager/verify-data">
@@ -502,6 +389,7 @@ class CreateAdDashboard extends Component {
                     category: this.state.adCategory,
                     budget: this.state.daily_budget,
                     artWork: this.state.verify_img,
+                    duration: this.state.duration,
                   },
                 ]}
                 sendToBackEnd={this.toggleCompleteCreateAd}
@@ -515,12 +403,8 @@ class CreateAdDashboard extends Component {
   }
 }
 
-const mapStatetoProps = (state) => {
-  console.log(state);
-  const email = state.Login;
-  return email;
-};
+
 
 export default withRouter(
-  connect(mapStatetoProps, { changeSideBar })(CreateAdDashboard)
+  connect(null, { toggleSideBar })(CreateAdDashboard)
 );

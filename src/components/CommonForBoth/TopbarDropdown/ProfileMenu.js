@@ -14,6 +14,7 @@ import { withNamespaces } from "react-i18next";
 import user1 from "../../../assets/images/avatar.png";
 
 import classes from "../../../assets/css/Settings/settings.module.css";
+import '../../../assets/css/surveys/profile/index.css'
 
 class ProfileMenu extends Component {
   constructor(props) {
@@ -24,7 +25,9 @@ class ProfileMenu extends Component {
         ? sessionStorage.getItem("fullName")
         : null,
 
-      profile_image: '',
+      profile_image: {
+        src: ''
+      },
     };
     this.toggle = this.toggle.bind(this);
   }
@@ -37,26 +40,30 @@ class ProfileMenu extends Component {
   }
 componentDidMount(){
   const url =  sessionStorage.getItem("profileImage")
-  const image = new Image()
+  let image = {
+    src: ''
+  }
+  if(url){
+   image = new Image()
   image.src = url
-
+  image.name = url.split("https://backendapp.murmurcars.com/advertisers/users/profilePhoto/")[1]
+  }
   this.setState({
     ...this.state,
     profile_image: image
   })
 }
   render() {
+    console.log(this.state)
     return (
       <React.Fragment>
         <Dropdown
           isOpen={this.state.menu && this.props.scope!=='local'}
           toggle={this.toggle}
-
-          //className={`${this.props.scope==='global' &&  classes.search_profil_parent}`}
-          // className="d-inline-block"
+          className={`${this.props.scope ==='survey' ? 'dropdown' : null}`}
         >
           <DropdownToggle
-            //className="btn header-item waves-effect"
+
             id="page-header-user-dropdown"
             tag="button"
             type="button"
@@ -69,7 +76,6 @@ componentDidMount(){
             }`}
           >
             <img
-              //className="rounded-circle header-profile-user"
               className={`${
                 this.props.scope === "global"
                   ? classes.profil_img
@@ -78,37 +84,28 @@ componentDidMount(){
                   : classes.profil_cover_img
               }`}
               src={`${
-                this.props.image && this.props.image.length > 0
+                (this.props.image && this.props.image.length > 0)
                   ? this.props.image
-                  : this.state.profile_image.src
+                  : (this.state.profile_image.name && this.state.profile_image.name.length > 0)
                   ? this.state.profile_image.src
                   : user1
               }`}
               alt="Header Avatar"
             />
-            {/* <span 
-           // className="d-none d-xl-inline-block ml-2 mr-1"
-            >
-              {this.state.username}
-           </span>*/}
-            {/* <i className="mdi mdi-chevron-down d-none d-xl-inline-block"></i> */}
+
           </DropdownToggle>
           <DropdownMenu right>
-            <DropdownItem tag="a" href="/settings">
+            <DropdownItem tag="a" href={`${this.props.scope ==='survey' ? '/surveys' :'/settings'}`}>
               <i className="bx bx-user font-size-16 align-middle mr-1"></i>
-              {this.props.t("Profile")}
+              {this.props.t(`${this.props.scope === 'survey' ? 'My Surveys' : "Profile"}`)}
             </DropdownItem>
-            {/*<DropdownItem tag="a" href="/billing">
-              <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>
-              {this.props.t("Billing")}
-            </DropdownItem>
-            <DropdownItem tag="a" href="#">
-              <span className="badge badge-success float-right">11</span>
-              <i className="mdi mdi-settings font-size-17 align-middle mr-1"></i>
-              {this.props.t("Settings")}
-            </DropdownItem> */}
 
-            <div className="dropdown-divider"></div>
+          <div className="dropdown-divider"></div>
+           {this.props.scope ==='survey' && <DropdownItem tag="a" href="/settings">
+              <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>
+              {this.props.t("My Profile")}
+            </DropdownItem>}
+            {this.props.scope === 'survey' && <div className="dropdown-divider"></div>}
             <Link to="/logout" className="dropdown-item">
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger"></i>
               <span>{this.props.t("Logout")}</span>

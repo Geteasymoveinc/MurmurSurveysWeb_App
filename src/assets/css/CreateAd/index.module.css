@@ -196,6 +196,7 @@
 .create_ads_img{
   margin-left:10px;
 }
+
 .cads_table{
   margin-top:24px;
 }
@@ -449,21 +450,23 @@ input:checked + .slider:before {
 .check_remove{
   width:24px;
   height:24px;
+
   padding:0;
   border:0;
   background:transparent;
   margin-right:16px;
-  margin-bottom: 10px;
+
   cursor:pointer;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
 }
-.multiple_remove{
+.check_remove.multiple_remove{
   position: absolute;
   top:0;
-  right:0
+  right:0;
+margin:0;
 }
 
 @media screen and (max-width:1320px){
@@ -482,9 +485,6 @@ input:checked + .slider:before {
 
 
 
-.cads_flex_th{
- /* margin-top: 7px;*/
-}
 
 .invoice_th{
   margin-top: 7px;

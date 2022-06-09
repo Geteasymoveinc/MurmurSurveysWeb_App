@@ -89,6 +89,8 @@ class AdDetails extends React.Component {
     updates[0][name] = value;
     this.setState({ ...this.state, updates });
   };
+
+
   submitUpdates = () => {
     const updates = this.state.updates[0];
 
@@ -104,9 +106,9 @@ class AdDetails extends React.Component {
     const audienceGender = updates.audienceGender
     const ad_schedule_time = updates.ad_schedule_time
     const artWork_url = updates.artWork_url
+    const ad_status = updates.ad_status
+    const ad_type = updates.ad_type
 
-    /*updates[0].ad_schedule = this.props.campaigns[0].ad_schedule;
-    updates[0].ad_schedule_time = this.props.campaigns[0].ad_schedule_time;*/
     this.setState({ ...this.state, loaded: false });
   
     const formData = new FormData();
@@ -114,6 +116,8 @@ class AdDetails extends React.Component {
     formData.append("campaign_type",campaign_type)
     formData.append("campaign_name", campaign_name)
     formData.append("ad_schedule",ad_schedule)
+    formData.append('ad_status', ad_status)
+    formData.append('ad_type', ad_type)
     formData.append("area", area)
     formData.append("daily_budget", daily_budget)
     formData.append("display_quantity",display_quantity)
@@ -128,7 +132,7 @@ class AdDetails extends React.Component {
       data: formData,
     })
       .then((res) => {
-        //window.location.reload()
+        
         let url = "";
 
         if (/[1-9]/i.test(area)) {
@@ -196,7 +200,6 @@ class AdDetails extends React.Component {
         axios
           .post(url, { postalCode: area, district: area })
           .then((res) => {
-            console.log(res);
 
             if (/[1-9]/i.test(area)) {
               Geocode.fromAddress("" + area)
@@ -216,6 +219,8 @@ class AdDetails extends React.Component {
                       {
                         ...this.state.updates,
                         daily_budget: campaigns[0].daily_budget,
+                        ad_type: campaigns[0].ad_type,
+                        ad_status: campaigns[0].ad_status,
                         advertisers_email: sessionStorage.getItem("authUser"),
                         audienceAge: campaigns[0].audienceAge,
                         audienceGender: campaigns[0].audienceGender,
@@ -247,6 +252,8 @@ class AdDetails extends React.Component {
                   {
                     ...this.state.updates,
                     daily_budget: campaigns[0].daily_budget,
+                    ad_type: campaigns[0].ad_type,
+                    ad_status: campaigns[0].ad_status,
                     advertisers_email: sessionStorage.getItem("authUser"),
                     audienceAge: campaigns[0].audienceAge,
                     audienceGender: campaigns[0].audienceGender,
@@ -269,14 +276,15 @@ class AdDetails extends React.Component {
   render() {
     const { editable } = this.state;
     const url = this.props.location.search;
-    const params = url.split("?campaign=")[1];
-    const statusArray = this.props.adds.filter((el) => el.id === params);
-    let status = [];
+    const id = new URLSearchParams(url).get('campaign')
 
-    if (statusArray.length) {
-      status = Object.values(statusArray[0]);
+    const add = this.props.adds.filter((el) => el.id === id);
+    let status = false;
+
+    if (add.length) {
+      status =  add[0].toggled
     }
-    console.log(this.state);
+    
     return (
       <React.Fragment>
         {!this.state.loaded && (
@@ -306,13 +314,13 @@ class AdDetails extends React.Component {
                   <p>{campaign.campaign_name}</p>
                   <span
                     className={`${
-                      status[0]
+                      status
                         ? classes2.cads_active_dot
                         : classes2.cads_deactive_dot
                     }`}
                   >
                     <span className={classes2.cads_dot}></span>
-                    {status[0] ? "Active" : "Deactive"}
+                    {status ? "Active" : "Deactive"}
                   </span>
                   {/*<!-- <span class="cads_deactive_dot"><span class="cads_dot"></span>Deactive</span> -->*/}
                 </div>
@@ -588,7 +596,7 @@ class AdDetails extends React.Component {
                           onChange={this.handleDetailsUpdate}
                         />
                       ) : (
-                        <div className={classes2.details_edit_select}>
+                        <div className={classes2.ddetails_edit_select}>
                           {" "}
                           <select
                             name="area"
@@ -638,7 +646,7 @@ class AdDetails extends React.Component {
                 <button
                   type="button"
                   className={classes2.delete_ads_btn}
-                  onClick={() => this.props.delete(params, "_details")}
+                  onClick={() => this.props.delete(id, "from_details")}
                 >
                   <span>Delete Ad</span>
                   <img src={Trash2} alt="" />

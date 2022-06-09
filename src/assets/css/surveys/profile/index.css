@@ -3,7 +3,7 @@
 /*header-search*/
 
   
-.profil_img:hover {
+/*.profil_img:hover {
     transform: scale(1.1);
   }
   
@@ -50,4 +50,10 @@
     width:80px;
     height:80px;
     object-fit:contain;
+  }
+
+*/
+ .dropdown .dropdown-menu.dropdown-menu-right{
+    position: absolute;
+    right: -55px !important;
   }

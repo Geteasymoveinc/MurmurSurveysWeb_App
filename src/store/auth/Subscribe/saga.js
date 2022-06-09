@@ -13,13 +13,13 @@ import { subscribeSuccesfully, subscriptionUserFailed } from "./actions";
 
 //Include Both Helper File with needed methods
 import { getFirebaseBackend } from "../../../helpers/firebase_helper";
-import { subscribe } from "../../../helpers/fakebackend_helper";
+import {  subscribeBackend } from "../../../helpers/fakebackend_helper";
 
 // initialize relavant method of both Auth
 const fireBaseBackend = getFirebaseBackend();
 
 // Is user register successfull then direct plot user in redux.
-function* subscribeFn({ payload: { subscriber, history } }) {
+function* subscribeFn({ payload: { subscribe, subscriber, history } }) {
   try {
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
       const response = yield call(
@@ -37,6 +37,7 @@ function* subscribeFn({ payload: { subscriber, history } }) {
         const phoneNumber = subscriber.phone_number;
         const company = subscriber.company;
 
+        
         const subscribed_user = {
           firstName,
           lastName,
@@ -44,17 +45,26 @@ function* subscribeFn({ payload: { subscriber, history } }) {
           phoneNumber,
           company,
         };
+        console.log('in saga')
+        if(subscribe){
+         console.log(subscribed_user)
 
         const response = yield call(
-          subscribe,
-          "https://backendapp.murmurcars.com/api/v1/subscribe/mailchimp",
+          subscribeBackend,
+          "http://localhost:4000/api/v1/subscribe/mailchimp",
           subscribed_user
         );
 
         yield put(subscribeSuccesfully(response));
         sessionStorage.setItem('authUser', email)
         history.push("/dashboard");
+        }else{
+
+          sessionStorage.setItem('authUser', email)
+          history.push("/dashboard");
+        }
       } else {
+    
         history.replace("/register");
       }
     }

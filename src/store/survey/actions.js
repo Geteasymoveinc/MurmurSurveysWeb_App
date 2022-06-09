@@ -6,6 +6,9 @@ import {
   SUBMITSURVEYTOBACKEND,
   SUBMITSURVEYTOBACKENDSUCCESS,
   SUBMITSURVEYTOBACKENDERROR,
+  FETCHSURVEYFROMBACKEND,
+  FETCHSURVEYFROMBACKENDSUCCESS,
+  FETCHINGMAPLOCATIONANDADDRESS,
 } from "./actionTypes";
 
 const add_survey = (surveys) => {
@@ -37,14 +40,44 @@ const add_settings = (settings) => {
   };
 };
 
-const publish_survey = ({ data, user_id,  history }) => {
+const publish_survey = ({url, data,  history, method }) => {
   return {
-    payload: { data, user_id, history },
+    payload: { url,data, history, method },
     type: SUBMITSURVEYTOBACKEND,
   };
 };
 
-const publish_survey_success = () => {};
+const publish_survey_success = (message) => {
+  console.log(message)
+  return {
+    type:SUBMITSURVEYTOBACKENDSUCCESS,
+    payload: message
+  }
+};
+
+
+const fetch_survey = (url) => {
+  console.log(url)
+  return{
+    type: FETCHSURVEYFROMBACKEND,
+    payload: {url}
+  }
+}
+const fetch_survey_success = (data) => {
+  return {
+    type: FETCHSURVEYFROMBACKENDSUCCESS,
+    payload: data
+  }
+}
+
+const fetch_map_position = (address,center) => {
+ console.log(address,center)
+  return {
+    type:FETCHINGMAPLOCATIONANDADDRESS,
+    payload: {address,center}
+  }
+}
+
 
 export {
   add_survey,
@@ -53,4 +86,8 @@ export {
   add_settings,
   publish_survey,
   publish_survey_success,
+  fetch_survey,
+  fetch_survey_success,
+  fetch_map_position,
+
 };

@@ -7,10 +7,21 @@ import classes2 from "../../assets/css/StreetIQ/index.module.css";
 class Filters extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      filters: []
+    }
   }
 
   render() {
     const {
+      searchLocationsByFilterData,
+      selectFilterData,
+      Country,
+      filters,
+      filterMethod,
+    } = this.props;
+
+   /* const {
       Population,
       Places,
       Age,
@@ -25,14 +36,28 @@ class Filters extends React.Component {
       Income,
       Race,
       Real_Estate,
-      Education
-    } = this.props.filterMethod;
-    const { Country } = this.props;
-    const { searchLocationsByFilterData, selectFilterData } = this.props;
+      Education,
+    } = filterMethod;*/
 
+    
+ console.log(Country)
     return (
       <div className={classes2.stc_drops}>
-        <div className={classes2.stc_drop}>
+        {filters.length &&
+          filters.map((filter, i) => (
+            <div className={classes2.stc_drop} key={i}>
+              <div className={classes2.stc_drop_select}>
+               <SearchModal
+       statistic={filter.filter}
+              labels= {filter.labels}
+              filters={filter.filters}
+              method={filterMethod[filter.filter]}
+              activeRadio={(option) => selectFilterData(option, filter.filter)}
+        />
+              </div>
+            </div>
+          ))}
+        {/*<div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
             <SearchModal
               statistic={"Population"}
@@ -49,19 +74,7 @@ class Filters extends React.Component {
             />
           </div>
         </div>
-        <div className={classes2.stc_drop}>
-          <div className={classes2.stc_drop_select}>
-            {Country !== "US" && (
-              <SearchModal
-                statistic={"Popular Places"}
-                labels={["high rated", "low rated"]}
-                filters={[">4", "<4"]}
-                method={Places}
-                activeRadio={(option) => selectFilterData(option, "Places")}
-              />
-            )}
-          </div>
-        </div>
+
         <div className={classes2.stc_drop}>
           <div className={classes2.stc_drop_select}>
             <SearchModal
@@ -81,7 +94,7 @@ class Filters extends React.Component {
               ] : ['20-39<20000', '20-39>20000']}
               activeRadio={(option) => selectFilterData(option, "Age")}
             />
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+            
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -93,7 +106,7 @@ class Filters extends React.Component {
               method={Gender}
               activeRadio={(option) => selectFilterData(option, "Gender")}
             />
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+          
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -116,7 +129,7 @@ class Filters extends React.Component {
                 )
               }
             />
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+            
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -139,7 +152,7 @@ class Filters extends React.Component {
                 )
               }
             />
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+            
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -158,7 +171,7 @@ class Filters extends React.Component {
               method={Country!=='US'? Business: Real_Estate}
               activeRadio={(option) => selectFilterData(option, Country !=='US'?"Business":'Real_Estate')}
             />
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+      
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -180,7 +193,7 @@ class Filters extends React.Component {
               selectFilterData(option, "Education")
             }
             />}
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+            
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -188,8 +201,8 @@ class Filters extends React.Component {
             {Country!=='US' && <SearchModal
               statistic={"Birth"}
               labels={[
-                "Born borm less than 1000",
-                "Born borm more than 1000",
+                "Boys borm less than 1000",
+                "Boys borm more than 1000",
                 "Girls born less than 1000",
                 'Girls born more than 1000'
               ]}
@@ -197,7 +210,7 @@ class Filters extends React.Component {
               method={Birth}
               activeRadio={(option) => selectFilterData(option, "Birth")}
             />}
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+          
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -209,7 +222,7 @@ class Filters extends React.Component {
               method={Retired}
               activeRadio={(option) => selectFilterData(option, "Retired")}
             />}
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+
           </div>
         </div>
         <div className={classes2.stc_drop}>
@@ -221,10 +234,10 @@ class Filters extends React.Component {
               method={Non_Retired}
               activeRadio={(option) => selectFilterData(option, "Non_Retired")}
             />}
-            {/*<!-- <span class="stc_slcted">#more than 5</span> -->*/}
+  
           </div>
-        </div>
-        <div className={classes2.stc_drop}>
+            </div>*/}
+       <div className={classes2.stc_drop}>
           <button
             className={classes2.stc_drop_submit}
             type="submit"
@@ -254,7 +267,7 @@ class Filters extends React.Component {
               />
             </svg>
           </button>
-        </div>
+          </div>
       </div>
     );
   }

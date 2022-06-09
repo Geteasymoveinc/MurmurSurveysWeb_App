@@ -10,15 +10,9 @@ class Statistic extends React.Component {
     };
   }
   render() {
-    const {
-      selectedDataSegment,
-      areaStatistic,
-      Places,
-      Country,
-      expandStatisticModalWithScrool,
-    } = this.props;
+    const { areaStatistic, Country, expandStatisticModalWithScrool, modal } =
+      this.props;
 
-    const { modal } = this.props;
     const segments = Object.keys(areaStatistic);
 
     return (
@@ -26,33 +20,36 @@ class Statistic extends React.Component {
         <div className={classes2.stc_result_list}>
           <div className={classes2.stc_list_each}>
             {Object.keys(areaStatistic[segments[0]]).map((segment, index) => {
-              console.log(segment)
-             return( <React.Fragment key={index}>
-                {modal && (
-                  <p>
-                    {segment === "nonRetiredPopulation"
-                      ? "non retired population"
-                      : segment === "retiredPopulation"
-                      ? "retired population"
-                      : segment.split("_").join(" ").toLowerCase()}
-                  </p>
-                )}
-                <ul key={index}>
-                  {Object.keys(areaStatistic[segments[0]][segment]).map(
-                    (key, i) => (
-                      <li className={classes2.stc_list_li} key={i}>
-                        <p>{key.split("_").join(" ")}</p>
-                        <span>{areaStatistic["Population"][segment][key]}</span>
-                      </li>
-                    )
+              return (
+                <React.Fragment key={index}>
+                  {modal && (
+                    <p>
+                      {segment === "nonRetiredPopulation"
+                        ? "non retired population"
+                        : segment === "retiredPopulation"
+                        ? "retired population"
+                        : segment.split("_").join(" ").toLowerCase()}
+                    </p>
                   )}
-                </ul>
-              </React.Fragment>)
+                  <ul key={index}>
+                    {Object.keys(areaStatistic[segments[0]][segment]).map(
+                      (key, i) => (
+                        <li className={classes2.stc_list_li} key={i}>
+                          <p>{key.split("_").join(" ")}</p>
+                          <span>
+                            {areaStatistic["Population"][segment][key]}
+                          </span>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </React.Fragment>
+              );
             })}
           </div>
           <div className={classes2.stc_list_each}>
             <ul>
-              {modal && Country === "US" ? (
+              {modal && Country.includes("US") ? (
                 <p>race</p>
               ) : modal ? (
                 <p>ethnisity</p>
@@ -66,12 +63,12 @@ class Statistic extends React.Component {
             </ul>
           </div>
           <div className={classes2.stc_list_each}>
-            {!Country.includes("Azerbaijan") ? (
+            {Country.includes("US") ? (
               Object.keys(areaStatistic["Real_Estate"]).map(
                 (segment, index) => (
-                  <React.Fragment>
+                  <React.Fragment key={index}>
                     {modal && <p>{segment.split("_").join(" ")}</p>}
-                    <ul key={index}>
+                    <ul>
                       {Object.keys(areaStatistic["Real_Estate"][segment]).map(
                         (key, index) => (
                           <li className={classes2.stc_list_li} key={index}>
@@ -103,9 +100,13 @@ class Statistic extends React.Component {
             )}
 
             <div
-              className={` ${
-                classes2.button_expand_modal
-              } ${modal ? classes2.button_fixed : null}`}
+              className={` ${classes2.button_expand_modal} ${
+                Country === "Georgia" && modal
+                  ? classes2.button_fixed_2
+                  : modal
+                  ? classes2.button_fixed
+                  : null
+              }`}
             >
               {" "}
               <button

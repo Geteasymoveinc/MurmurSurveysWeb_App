@@ -12,19 +12,17 @@ import Backup from "../../assets/css/CreateAd/backup.svg";
 import { Link, withRouter } from "react-router-dom";
 import { Upload } from "antd";
 
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 import { connect } from "react-redux";
 
 const { Dragger } = Upload;
-
-
 
 class AdCreative extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       files: [],
-      img:[],
+      img: [],
       error: false,
     };
     this.submit = this.submit.bind(this);
@@ -34,11 +32,11 @@ class AdCreative extends React.Component {
 
   submit() {
     if (this.state.img.length > 0) {
-      const files = this.state.files
-      const verify_img = this.state.img[0]
+      const files = this.state.files;
+      const verify_img = this.state.img[0];
       this.props.createAdImage({
         files,
-        verify_img
+        verify_img,
       });
     } else {
       this.setState({
@@ -50,23 +48,23 @@ class AdCreative extends React.Component {
 
   handleFileChange = (info) => {
     const reader = new FileReader();
-    const images = this.state.files 
-    const img = this.state.img
-   
+    const images = this.state.files;
+    const img = this.state.img;
+
     reader.readAsDataURL(info.file);
     reader.onload = (e) => {
-      images.push(info.file)
-      img.push(e.target.result)
+      images.push(info.file);
+      img.push(e.target.result);
       this.setState({
         ...this.state,
-        files:images,
-        img
+        files: images,
+        img,
       });
     };
   };
 
   canselNewCampaign() {
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.history.replace("/ad-manager");
     this.props.history.go("/ad-manager");
   }
@@ -123,7 +121,7 @@ class AdCreative extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Objective
+                    Campaign Objective
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -143,7 +141,7 @@ class AdCreative extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Details
+                    Campaign Details
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -221,7 +219,7 @@ class AdCreative extends React.Component {
                 </li>
                 <li className={`${classes2.nav_ul_item} ${classes2.active}`}>
                   <a href="#" className={classes2.nav_item_name}>
-                    Ad creative
+                    Ad Media
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -241,16 +239,12 @@ class AdCreative extends React.Component {
             </div>
             <div className={classes.media_step}>
               <div className={classes.create_step_1}>
-                <h4 className={classes.create_step_h4}>Add Media</h4>
-                <p className={classes.create_step_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non
-                  facilisis quis a faucibus.
-                </p>
+                <h4 className={classes.create_step_h4}>Ad Media</h4>
+
                 <div className={classes.step_max_media}>
                   <div className={classes.media_block}>
                     <Dragger
                       listType="picture-card"
-        
                       beforeUpload={() => false}
                       showUploadList={false}
                       onChange={(info) => this.handleFileChange(info)}
@@ -275,12 +269,10 @@ class AdCreative extends React.Component {
                     </Dragger>
                   </div>
 
-                  {this.state.img.length > 0 && this.state.img.map(img => 
-                    <img
-                      src={img}
-                      className={classes.example_img}
-                    />
-                  )}
+                  {this.state.img.length > 0 &&
+                    this.state.img.map((img) => (
+                      <img src={img} className={classes.example_img} />
+                    ))}
 
                   <button
                     type="button"
@@ -305,14 +297,15 @@ class AdCreative extends React.Component {
               <div className={classes.create_info}>
                 <p className={classes.create_info_icon}>
                   <img src={InfoCircle} alt="" />
-                  <span>Info</span>
+                  <span>Information</span>
                 </p>
                 <ul className={classes.create_info_ul}>
                   <li>
                     <p className={classes.create_ul_p}>Ad Media</p>
                     <div className={classes.create_ul_txt}>
                       Select the media and upload it. Media can be image,
-                      animation or video. dimensions should to be 196X64.
+                      animation or video. Dimensions of your media should be
+                      196X64
                     </div>
                   </li>
                 </ul>
@@ -345,4 +338,4 @@ class AdCreative extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(AdCreative));
+export default connect(null, { toggleSideBar })(withRouter(AdCreative));

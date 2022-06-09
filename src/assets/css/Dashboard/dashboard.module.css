@@ -141,7 +141,23 @@
   margin-top: 24px;
   margin-left: 24px;
   margin-right: 24px;
-  overflow: hidden !important;
+  overflow: hidden;
+}
+
+.choose_search_section{
+  padding:24px;
+  max-height: 345px;
+  overflow:hidden
+}
+.choose_modal_section{
+  
+  max-height: 490px;
+  overflow-y: scroll ;
+  overflow-x: hidden
+}
+
+.overflow_visible{
+  overflow: visible;
 }
 
 .show_place {
@@ -520,7 +536,15 @@
 }
 .collapsed_item .margin_bottom_reduce {
   margin-bottom: 0.5rem;
+
 }
+
+.collapsed_item .margin_reduce {
+  margin-bottom: 0.5rem;
+
+  margin-top: 0.5rem;
+}
+
 
 .temp_info_cont {
   width: 100%;
@@ -627,6 +651,14 @@
   top: 0.8rem;
   pointer-events: none;
 }
+.city_picke{
+  width: 306px;
+  height: 48px;
+  border: transparent;
+  outline: none;
+  background-color: #edf1f7;
+  padding-left: 15px;
+}
 .data_picker_btn_group {
   display: flex;
   justify-content: space-between;
@@ -646,6 +678,7 @@
   background-color: transparent;
   border: transparent;
   outline: none;
+
 }
 
 .black {

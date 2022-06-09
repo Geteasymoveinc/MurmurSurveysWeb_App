@@ -9,6 +9,7 @@ import {
   CHANGE_PRELOADER,
   HIDE_RIGHT_SIDEBAR,
   CHANGE_SIDEBAR_VISIBILITY,
+  TOGGLEADMINNAVBAR
 } from "./actionTypes";
 
 export const changeLayout = (layout) => ({
@@ -37,7 +38,7 @@ export const changeSidebarType = (sidebarType, isMobile) => {
     payload: { sidebarType, isMobile },
   };
 };
-export const changeSideBar = (isSideBar) => {
+export const toggleSideBar = (isSideBar) => {
   return {
     type: CHANGE_SIDEBAR_VISIBILITY,
     payload: isSideBar,

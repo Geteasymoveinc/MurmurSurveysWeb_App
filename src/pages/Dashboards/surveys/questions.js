@@ -1,23 +1,25 @@
 import React, { Component } from "react";
 
-import { connect } from "react-redux";
-import { add_survey, add_price, add_title } from "../../store/actions";
+import { connect, Provider } from "react-redux";
+import { add_survey, add_price, add_title } from "../../../store/actions";
 
 import { withRouter } from "react-router-dom";
 
-import classes from "../../assets/css/surveys/index.module.scss";
-import "../../assets/css/surveys/antd.css";
-import Radio from "../../assets/images/surveys/radio.svg";
-import Avatar from "../../assets/images/avatar.png";
-import Trash from "../../assets/images/surveys/trash.svg";
-import Copy from "../../assets/images/surveys/copy.svg";
-import Chevron_Down from "../../assets/images/surveys/chevron-down.svg";
-import Add_Icon from "../../assets/images/surveys/add.svg";
-import Close_Icon from "../../assets/images/surveys/close.svg";
-import Trash_Danger from "../../assets/images/surveys/trash-danger.svg";
-import Gallery_Add from "../../assets/images/surveys/gallery-add.svg";
+import classes from "../../../assets/css/surveys/index.module.scss";
+import "../../../assets/css/surveys/antd.css";
+import Radio from "../../../assets/images/surveys/radio.svg";
+import Avatar from "../../../assets/images/avatar.png";
+import Trash from "../../../assets/images/surveys/trash.svg";
+import Copy from "../../../assets/images/surveys/copy.svg";
+import Chevron_Down from "../../../assets/images/surveys/chevron-down.svg";
+import Add_Icon from "../../../assets/images/surveys/add.svg";
+import Close_Icon from "../../../assets/images/surveys/close.svg";
+import Trash_Danger from "../../../assets/images/surveys/trash-danger.svg";
+import Gallery_Add from "../../../assets/images/surveys/gallery-add.svg";
 
 import { Upload } from "antd";
+
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const { Dragger } = Upload;
 
@@ -26,13 +28,15 @@ class SurveyQuestion extends Component {
     super(props);
 
     this.state = {
+      loaded: false,
       form: {
+        hasSurvey: false,
         survey_answers_questions: {
           id: 0,
           input: false,
           survey: {
             important: true,
-            type: "Multiple choice",
+            type: "radio",
             image: {
               image_url: "",
               image_file: {},
@@ -46,31 +50,33 @@ class SurveyQuestion extends Component {
               },
             },
           },
-          surveys: [],
+          surveys: this.props.surveys,
         },
         survey_title_question_image: {
           input: false,
 
           survey: {
-            form_title: "Untitled",
+            form_title: this.props.survey_title,
 
-            form_caption: "Title caption goes here",
+            form_caption: this.props.survey_caption,
             image: {
-              image_url: "",
-              image_file: {},
-              image_name: "",
+              image_url: this.props.survey_image.image_url,
+              image_file: this.props.survey_image.image_file,
+              image_name: this.props.survey_image.image_name,
             },
           },
         },
         survey_price_amount: {
           input: false,
           survey: {
-            price: 0,
-            amount: 0,
+            price: this.props.survey_earnings,
+            amount: this.props.survey_audience_number,
           },
         },
       },
-      drag_drop: {},
+      drag_drop: {
+        dragableItems: this.props.surveys,
+      },
       inform_danger: {
         survey_question: false,
       },
@@ -79,33 +85,29 @@ class SurveyQuestion extends Component {
 
   //drag and drop
 
-  handleDragEnter = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  handleDragLeave = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-  handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  handleDragEnd = (result) => {
+    const destin_id = result.destination.index;
+    const source_id = result.source.index;
+    console.log("from " + source_id + " to " + destin_id);
 
-  onDragStart = (id) => {
+    const { surveys } = this.state.form.survey_answers_questions;
+
+    const dragged_item = surveys[source_id];
+
+    surveys[source_id] = surveys[destin_id];
+    surveys[destin_id] = dragged_item;
+
     this.setState({
       ...this.state,
-      drag_drop: {
-        ...this.state.drag_drop,
-        id,
+      form: {
+        ...this.state.form,
+        survey_answers_questions: {
+          ...this.state.form.survey_answers_questions,
+          surveys,
+        },
       },
     });
   };
-
   //drag and drop
 
   toggleToInputState = (type, input) => {
@@ -141,7 +143,11 @@ class SurveyQuestion extends Component {
       const { image, form_caption, form_title } =
         this.state.form.survey_title_question_image.survey;
       this.props.add_title({
-        image: { name: image.image_name, file: image.image_file },
+        image: {
+          name: image.image_name,
+          file: image.image_file,
+          url: image.image_url,
+        },
         title: form_title,
         caption: form_caption,
       });
@@ -258,13 +264,14 @@ class SurveyQuestion extends Component {
   //create new survey question
   addNewQuestionAnswer = () => {
     const { survey, surveys } = this.state.form.survey_answers_questions;
+
     const { image, question, answers, type, important } = survey;
 
     const options = Object.values(answers.options);
     const id = this.state.form.survey_answers_questions.id;
     this.props.add_survey([
       ...surveys,
-      { image, question, answers: options, type, important },
+      { image, question, answers: options, type, important, id: `a${id + 1}` },
     ]);
     if (question.length > 0) {
       this.setState({
@@ -277,7 +284,7 @@ class SurveyQuestion extends Component {
             id: id + 1,
             survey: {
               important: true,
-              type: "Multiple choice",
+              type: "radio",
               image: {
                 image_url: "",
                 image_file: {},
@@ -292,14 +299,14 @@ class SurveyQuestion extends Component {
               },
             },
             surveys: [
-              ...this.state.form.survey_answers_questions.surveys,
+              ...surveys,
               {
                 image,
                 question,
                 answers: options,
                 type,
-                id,
                 important,
+                id: `a${id + 1}`,
               },
             ],
           },
@@ -315,17 +322,18 @@ class SurveyQuestion extends Component {
       });
     }
   };
-  deleteCreatedSurvey = (id) => {
-    const { surveys } = this.state.form.survey_answers_questions;
+  deleteCreatedSurvey = (start) => {
+    const { survey, surveys } = this.state.form.survey_answers_questions;
+    this.props.add_survey(surveys);
 
     this.setState({
       ...this.state,
       form: {
         ...this.state.form,
-        id: this.state.form.id++,
         survey_answers_questions: {
+          id: this.state.form.id--,
           ...this.state.form.survey_answers_questions,
-          surveys: [...surveys.filter((survey) => survey.id !== id)],
+          surveys: [...surveys.splice(start, 1)],
         },
       },
     });
@@ -353,18 +361,18 @@ class SurveyQuestion extends Component {
     const { answers, type } = survey;
     const answers_array = [];
     let htmlElement = [];
-    if (type !== "Short answers") {
+    if (type !== "text") {
       for (let i = 0; i < answers.count; i++) {
         let htmlElement = (
           <span key={i}>
-            {type !== "Dropdown" && (
+            {type !== "dropdown" && (
               <input
                 id={`answer-${i}`}
-                type={`${type === "Multiple choice" ? "radio" : "checkbox"}`}
+                type={`${type === "radio" ? "radio" : "checkbox"}`}
                 name={`answer`}
               />
             )}
-            {input && type !== "Dropdown" ? (
+            {input && type !== "dropdown" ? (
               <input
                 type="text"
                 className={classes.input_option}
@@ -373,7 +381,7 @@ class SurveyQuestion extends Component {
                   this.createAnOption(event, `option_${i + 1}`);
                 }}
               />
-            ) : type === "Dropdown" ? (
+            ) : type === "dropdown" ? (
               <span className={classes.dropdown_option}>
                 <span className={classes.dropdown_option_counter}>
                   {i + 1}.
@@ -402,10 +410,10 @@ class SurveyQuestion extends Component {
       }
     } else {
       htmlElement = (
-        <span>
+        <span key="1">
           <input
-            className={`${type === "Short answers" && classes.survey_input} ${
-              type === "Short answers" && classes.survey_input_2
+            className={`${type === "text" && classes.survey_input} ${
+              type === "text" && classes.survey_input_2
             }`}
             onChange={(event) => {
               this.createAnOption(event, `option_1`);
@@ -435,6 +443,26 @@ class SurveyQuestion extends Component {
       },
     });
   };
+  toggleCurrentSurveysImportance = (id) => {
+        let {surveys} = this.state.form.survey_answers_questions
+        
+        surveys = surveys.map(survey => {
+               if(survey.id ===id){
+                 survey.important = !survey.important
+               }
+                return survey
+        })
+        this.setState({
+          ...this.state,
+          form: {
+            ...this.state.form,
+            survey_answers_questions: {
+              ...this.state.form.survey_answers_questions,
+              surveys
+            }
+          }
+        })
+  }
 
   render() {
     const { form, inform_danger } = this.state;
@@ -449,14 +477,14 @@ class SurveyQuestion extends Component {
     const { survey: price_amount, input: price_amount_input } =
       survey_price_amount;
     const { amount, price } = price_amount;
-    const {
-      surveys,
+    let {
       survey: create_answers_questions,
       input,
+      surveys,
     } = survey_answers_questions;
 
     const { image: expamle_img, answers } = create_answers_questions;
-    const {
+    let {
       form_title,
       form_caption,
       image: create_title_caption_image,
@@ -464,10 +492,12 @@ class SurveyQuestion extends Component {
 
     const { type: type_dev, important } = create_answers_questions;
 
-    console.log(this.state);
+    console.log(surveys);
+    const { expanded, selected } = this.state.drag_drop;
     return (
       <>
         {/**/}
+
         <div className={classes.grid_container}>
           <div className={classes.left_container}>
             <div
@@ -489,6 +519,8 @@ class SurveyQuestion extends Component {
                       type="number"
                       className={classes.survey_amount_price_input}
                       value={price}
+                      min="0.1"
+                      step="0.1"
                       onChange={(e) =>
                         this.getUserInput(e, "survey_price_amount", "price")
                       }
@@ -569,7 +601,7 @@ class SurveyQuestion extends Component {
                         <div className={classes.profil_cover}>
                           <img
                             src={
-                              create_title_caption_image.image_url
+                              create_title_caption_image.image_name.length
                                 ? create_title_caption_image.image_url
                                 : Avatar
                             }
@@ -630,127 +662,206 @@ class SurveyQuestion extends Component {
                 )}
               </div>
               {/*surveys */}
-              {surveys.length > 0 &&
-                surveys.map((survey, index) => {
-                  return (
+              <DragDropContext onDragEnd={this.handleDragEnd}>
+                <Droppable droppableId="surveys">
+                  {(provided) => (
                     <div
-                      className={`${classes.item1} ${
-                        this.state.form.survey_answers_questions[
-                          `survey_created_input_${index}`
-                        ] && classes.active
-                      }`}
-                      key={index}
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className={classes.dragable_container}
                     >
-                      {/*deleting survey icon*/}
-                      {this.state.form.survey_answers_questions[
-                        `survey_created_input_${index}`
-                      ] && (
-                        <div className={classes.survey_trash}>
-                          <img
-                            src={Trash}
-                            alt="delete icon"
-                            onClick={() => this.deleteCreatedSurvey(survey.id)}
-                          />
-                        </div>
-                      )}
-                      {/*container for survey*/}
-                      <div
-                        className={classes.question_answer}
-                        onClick={() => {
-                          this.toggleToInputState(
-                            "survey_answers_questions",
-                            `survey_created_input_${index}`
-                          );
-                        }}
-                      >
-                        {/*image*/}
-                        {survey.image.image_url && (
-                          <div className={` ${classes.survey_image_container}`}>
-                            {survey.image.image_url && (
-                              <img
-                                src={survey.image.image_url}
-                                alt="survey question image"
-                                className={` ${classes.survey_image_img}`}
-                              />
-                            )}
-                          </div>
-                        )}
-                        {/*question*/}
-                        <h4
-                          className={`${
-                            survey.image.image_url && classes.margin_top
-                          }`}
-                        >
-                          {survey.question}
-                        </h4>
-
-                        {/*answers ---options*/}
-                        <span className={classes.question_answers_container}>
-                          {survey.type === "Dropdown" ? (
-                            <span
-                              className={classes.selection_options_container}
+                      {surveys.length > 0 &&
+                        surveys.map((survey, i) => {
+                          return (
+                            <Draggable
+                              key={i}
+                              draggableId={survey.id}
+                              index={i}
                             >
-                              <select
-                                className={`${classes.survey_input} ${classes.survey_selection}`}
-                              >
-                                {survey.answers.map((answer, index) => (
-                                  <option key={index} value={answer}>
-                                    {answer}
-                                  </option>
-                                ))}
-                              </select>
-                              <img
-                                src={Chevron_Down}
-                                alt="arrow"
-                                className={classes.select_icon}
-                              />
-                            </span>
-                          ) : (
-                            survey.answers.map((answer, index) => {
-                              return (
-                                <span
-                                  className={classes.question_answer_span}
-                                  key={index}
+                              {(provided) => (
+                                <div
+                                  {...provided.dragHandleProps}
+                                  {...provided.draggableProps}
+                                  ref={provided.innerRef}
+                                  className={`${classes.item1} ${
+                                    this.state.form.survey_answers_questions[
+                                      `survey_created_input_${i}`
+                                    ] && classes.active
+                                  }`}
                                 >
-                                  <input
-                                    id={`answer-${index + 1}`}
-                                    type={`${
-                                      survey.type === "Multiple choice"
-                                        ? "radio"
-                                        : survey.type === "Checkboxes"
-                                        ? "checkbox"
-                                        : survey.type === "Short answers"
-                                        ? "text"
-                                        : null
-                                    }`}
-                                    className={`${
-                                      survey.type === "Short answers" &&
-                                      classes.survey_input
-                                    } ${
-                                      survey.type === "Short answers" &&
-                                      classes.survey_input_2
-                                    }`}
-                                    name="options"
-                                    placeholder={`${
-                                      survey.type === "Short answers" &&
-                                      "Answer"
-                                    }`}
-                                  />
-                                  {survey.type !== "Short answers" && (
-                                    <label htmlFor={`answer-${index + 1}`}>
-                                      {" "}
-                                      {answer}
-                                    </label>
-                                  )}
-                                </span>
-                              );
-                            })
-                          )}
-                        </span>
-                      </div>
+                                  {/*container for survey*/}
+                                  <div
+                                    className={classes.question_answer}
+                                    onClick={() => {
+                                      this.toggleToInputState(
+                                        "survey_answers_questions",
+                                        `survey_created_input_${i}`
+                                      );
+                                    }}
+                                  >
+                                    {/*image*/}
+                                    {survey.image && survey.image.image_url && (
+                                      <div
+                                        className={` ${classes.survey_image_container}`}
+                                      >
+                                        {survey.image.image_url && (
+                                          <img
+                                            src={survey.image.image_url}
+                                            alt="survey question image"
+                                            className={` ${classes.survey_image_img}`}
+                                          />
+                                        )}
+                                      </div>
+                                    )}
+                                    {/*question*/}
+                                    <h4
+                                      className={`${
+                                        survey.image &&
+                                        survey.image.image_url &&
+                                        classes.margin_top
+                                      }`}
+                                    >
+                                      {survey.question}
+                                    </h4>
+
+                                    {/*answers ---options*/}
+                                    <span
+                                      className={
+                                        classes.question_answers_container
+                                      }
+                                    >
+                                      {survey.type === "dropdown" ? (
+                                        <span
+                                          className={
+                                            classes.selection_options_container
+                                          }
+                                        >
+                                          <select
+                                            className={`${classes.survey_input} ${classes.survey_selection}`}
+                                          >
+                                            {survey.answers.map(
+                                              (answer, index) => (
+                                                <option
+                                                  key={index}
+                                                  value={answer}
+                                                >
+                                                  {answer}
+                                                </option>
+                                              )
+                                            )}
+                                          </select>
+                                          <img
+                                            src={Chevron_Down}
+                                            alt="arrow"
+                                            className={classes.select_icon}
+                                          />
+                                        </span>
+                                      ) : (
+                                        survey.answers.map((answer, index) => {
+                                          return (
+                                            <span
+                                              className={
+                                                classes.question_answer_span
+                                              }
+                                              key={index}
+                                            >
+                                              <input
+                                                id={`answer${i + 1}-${
+                                                  index + 1
+                                                }`}
+                                                type={`${
+                                                  survey.type === "radio"
+                                                    ? "radio"
+                                                    : survey.type === "checkbox"
+                                                    ? "checkbox"
+                                                    : survey.type === "text"
+                                                    ? "text"
+                                                    : null
+                                                }`}
+                                                className={`${
+                                                  survey.type === "text" &&
+                                                  classes.survey_input
+                                                } ${
+                                                  survey.type === "text" &&
+                                                  classes.survey_input_2
+                                                }`}
+                                                name={`options${i + 1}`}
+                                                placeholder={`${
+                                                  survey.type === "text" &&
+                                                  "Answer"
+                                                }`}
+                                              />
+                                              {survey.type !== "text" && (
+                                                <label
+                                                  htmlFor={`answer${i + 1}-${
+                                                    index + 1
+                                                  }`}
+                                                >
+                                                  {" "}
+                                                  {answer}
+                                                </label>
+                                              )}
+                                            </span>
+                                          );
+                                        })
+                                      )}
+                                    </span>
+
+                                    {this.state.form.survey_answers_questions[
+                                      `survey_created_input_${i}`
+                                    ] && (
+                                      <>
+                                        {" "}
+                                        <div
+                                          className={
+                                            classes.question_answer_border
+                                          }
+                                        ></div>
+                                        <div
+                                          className={
+                                            classes.question_answer_setting_flex_end
+                                          }
+                                        >
+                                          <div className={classes.survey_trash}>
+                                            <img
+                                              src={Trash}
+                                              alt="delete icon"
+                                              onClick={() =>
+                                                this.deleteCreatedSurvey(i)
+                                              }
+                                            />
+                                            <p>Important</p>
+                                            <label
+                                              className={classes.switch}
+                                              htmlFor="checkbox"
+                                            >
+                                              <input
+                                                type="checkbox"
+                                                id="checkbox"
+                                                checked={survey.important}
+                                                onChange={() => 
+                                                  this.toggleCurrentSurveysImportance(survey.id)
+                                                }
+                                              />
+                                              <div
+                                                className={`${classes.slider} ${classes.round}`}
+                                              ></div>
+                                            </label>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          );
+                        })}
+                      {provided.placeholder}
                     </div>
-                  );
-                })}
+                  )}
+                </Droppable>
+              </DragDropContext>
               <div
                 className={`${classes.create_question} ${
                   input ? classes.active : null
@@ -858,7 +969,7 @@ class SurveyQuestion extends Component {
                       </div>
                       <span className={classes.select_container}>
                         <select
-                          name="audienceAge"
+                          name="question_type"
                           onChange={(event) =>
                             this.handleCreateQuestion(
                               event,
@@ -867,16 +978,27 @@ class SurveyQuestion extends Component {
                             )
                           }
                         >
+                          <option key={type_dev}>
+                            {type_dev === "radio"
+                              ? "Multiple choice"
+                              : type_dev === "checkbox"
+                              ? "Checkboxes"
+                              : type_dev === "dropdown"
+                              ? "Dropdown"
+                              : "Short answers"}
+                          </option>
                           {[
-                            "Multiple choice",
-                            "Checkboxes",
-                            "Dropdown",
-                            "Short answers",
-                          ].map((type, index) => (
-                            <option key={index} value={type}>
-                              {type}
-                            </option>
-                          ))}
+                            { value: "radio", type: "Multiple choice" },
+                            { value: "checkbox", type: "Checkboxes" },
+                            { value: "dropdown", type: "Dropdown" },
+                            { value: "text", type: "Short answers" },
+                          ].map((el, index) => {
+                            if(el.value !== type_dev){
+                            return (<option key={index} value={el.value}>
+                              {el.type}
+                            </option>)
+                            }
+                            })}
                         </select>
                         <img
                           src={Chevron_Down}
@@ -898,15 +1020,15 @@ class SurveyQuestion extends Component {
                       className={`${classes.question_answer} ${classes.margin_top}`}
                     >
                       {this.returnAnswerOptions()}
-                      {type_dev !== "Short answers" && (
+                      {type_dev !== "text" && (
                         <span className={classes.add_question}>
-                          {type_dev !== "Dropdown" ? (
+                          {type_dev !== "dropdown" ? (
                             <input
                               id="answer"
                               type={`${
-                                type_dev === "Multiple choice"
+                                type_dev === "radio"
                                   ? "radio"
-                                  : type_dev === "Checkboxes"
+                                  : type_dev === "checkbox"
                                   ? "checkbox"
                                   : null
                               }`}
@@ -932,8 +1054,8 @@ class SurveyQuestion extends Component {
                     <div className={classes.question_answer_border}></div>
                     <div className={classes.question_answer_setting}>
                       <div>
-                        <img src={Copy} alt="comment icon" />
-                        <img src={Trash} alt="delete icon" />
+                        {/*<img src={Copy} alt="comment icon" />
+                        <img src={Trash} alt="delete icon" />*/}
                         <p>Important</p>
                         <label className={classes.switch} htmlFor="checkbox">
                           <input
@@ -959,6 +1081,11 @@ class SurveyQuestion extends Component {
   }
 }
 
-export default connect(null, { add_survey, add_price, add_title })(
+const mapPropsToState = (state) => {
+  const { survey_questions, survey_title, survey_earnings } = state.Survey;
+  return { survey_questions };
+};
+
+export default connect(mapPropsToState, { add_survey, add_price, add_title })(
   withRouter(SurveyQuestion)
 );

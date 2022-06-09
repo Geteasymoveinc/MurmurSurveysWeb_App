@@ -41,6 +41,7 @@ class Login extends React.Component {
       errorEmail: false,
       errorPassword: false,
       error: false,
+      rememberMe: true,
     };
 
     // handleValidSubmit
@@ -53,7 +54,10 @@ class Login extends React.Component {
   handleInputChange = (event) => {
     const name = event.target.name;
     this.setState({ ...this.state, [name]: event.target.value.trim() });
-    if (name === "email" && /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(event.target.value)) {
+    if (
+      name === "email" &&
+      /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(event.target.value)
+    ) {
       this.setState({
         ...this.state,
         [name]: event.target.value.trim(),
@@ -117,8 +121,12 @@ class Login extends React.Component {
       login: this.props.google_login,
     });
   }
-
-
+  changeRememberMeState = () => {
+    this.setState({
+      ...this.state,
+     rememberMe: !this.state.rememberMe
+    })
+  }
   componentDidUpdate(prevProps, prevState) {
     if (this.props.error !== prevProps.error) {
       this.setState({ ...this.state, error: true });
@@ -236,7 +244,8 @@ class Login extends React.Component {
                       />
                       {this.state.errorPassword && (
                         <span className={classes.pass_error}>
-                           lowercase, upercase, special character and at least 8 long
+                          lowercase, upercase, special character and at least 8
+                          long
                         </span>
                       )}
                       <button
@@ -252,7 +261,12 @@ class Login extends React.Component {
                     </div>
                     <div className={classes.remember_forgot}>
                       <div className={classes.form_group_log}>
-                        <input type="checkbox" id="remember-me" />
+                        <input
+                          type="checkbox"
+                          id="remember-me"
+                          checked={this.state.rememberMe}
+                          onChange={this.changeRememberMeState}
+                        />
                         <label htmlFor="remember-me">
                           <span>Remember me</span>
                         </label>

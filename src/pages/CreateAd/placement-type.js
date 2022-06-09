@@ -9,7 +9,7 @@ import InfoCircle from "../../assets/css/CreateAd/info-circle.svg";
 import ArrowLeft from "../../assets/css/CreateAd/ads-details/arrow-left.svg";
 import ArrowDown from "../../assets/css/CreateAd/arrow-down.svg";
 
-import { changeSideBar } from "../../store/actions";
+import { toggleSideBar } from "../../store/actions";
 import { connect } from "react-redux";
 
 import { Link, withRouter } from "react-router-dom";
@@ -47,7 +47,7 @@ class PlacementType extends React.Component {
   }
 
   canselNewCampaign(){
-    this.props.changeSideBar(true);
+    this.props.toggleSideBar(true);
     this.props.history.replace('/ad-manager')
     this.props.history.go('/ad-manager')
   }
@@ -104,7 +104,7 @@ class PlacementType extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Objective
+                    Campaign Objective
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -124,7 +124,7 @@ class PlacementType extends React.Component {
                   className={`${classes2.nav_ul_item} ${classes2.passed_step}`}
                 >
                   <a href="#" className={classes2.nav_item_name}>
-                    Campaing Details
+                    Campaign Details
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -200,7 +200,7 @@ class PlacementType extends React.Component {
                 </li>
                 <li className={classes2.nav_ul_item}>
                   <a href="#" className={classes2.nav_item_name}>
-                    Ad creative
+                    Ad Media
                   </a>
                   <div className={classes2.step_number_cover}>
                     <div className={classes2.number_dot}>
@@ -220,11 +220,8 @@ class PlacementType extends React.Component {
             </div>
             <div className={classes.placement_step}>
               <div className={classes.create_step_1}>
-                <h4 className={classes.create_step_h4}>Placement Type</h4>
-                <p className={classes.create_step_p}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non
-                  facilisis quis a faucibus.
-                </p>
+                <h4 className={classes.create_step_h4}>Type Of Placement</h4>
+              
                 <div className={classes.step_max_form}>
                   <form onSubmit={this.submit}>
                     <div className={classes.step_form_item}>
@@ -232,7 +229,7 @@ class PlacementType extends React.Component {
                         htmlFor="step-place-type"
                         className={classes.step_label}
                       >
-                        Type of your Ad
+                      Type of Your Ad
                       </label>
                       <div className={classes.step_relative}>
                         <select
@@ -245,6 +242,7 @@ class PlacementType extends React.Component {
                             Choose type
                           </option>
                           <option value="Outdoor">Outdoor</option>
+                          <option value="Outdoor">Indoor</option>
                           <option value="Pirates">Pirates</option>
                       
                         </select>
@@ -309,19 +307,19 @@ class PlacementType extends React.Component {
               <div className={classes.create_info}>
                 <p className={classes.create_info_icon}>
                   <img src={InfoCircle} alt="" />
-                  <span>Info</span>
+                  <span>Information</span>
                 </p>
                 <ul className={classes.create_info_ul}>
                   <li>
-                    <p className={classes.create_ul_p}>Type of your Ad</p>
+                    <p className={classes.create_ul_p}>Type of Your Ad</p>
                     <div className={classes.create_ul_txt}>
-                      Choose the type to show your Ad.
+                    Choose the type of your ad
                     </div>
                   </li>
                   <li>
-                    <p className={classes.create_ul_p}>Number of Display</p>
+                    <p className={classes.create_ul_p}>Number of Displays</p>
                     <div className={classes.create_ul_txt}>
-                      How many displays will show your ads?
+                    How many displays will show your ad?
                     </div>
                   </li>
                 </ul>
@@ -354,4 +352,4 @@ class PlacementType extends React.Component {
   }
 }
 
-export default connect(null, { changeSideBar })(withRouter(PlacementType));
+export default connect(null, { toggleSideBar })(withRouter(PlacementType));
