@@ -286,14 +286,20 @@ class Details extends React.Component {
                         </h5>
                       </div>
                       <div className={`${classes2.ads_details_content} `}>
-                        <ul className={classes2.ads_detail_age}>
-                          <li>
+                        {!editable ? <ul className={classes2.ads_detail_age}>
+                        <li>
                             <span>Phone Number</span>
                             <p className={classes2.detail_content_p}>
                               {customer.phone_number}
                             </p>
-                          </li>
-                        </ul>
+                          </li> </ul>: 
+                                 <div
+                                 className={`${classes2.details_edit_input} ${classes2.mt_8}`}
+                               >
+                            <input type='text' onChange={e => this.handleDetailsUpdate(e, 'phone_number')}/>
+                            </div>
+                          }
+                        
                       </div>
                     </div>
                   </div>
@@ -355,7 +361,11 @@ class Details extends React.Component {
                           <p className={classes2.detail_content_p}>
                             ${customer.company}
                           </p>
-                        ) : null}
+                        ) :       <div
+                        className={`${classes2.details_edit_input} ${classes2.mt_8}`}
+                      >
+                   <input type='text' onChange={e => this.handleDetailsUpdate(e, 'company')}/>
+                   </div>}
                       </div>
                     </div>
                   </div>
@@ -434,9 +444,13 @@ class Details extends React.Component {
                           this.state.editable && classes2.edit_inline_flex
                         }`}
                       >
-                        <p className={classes2.detail_content_p}>
+                       {!editable ? <p className={classes2.detail_content_p}>
                           {customer.email}
-                        </p>
+                        </p> :       <div
+                                 className={`${classes2.details_edit_input} ${classes2.mt_8}`}
+                               >
+                            <input type='text' onChange={e => this.handleDetailsUpdate(e, 'email')}/>
+                            </div>}
                       </div>
                     </div>
                   </div>

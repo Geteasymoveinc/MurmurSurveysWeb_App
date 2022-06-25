@@ -1,43 +1,116 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 
-import classes from "../../../assets/css/surveys/answers.module.scss";
+import classes from "../../../assets/css/surveys/index.module.scss";
 
-import BarDefault from "./bar-default";
+import Pie from "./pie";
+import axios from "axios";
 
-class SurveyAnswers extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      analytics: this.props.analytics,
-    };
-  }
+class SurveyAnalytics extends Component {
+ constructor(props){
+   super(props)
+   this.state = {
+    location: {},
+    gender: {},
+    loading: false
+   }
+ }
+ 
+ selectBarChartGenderGroup = (gender) => {
+   alert(gender)
+ }
+
+
+ componentDidMount(){
+
+  this.setState({
+    ...this.state,
+    loading:true
+  })
+  const {id} = this.props
+  axios.get(`http://localhost:4000/api/v1/surveys/survey/users-analytics/${id}`)
+  .then(response => {
+    console.log(response)
+    const {location, gender} = response.data
+
+    this.setState({
+      ...this.state,
+      location,
+      gender,
+      loading:false
+    })
+  })
+ }
 
   render() {
-    const {analytics } = this.props
-    return (
-    
-        <div className={` ${classes.flexbox} `}>
-          {analytics.length ? analytics.map((el, i) => {
-            const question = Object.keys(el);
-            const categories = Object.keys(el[question]);
-            const series = Object.values(el[question]);
-            return (
-              <div key={i} className={`${classes.rows} ${classes.rows_2}`}>
-                <div className={`${classes.pies}`}>
-                  <div className={classes.survey_info}>
-                    <h1>{question}</h1>
-                  </div>
-                  <div className={classes.chart_contaioner_2}>
-                    <BarDefault categories={categories} series={series} />
-                  </div>
-                </div>
-              </div>
-            );
-          }) : <div className="w-100 "><h1 className="text-center">No Analytics found </h1></div>}
-        </div>
 
+    const {location, gender, loading} = this.state
+
+    
+    return (
+      <Fragment>
+      {loading && (
+        <div id="status">
+          <div className="spinner-chase">
+            <div className="chase-dot"></div>
+            <div className="chase-dot"></div>
+            <div className="chase-dot"></div>
+            <div className="chase-dot"></div>
+            <div className="chase-dot"></div>
+            <div className="chase-dot"></div>
+          </div>
+        </div>
+      )}
+      {!loading && <div className={`${classes.flex_container_2}`}>
+        <div className={` ${classes.flexbox} `}>
+          <div className={classes.rows}>
+          <div className={`${classes.pies}`}>
+            <div className={classes.survey_info}>
+                <h1>Gender</h1>
+
+            </div>
+            <div className={classes.chart_contaioner}>
+              <Pie  series={Object.values(gender)}  categories={Object.keys(gender)} />
+            </div>
+          </div>
+
+          <div className={classes.pies}>
+          <div className={classes.survey_info}>
+                <h1>Location</h1>
+        
+
+            </div>
+            <div className={classes.chart_contaioner}>
+              <Pie  series={Object.values(location)} categories={Object.keys(location)}/>
+            </div>
+          </div>
+          </div>
+         {/* <div className={`${classes.rows} ${classes.rows_2}`}>
+          <div className={`${classes.pies} ${classes.pies_2}`}>
+          <div className={`${classes.survey_info} ${classes.survey_info_2}`}>
+                <h1>Gender</h1>
+                <span className={classes.chart__gender_groups}>
+                       <button onClick={() => this.selectBarChartGenderGroup('All')}>All</button>
+                       <button onClick={() => this.selectBarChartGenderGroup('Woman')}>Woman</button>
+                       <button onClick={() => this.selectBarChartGenderGroup('Man')}>Man</button>
+                </span>
+            </div>
+            <div className={classes.question_answer}>
+          <Bar/>
+            </div>
+          </div>
+          
+          <div className={`${classes.pies} ${classes.pie_location}`}>
+            <div className={classes.question_answer}>
+              <BarHorisontal/>
+            </div>
+          </div>
+          
+      </div>*/}
+        </div>
+      </div>}
+      </Fragment>
     );
   }
 }
 
-export default SurveyAnswers;
+export default SurveyAnalytics;

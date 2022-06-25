@@ -54,7 +54,6 @@ class View extends Component {
         }
       )
       .then((response) => {
-        console.log(response)
         this.props.history.push('/surveys')
         window.location.reload();
       })

@@ -11,6 +11,7 @@ import ImgEdit from "../../../assets/css/CreateAd/ads-details/image-edit.svg";
 import ArrowLeft from "../../../assets/css/CreateAd/ads-details/arrow-left.svg";
 import Avatar from "../../../assets/images/surveys/sample-image2.png";
 import classes2 from "../../../assets/css/CreateAd/ads-details/index.module.css";
+import classes from "../../../assets/css/CreateAd/index.module.css";
 
 import Geocode from "react-geocode";
 import { GOOGLE_MAP_KEY } from "../../../api";
@@ -86,12 +87,16 @@ class Details extends React.Component {
       loading: true,
     });
     axios
-      .delete(`https://backendapp.murmurcars.com/api/v1/admin/delete-survey/${id}`)
+      .delete(
+        `https://backendapp.murmurcars.com/api/v1/admin/delete-survey/${id}`
+      )
       .then(() => {
         this.setState({
           ...this.state,
           loading: false,
         });
+        this.props.history.push('/surveys')
+        window.location.reload()
       })
       .catch(() => {
         this.setState({
@@ -101,12 +106,14 @@ class Details extends React.Component {
       });
   };
   submitUpdates = () => {
-    const { updates, customer } = this.state;
-    const { email } = customer[0];
+    const { updates } = this.state;
+    const { id } = this.props;
 
     const formData = new FormData();
 
     const keys = Object.keys(updates);
+
+    console.log(updates, keys);
 
     for (let key of keys) {
       if (key === "image") break;
@@ -116,12 +123,11 @@ class Details extends React.Component {
       ...this.state,
       loading: true,
     });
+
     axios
-      .put(
-        `https://backendapp.murmurcars.com/api/v1/admin/update-survey/${email}`,
-        formData
-      )
-      .then(() => {
+      .put(`http://localhost:4000/api/v1/admin/update-survey/${id}`, formData)
+      .then((res) => {
+        console.log(res);
         this.setState({
           ...this.state,
           loading: false,
@@ -137,8 +143,16 @@ class Details extends React.Component {
         });
       });
   };
+
+  toggleToUpdateSurveyMode = () => {
+    const { id } = this.props;
+    this.props.history.push(`/surveys?survey=${id}&mode=update-survey`);
+  };
+
   render() {
     const { loading, survey, updates, editable } = this.state;
+
+    console.log(survey);
     return (
       <React.Fragment>
         {loading && (
@@ -276,11 +290,15 @@ class Details extends React.Component {
                           >
                             <select
                               onChange={(event) =>
-                                this.handleDetailsUpdate(event, "status", null)
+                                this.handleDetailsUpdate(
+                                  event,
+                                  "survey_status",
+                                  null
+                                )
                               }
                             >
                               <option value={survey.status}>
-                                {survey.status}
+                                {survey.survey_status}
                               </option>
                               {["Approved", "Declined"].map(
                                 (status, index) =>
@@ -301,7 +319,39 @@ class Details extends React.Component {
                       </div>
                     </div>
                   </div>
+                  <button
+                    onClick={this.toggleToUpdateSurveyMode}
+                    type="button"
+                    className={classes.create_ads_btn}
+                    to={"/create-survey"}
+                  >
+                    Update Survey
+                    <svg
+                      width="20"
+                      height="20"
+                      className={classes.create_ads_img}
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M5 10H15"
+                        stroke="white"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M10 15V5"
+                        stroke="white"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
                 </div>
+
                 <div
                   className={`${classes2.budget_category_are} ${classes2.ads_detail_row}`}
                 >
@@ -325,7 +375,7 @@ class Details extends React.Component {
                               onChange={(event) =>
                                 this.handleDetailsUpdate(
                                   event,
-                                  'survey_title',
+                                  "survey_title",
                                   null
                                 )
                               }
@@ -356,7 +406,7 @@ class Details extends React.Component {
                               onChange={(event) =>
                                 this.handleDetailsUpdate(
                                   event,
-                                  'survey_earnings',
+                                  "survey_earnings",
                                   null
                                 )
                               }
@@ -388,7 +438,7 @@ class Details extends React.Component {
                     <div className={classes2.ads_detail_col}>
                       <div className={classes2.ads_detail_top}>
                         <h5 className={classes2.detail_top_h5}>
-                          Total Answered Users
+                          Total Audience
                         </h5>
                       </div>
                       <div
@@ -411,7 +461,7 @@ class Details extends React.Component {
                               onChange={(event) =>
                                 this.handleDetailsUpdate(
                                   event,
-                                  'survey_audience_number',
+                                  "survey_audience_number",
                                   null
                                 )
                               }

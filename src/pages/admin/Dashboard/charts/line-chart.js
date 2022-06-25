@@ -71,7 +71,7 @@ class Statistics_Chart extends Component {
           ...this.state.options,
           xaxis: {
             ...this.state.options.xaxis,
-           // categories: categories
+            categories: categories
           },
          },
          series: [

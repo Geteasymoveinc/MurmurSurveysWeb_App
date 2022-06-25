@@ -12,14 +12,26 @@ const fetchCampaigns = (url) => {
   };
 };
 
-const fetchCampaignsSuccess = (campaigns, campaign_adds, requests, request_adds) => {
+const fetchCampaignsSuccess = (
+  campaigns,
+  campaign_adds,
+  requests,
+  request_adds,
+  completed_campaigns,
+  completed_adds
+) => {
   return {
     type: FETCHCAMPAIGNSSUCCESS,
-    payload: { campaigns, campaign_adds, requests, request_adds},
+    payload: {
+      campaigns,
+      campaign_adds,
+      requests,
+      request_adds,
+      completed_campaigns,
+      completed_adds,
+    },
   };
 };
-
-
 
 const postUpdateCampaignStatusToBackend = (id, ad_status) => {
   return {

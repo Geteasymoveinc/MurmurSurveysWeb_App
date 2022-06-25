@@ -40,18 +40,6 @@ class Layout extends Component {
 
   componentDidMount() {
 
-    if (this.props.isPreloader === true) {
-      document.getElementById("preloader").style.display = "block";
-      document.getElementById("status").style.display = "block";
-
-      setTimeout(function () {
-        document.getElementById("preloader").style.display = "none";
-        document.getElementById("status").style.display = "none";
-      }, 2500);
-    } else {
-      document.getElementById("preloader").style.display = "none";
-      document.getElementById("status").style.display = "none";
-    }
 
     // Scroll Top to 0
     window.scrollTo(0, 0);
@@ -88,20 +76,7 @@ class Layout extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.props.isSideBarVisible && (
-          <div id="preloader">
-            <div id="status">
-              <div className="spinner-chase">
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-                <div className="chase-dot"></div>
-              </div>
-            </div>
-          </div>
-        )}
+
         <div
           className={`${
             (this.props.location.pathname === "/dashboard" &&

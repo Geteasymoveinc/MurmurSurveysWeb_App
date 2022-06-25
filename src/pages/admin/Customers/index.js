@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from "react";
 
-import { Pagination } from 'antd';
-import 'antd/dist/antd.css'
-import '../../../assets/css/antd/custom-antd.css'
+import { Pagination } from "antd";
+import "antd/dist/antd.css";
+import "../../../assets/css/antd/custom-antd.css";
 
 import PulledCustomers from "./pulledCustomers";
 
@@ -24,7 +24,7 @@ class Customers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading:this.props.loading,
+      loading: true,
       length: this.props.length,
       customers: this.props.customers,
       page: 1,
@@ -33,30 +33,31 @@ class Customers extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.customers.length !== prevProps.customers.length) {
-      const length = this.props.length
+    if (
+      this.props.customers.length !== prevProps.customers.length
+    ) {
+      const length = this.props.length;
 
       this.setState({
         ...this.state,
         length,
-        customers: this.props.customers
+        customers: this.props.customers,
       });
-
-      this.async = setTimeout(() => {
-        if (!this.state.loaded) {
-          this.setState({
-            ...this.state,
-            loading: false
-          });
-        }
-      }, 3000);
     }
+    this.async = setTimeout(() => {
+      if (!this.state.loaded) {
+        this.setState({
+          ...this.state,
+          loading: false,
+        });
+      }
+    }, 3000);
   }
   componentDidMount() {
-    const url = this.props.location.search
-    let page = new URLSearchParams(url).get("page")
-    if(!page){
-      page = this.state.page
+    const url = this.props.location.search;
+    let page = new URLSearchParams(url).get("page");
+    if (!page) {
+      page = this.state.page;
     } //extracting id)
     this.props.fetchCustomers(
       `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
@@ -84,17 +85,16 @@ class Customers extends Component {
     let page = 1;
     for (let i = 0; i < length; i++) {
       if (i % 5 === 0) {
-        
         buttons.push(
-          <input 
+          <input
             key={i}
-            type='button'
+            type="button"
             className={`${classes3.pagination_element} ${
               this.state.page === page ? classes3.page_active : null
             }`}
             onClick={(e) => this.changeToAnotherPage(e, page)}
             value={page++}
-           />
+          />
         );
       }
     }
@@ -102,23 +102,19 @@ class Customers extends Component {
   };
 
   changeToAnotherPage = (page) => {
-  
-    console.log(page)
-    
     this.props.fetchCustomers(
       `https://backendapp.murmurcars.com/api/v1/admin/customers?page=${page}`
     );
 
     this.setState({
       ...this.state,
-      page
-    })
+      page,
+    });
   };
 
   render() {
-    const {customers, length} = this.state
+    const { customers, length } = this.state;
 
-  
     return (
       <Fragment>
         {this.state.loading && (
@@ -173,13 +169,22 @@ class Customers extends Component {
                   className={`${classes.analytics_block} ${classes2.flex_analytics_container}`}
                 >
                   <div className={classes3.ads_section}>
-                    <div className={`${classes3.cads_head} ${classes3.cads_head_2}`}>
+                    <div
+                      className={`${classes3.cads_head} ${classes3.cads_head_2}`}
+                    >
                       <h4 className={classes3.cads_h4}>Customers</h4>
                     </div>
-                    <PulledCustomers  loading={this.props.loading} customers={customers}/>
+                    <PulledCustomers
+                      loading={this.props.loading}
+                      customers={customers}
+                    />
 
-                   <div>
-                    <Pagination defaultCurrent={1} total={length/5 * 10} onChange={this.changeToAnotherPage} />
+                    <div>
+                      <Pagination
+                        defaultCurrent={1}
+                        total={(length / 5) * 10}
+                        onChange={this.changeToAnotherPage}
+                      />
                     </div>
                   </div>
                 </div>
@@ -187,7 +192,10 @@ class Customers extends Component {
             )}
             {this.props.match.isExact &&
               this.props.location.search.length > 0 && ( //details
-              <PulledCustomers  loading={this.props.loading} customers={customers}/>
+                <PulledCustomers
+                  loading={this.props.loading}
+                  customers={customers}
+                />
               )}
           </div>
         )}
@@ -197,8 +205,8 @@ class Customers extends Component {
 }
 
 const mapstatetoprops = (state) => {
-  const {  length, customers } = state.Customers;
+  const { length, customers } = state.Customers;
 
-  return {  length, customers };
+  return { length, customers };
 };
 export default connect(mapstatetoprops, { fetchCustomers })(Customers);

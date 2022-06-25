@@ -229,9 +229,10 @@ class CampaignAnalytics extends Component {
   getAnbalyticsfromApi = () => {
     this.setState({ ...this.state, loaded: false });
     const {email} = this.props
+    console.log(email)
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/admin/allcampaignAnalytics/${email}`
+        `http://localhost:4000/api/v1/admin/allcampaignAnalytics/${email}`
       )
       .then((analytics) => {
         const data = analytics.data;

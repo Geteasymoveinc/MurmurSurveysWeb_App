@@ -12,7 +12,9 @@ const initialState = {
    campaigns: [],
    campaign_adds:[],
    requests: [],
-   request_adds: []
+   request_adds: [],
+   completed_campaigns: [],
+   completed_adds: []
 }
 
 
@@ -32,7 +34,9 @@ const Campaigns = (state=initialState, actions) => {
                 campaigns: actions.payload.campaigns,
                 campaign_adds: actions.payload.campaign_adds,
                 requests: actions.payload.requests,
-                request_adds: actions.payload.request_adds
+                request_adds: actions.payload.request_adds,
+                completed_campaigns: actions.payload.completed_campaigns,
+                completed_adds: actions.payload.completed_adds
             }
             break;
 

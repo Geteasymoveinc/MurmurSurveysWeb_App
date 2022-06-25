@@ -10,9 +10,7 @@ const AppRoute = ({
   <Route
     {...rest}
     render={(props) => {
-      console.log('check')
-      console.log(isAuthProtected)
-      console.log(sessionStorage.getItem('authUser'))
+
       if (isAuthProtected && !sessionStorage.getItem("authUser")) {
       
         return (

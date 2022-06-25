@@ -9,6 +9,8 @@ import UserSaga from "./users/sagas";
 import CampaignsSaga from "./campaigns/sagas";
 import SurveysSaga from "./surveys/sagas";
 import CustomersSaga from "./customers/sagas";
+import  SurveySaga from "./survey/sagas";
+
 
 export default function* rootSaga() {
   yield all([
@@ -19,6 +21,7 @@ export default function* rootSaga() {
     UserSaga(),
     CampaignsSaga(),
     SurveysSaga(),
-    CustomersSaga()
+    CustomersSaga(),
+    SurveySaga()
   ]);
 }

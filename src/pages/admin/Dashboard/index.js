@@ -16,8 +16,7 @@ import Statistics_Chart from "./charts/line-chart";
 import BarHorisontal from "./charts/bar-chart";
 
 import { connect } from "react-redux";
-import {fetchUserAnalytics,fetchCampaigns} from '../../../store/actions'
-
+import { fetchUserAnalytics, fetchCampaigns } from "../../../store/actions";
 
 class CampaignAnalytics extends Component {
   constructor(props) {
@@ -27,54 +26,58 @@ class CampaignAnalytics extends Component {
       campaigns: this.props.campaigns,
       surveys: this.props.surveys,
       users: this.props.users,
-      partners: this.props.partners
+      partners: this.props.partners,
+      ad_customers: this.props.ad_customers,
+      ad_partners: this.props.ad_partners,
     };
-    this.async = null
+    this.async = null;
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.loading !== prevProps.loading) {
+      const users = this.props.users;
+      const campaigns = this.props.campaigns;
+      const surveys = this.props.surveys;
+      const partners = this.props.partners;
+      const ad_customers = this.props.ad_customers;
+      const ad_partners = this.props.ad_partners;
+      this.setState({
+        ...this.state,
+        loaded: false,
+        users,
+        campaigns,
+        surveys,
+        partners,
+        ad_customers,
+        ad_partners,
+      });
 
-
-  componentDidUpdate(prevProps){
-if(this.props.loading !==prevProps.loading){
-  const users = this.props.users;
-  const campaigns = this.props.campaigns;
-  const surveys = this.props.surveys
-  const partners = this.props.partners
-
-  this.setState({
-    ...this.state,
-    loaded:false,
-    users,
-    campaigns,
-    surveys,
-    partners
-  });
-
-  this.async = setTimeout(() => {
-    if(!this.state.loaded){
-    this.setState({
-      ...this.state,
-      loaded:true
-    })
-  }}, 2000)
-
-}
+      this.async = setTimeout(() => {
+        if (!this.state.loaded) {
+          this.setState({
+            ...this.state,
+            loaded: true,
+          });
+        }
+      }, 2000);
+    }
   }
   componentDidMount() {
-
-    this.props.fetchUserAnalytics('https://backendapp.murmurcars.com/api/v1/admin/get-users-statistic')
-    this.props.fetchCampaigns(
-      "https://backendapp.murmurcars.com/api/v1/admin/get-campaigns"
+    this.props.fetchUserAnalytics(
+      "http://localhost:4000/api/v1/admin/get-users-statistic"
     );
-   
+    this.props.fetchCampaigns(
+      "http://localhost:4000/api/v1/admin/get-campaigns"
+    );
   }
 
-  componentWillUnmount(){
-     clearTimeout(this.async)
+  componentWillUnmount() {
+    clearTimeout(this.async);
   }
 
   pickTimeFrame = (e, category, key) => {
     const value = e.target.value;
+    console.log(value, category, key)
     this.setState({
       ...this.state,
       [category]: {
@@ -85,23 +88,29 @@ if(this.props.loading !==prevProps.loading){
   };
 
   render() {
-
-
     const { campaigns } = this.state.campaigns;
     const { surveys } = this.state.surveys;
-    const {partners} = this.state.partners
+    const { partners } = this.state.partners;
+    const { time: ad_customers_time } = this.state.ad_customers;
+    const { time: ad_partners_time } = this.state.ad_partners;
+
     const {
       campaigns: campaigns_data,
       users: users_data,
       surveys: survey_data,
       partners: partners_data,
-      loaded
+      ad_customers,
+      ad_partners,
+      loaded,
     } = this.state;
     const { users, chart } = this.state.users;
+ 
 
+
+    console.log(ad_customers_time, ad_partners_time)
     return (
       <Fragment>
-        {(this.props.loading || !loaded ) && (
+        {(this.props.loading || !loaded) && (
           <div id="preloader" style={{ opacity: 0.7 }}>
             <div id="status">
               <div className="spinner-chase">
@@ -156,7 +165,7 @@ if(this.props.loading !==prevProps.loading){
                     <div className={classes2.card_analytics}>
                       <div className={classes2.card_analytics_data}>
                         <div>
-                          <h1>Total active Outdoor Ads.</h1>
+                          <h1>Total Outdoor Ads.</h1>
                           <p className={classes2.data_total_active_ads}>
                             {campaigns_data[campaigns].total}
                           </p>
@@ -184,7 +193,7 @@ if(this.props.loading !==prevProps.loading){
                           colors={["#3F2B89"]}
                           series={campaigns_data[campaigns].series}
                           categories={campaigns_data[campaigns].categories}
-                          name={'Campaigns'}
+                          name={"Campaigns"}
                           time={campaigns}
                           loaded={this.state.loaded}
                         />
@@ -196,7 +205,7 @@ if(this.props.loading !==prevProps.loading){
                     >
                       <div className={classes2.card_analytics_data}>
                         <div>
-                          <h1>Total active Surveys.</h1>
+                          <h1>Total Surveys.</h1>
                           <p className={classes2.data_total_active_ads}>
                             {survey_data[surveys].total}
                           </p>
@@ -223,18 +232,17 @@ if(this.props.loading !==prevProps.loading){
                           series={survey_data[surveys].series}
                           categories={survey_data[surveys].categories}
                           time={surveys}
-                          name={'Surveys'}
+                          name={"Surveys"}
                           loaded={this.state.loaded}
                         />
                       </div>
-                   
                     </div>
-                    </div>
-                    <div className={classes2.analytics_block_grid}>
+                  </div>
+                  <div className={classes2.analytics_block_grid}>
                     <div className={classes2.analytics_info_box}>
                       <div className={classes2.flexbox_info_box}>
                         <div>
-                          <h1>Total Users.</h1>
+                          <h1>Ad Portal Customers.</h1>
                           <p className={classes2.data_total_active_ads}>
                             {users_data[users].total}
                           </p>
@@ -256,11 +264,11 @@ if(this.props.loading !==prevProps.loading){
                         </div>
                       </div>
                     </div>
-           
+
                     <div className={classes2.chart_and_info_box}>
                       <div className={classes2.header_info_box}>
                         <span>
-                          <label>Total users</label>
+                          <label>Ad Portal Customers</label>
                           <p>{users_data[chart].total}</p>
                         </span>
                         <span>
@@ -299,14 +307,16 @@ if(this.props.loading !==prevProps.loading){
                     <div className={classes2.analytics_info_box_partners}>
                       <div className={classes2.flexbox_info_box}>
                         <div>
-                          <h1>Total Partners.</h1>
+                          <h1>Survey Partners.</h1>
                           <p className={classes2.data_total_active_ads}>
                             {partners_data[partners].total}
                           </p>
                         </div>
                         <div>
                           <p className={classes2.margin_bottom_zero}>
-                            <strong>{partners_data[partners].improvement} </strong>
+                            <strong>
+                              {partners_data[partners].improvement}{" "}
+                            </strong>
                             improvement
                           </p>
                           <select
@@ -321,9 +331,73 @@ if(this.props.loading !==prevProps.loading){
                         </div>
                       </div>
                     </div>
+                    <div className={classes2.ad_partners}>
+                      <div className={classes2.flexbox_info_box}>
+                        <div>
+                          <h1>Survey  Customers.</h1>
+                          <p className={classes2.data_total_active_ads}>
+                            {ad_customers[ad_customers_time].total}
+                          </p>
+                        </div>
+                        <div>
+                          <p className={classes2.margin_bottom_zero}>
+                            <strong>
+                              {ad_customers[ad_customers_time].improvement}{" "}
+                            </strong>
+                            improvement
+                          </p>
+                          <select
+                            onChange={(e) =>
+                              this.pickTimeFrame(
+                                e,
+                                "ad_customers",
+                                "time"
+                              )
+                            }
+                          >
+                            <option value="week"> Week</option>
+                            <option value="month">Month</option>
+                            <option value="year">Year</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={classes2.survey_users}>
+                      <div className={classes2.flexbox_info_box}>
+                        <div>
+                          <h1>Ad Portal Partners.</h1>
+                          <p className={classes2.data_total_active_ads}>
+                            {ad_partners[ad_partners_time].total}
+                          </p>
+                        </div>
+                        <div>
+                          <p className={classes2.margin_bottom_zero}>
+                            <strong>
+                              {ad_partners[ad_partners_time].improvement}{" "}
+                            </strong>
+                            improvement
+                          </p>
+                          <select
+                            onChange={(e) =>
+                              this.pickTimeFrame(
+                                e,
+                                "ad_partners",
+                                "time"
+                              )
+                            }
+                          >
+                            <option value="week"> Week</option>
+                            <option value="month">Month</option>
+                            <option value="year">Year</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div className={classes3.ads_section}>
-                    <div className={`${classes3.cads_head} ${classes3.cads_head_2}`}>
+                    <div
+                      className={`${classes3.cads_head} ${classes3.cads_head_2}`}
+                    >
                       <h4 className={classes3.cads_h4}>
                         Most recent Campaigns
                       </h4>
@@ -345,8 +419,26 @@ if(this.props.loading !==prevProps.loading){
 }
 
 const mapstatetoprops = (state) => {
-  const { users, campaigns, surveys,partners, loading } = state.Users;
+  const {
+    users,
+    campaigns,
+    surveys,
+    partners,
+    ad_partners,
+    ad_customers,
+    loading,
+  } = state.Users;
 
-  return { users, campaigns, surveys,partners, loading };
+  return {
+    users,
+    campaigns,
+    surveys,
+    partners,
+    ad_partners,
+    ad_customers,
+    loading,
+  };
 };
-export default connect(mapstatetoprops, {fetchUserAnalytics, fetchCampaigns})(CampaignAnalytics);
+export default connect(mapstatetoprops, { fetchUserAnalytics, fetchCampaigns })(
+  CampaignAnalytics
+);

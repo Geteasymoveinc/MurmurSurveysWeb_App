@@ -3,7 +3,6 @@ import React, { Component } from "react";
 
 import { Link, withRouter } from "react-router-dom";
 
-
 import ArrowRight from "../../../assets/css/CreateAd/arrow-right.svg";
 import classes from "../../../assets/css/CreateAd/index.module.css";
 import Avatar from "../../../assets/images/avatar.png";
@@ -11,11 +10,14 @@ import Avatar from "../../../assets/images/avatar.png";
 import AdDetails from "./ad-details";
 
 import { connect } from "react-redux";
-import { postUpdateCampaignStatusToBackend, postUpdateCampaignsStatusToBackend } from "../../../store/campaigns/actions";
+import {
+  postUpdateCampaignStatusToBackend,
+  postUpdateCampaignsStatusToBackend,
+} from "../../../store/campaigns/actions";
 
-const declineRequest = (pulledRequests,adds, id) => {
-  let requests = []
-  let adds_mod= []
+const declineRequest = (pulledRequests, adds, id) => {
+  let requests = [];
+  let adds_mod = [];
 
   requests = pulledRequests.filter((campaign) => {
     if (campaign._id !== id) {
@@ -28,12 +30,9 @@ const declineRequest = (pulledRequests,adds, id) => {
       return campaign;
     }
   });
-  
-  return {pulledRequests: requests,adds: adds_mod}
 
-}
-
-
+  return { pulledRequests: requests, adds: adds_mod };
+};
 
 class PulledRequests extends Component {
   constructor(props) {
@@ -48,30 +47,28 @@ class PulledRequests extends Component {
     };
   }
   componentDidUpdate(prevProps) {
-    const { requests, request_adds, loading } =
-      this.props;
+    const { requests, request_adds, loading } = this.props;
     if (
       prevProps.requests.length !== requests.length ||
       loading !== prevProps.loading
     ) {
-
       const pulledRequests = requests;
 
       this.setState({
         ...this.state,
         pulledRequests,
         adds: request_adds,
-
       });
     }
   }
 
   declineMultipleRequests = (ids) => {
-  
-    let {adds, pulledRequests} = this.state
-   
-    adds = adds.filter((add, i) => add.id!==ids[i])
-    pulledRequests = pulledRequests.filter((request, i) => request._id!==ids[i])
+    let { adds, pulledRequests } = this.state;
+
+    adds = adds.filter((add, i) => add.id !== ids[i]);
+    pulledRequests = pulledRequests.filter(
+      (request, i) => request._id !== ids[i]
+    );
     this.setState({
       ...this.state,
       pulledRequests,
@@ -79,42 +76,33 @@ class PulledRequests extends Component {
       multiple: false,
       checked: false,
     });
- 
-  }
+  };
   declineAllRequests = () => {
-    
-  
-    let {adds} = this.state
-    const ids = []
+    let { adds } = this.state;
+    const ids = [];
 
-
-    for(let i=0;i< adds.length; i++){
-      
-      if(adds[i].checked){
-      
-      const id = adds[i].id
-      ids.push(id)
+    for (let i = 0; i < adds.length; i++) {
+      if (adds[i].checked) {
+        const id = adds[i].id;
+        ids.push(id);
       }
     }
 
+    this.declineMultipleRequests(ids);
 
-
-    this.declineMultipleRequests(ids)
-
-    this.props.postUpdateCampaignsStatusToBackend(ids, 'Declined')
+    this.props.postUpdateCampaignsStatusToBackend(ids, "Declined");
   };
   declineRequest = (id) => {
     let { pulledRequests, adds } = this.state;
-   
 
-    const obj = declineRequest(pulledRequests,adds,id)
-    
+    const obj = declineRequest(pulledRequests, adds, id);
+
     this.setState({
       ...this.state,
       pulledRequests: obj.pulledRequests,
       adds: obj.adds,
     });
-    this.props.postUpdateCampaignStatusToBackend(id, "Declined")
+    this.props.postUpdateCampaignStatusToBackend(id, "Declined");
   };
 
   approveRequest = (campaign) => {
@@ -125,42 +113,38 @@ class PulledRequests extends Component {
       daily_budget: campaign.daily_budget,
       ad_type: campaign.ad_type,
     });
-  let { pulledRequests,adds } = this.state;
-    const obj = declineRequest(pulledRequests,adds,campaign._id)
-    
+    let { pulledRequests, adds } = this.state;
+    const obj = declineRequest(pulledRequests, adds, campaign._id);
+
     this.setState({
       ...this.state,
       pulledRequests: obj.pulledRequests,
-      adds:obj.adds,
+      adds: obj.adds,
     });
 
-    this.props.postUpdateCampaignStatusToBackend(campaign._id, 'Approved');
+    this.props.postUpdateCampaignStatusToBackend(campaign._id, "Approved");
   };
   approveAllRequests = () => {
+    const ids = [];
 
-   
-   const ids = []
+    let { adds, pulledRequests } = this.state;
 
-   let {adds,pulledRequests} = this.state
-
-   const requests = []
-   const Adds = []
-   for(let i=0;i< adds.length; i++){
-
-    if(adds[i].checked){
-     const id = adds[i].id
-     ids.push(id)
-     adds[i].checked = false
-    Adds.push(adds[i])
-    requests.push(pulledRequests[i])
+    const requests = [];
+    const Adds = [];
+    for (let i = 0; i < adds.length; i++) {
+      if (adds[i].checked) {
+        const id = adds[i].id;
+        ids.push(id);
+        adds[i].checked = false;
+        Adds.push(adds[i]);
+        requests.push(pulledRequests[i]);
+      }
     }
-   }
 
-    this.props.approveAllRequests(requests,Adds);
-    this.declineMultipleRequests(ids)
+    this.props.approveAllRequests(requests, Adds);
+    this.declineMultipleRequests(ids);
 
-  
-    this.props.postUpdateCampaignsStatusToBackend(ids, 'Approved')
+    this.props.postUpdateCampaignsStatusToBackend(ids, "Approved");
   };
   //ad-campaign
   handleCampaigns = () => {
@@ -169,21 +153,19 @@ class PulledRequests extends Component {
     if (this.state.pulledRequests.length !== 0) {
       {
         this.state.pulledRequests.map((campaign, i) => {
-
-                 
-            let profile = campaign.customer.img
-            const hasImage =
+          let profile = campaign.customer.img;
+          const hasImage =
             profile &&
             profile.split(
               "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
-            )[1]
-          if (hasImage === 'null' || hasImage === 'undefined' ) profile = Avatar;
-    
+            )[1];
+          if (hasImage === "null" || hasImage === "undefined") profile = Avatar;
+
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
                 <div className={classes.cads_flex_th}>
-                <div className={classes.cads_check}>
+                  <div className={classes.cads_check}>
                     <input
                       type="checkbox"
                       id={campaign._id}
@@ -194,9 +176,11 @@ class PulledRequests extends Component {
                         this.state.haveCampaigns &&
                         this.state.adds[i].checked
                       }
-                      onChange={e => this.checkCampaign(e)}
+                      onChange={(e) => this.checkCampaign(e)}
                     />
-                  <label htmlFor={campaign._id}>{campaign.campaign_name}</label>
+                    <label htmlFor={campaign._id}>
+                      {campaign.campaign_name}
+                    </label>
                   </div>
                 </div>
               </td>
@@ -207,7 +191,7 @@ class PulledRequests extends Component {
                     alt="profile img"
                     className={classes.partner_profile_img}
                   />
-                        <span>{campaign.customer.fullName}</span>
+                  <span>{campaign.customer.fullName}</span>
                 </span>
               </td>
               <td className={classes.cads_td}>
@@ -259,20 +243,17 @@ class PulledRequests extends Component {
 
     return murmurCampaigns;
   };
-  
 
-  
   checkCampaign = (event) => {
     const id = event.target.id;
     const adds = this.state.adds;
     let multiple = false;
     let count = 0;
     for (let i = 0; i < adds.length; i++) {
-      if (adds[i].checked && adds[i].id!==id) {
+      if (adds[i].checked && adds[i].id !== id) {
         count++;
       }
       if (adds[i].id === id) {
-        
         adds[i].checked = !adds[i].checked;
         if (adds[i].checked) {
           count++;
@@ -281,13 +262,12 @@ class PulledRequests extends Component {
     }
     if (count > 1) {
       multiple = true;
-    } 
+    }
     this.setState({
       ...this.state,
       adds,
       multiple,
     });
-
   };
 
   checkAllCampigns = () => {
@@ -295,7 +275,7 @@ class PulledRequests extends Component {
     let count = 0;
     let multiple = false;
     const checked = !this.state.checked;
-   console.log('checking')
+    console.log("checking");
     for (let i = 0; i < adds.length; i++) {
       if (
         (this.state.multiple && this.state.checked) ||
@@ -303,15 +283,15 @@ class PulledRequests extends Component {
       ) {
         if (adds[i].checked === true && this.state.checked) {
           adds[i].checked = false;
-        } else if(!this.state.checked){
+        } else if (!this.state.checked) {
           count++;
           adds[i].checked = true;
         }
       } else if (!this.state.checked) {
         count++;
         adds[i].checked = true;
-      }else{
-        adds[i].checked = false
+      } else {
+        adds[i].checked = false;
       }
     }
 
@@ -325,16 +305,14 @@ class PulledRequests extends Component {
       multiple,
       checked,
     });
-
-  }
+  };
   render() {
-
     const url = this.props.location.search; //search property of history props
-    const id = new URLSearchParams(url).get('request') //extracting id 
- 
-    const campaign = this.state.pulledRequests.filter(campaign => campaign._id ===id)
-   
-  
+    const id = new URLSearchParams(url).get("request"); //extracting id
+
+    const campaign = this.state.pulledRequests.filter(
+      (campaign) => campaign._id === id
+    );
 
     return (
       <React.Fragment>
@@ -363,7 +341,7 @@ class PulledRequests extends Component {
                 <thead>
                   <tr className={classes.first_tr}>
                     <th className={`${classes.cads_th}`}>
-                    <div
+                      <div
                         className={`${classes.cads_check} ${classes.invoice_th}`}
                       >
                         <input
@@ -371,7 +349,6 @@ class PulledRequests extends Component {
                           id="requests"
                           onChange={this.checkAllCampigns}
                           checked={this.state.checked}
-
                         />
                         <label htmlFor="requests">Name</label>
                       </div>
@@ -420,11 +397,12 @@ class PulledRequests extends Component {
   }
 }
 
-
 const mapstatetoprops = (state) => {
-  const { requests, request_adds, loading } =
-    state.Campaigns;
-  return { requests, loading,  request_adds };
+  const { requests, request_adds, loading } = state.Campaigns;
+  return { requests, loading, request_adds };
 };
 
-export default connect(mapstatetoprops,{postUpdateCampaignStatusToBackend,postUpdateCampaignsStatusToBackend})(withRouter(PulledRequests));
+export default connect(mapstatetoprops, {
+  postUpdateCampaignStatusToBackend,
+  postUpdateCampaignsStatusToBackend,
+})(withRouter(PulledRequests));

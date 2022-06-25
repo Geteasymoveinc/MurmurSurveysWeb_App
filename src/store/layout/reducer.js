@@ -14,13 +14,13 @@ import {
 
 const INIT_STATE = {
   layoutType: "horizontal",
-  layoutWidth: "fluid",
-  leftSideBarTheme: "dark",
-  leftSideBarType: "default",
-  topbarTheme: "dark",
+  //layoutWidth: "fluid",
+ // leftSideBarTheme: "dark",
+  //leftSideBarType: "default",
+  //topbarTheme: "dark",
   isPreloader: false,
   showRightSidebar: false,
-  isMobile: false,
+  //isMobile: false,
   isSideBarVisible: true,
 };
 

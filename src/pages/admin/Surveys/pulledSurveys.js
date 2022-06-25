@@ -13,9 +13,11 @@ import Avatar from "../../../assets/images/avatar.png";
 import classes from "../../../assets/css/CreateAd/index.module.css";
 import classes2 from "../../../assets/css/surveys/surveys.module.css";
 
-import CampaignAnalytics from "./analytics";
+import Answers from "./answers";
 import Details from "./details";
 import View from "./question-answers";
+import Survey from "./create/index";
+import SurveyAnalytics from "./analytics";
 
 class PulledSurveys extends React.Component {
   constructor(props) {
@@ -126,7 +128,6 @@ class PulledSurveys extends React.Component {
         if (hasSurveyImage === "null" || hasSurveyImage === "undefined")
           survey = SampleImage2;
 
-
         murmurCampaigns.push(
           <div
             key={i}
@@ -188,10 +189,9 @@ class PulledSurveys extends React.Component {
   };
 
   componentDidUpdate(prevProps) {
-    const prev_props= prevProps.loading;
-    const this_props = this.props.loading;
-   console.log(prev_props, this_props)
-    if (this.props.surveys.length !== this.state.pulledSurveys.length) {
+    if (
+      this.props.surveys.length !== this.state.pulledSurveys.length
+    ) {
       this.setState({
         ...this.state,
         pulledSurveys: this.props.surveys,
@@ -209,29 +209,33 @@ class PulledSurveys extends React.Component {
     });
   };
 
-
   returnComponent = () => {
-    const {pulledSurveys} = this.state
+    const { pulledSurveys } = this.state;
 
     const url = this.props.location.search; //search property of history props
     const id = new URLSearchParams(url).get("survey"); //extracting id
-    const mode = new URLSearchParams(url).get('mode')
+    const mode = new URLSearchParams(url).get("mode");
     let survey = [];
     if (id) {
       survey = pulledSurveys.filter((survey) => {
         if (survey._id === id) {
-          return survey.analytics;
+          return survey;
         }
       })[0];
     }
-    
-    let component  
-    if(mode === 'Answers') component = <CampaignAnalytics analytics={survey.analytics} />
-    else if(mode === 'Details') component = <Details survey ={survey}/>
-    else if(mode === 'survey-view') component = <View surveys={survey.survey_questions}/>
 
-    return component
-  }
+    let component;
+    if (mode === "Answers")
+      component = <Answers answers={survey.analytics} id={id} />;
+    else if (mode === "Details")
+      component = <Details survey={survey} id={id} />;
+    else if (mode === "survey-view")
+      component = <View surveys={survey.survey_questions} />;
+    else if (mode === "update-survey") component = <Survey id={id} />;
+    else if (mode === "create-survey") component = <Survey />;
+    else if(mode === 'Analytics') component = <SurveyAnalytics id={id}/>
+     return component;
+  };
 
   render() {
     const url = this.props.location.search; //search property of history props
@@ -244,11 +248,10 @@ class PulledSurveys extends React.Component {
         }
       })[0];
     }
+
     const { mode } = this.state;
     const { view } = this.props;
 
-     
-    console.log(this.state)
     return (
       <React.Fragment>
         {!this.props.location.search.length && view.table ? (
@@ -274,9 +277,13 @@ class PulledSurveys extends React.Component {
                   <th className={classes.select_mode}>
                     <select onChange={this.switchBetweenAnalyticsAndDetals}>
                       <option value={mode}>{mode}</option>
-                      {[ "Answers", "Details"].map((el, i) => {
+                      {["Answers",'Analytics', "Details"].map((el, i) => {
                         if (el !== mode) {
-                          return <option key={i} value={el}>{el}</option>;
+                          return (
+                            <option key={i} value={el}>
+                              {el}
+                            </option>
+                          );
                         }
                       })}
                     </select>
@@ -290,8 +297,9 @@ class PulledSurveys extends React.Component {
           <div className={classes2.surveys_windows_container}>
             {this.handleWindowsView()}
           </div>
-        ):
-          this.returnComponent()}
+        ) : (
+          this.returnComponent()
+        )}
       </React.Fragment>
     );
   }

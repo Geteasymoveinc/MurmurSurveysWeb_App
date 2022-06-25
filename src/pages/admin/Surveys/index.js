@@ -13,7 +13,9 @@ import MenuDefault from "../../../assets/images/surveys/menu-default.svg";
 import MenuWindows from "../../../assets/images/surveys/menu-windows.svg";
 
 import { connect } from "react-redux";
-import { fetchSurveys } from "../../../store/surveys/actions";
+import { fetchSurveys } from "../../../store/actions";
+
+import HeadSearch from "../../../components/CommonForBoth/Headsearch";
 
 class Surveys extends React.Component {
   constructor(props) {
@@ -39,11 +41,12 @@ class Surveys extends React.Component {
     });
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { adds, surveys } = this.props;
 
     if (
-        this.state.loading !== prevState.loading
+      prevProps.surveys.length !== this.props.surveys.length ||
+      this.state.surveys.length !== this.props.surveys.length
     ) {
       this.setState({
         ...this.state,
@@ -58,22 +61,28 @@ class Surveys extends React.Component {
           loading: false,
         });
       }
-    }, 2000);
+    }, 2500);
   }
   componentWillUnmount() {
     clearTimeout(this.async);
   }
 
   componentDidMount() {
-    this.props.fetchSurveys(
-      "https://backendapp.murmurcars.com/api/v1/admin/get-surveys"
-    );
+    this.props.fetchSurveys("http://localhost:4000/api/v1/admin/get-surveys");
   }
+
+  toggleToCreateSurveyMode = () => {
+    this.props.history.push("/surveys?mode=create-survey");
+  };
+
   render() {
-    const {menu, loading} = this.state
+    const { menu, loading, surveys, adds } = this.state;
     const { windnows, table } = menu;
 
-    
+    const url = this.props.location.search; //search property of history props
+    const mode = new URLSearchParams(url).get("mode"); //extracting mode
+
+  
     return (
       <React.Fragment>
         {loading && (
@@ -92,8 +101,13 @@ class Surveys extends React.Component {
         )}
 
         {!loading && (
-          <div className={classes.dash_right}>
-            <div className={classes.head_search}>
+          <div
+            className={`${classes.dash_right}  ${
+              (mode === "create-survey" || mode === "update-survey") &&
+              classes.full_width
+            }`}
+          >
+            {/* <div className={classes.head_search}>
               <h1 className={classes.dash_h1}>Surveys</h1>
 
               <form>
@@ -121,8 +135,10 @@ class Surveys extends React.Component {
                   </div>
                 </div>
               </form>
-            </div>
-
+        </div>*/}
+            {mode !== "create-survey" && mode !== "update-survey" && (
+              <HeadSearch component={"Surveys"} />
+            )}
             {this.props.match.isExact &&
               !this.props.location.search && ( //page where user see all its campaigns
                 <div className={classes.create_ads}>
@@ -130,7 +146,40 @@ class Surveys extends React.Component {
                     <div
                       className={`${classes.cads_head} ${classes2.cads_head_space_between}`}
                     >
-                      <h4 className={classes.cads_h4}>Number of Surveys {this.state.surveys.length}</h4>
+                      <button
+                        onClick={this.toggleToCreateSurveyMode}
+                        type="button"
+                        className={`${classes.create_ads_btn} ${classes.create_survey}`}
+                        to={"/create-survey"}
+                      >
+                        Create Survey
+                        <svg
+                          width="20"
+                          height="20"
+                          className={classes.create_ads_img}
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5 10H15"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M10 15V5"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                      <h4 className={classes.cads_h4}>
+                        Number of Surveys {surveys.length}
+                      </h4>
                       <div className={classes2.surveys_view}>
                         <label>View:</label>
                         <div className={classes2.surveys_view_menu}>
@@ -158,8 +207,8 @@ class Surveys extends React.Component {
                       </div>
                     </div>
                     <PulledSurveys
-                      surveys={this.state.surveys}
-                      adds={this.state.adds}
+                      surveys={surveys}
+                      adds={adds}
                       view={{ windnows, table }}
                       loading={loading}
                     />
@@ -170,8 +219,8 @@ class Surveys extends React.Component {
             {this.props.match.isExact &&
               this.props.location.search.length > 0 && ( //details
                 <PulledSurveys
-                  surveys={this.state.surveys}
-                  adds={this.state.adds}
+                  surveys={surveys}
+                  adds={adds}
                   view={{ windnows, table }}
                   loading={loading}
                 />

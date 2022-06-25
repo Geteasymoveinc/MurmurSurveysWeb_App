@@ -18,9 +18,9 @@ function* Campaigns({ payload: { url } }) {
   try {
     const response = yield call(fetch_campaigns, url);
 
-    const { campaigns, campaign_adds, requests, request_adds } = response.data;
+    const { campaigns, campaign_adds, requests, request_adds, completed_campaigns, completed_adds } = response.data;
     yield put(
-      fetchCampaignsSuccess(campaigns, campaign_adds, requests, request_adds)
+      fetchCampaignsSuccess(campaigns, campaign_adds, requests, request_adds, completed_campaigns, completed_adds)
     );
   } catch (err) {}
 }

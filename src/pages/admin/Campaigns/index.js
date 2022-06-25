@@ -4,6 +4,7 @@ import { withRouter, Link, Switch, Route, Redirect } from "react-router-dom";
 
 import PulledCampaigns from "./pulledCampaigns";
 import PulledRequests from "./pulledRequests";
+import CompletedCampaigns from "./completed_campaigns";
 
 import SearchNormal from "../../../assets/css/Settings/search-normal.svg";
 import SearchMaximize from "../../../assets/css/Settings/search-maximize.svg";
@@ -29,26 +30,22 @@ class Campaigns extends React.Component {
     clearTimeout(this.timeout);
   }
   componentDidMount() {
-
     this.props.fetchCampaigns(
-      "https://backendapp.murmurcars.com/api/v1/admin/get-campaigns"
+      "http://localhost:4000/api/v1/admin/get-campaigns"
     );
   }
   componentDidUpdate(prevProps) {
-    const { campaigns, campaign_adds, loading } =
-      this.props;
+    const { campaigns, campaign_adds, loading } = this.props;
     if (
       prevProps.campaigns.length !== campaigns.length ||
       loading !== prevProps.loading
     ) {
-
       const pulledCampaigns = campaigns;
 
       this.setState({
         ...this.state,
         pulledCampaigns,
         adds: campaign_adds,
-
       });
     }
     this.timeout = setTimeout(() => {
@@ -76,7 +73,6 @@ class Campaigns extends React.Component {
   };
 
   approveAllRequests = (campaigns, adds) => {
-  
     this.setState({
       ...this.state,
       pulledCampaigns: [...this.state.pulledCampaigns, ...campaigns],
@@ -86,11 +82,12 @@ class Campaigns extends React.Component {
 
   render() {
     const url = this.props.location.search;
-    const request = url.split("?request=")[1];
-    const campaign = url.split("?campaign=")[1];
-    const { modal } = this.state;
+    const request = new URLSearchParams(url).get('request')
+    const campaign = new URLSearchParams(url).get('campaign')
+    const type = new URLSearchParams(url).get("type")
 
-  
+
+    const { modal } = this.state;
 
     return (
       <React.Fragment>
@@ -176,13 +173,25 @@ class Campaigns extends React.Component {
                         adds={this.state.adds}
                         mode={this.state.mode}
                       />
+                                    <div
+                        className={`${classes.cads_head} ${classes.cads_head_2}`}
+                      >
+                        <div className={classes.cads_head_left}>
+                          <h4 className={classes.cads_h4}>Completed Campaigns</h4>
+                          <p className={classes.cads_p}>
+                            Here you can view the list of completed campaigns we
+                            have
+                          </p>
+                        </div>
+                      </div>
+                      <CompletedCampaigns/>
                     </div>
                   </div>
                 )}
 
               {this.props.match.isExact &&
                 this.props.location.search.length > 0 &&
-                campaign && (
+                campaign && type === 'active' && (
                   <PulledCampaigns
                     campaigns={this.state.pulledCampaigns}
                     adds={this.state.adds}
@@ -197,6 +206,13 @@ class Campaigns extends React.Component {
                     approveAllRequests={this.approveAllRequests}
                   />
                 )}
+              {this.props.match.isExact &&
+                this.props.location.search.length > 0 &&
+                campaign && type === 'completed' && (
+                  <CompletedCampaigns/>
+                )}
+
+
             </div>
           )}
       </React.Fragment>
@@ -204,9 +220,16 @@ class Campaigns extends React.Component {
   }
 }
 const mapstatetoprops = (state) => {
-  const { requests, campaigns, request_adds, campaign_adds, loading } =
-    state.Campaigns;
-  return { requests, loading, campaigns, request_adds, campaign_adds };
+  const {
+    campaigns,
+    campaign_adds,
+    loading,
+  } = state.Campaigns;
+  return {
+    loading,
+    campaigns,
+    campaign_adds,
+  };
 };
 
 export default connect(mapstatetoprops, {

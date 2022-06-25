@@ -1,0 +1,25 @@
+
+#chart-survey .apexcharts-canvas {
+    width: 100% !important;
+}
+#chart-survey .apexcharts-canvas .apexcharts-svg{
+    width: 100% !important;
+}
+#chart-survey .apexcharts-canvas .apexcharts-svg foreignObject{
+    width: 100% !important;
+}
+
+#chart-survey .apexcharts-canvas   .apexcharts-legend  {
+    top:0  !important
+}
+
+#chart-survey .apexcharts-canvas   .apexcharts-legend .apexcharts-legend-series{
+    height: 15px;
+}
+
+#chart-survey .apexcharts-legend.apexcharts-align-center.apx-legend-position-right{
+    flex-wrap: wrap ;
+    display: flex;
+    
+}
+

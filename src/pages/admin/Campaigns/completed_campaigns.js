@@ -10,30 +10,24 @@ import classes from "../../../assets/css/CreateAd/index.module.css";
 
 import CampaignAnalytics from "../../../components/analytics/analytics";
 
+import { connect } from "react-redux";
 
-
-
-
-class PulledCampaigns extends Component {
+class CompletedCampaigns extends Component {
   constructor(props) {
     super(props);
     this.state = {
       haveCampaigns: true,
       checked: false,
       multiple: false,
-       pulledCampaigns: this.props.campaigns,
-       adds: this.props.adds,
+      pulledCampaigns: this.props.completed_campaigns,
+      adds: this.props.completed_adds,
       loading: false,
     };
-
 
     this.settingInterval = null;
   }
 
-
   deleteCampaign = (id) => {
-
-  
     let { pulledCampaigns, adds } = this.state;
 
     pulledCampaigns = pulledCampaigns.filter((campaign) => {
@@ -47,17 +41,12 @@ class PulledCampaigns extends Component {
       }
     });
 
-
     this.setState({
       ...this.state,
       pulledCampaigns,
       adds,
     });
-  }
-
-
-
-
+  };
 
   checkCampaign = (event) => {
     const id = event.target.id;
@@ -65,11 +54,10 @@ class PulledCampaigns extends Component {
     let multiple = false;
     let count = 0;
     for (let i = 0; i < adds.length; i++) {
-      if (adds[i].checked && adds[i].id!==id) {
+      if (adds[i].checked && adds[i].id !== id) {
         count++;
       }
       if (adds[i].id === id) {
-        
         adds[i].checked = !adds[i].checked;
         if (adds[i].checked) {
           count++;
@@ -78,13 +66,12 @@ class PulledCampaigns extends Component {
     }
     if (count > 1) {
       multiple = true;
-    } 
+    }
     this.setState({
       ...this.state,
       adds,
       multiple,
     });
-
   };
 
   checkAllCampigns = () => {
@@ -100,15 +87,15 @@ class PulledCampaigns extends Component {
       ) {
         if (adds[i].checked === true && this.state.checked) {
           adds[i].checked = false;
-        } else if(!this.state.checked){
+        } else if (!this.state.checked) {
           count++;
           adds[i].checked = true;
         }
       } else if (!this.state.checked) {
         count++;
         adds[i].checked = true;
-      }else{
-        adds[i].checked = false
+      } else {
+        adds[i].checked = false;
       }
     }
 
@@ -139,8 +126,6 @@ class PulledCampaigns extends Component {
     }*/
   };
 
-  
-
   //ad-campaign
   handleCampaigns = () => {
     const { multiple } = this.state;
@@ -150,14 +135,14 @@ class PulledCampaigns extends Component {
     if (this.state.pulledCampaigns.length !== 0) {
       {
         this.state.pulledCampaigns.map((campaign, i) => {
-          let profile = campaign.customer.img
+          let profile = campaign.customer.img;
           const hasImage =
-          profile &&
-          profile.split(
-            "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
-          )[1]
-        if (hasImage === 'null' || hasImage === 'undefined' ) profile = Avatar;
-  
+            profile &&
+            profile.split(
+              "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+            )[1];
+          if (hasImage === "null" || hasImage === "undefined") profile = Avatar;
+
           murmurCampaigns.push(
             <tr key={campaign._id}>
               <td className={classes.cads_td}>
@@ -173,7 +158,7 @@ class PulledCampaigns extends Component {
                         this.state.haveCampaigns &&
                         this.state.adds[i].checked
                       }
-                      onChange={e => this.checkCampaign(e)}
+                      onChange={(e) => this.checkCampaign(e)}
                     />
                     <label htmlFor={campaign._id}>
                       {campaign.campaign_name}
@@ -199,7 +184,7 @@ class PulledCampaigns extends Component {
                     alt="profile img"
                     className={classes.partner_profile_img}
                   />
-                           <span>{campaign.customer.fullName}</span>
+                  <span>{campaign.customer.fullName}</span>
                 </span>
               </td>
               <td className={classes.cads_td}>
@@ -210,7 +195,7 @@ class PulledCampaigns extends Component {
               </td>
               <td className={classes.cads_td}>
                 <Link
-                  to={`/campaigns?campaign=${campaign._id}`}
+                  to={`/campaigns?campaign=${campaign._id}&type=completed`}
                   className={classes.details_link}
                 >
                   Analytics
@@ -230,25 +215,14 @@ class PulledCampaigns extends Component {
     return murmurCampaigns;
   };
 
-
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.campaigns.length !== this.props.campaigns.length
-    ) {
-
-        this.setState({
-          ...this.state,
-          pulledCampaigns: [
-            ...this.state.pulledCampaigns,
-            ...this.props.campaigns.slice(prevProps.campaigns.length, )
-          ],
-          adds: [...this.state.adds, ...this.props.adds.slice(prevProps.adds.length,)]
-        });
-
-      
+    if (prevProps.completed_campaigns.length !== this.props.completed_campaigns.length) {
+      this.setState({
+        ...this.state,
+        pulledCampaigns: this.props.completed_campaigns,
+        adds: this.props.completed_adds
+      });
     }
-
-    
   }
   toggleDeleteAd = (id, type) => {
     this.setState({ ...this.state, loading: true });
@@ -256,7 +230,7 @@ class PulledCampaigns extends Component {
       .delete(`https://backendapp.murmurcars.com/api/v1/campaigns/${id}`)
       .then(() => {
         window.location.reload();
-        if (type === 'from_details') {
+        if (type === "from_details") {
           this.props.history.replace("/ad-manager");
           this.props.history.go("/ad-manager");
         }
@@ -275,7 +249,7 @@ class PulledCampaigns extends Component {
         list_of_ids.push(adds[i].id);
       }
     }
-   
+
     axios
       .delete(
         `https://backendapp.murmurcars.com/api/v1/campaigns/delete/${list_of_ids}`
@@ -284,23 +258,28 @@ class PulledCampaigns extends Component {
         window.location.reload();
         this.setState({ ...this.state, loading: false });
       })
-      .catch((err) => this.setState({
-        ...this.state, loading: false
-      }));
+      .catch((err) =>
+        this.setState({
+          ...this.state,
+          loading: false,
+        })
+      );
   };
   render() {
     const url = this.props.location.search; //search property of history props
-    const id = new URLSearchParams(url).get('campaign') //extracting id 
+    const id = new URLSearchParams(url).get("campaign"); //extracting id
     const type = new URLSearchParams(url).get("type")
-
     const { multiple } = this.state;
-   let campaign = {} 
-   if(id){
-   campaign = this.state.pulledCampaigns.filter(campaign => campaign._id===id)[0]
-   }
-
-
-    
+    let campaign = {};
+    if (id) {
+      campaign = this.state.pulledCampaigns.filter(
+        (campaign) => campaign._id === id
+      )[0];
+    }
+  
+    console.log(id)
+    console.log(type)
+    console.log(campaign)
     return (
       <React.Fragment>
         {/* this part is ad-manager STARTING*/}
@@ -369,16 +348,20 @@ class PulledCampaigns extends Component {
             </div>
           )}
 
-        {this.props.location.search.length > 0 &&  ( //when user selects an add to check details
-          <CampaignAnalytics email ={campaign.advertisers_email} campaign={campaign}/>
+        {this.props.location.search.length > 0 && ( //when user selects an add to check details
+          <CampaignAnalytics
+            email={campaign.advertisers_email}
+            campaign={campaign}
+          />
         )}
       </React.Fragment>
     );
   }
 }
 
+const mapstatetoprops = (state) => {
+  const { completed_campaigns, completed_adds } = state.Campaigns;
+  return { completed_campaigns, completed_adds };
+};
 
-
-
-
-export default withRouter(PulledCampaigns);
+export default  connect(mapstatetoprops, null)(withRouter(CompletedCampaigns));

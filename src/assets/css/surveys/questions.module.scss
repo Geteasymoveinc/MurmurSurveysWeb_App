@@ -89,7 +89,8 @@
   .flex_container .flexbox{
     display: flex;
     flex-direction: column;
-   
+   background-color: transparent;
+   margin-top: 0;
   }
   
    .flexbox > div{

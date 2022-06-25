@@ -10,10 +10,14 @@
   align-items: center;
   
 }
+
+.flexbox .rows{   ///answers analytics
+  width: 100%;
+}
 .flex_container_2 .flexbox .rows{
   position: relative;
   display: flex;
-  width: 95%;
+  width: 100%;
   background-color: transparent;
 }
 .flex_container_2 .flexbox .rows:first-child{

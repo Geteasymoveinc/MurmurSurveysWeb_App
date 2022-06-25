@@ -13,10 +13,10 @@ function* UsersAnalytics ({payload: {url}}){
   
     const response =  yield call(fetch_user_analytics, url)
   
-    const {campaigns, surveys,users, partners} = response.data
+    const {campaigns, surveys,users, partners, ad_customers, ad_partners} = response.data
    
 
-    yield put(fetchUserAnalyticsSuccess(campaigns,surveys,users, partners))
+    yield put(fetchUserAnalyticsSuccess(campaigns,surveys,users, partners, ad_customers, ad_partners))
    }catch(err){
 
    }

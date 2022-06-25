@@ -117,7 +117,6 @@ class PulledCustomers extends React.Component {
       (customers.length && customers[0]._id !== prevProps.customers[0]._id)
     ) {
 
-      console.log(this.props.page)
       this.setState({
         ...this.state,
         pulledCustomers: customers,
