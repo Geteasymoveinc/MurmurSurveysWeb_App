@@ -312,11 +312,11 @@ class CompletedCampaigns extends Component {
                       >
                         <input
                           type="checkbox"
-                          id="campaigns"
+                          id="completed-campaigns"
                           onChange={this.checkAllCampigns}
                           checked={this.state.checked}
                         />
-                        <label htmlFor="campaigns">Name</label>
+                        <label htmlFor="completed-campaigns">Name</label>
                         {multiple && (
                           <button
                             type="button"

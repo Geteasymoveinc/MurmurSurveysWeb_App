@@ -68,7 +68,7 @@ class Surveys extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchSurveys("http://localhost:4000/api/v1/admin/get-surveys");
+    this.props.fetchSurveys("https://backendapp.murmurcars.com/api/v1/admin/get-surveys");
   }
 
   toggleToCreateSurveyMode = () => {

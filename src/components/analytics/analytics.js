@@ -232,7 +232,7 @@ class CampaignAnalytics extends Component {
     console.log(email)
     axios
       .get(
-        `http://localhost:4000/api/v1/admin/allcampaignAnalytics/${email}`
+        `https://backendapp.murmurcars.com/api/v1/admin/allcampaignAnalytics/${email}`
       )
       .then((analytics) => {
         const data = analytics.data;

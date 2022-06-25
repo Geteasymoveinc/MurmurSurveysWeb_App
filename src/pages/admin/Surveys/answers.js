@@ -26,7 +26,7 @@ class SurveyAnswers extends Component {
 
     axios
       .get(
-        `http://localhost:4000/api/v1/admin/survey-answer-analytics?id=${id}&question=${question}`
+        `https://backendapp.murmurcars.com/api/v1/admin/survey-answer-analytics?id=${id}&question=${question}`
       )
       .then((response) => {
         const {Analytics} = response.data

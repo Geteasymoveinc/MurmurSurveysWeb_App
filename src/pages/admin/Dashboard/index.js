@@ -64,10 +64,10 @@ class CampaignAnalytics extends Component {
   }
   componentDidMount() {
     this.props.fetchUserAnalytics(
-      "http://localhost:4000/api/v1/admin/get-users-statistic"
+      "https://backendapp.murmurcars.com/api/v1/admin/get-users-statistic"
     );
     this.props.fetchCampaigns(
-      "http://localhost:4000/api/v1/admin/get-campaigns"
+      "https://backendapp.murmurcars.com/api/v1/admin/get-campaigns"
     );
   }
 
@@ -107,7 +107,7 @@ class CampaignAnalytics extends Component {
  
 
 
-    console.log(ad_customers_time, ad_partners_time)
+
     return (
       <Fragment>
         {(this.props.loading || !loaded) && (

@@ -27,7 +27,7 @@ class SurveyAnalytics extends Component {
     loading:true
   })
   const {id} = this.props
-  axios.get(`http://localhost:4000/api/v1/surveys/survey/users-analytics/${id}`)
+  axios.get(`https://backendapp.murmurcars.com/api/v1/surveys/survey/users-analytics/${id}`)
   .then(response => {
     console.log(response)
     const {location, gender} = response.data

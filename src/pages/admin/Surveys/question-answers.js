@@ -5,7 +5,7 @@ import { Link, withRouter } from "react-router-dom";
 import classes from "../../../assets/css/surveys/index.module.scss";
 import classes2 from "../../../assets/css/CreateAd/ads-details/index.module.css";
 import Chevron_Down from "../../../assets/images/surveys/chevron-down.svg";
-import Trash2 from "../../../assets/css/CreateAd/ads-details/trash.svg";
+
 
 import DeclineSurvey from "./modals/decline-survey";
 import axios from "axios";

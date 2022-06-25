@@ -113,7 +113,6 @@ class Details extends React.Component {
 
     const keys = Object.keys(updates);
 
-    console.log(updates, keys);
 
     for (let key of keys) {
       if (key === "image") break;
@@ -125,7 +124,7 @@ class Details extends React.Component {
     });
 
     axios
-      .put(`http://localhost:4000/api/v1/admin/update-survey/${id}`, formData)
+      .put(`https://backendapp.murmurcars.com/api/v1/admin/update-survey/${id}`, formData)
       .then((res) => {
         console.log(res);
         this.setState({
@@ -152,7 +151,6 @@ class Details extends React.Component {
   render() {
     const { loading, survey, updates, editable } = this.state;
 
-    console.log(survey);
     return (
       <React.Fragment>
         {loading && (
