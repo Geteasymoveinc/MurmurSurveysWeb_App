@@ -16,10 +16,8 @@ import "./assets/scss/theme.scss";
 
 
 
-import fakeBackend from "./helpers/AuthType/fakeBackend";
 
-// Activating fake backend
-fakeBackend();
+
 
 
 class App extends Component {

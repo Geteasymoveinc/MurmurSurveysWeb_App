@@ -2,14 +2,6 @@ import React, { Component } from "react";
 
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import {} from "../../store/actions";
-
-
-//i18n
-import { withNamespaces } from "react-i18next";
-import SidebarContent from "./testSidebarContent";
-
-
 
 
 

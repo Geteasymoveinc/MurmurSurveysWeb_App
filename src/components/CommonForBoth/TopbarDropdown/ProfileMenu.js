@@ -7,8 +7,7 @@ import {
 } from "reactstrap";
 import { withRouter, Link } from "react-router-dom";
 
-//i18n
-import { withNamespaces } from "react-i18next";
+
 
 // users
 import user1 from "../../../assets/images/avatar.png";
@@ -97,19 +96,19 @@ componentDidMount(){
           <DropdownMenu right>
             <DropdownItem tag="a" href='/surveys'>
             <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>
-              {this.props.t('My Surveys')}
+              {'My Surveys'}
             </DropdownItem>
 
           <div className="dropdown-divider"></div>
             <DropdownItem tag="a" href="/settings">
          
               <i className="bx bx-user font-size-16 align-middle mr-1"></i>
-              {this.props.t("My Profile")}
+              {"My Profile"}
             </DropdownItem>
            <div className="dropdown-divider"></div>
             <Link to="/logout" className="dropdown-item">
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger"></i>
-              <span>{this.props.t("Logout")}</span>
+              <span>{"Logout"}</span>
             </Link>
           </DropdownMenu>
         </Dropdown>
@@ -118,4 +117,4 @@ componentDidMount(){
   }
 }
 
-export default withRouter(withNamespaces()(ProfileMenu));
+export default withRouter(ProfileMenu);

@@ -3,8 +3,6 @@ import { Row, Col, Collapse } from "reactstrap";
 import { Link, withRouter } from "react-router-dom";
 import classname from "classnames";
 
-//i18n
-import { withNamespaces } from "react-i18next";
 
 class Navbar extends Component {
   constructor(props) {
@@ -288,4 +286,4 @@ class Navbar extends Component {
   }
 }
 
-export default withRouter(withNamespaces()(Navbar));
+export default withRouter(Navbar);

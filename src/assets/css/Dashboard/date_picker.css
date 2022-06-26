@@ -1,9 +1,0 @@
-#date-picker .react-datepicker-wrapper .react-datepicker__close-icon{
-    display:none !important
-  }
-
-  #date-picker .react-datepicker-wrapper  input{
-
-        cursor: pointer !important;
-        padding-left: 1rem;
-  }

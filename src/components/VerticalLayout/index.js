@@ -13,12 +13,10 @@ import {
 } from "../../store/actions";
 
 // Layout Related Components
-import Sidebar from "./Sidebar";
+
 import Rightbar from "../CommonForBoth/Rightbar";
 
 
-import classes from "../../assets/css/common/css/common.module.css";
-import classes2 from "../../assets/css/layout/sidebar-content.module.css";
 
 class Layout extends Component {
   constructor(props) {
@@ -104,11 +102,6 @@ class Layout extends Component {
         )}
 
         <div
-          className={`${
-            (this.props.location.pathname === "/dashboard" ||
-            this.props.location.pathname === "/streetIQ") &&
-              classes2.dashboard_page
-          }`}
         >
           <div>
  

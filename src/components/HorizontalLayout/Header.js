@@ -8,8 +8,8 @@ import { Link } from "react-router-dom";
 import { Row, Col, Dropdown, DropdownToggle, DropdownMenu } from "reactstrap";
 
 // Import menuDropdown
-import LanguageDropdown from "../CommonForBoth/TopbarDropdown/LanguageDropdown";
-import NotificationDropdown from "../CommonForBoth/TopbarDropdown/NotificationDropdown";
+
+
 import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu";
 
 import megamenuImg from "../../assets/images/megamenu-img.png";
@@ -29,8 +29,7 @@ import slack from "../../assets/images/brands/slack.png";
 // Redux Store
 import { toggleRightSidebar } from "../../store/actions";
 
-//i18n
-import { withNamespaces } from "react-i18next";
+
 
 class Header extends Component {
   constructor(props) {
@@ -307,7 +306,7 @@ class Header extends Component {
                 </div>
               </div>
 
-              <LanguageDropdown />
+              
 
               {/* <Dropdown className="d-none d-lg-inline-block ml-1" isOpen={this.state.socialDrp} toggle={() => { this.setState({ socialDrp: !this.state.socialDrp }) }}>
                 <DropdownToggle className="btn header-item noti-icon waves-effect" caret tag="button">
@@ -370,7 +369,7 @@ class Header extends Component {
                 </button>
               </div>
 
-              <NotificationDropdown />
+      
 
               <ProfileMenu />
 
@@ -396,5 +395,5 @@ const mapStatetoProps = (state) => {
 };
 
 export default connect(mapStatetoProps, { toggleRightSidebar })(
-  withNamespaces()(Header)
+  Header
 );

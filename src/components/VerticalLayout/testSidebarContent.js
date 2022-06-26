@@ -5,8 +5,7 @@ import MetisMenu from "metismenujs";
 import { withRouter } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-//i18n
-import { withNamespaces } from "react-i18next";
+
 
 import Logo from "../../assets/css/common/icons/logoBlue.svg";
 import Element4 from "../../assets/css/layout/element-4.svg";
