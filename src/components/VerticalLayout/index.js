@@ -110,20 +110,11 @@ class Layout extends Component {
               classes2.dashboard_page
           }`}
         >
-          <div
-            className={`${this.props.isSideBarVisible && classes.dash_cover}`}
-          >
-            {this.props.isSideBarVisible  && 
-         
-              <Sidebar
-                theme={this.props.leftSideBarTheme}
-                type={this.props.leftSideBarType}
-                isMobile={this.state.isMobile}
-              /> 
-            }
+          <div>
+ 
             {this.props.children}
 
-          </div>{" "}
+          </div>
         </div>
         <Rightbar />
       </React.Fragment>

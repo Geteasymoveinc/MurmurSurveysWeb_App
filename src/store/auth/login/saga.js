@@ -22,11 +22,12 @@ function* loginUser({ payload: { user, history } }) {
     } else {
       const response = yield call(
         postLogin,
-        "https://backendapp.murmurcars.com/api/v1/users/login",
-        //"http://localhost:4000/api/v1/users/login",
+        //"https://backendapp.murmurcars.com/api/v1/users/login",
+        "http://localhost:4000/api/v1/users/login",
         {
           email: user.email,
           password: user.password,
+          role: '2'
         }
       );
 
@@ -36,7 +37,6 @@ function* loginUser({ payload: { user, history } }) {
 
       
       sessionStorage.setItem("authUser", response.resp.at(-1).email);
-      console.log(image)
       if (image) {
         sessionStorage.setItem("profileImage", image);
       }

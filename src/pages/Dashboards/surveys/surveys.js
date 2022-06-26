@@ -20,7 +20,7 @@ class Surveys extends Component {
     super(props);
     this.state = {
       create_edit_survey_mode: false,
-      user_id: "622373650a08268626891c14",
+      user_id: "",
       loading: true,
     };
   }
@@ -89,7 +89,6 @@ class Surveys extends Component {
 
   render() {
     const { create_edit_survey_mode, loading, user_id } = this.state;
-  console.log(this.state)
     return (
       <Fragment>
         {loading && (

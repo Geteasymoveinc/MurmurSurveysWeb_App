@@ -29,15 +29,14 @@ function* addPackageFn({ payload: { option, history } }) {
         const password = option.user.password;
         const phone_number = option.user.phone_number;
         const company = option.user.company;
-        const advertise_options = option.option;
+      
 
         const registered_user = {
           fullName,
           password,
           email,
           phone_number,
-          company,
-          advertise_options
+          company
         };
 
         const response = yield call(

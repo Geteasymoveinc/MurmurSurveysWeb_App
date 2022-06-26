@@ -1,5 +1,5 @@
 
-import { NEW_USER } from "./actionTypes";
+import { NEW_USER, NEW_USER_FAILED, NEW_USER_SECCESSFULL } from "./actionTypes";
 
 export const addUser = (user, history) => {
   return {
@@ -7,3 +7,22 @@ export const addUser = (user, history) => {
     payload: { user, history },
   };
 };
+
+
+
+export const registerUserSuccessfull = (user) => {
+  return {
+    type: NEW_USER_SECCESSFULL,
+    payload: {user}
+  }
+}
+
+export const registerUserError = (err) => {
+  return {
+    type: NEW_USER_FAILED,
+    payload: err
+  }
+}
+
+
+

@@ -14,7 +14,6 @@ import EyeSlash from "../../assets/css/common/icons/eye-slash.svg";
 import Phone from "../../assets/css/Authentication/Register/mobile.svg";
 import Building from "../../assets/css/Settings/building.svg";
 import Car from "../../assets/css/Settings/car.svg";
-
 import classes from "../../assets/css/Settings/settings.module.css";
 
 import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
@@ -174,7 +173,6 @@ class Settings extends Component {
         });
       })
       .catch((err) => {
-        console.log(err);
         this.setState({
           ...this.state,
           loading: false,
@@ -273,7 +271,6 @@ class Settings extends Component {
           .then((user) => {
             let hasBilling = false;
             if (user.data.status !== 204) {
-              console.log(user);
               const user_billing = this.state.user_billing;
               const billing_state = user_billing.billing;
               let hasSubscription = false;
@@ -375,7 +372,6 @@ class Settings extends Component {
         }
       }
     }
-    console.log(this.state);
     return (
       <React.Fragment>
         {this.state.loading && (

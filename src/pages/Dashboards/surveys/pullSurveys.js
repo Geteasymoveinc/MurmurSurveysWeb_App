@@ -50,7 +50,7 @@ class PullSurveys extends Component {
       )
       .then((response) => {
         const { surveys: surveys_data } = response.data;
-        console.log(surveys_data)
+      
         const surveys = [];
 
         for (let i = 0; i < surveys_data.length; i++) {
@@ -293,7 +293,7 @@ class PullSurveys extends Component {
   }
   render() {
     const { multiple } = this.state;
-    console.log(this.state);
+  
     return (
       <Fragment>
         {this.state.loading && (

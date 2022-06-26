@@ -159,20 +159,6 @@ class Login extends React.Component {
         )}
         {(!this.props.loading || !this.props.loading2) && (
           <div className={classes.login_register}>
-            <div className={classes.log_reg_left}>
-              <img src={Car} alt="" className={classes.log_reg_img} />
-              <div className={classes.login_layer}>
-                <img src={Logo} alt="" className={classes.white_logo} />
-
-                <Slider />
-                <p
-                  className={`${classes.footer_copyright} ${classes.mur_flex} ${classes.log_reg_footer}`}
-                >
-                  <img src={Vector2} alt="" />
-                  <span>2022, Murmur</span>
-                </p>
-              </div>
-            </div>
 
             <div className={classes.log_reg_right}>
               <div className={classes.login_section}>

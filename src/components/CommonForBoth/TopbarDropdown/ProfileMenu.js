@@ -54,13 +54,13 @@ componentDidMount(){
   })
 }
   render() {
-    console.log(this.state)
+  
     return (
       <React.Fragment>
         <Dropdown
           isOpen={this.state.menu && this.props.scope!=='local'}
           toggle={this.toggle}
-          className={`${this.props.scope ==='survey' ? 'dropdown' : null}`}
+          className={`${'dropdown'}`}
         >
           <DropdownToggle
 
@@ -95,17 +95,18 @@ componentDidMount(){
 
           </DropdownToggle>
           <DropdownMenu right>
-            <DropdownItem tag="a" href={`${this.props.scope ==='survey' ? '/surveys' :'/settings'}`}>
-              <i className="bx bx-user font-size-16 align-middle mr-1"></i>
-              {this.props.t(`${this.props.scope === 'survey' ? 'My Surveys' : "Profile"}`)}
+            <DropdownItem tag="a" href='/surveys'>
+            <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>
+              {this.props.t('My Surveys')}
             </DropdownItem>
 
           <div className="dropdown-divider"></div>
-           {this.props.scope ==='survey' && <DropdownItem tag="a" href="/settings">
-              <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>
+            <DropdownItem tag="a" href="/settings">
+         
+              <i className="bx bx-user font-size-16 align-middle mr-1"></i>
               {this.props.t("My Profile")}
-            </DropdownItem>}
-            {this.props.scope === 'survey' && <div className="dropdown-divider"></div>}
+            </DropdownItem>
+           <div className="dropdown-divider"></div>
             <Link to="/logout" className="dropdown-item">
               <i className="bx bx-power-off font-size-16 align-middle mr-1 text-danger"></i>
               <span>{this.props.t("Logout")}</span>

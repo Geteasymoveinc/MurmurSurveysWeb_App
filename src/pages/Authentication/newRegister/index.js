@@ -1,7 +1,7 @@
 import React from "react";
 
 //reactstrap
-import { Alert, Modal } from "reactstrap";
+import { Alert, Button } from "reactstrap";
 
 // Redux
 import { connect } from "react-redux";
@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 import { FirebaseAuth } from "../../../helpers/firebaseAuth/firebaseAuth";
 
 // action
-import { addUser} from "../../../store/actions";
+import { addUser } from "../../../store/actions";
 
 //router
 import { withRouter, Link } from "react-router-dom";
@@ -75,10 +75,10 @@ class Register extends React.Component {
         )
       ) {
         error.push(state);
-      }else if(
-        state=== 'email' && 
+      } else if (
+        state === "email" &&
         !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(this.state[state])
-      ){
+      ) {
         error.push(state);
       }
     }
@@ -100,9 +100,9 @@ class Register extends React.Component {
 
   handleInputChange(event) {
     const name = event.target.name;
-    let value = event.target.value
-    if(name === 'email' || name==='password' || name ==='phone_number'){
-       value = event.target.value.trim()
+    let value = event.target.value;
+    if (name === "email" || name === "password" || name === "phone_number") {
+      value = event.target.value.trim();
     }
     this.setState({ ...this.state, [name]: value });
     if (
@@ -110,7 +110,7 @@ class Register extends React.Component {
       name !== "email" &&
       name !== "password" &&
       name !== "phone_number" &&
-       value.length > 0
+      value.length > 0
     ) {
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
@@ -125,7 +125,6 @@ class Register extends React.Component {
         value
       )
     ) {
-
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
         ...this.state,
@@ -135,9 +134,8 @@ class Register extends React.Component {
     } else if (
       this.state.error.includes(name) &&
       name === "email" &&
-      !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(event.target.value.trim()) 
+      !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(event.target.value.trim())
     ) {
-
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
         ...this.state,
@@ -151,7 +149,6 @@ class Register extends React.Component {
         value
       )
     ) {
-   
       const error = this.state.error.filter((el) => el !== name);
       this.setState({
         ...this.state,
@@ -181,25 +178,34 @@ class Register extends React.Component {
     }
   }
   render() {
-    console.log(this.state.error.includes("fullName"));
     return (
       <React.Fragment>
         <div className={classes.login_register}>
-          <div className={classes.log_reg_left}>
-            <img src={Car} alt="" className={classes.log_reg_img} />
-            <div className={classes.login_layer}>
-              <img src={Logo} alt="" className={classes.white_logo} />
-
-              <Slider />
-              <p
-                className={`${classes.footer_copyright} ${classes.mur_flex} ${classes.log_reg_footer}`}
-              >
-                <img src={Copyright} alt="" />
-                <span>{new Date().getFullYear()}, Murmur</span>
-              </p>
-            </div>
-          </div>
           <div className={classes.log_reg_right}>
+            {this.state.alert_status || this.props.error ? (
+              <Alert
+                color="danger"
+                className={`d-flex justify-content-between align-items-center ${classes.alert}`}
+              >
+                <span>
+                  {`${
+                    !this.props.error
+                      ? "Choose one of 3 available advertising options"
+                      : "User already exists"
+                  }`}
+                </span>
+                {!this.props.error && (
+                  <Button
+                    color="link"
+                    onClick={() =>
+                      this.setState({ ...this.state, alert_status: false })
+                    }
+                  >
+                    Close
+                  </Button>
+                )}
+              </Alert>
+            ) : null}
             <div className={classes.signup_section}>
               <h1 className={classes.signup_h1}>Signup</h1>
               <form onSubmit={this.handleValidSubmit}>
@@ -371,6 +377,12 @@ class Register extends React.Component {
             </div>
             <ul className={`${classes.footer_links} ${classes.login_footer}`}>
               <li>
+                <span>
+                  <img src={Copyright} alt="" /> {new Date().getFullYear()},
+                  Murmur
+                </span>
+              </li>
+              <li>
                 <a href="#" className={classes.footer_link}>
                   All rights reserved
                 </a>
@@ -405,5 +417,5 @@ const mapStatetoProps = (state) => {
 
 export default connect(mapStatetoProps, {
   addUser,
-  google_signup
+  google_signup,
 })(withRouter(Register));

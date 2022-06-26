@@ -17,6 +17,7 @@ function* loginUser({ payload: { profile, history } }) {
       //`http://localhost:4000/api/v1/users/checkemail/${true}`,
       {
         email: profile.email,
+        role: '2'
       }
     );
     const data = response.resp;

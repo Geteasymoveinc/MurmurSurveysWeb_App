@@ -513,6 +513,6 @@ margin: 0;
 }
 
 .dash_right{
-  width:calc(100% - 290px);
-  padding-left:32px;
+  width:100%;
+  padding: 50px;
 }

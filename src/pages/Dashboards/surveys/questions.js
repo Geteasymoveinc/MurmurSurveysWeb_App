@@ -88,7 +88,7 @@ class SurveyQuestion extends Component {
   handleDragEnd = (result) => {
     const destin_id = result.destination.index;
     const source_id = result.source.index;
-    console.log("from " + source_id + " to " + destin_id);
+  
 
     const { surveys } = this.state.form.survey_answers_questions;
 
@@ -339,9 +339,9 @@ class SurveyQuestion extends Component {
     });
   };
   addNewAnswerOption = () => {
-    console.log("hey");
+    
     let count = this.state.form.survey_answers_questions.survey.answers.count;
-    console.log(count);
+  
 
     const form = this.state.form;
     form.survey_answers_questions.survey.answers.count = count + 1;
@@ -492,8 +492,6 @@ class SurveyQuestion extends Component {
 
     const { type: type_dev, important } = create_answers_questions;
 
-    console.log(surveys);
-    const { expanded, selected } = this.state.drag_drop;
     return (
       <>
         {/**/}

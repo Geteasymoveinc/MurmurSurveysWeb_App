@@ -9,14 +9,14 @@ class Pie extends Component{
     constructor(props){
         super(props)
         this.state={
-            series: [44, 55, 34,44,55,65],
+            series: this.props.series,
              options: {
             
                 chart: {
                 width: 380,
                 type: 'pie',
               },
-              labels: ['Team A', 'Team B','Team A', 'Team B','Team A', 'Team B'],
+              labels: this.props.categories,
               colors:['#7356C0', '#3F2B89'],
               responsive: [{
                 breakpoint: 480,
