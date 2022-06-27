@@ -242,9 +242,9 @@ class Survey extends Component {
   render() {
     const { menu, survey_id, hasSurvey, loading } = this.state;
     const { menu_item, preview: preview_mode } = menu;
-
-    
-   console.log(this.props)
+   
+    const {analytics} = this.props
+  
     return (
       <Fragment>
         {loading && (
@@ -267,8 +267,8 @@ class Survey extends Component {
                   <img src={Logo} alt="logo" />
                 </a>
               </div>
-              <div className={`${classes.menu_self_flex} ${hasSurvey ? classes.menu_self_flex_hasSurvey: null}`}>
-                <div className={`${classes.menu_flex} ${hasSurvey ? classes.menu_flex_hasSurvey: null}`}>
+              <div className={`${classes.menu_self_flex} ${ analytics.length? classes.menu_self_flex_hasSurvey: null}`}>
+                <div className={`${classes.menu_flex} ${analytics.length ? classes.menu_flex_hasSurvey: null}`}>
                   <div className={classes.button_containers}>
                     {" "}
                     <button onClick={() => this.togleMenuItem("questions")}>
@@ -281,7 +281,7 @@ class Survey extends Component {
                     ></span>
                   </div>
 
-                  {hasSurvey && (
+                  {analytics.length > 0 && (
                     <div className={classes.button_containers}>
                       <button onClick={() => this.togleMenuItem("analytics")}>
                         Analytics
@@ -296,7 +296,7 @@ class Survey extends Component {
                       ></span>
                     </div>
                   )}
-                  {hasSurvey && (
+                  {analytics.length >0  && (
                     <div className={classes.button_containers}>
                       <button onClick={() => this.togleMenuItem("answers")}>
                         Answers
@@ -369,7 +369,7 @@ class Survey extends Component {
                 map={this.props.map}
               />
             )}
-            {!preview_mode && menu_item === "analytics" && <SurveyAnalytics />}
+            {!preview_mode && menu_item === "analytics"  && <SurveyAnalytics />}
             {!preview_mode && menu_item === "answers" && <SurveyAnswers analytics={this.props.analytics}/>}
             {preview_mode && <Preview surveys={this.props.survey_questions}/>}
           </div>
