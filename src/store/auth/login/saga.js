@@ -30,8 +30,7 @@ function* loginUser({ payload: { user, history } }) {
           role: '2'
         }
       );
-
-      console.log(response)
+      
 
       const image = response.resp.at(-1).profilePhoto;
 
