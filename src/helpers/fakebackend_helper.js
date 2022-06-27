@@ -14,7 +14,6 @@ const isUserAuthenticated = () => {
 
 // Register Method
 const postRegister = (url, data) => {
-  console.log("This is url", url, data);
   return axios
     .post(url, data)
     .then((response) => {
