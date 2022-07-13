@@ -7,8 +7,7 @@ import GoogleAuthSaga from "./helpers/saga";
 import ForgetSaga from "./auth/forgetpwd/saga";
 import ResetPasswordSaga from './auth/reset-password/saga'
 import LayoutSaga from "./layout/saga";
-import PackageSaga from './auth/business/saga'
-import SubscribeSaga from "./auth/Subscribe/saga";
+
 
 
 //surveys
@@ -24,8 +23,6 @@ export default function* rootSaga() {
     ForgetSaga(),
     ResetPasswordSaga(),
     LayoutSaga(),
-    PackageSaga(),
-    SubscribeSaga(),
     //private
     SurveySaga()
   ]);

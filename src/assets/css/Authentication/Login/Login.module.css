@@ -10,7 +10,6 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  justify-content: center 
 }
 .log_reg_left{
   position:relative;
@@ -97,7 +96,7 @@
   padding-right:75px;
 }
 .login_section{
-  width: 100%;
+  width: 344px;
   margin-left: auto;
   margin-right: auto;
   padding-top: 80px;
@@ -395,6 +394,7 @@
 }
 .log_reg_right{
   width:50%;
+  margin-left:auto;
   background:#fff;
   min-height:100vh;
 }

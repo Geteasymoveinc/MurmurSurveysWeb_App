@@ -240,7 +240,7 @@ class Survey extends Component {
     );
   };
   render() {
-    const { menu, survey_id, hasSurvey, loading } = this.state;
+    const { menu, loading } = this.state;
     const { menu_item, preview: preview_mode } = menu;
    
     const {analytics} = this.props

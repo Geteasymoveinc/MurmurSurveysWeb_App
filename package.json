@@ -1,5 +1,5 @@
 {
-  "name": "murmurCustomerApp",
+  "name": "survey app",
   "homepage": "https://murmurcars.com/",
   "version": "0.2.1",
   "private": true,
@@ -53,12 +53,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "resolutions": {
-    "moment": "2.24.0"
-  },
-  "main": "index.js",
-  "author": "Emin Aliyev",
-  "license": "ISC",
-  "description": ""
+  }
 }

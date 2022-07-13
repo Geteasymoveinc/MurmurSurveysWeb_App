@@ -17,9 +17,6 @@ import "./assets/scss/theme.scss";
 
 
 
-
-
-
 class App extends Component {
   constructor(props) {
     super(props);

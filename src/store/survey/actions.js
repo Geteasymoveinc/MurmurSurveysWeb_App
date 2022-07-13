@@ -8,11 +8,11 @@ import {
   SUBMITSURVEYTOBACKENDERROR,
   FETCHSURVEYFROMBACKEND,
   FETCHSURVEYFROMBACKENDSUCCESS,
+  FETCHSURVEYFROMBACKENDFAILED,
   FETCHINGMAPLOCATIONANDADDRESS,
 } from "./actionTypes";
 
 const add_survey = (surveys) => {
-  console.log("action creater for add survey is getting called");
   return {
     payload: surveys,
     type: ADDSURVEY,
@@ -48,16 +48,22 @@ const publish_survey = ({url, data,  history, method }) => {
 };
 
 const publish_survey_success = (message) => {
-  console.log(message)
+
   return {
     type:SUBMITSURVEYTOBACKENDSUCCESS,
     payload: message
   }
 };
+const publish_survey_failed= (err) => {
 
+  return {
+    type:SUBMITSURVEYTOBACKENDERROR,
+    payload: err
+  }
+};
 
 const fetch_survey = (url) => {
-  console.log(url)
+  
   return{
     type: FETCHSURVEYFROMBACKEND,
     payload: {url}
@@ -69,9 +75,15 @@ const fetch_survey_success = (data) => {
     payload: data
   }
 }
+const fetch_survey_failed= (err) => {
+  return {
+    type: FETCHSURVEYFROMBACKENDFAILED,
+    payload: err
+  }
+}
 
 const fetch_map_position = (address,center) => {
- console.log(address,center)
+ 
   return {
     type:FETCHINGMAPLOCATIONANDADDRESS,
     payload: {address,center}
@@ -86,8 +98,10 @@ export {
   add_settings,
   publish_survey,
   publish_survey_success,
+  publish_survey_failed,
   fetch_survey,
   fetch_survey_success,
+  fetch_survey_failed,
   fetch_map_position,
 
 };

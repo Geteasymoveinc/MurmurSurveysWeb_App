@@ -1,55 +1,55 @@
-import { takeEvery, fork, put, all, call, takeLatest } from "redux-saga/effects";
+import {
+  takeEvery,
+  fork,
+  put,
+  all,
+  call,
+  takeLatest,
+} from "redux-saga/effects";
 
-import { publish_survey_success, fetch_survey_success } from "./actions";
+import {
+  fetch_survey_success,
+  fetch_survey_failed,
+  publish_survey_success,
+  publish_survey_failed,
+} from "./actions";
 
+import { SUBMITSURVEYTOBACKEND, FETCHSURVEYFROMBACKEND } from "./actionTypes";
 
-import {ADDSURVEY,ADDSETTINGS,SUBMITSURVEYTOBACKEND, FETCHSURVEYFROMBACKEND} from './actionTypes'
+import { post_surveys, get_survey } from "../../helpers/fakebackend_helper";
 
-
-import {post_surveys, get_survey} from '../../helpers/fakebackend_helper'
-
- function* post_survey({ payload: { url,data,  history, method} }) {
-    
+function* post_survey({ payload: { url, data, history, method } }) {
   try {
-    const response = yield call(
-      post_surveys,
-       url,data, method
-    );
+    const response = yield call(post_surveys, url, data, method);
 
-    const {message} = response.data
+    const { message } = response.data;
 
-    
-    yield put(publish_survey_success(message))
-   setTimeout(() => history.push('/surveys'), 1000)
-    }catch{
-       
-    }
+    yield put(publish_survey_success(message));
+    setTimeout(() => history.push("/surveys"), 1000);
+  } catch (err) {
+    yield put(publish_survey_failed(err));
+  }
 }
 
-function* fetch_survey({payload: {url}}){
-  
+function* fetch_survey({ payload: { url } }) {
   try {
-    const response = yield call(
-      get_survey,
-       url
-    );
+    const response = yield call(get_survey, url);
 
-    yield put(fetch_survey_success(response))
-    }catch{
-
-    }
-
+    yield put(fetch_survey_success(response));
+  } catch (err) {
+    yield put(fetch_survey_failed(err));
+  }
 }
 
 export function* watchPostingSurvey() {
   yield takeEvery(SUBMITSURVEYTOBACKEND, post_survey);
 }
 
-export function* watchFetchingSurvey(){
+export function* watchFetchingSurvey() {
   yield takeEvery(FETCHSURVEYFROMBACKEND, fetch_survey);
 }
 
 function* survey_saga() {
-    yield all([fork(watchPostingSurvey), fork(watchFetchingSurvey)]);
-  }
+  yield all([fork(watchPostingSurvey), fork(watchFetchingSurvey)]);
+}
 export default survey_saga;

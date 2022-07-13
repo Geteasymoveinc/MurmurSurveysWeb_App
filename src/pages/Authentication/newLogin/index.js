@@ -19,7 +19,7 @@ import { loginUser, google_login } from "../../../store/actions";
 //import assets
 import Google from "../../../assets/css/common/icons/google.svg";
 import Logo from "../../../assets/css/common/icons/logo.svg";
-import Car from "../../../assets/css/common/icons/car.png";
+import Survey from "../../../assets/css/common/icons/Survey.png";
 import Eye from "../../../assets/css/common/icons/icon.svg";
 import EyeSlash from "../../../assets/css/common/icons/eye-slash.svg";
 import Vector2 from "../../../assets/css/common/icons/vector2.svg";
@@ -159,6 +159,20 @@ class Login extends React.Component {
         )}
         {(!this.props.loading || !this.props.loading2) && (
           <div className={classes.login_register}>
+            <div className={classes.log_reg_left}>
+              <img src={Survey} alt="" className={classes.log_reg_img} />
+              <div className={classes.login_layer}>
+                <img src={Logo} alt="" className={classes.white_logo} />
+
+                <Slider />
+                <p
+                  className={`${classes.footer_copyright} ${classes.mur_flex} ${classes.log_reg_footer}`}
+                >
+                  <img src={Vector2} alt="" />
+                  <span>2022, Murmur</span>
+                </p>
+              </div>
+            </div>
 
             <div className={classes.log_reg_right}>
               <div className={classes.login_section}>
