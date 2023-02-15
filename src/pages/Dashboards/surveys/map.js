@@ -5,8 +5,7 @@ import { Map, GoogleApiWrapper, Marker, Polygon, InfoWindow } from "google-maps-
 import googleMapStyles from "../../../assets/google/google-styles";
 
 import Geocode from "react-geocode";
-import { GOOGLE_MAP_KEY } from "../../../api";
-
+const GOOGLE_MAP_KEY = process.env.REACT_APP_GOOGLEMAPSKEY
 Geocode.setApiKey(GOOGLE_MAP_KEY);
 
 

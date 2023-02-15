@@ -3,16 +3,20 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
-
 import { Provider } from "react-redux";
-
-
 import store from "./store";
+
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(`${process.env.STRIPE_PUBLICK_KEY}`);
 
 const app = (
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+  
+        <App />
+
     </BrowserRouter>
   </Provider>
 );

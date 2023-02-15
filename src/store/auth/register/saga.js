@@ -41,7 +41,12 @@ try{
       //"http://localhost:4000/api/v1/users/signup",
       registered_user
     );
-  
+  if(response.status === 204){
+    console.log(response, 1)
+    yield put(registerUserError(response.message))
+    return
+  }
+    
     yield put(registerUserSuccessfull(response));
     sessionStorage.setItem('authUser', email)
     history.push("/surveys");

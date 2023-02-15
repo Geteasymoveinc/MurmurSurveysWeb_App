@@ -23,7 +23,7 @@ const postRegister = (url, data) => {
       throw response.data;
     })
     .catch((err) => {
-      console.log(err);
+      
       var message;
       if (err.response && err.response.status) {
         switch (err.response.status) {
@@ -57,7 +57,7 @@ const subscribeBackend = (url, data) => {
     })
     .catch((err) => {
       let message;
-      console.log(err);
+    
       if (err.response && err.response.status) {
         switch (err.response.status) {
           case 404:
@@ -80,7 +80,7 @@ const subscribeBackend = (url, data) => {
 };
 // Login Method
 const postLogin = (url, data) => {
-  console.log(url, data);
+
   return axios
     .post(url, data)
     .then((response) => {
@@ -96,11 +96,11 @@ const postLogin = (url, data) => {
 };
 
 const queryForEmail = (url, data) => {
-  console.log(url, data);
+  
   return axios
     .post(url, data)
     .then((response) => {
-      console.log(response);
+      
       return response.data;
     })
     .catch((err) => {
@@ -125,15 +125,7 @@ const postForgetPwd = (url, data) => {
 };
 
 const post_surveys = (url, data, method) => {
-  console.log(url, data, method);
-  const options = {
-    method,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json;charset=UTF-8",
-    },
-    body: data,
-  };
+
   return axios({
     url,
     data,
@@ -150,29 +142,43 @@ const get_survey = (url) => {
     .get(url)
     .then((response) => {
       const { survey } = response.data;
-      console.log(survey);
+    console.log("response",survey)
       const {
         survey_questions,
         survey_audience_number,
         survey_earnings,
+        survey_budget,
         survey_title,
         survey_caption,
         target_audience,
         survey_active,
+        survey_specific,
+        country,
         survey_image,
         analytics,
+        paid,
+        stripe,
+        _id
       } = survey;
+
       return {
         survey_questions,
         survey_audience_number,
         survey_earnings,
+        survey_budget,
         survey_title,
         survey_caption,
         target_audience,
         survey_image,
         survey_active,
+        survey_specific,
+        country,
         analytics,
+        paid,
+        stripe,
+        _id
       };
+  
     })
     .catch((err) => {
       throw new Error("something went wrong");

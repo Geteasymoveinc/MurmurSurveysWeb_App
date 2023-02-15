@@ -45,7 +45,7 @@ class HeadSearch extends React.Component{
     render(){
         return(
             <div className={classes.head_search}>
-            <h1 className={classes.dash_h1}>Analytics</h1>
+            <h1 className={classes.dash_h1}>{this.props.page}</h1>
             <form onSubmit={this.submitLocationToZoomIn} >
               <div
                 className={`${classes.dash_relative} ${classes.search_box}`}

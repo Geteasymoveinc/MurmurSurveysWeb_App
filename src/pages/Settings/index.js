@@ -13,12 +13,9 @@ import Eye from "../../assets/css/common/icons/icon.svg";
 import EyeSlash from "../../assets/css/common/icons/eye-slash.svg";
 import Phone from "../../assets/css/Authentication/Register/mobile.svg";
 import Building from "../../assets/css/Settings/building.svg";
-import Car from "../../assets/css/Settings/car.svg";
 import classes from "../../assets/css/Settings/settings.module.css";
 
 import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
-
-import Modal from "./settingsModal";
 
 import { Upload } from "antd";
 import HeadSearch from "../../components/CommonForBoth/Headsearch";
@@ -57,17 +54,7 @@ class Settings extends Component {
       profile_photo: "",
       loading: false,
       wrong_credentials: [],
-      user_billing: {
-        _id: "",
-        hasBilling: false,
-        hasSubscription: false,
-        billing: {
-          billing_id: "",
-          billing_package: "",
-          billing_price: 0,
-          billing_status: "",
-        },
-      },
+    
     };
     this.toggleEye = this.toggleEye.bind(this);
   }
@@ -104,83 +91,8 @@ class Settings extends Component {
     this.setState({ ...this.state, [name]: value });
   };
 
-  //update billing
-  updateBilling = (billing, amount) => {
-    const { hasBilling, billing: bill } = this.state.user_billing;
-    const { billing_id: id } = bill;
 
-    console.log(billing, amount);
-    this.setState({ ...this.state, loading: true });
-    let url = "";
 
-    if (hasBilling) {
-      url = `https://backendapp.murmurcars.com/api/v1/billing/update-active-billing/${this.state.stng_id}`;
-    } else {
-      url = `https://backendapp.murmurcars.com/api/v1/billing/create-billing`;
-    }
-    axios({
-      url: url,
-      method: hasBilling ? "PUT" : "POST",
-
-      data: {
-        amount,
-        invoice_package: billing,
-        user: !hasBilling ? this.state.stng_id : null,
-        id: hasBilling ? id : null,
-      },
-    })
-      .then((res) => {
-        this.setState({
-          ...this.state,
-          loading: false,
-          updateModal: false,
-          user_billing: {
-            hasBilling: true,
-            hasSubscription: true,
-            billing: {
-              billing_package: billing,
-              billing_id: id,
-              billing_price: amount,
-              billing_status: "Pending",
-            },
-          },
-        });
-      })
-      .catch((err) => {
-        this.setState({ ...this.state, loading: false, updateModal: false });
-      });
-  };
-  //cansel billing
-  canselBilling = () => {
-    const { billing } = this.state.user_billing;
-    const { billing_id: id } = billing;
-    this.setState({ ...this.state, loading: true });
-    axios({
-      url: `https://backendapp.murmurcars.com/api/v1/billing/delete-active-billing/${this.state.stng_id}`,
-      method: "DELETE",
-      data: {
-        id,
-      },
-    })
-      .then((res) => {
-        console.log(res);
-        //window.location.reload();
-        this.setState({
-          ...this.state,
-          loading: false,
-          canselModal: false,
-          loading: false,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          ...this.state,
-          loading: false,
-          canselModal: false,
-          loading: false,
-        });
-      });
-  };
 
   submitUpdateSettings = (event) => {
     event.preventDefault();
@@ -264,28 +176,6 @@ class Settings extends Component {
       .then((res) => {
         const data = res.resp;
 
-        axios
-          .get(
-            `https://backendapp.murmurcars.com/api/v1/billing/user/${data._id}`
-          )
-          .then((user) => {
-            let hasBilling = false;
-            if (user.data.status !== 204) {
-              const user_billing = this.state.user_billing;
-              const billing_state = user_billing.billing;
-              let hasSubscription = false;
-              hasBilling = true;
-
-              const billing = user.data.billing;
-              user_billing._id = user.data._id;
-
-              if (billing.length) {
-                hasSubscription = true;
-                billing_state.billing_package = billing[0].invoice_package;
-                billing_state.billing_price = billing[0].amount;
-                billing_state.billing_id = billing[0]._id;
-                billing_state.billing_status = billing[0].invoice_status;
-              }
 
               this.setState({
                 ...this.state,
@@ -306,48 +196,9 @@ class Settings extends Component {
                       "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
                     )[1]
                   : null,
-                user_billing: {
-                  ...user_billing,
-                  hasBilling,
-                  hasSubscription,
-                  billing: {
-                    ...billing_state,
-                  },
-                },
-              });
-            } else {
-              this.setState({
-                ...this.state,
-                stng_id: data._id,
-                stng_company: data.company,
-                stng_phone: data.phone_number,
-                stng_advertise_options: data.advertise_options,
-                stng_subscribedToMurmurNewsettler:
-                  data.subscribedToMurmurNewsettler,
-                stng_fullName: data.fullName,
-                stng_address: data.companyAddress,
-                stng_city: data.city,
-                stng_state: data.state,
-                subscription_status: data.subscription_status,
-                loading: false,
-                profile_photo: data.profilePhoto
-                  ? data.profilePhoto.split(
-                      "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
-                    )[1]
-                  : null,
-                user_billing: {
-                  ...this.state.user_billing,
-                  hasBilling: false,
-                },
-              });
-            }
-          })
-          .catch((err) =>
-            this.setState({
-              ...this.state,
-              loading: false,
-            })
-          );
+             
+              })
+            
       })
       .catch((err) =>
         this.setState({
@@ -358,8 +209,8 @@ class Settings extends Component {
   }
 
   render() {
-    const { user_billing, wrong_credentials } = this.state;
-    const { hasBilling, hasSubscription } = user_billing;
+    const { wrong_credentials, loading } = this.state;
+
     let email,
       password = false;
 
@@ -372,9 +223,12 @@ class Settings extends Component {
         }
       }
     }
+
+
+  
     return (
       <React.Fragment>
-        {this.state.loading && (
+        {loading && (
           <div id="preloader">
             <div id="status">
               <div className="spinner-chase">
@@ -388,9 +242,9 @@ class Settings extends Component {
             </div>
           </div>
         )}
-        {!this.state.loading && (
+        {!loading && (
           <div className={classes.dash_right}>
-            <HeadSearch />
+            <HeadSearch page={'Settings'}/>
             {/*<!-- settings block -->*/}
             <div className={classes.setting_block}>
               <div className={classes.setting_left}>
@@ -741,58 +595,6 @@ class Settings extends Component {
                   </div>
                 </form>
               </div>
-              <div className={classes.setting_right}>
-                <h4 className={classes.subc_plan}>Subscription Plan</h4>
-                <div
-                  className={`${
-                    (!hasSubscription || !hasSubscription) &&
-                    classes.subc_block_no_billing
-                  } ${classes.subc_block}`}
-                >
-                  {hasSubscription && (
-                    <div className={classes.subcrb_top}>
-                      <div className={classes.ads_subtype}>
-                        <p>{`${user_billing.billing.billing_package} Package`}</p>
-                        <span>30 Days remaining</span>
-                        <span>Type {this.state.stng_advertise_options}</span>
-                        <span>
-                          Status{" "}
-                          {this.state.user_billing.billing.billing_status}
-                        </span>
-                      </div>
-                      <p className={classes.subc_price}>
-                        {user_billing.billing.billing_price}$<span>/month</span>
-                      </p>
-                    </div>
-                  )}
-                  <div className={classes.subc_flex}>
-                    <button
-                      className={classes.subc_upgrade_plan}
-                      onClick={() => this.openModal("updateModal")}
-                    >
-                      {`${hasBilling ? "Upgrade plan" : "Create plan"}`}
-                    </button>
-                    {hasSubscription && (
-                      <button
-                        type="button"
-                        className={classes.subc_cancel}
-                        onClick={() => this.openModal("canselModal")}
-                      >
-                        Cancel plan
-                      </button>
-                    )}
-                  </div>
-                  <img src={Car} alt="" className={classes.subc_car} />
-                </div>
-              </div>
-              <Modal
-                updateModal={this.state.updateModal}
-                canselModal={this.state.canselModal}
-                toggleModal={this.toggleModal}
-                selectUpdatePackage={this.updateBilling}
-                canselBilling={this.canselBilling}
-                billing={this.state.user_billing}
-              />
             </div>
           </div>
         )}

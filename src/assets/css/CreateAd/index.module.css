@@ -206,6 +206,8 @@
 .cads_check label {
   position: relative;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .cads_check label:before{
   content:'';
@@ -220,12 +222,13 @@
   border-radius: 3px;
   position: relative;
   top:-1px;
+  height: 20px;
 } 
 .cads_check input:checked + label:after{
   content: '';
   display: block;
   position: absolute;
-  top: 2px;
+
   left: 8px;
   width: 5px;
   height: 8px;
@@ -301,6 +304,7 @@
   background:#F3FCCF;
   color:#54920B;
 }
+
 .cads_active_dot,.cads_deactive_dot{
   height:28px;
   border-radius:16px;
@@ -323,6 +327,12 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
+}
+.success{
+  color:#54920B;
+}
+.failed{
+  color: #AE1936;
 }
 .details_link{
   color: #3F2B89;
@@ -359,7 +369,7 @@
   margin-left:8px;
 }
 .cads_table table tr td:first-child{
-  width:34%;
+  width:24%;
 }
 .cads_table table tr td:nth-child(2){
   width:14%;
@@ -371,6 +381,9 @@
   width:14%;
 }
 .cads_table table tr td:nth-child(5){
+  width:10%;
+}
+.cads_table table tr td:nth-child(6){
   width:12%;
 }
 .cads_table table tr td:last-child{
@@ -443,6 +456,7 @@ input:checked + .slider:before {
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
+  justify-content: space-between;
 }
 .cads_radio_active{
   margin-left:16px;
@@ -496,3 +510,5 @@ margin:0;
   margin-bottom:0;
   position: relative;
 }
+
+

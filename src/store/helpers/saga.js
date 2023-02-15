@@ -21,11 +21,11 @@ function* loginUser({ payload: { profile, history } }) {
       }
     );
     const data = response.resp;
-
+    console.log('from backend', data)
     if(data.status!==204){
     sessionStorage.setItem("authUser", data.email);
     const image = data.profilePhoto
-    console.log(image)
+    
     if(image){
       sessionStorage.setItem("profileImage", image);
     }else{
@@ -42,7 +42,9 @@ function* loginUser({ payload: { profile, history } }) {
 
     history.push("/dashboard");
     }else{
+    
       history.push('/register')
+      yield put(google_failed());
     }
   } catch (error) {
     yield put(google_failed(error));

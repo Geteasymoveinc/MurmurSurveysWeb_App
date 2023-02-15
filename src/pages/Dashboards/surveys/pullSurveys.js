@@ -12,83 +12,59 @@ class PullSurveys extends Component {
     super(props);
     this.state = {
       loading: true,
-      pulledSurveys: {
-        hasSurveys: false,
-        surveys: [],
-      },
-      surveys: [
-        {
-          "survey-1": true,
-          toggled: false,
-          id: "1111",
-          checked: false,
-        },
-      ],
+
+      surveys: [],
+
+      multiple_remove: false,
       multiple: false,
-      checked: false,
     };
   }
 
   toggleDeleteSurvey = (id) => {
-    axios.delete(
-      `https://backendapp.murmurcars.com/api/v1/surveys/survey/delete-survey/${id}`
-    )
-    .then(() => {
-      window.location.reload();
-      this.setState({ ...this.state, loading: false });
-    })
-    .catch(err => {
-      this.setState({ ...this.state, loading: false });
-    })
+    axios
+      .delete(
+        `https://backendapp.murmurcars.com/api/v1/surveys/survey/delete-survey/${id}`
+      )
+      .then(() => {
+        window.location.reload();
+        this.setState({ ...this.state, loading: false });
+      })
+      .catch((err) => {
+        this.setState({ ...this.state, loading: false });
+      });
   };
   componentDidMount() {
     const user_id = this.props.user_id;
-    let hasSurveys = false;
+
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-admin-surveys/${user_id}`
+        `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-surveys/${user_id}`
       )
       .then((response) => {
         const { surveys: surveys_data } = response.data;
-      
-        const surveys = [];
 
-        for (let i = 0; i < surveys_data.length; i++) {
-          const name = `survey-${i + 1}`;
-          console.log(surveys_data[i])
-          hasSurveys = true;
-          const survey = {
-            [name]: surveys_data[i].survey_active,
-            toggled: false,
-            id: surveys_data[i].survey_id,
-            checked: false,
-          };
-          surveys.push(survey);
+        for (let survey of surveys_data) {
+          survey.checked = false;
         }
- 
+
         this.setState({
           ...this.state,
           loading: false,
-          pulledSurveys: {
-            hasSurveys,
-            surveys: surveys_data,
-          },
-          surveys,
+
+          surveys: surveys_data,
         });
       })
       .catch((err) => {
         this.setState({
           ...this.state,
           loading: false,
-          pulledSurveys: {
-            hasSurveys,
-            surveys: [],
-          },
+
+          surveys: [],
         });
       });
   }
 
-  changeSurveyStatus(id) {
+  /*changeSurveyStatus(id) {
     const target = id;
     const surveys = this.state.surveys;
     let count = 0;
@@ -123,177 +99,158 @@ class PullSurveys extends Component {
       surveys,
       multiple,
     });
-  }
+  }*/
   checkSurvey = (event) => {
     const id = event.target.id;
-    const surveys = this.state.surveys;
+    const checked = event.target.checked;
+    const surveys = [...this.state.surveys];
+    let multiple = false;
+    let count = 0;
+    if (checked) {
+      count++;
+    }
+    console.log(checked);
+    console.log(id);
     for (let i = 0; i < surveys.length; i++) {
-      const keys = Object.keys(surveys[i]);
+      console.log(surveys[i]._id);
+      if (surveys[i]._id === id) {
+        surveys[i].checked = checked;
+      }
 
-      if (keys[0] === id) {
-        surveys[i].toggled = !surveys[i].toggled;
-        surveys[i].checked = !surveys[i].checked;
+      if (surveys[i]._id !== id && surveys[i].checked) {
+        count++;
       }
     }
-    this.setState({
-      ...this.state,
+    if (count > 1) {
+      multiple = true;
+    }
+    this.setState((state) => ({
+      ...state,
       surveys,
-    });
+      multiple_remove: multiple,
+    }));
   };
 
-  checkAllSurveys = () => {
-    const campaigns = this.state.pulledSurveys.surveys.length;
-    const surveys = this.state.surveys;
+  checkAllSurveys = (e) => {
+    const surveys = [...this.state.surveys];
+    const checked = e.target.checked;
 
-    for (let i = 0; i < campaigns; i++) {
-      if (this.state.checked === true) {
-        surveys[i].toggled = false;
-        surveys[i].checked = false;
-
-        this.setState({ checked: false, surveys });
-      } else {
-        surveys[i].toggled = true;
-        surveys[i].checked = true;
-        this.setState({ checked: true, surveys });
-      }
+    for (let i = 0; i < surveys.length; i++) {
+      surveys[i].checked = checked;
     }
+
+    this.setState((state) => ({
+      ...state,
+      surveys,
+      multiple: checked,
+      multiple_remove: checked,
+    }));
   };
 
   handleSurveys = () => {
-    const { multiple } = this.state;
+    const { multiple, multiple_remove } = this.state;
     let murmurCampaigns = [];
 
-    if (this.state.pulledSurveys.hasSurveys) {
-      {
-        this.state.pulledSurveys.surveys.map((survey, i) => {
-          murmurCampaigns.push(
-            <tr key={i}>
-              <td className={classes.cads_td}>
-                <div className={classes.cads_flex_th}>
-                  <div className={classes.cads_check}>
-                    <input
-                      type="checkbox"
-                      id={`survey-${i + 1}`}
-                      checked={
-                        (this.state.checked ||
-                          (this.state.pulledSurveys.hasSurveys &&
-                            this.state.surveys[i].checked)) &&
-                        this.state.pulledSurveys.hasSurveys &&
-                        this.state.surveys[i].checked
-                      }
-                      onChange={this.checkSurvey}
-                    />
-                    <label htmlFor={`survey-${i + 1}`}>
-                      {survey.survey_title}
-                    </label>
-                  </div>
-                  <div className={`${classes.cads_radio_active}`}>
-                    {!this.state.surveys[i]["survey-" + (i + 1)] && !multiple && (
-                      <button
-                        type="button"
-                        className={`${classes.check_remove}`}
-                        onClick={() => this.toggleDeleteSurvey(survey.survey_id)}
-                      >
-                        <img src={Trash} alt="" />
-                      </button>
-                    )}
-                    <label
-                      className={classes.switch}
-                      htmlFor={`checkbox${i + 1}`}
-                    >
-                      <input
-                        type="checkbox"
-                        id={`checkbox${i + 1}`}
-                        name={`survey-${i + 1}`}
-                        checked={this.state.surveys[i]["survey-" + (i + 1)]}
-                        onChange={() => this.changeSurveyStatus(survey.survey_id)}
-                      />
-                      <div
-                        className={`${classes.slider} ${classes.round}`}
-                      ></div>
-                    </label>
-                  </div>
-                </div>
-              </td>
-              <td className={classes.cads_td}>
-                <span
-                  className={`${
-                    this.state.surveys[i]["survey-" + (i + 1)]
-                      ? classes.cads_active_dot
-                      : classes.cads_deactive_dot
-                  }`}
-                >
-                  <span className={classes.cads_dot}></span>{" "}
-                  {`${
-                    this.state.surveys[i]["survey-" + (i + 1)]
-                      ? "Active"
-                      : "Deactive"
-                  }`}
+    this.state.surveys.map((survey, i) => {
+      murmurCampaigns.push(
+        <tr key={i}>
+          <td className={classes.cads_td}>
+            <div className={classes.cads_flex_th}>
+              <div className={classes.cads_check}>
+                <input
+                  type="checkbox"
+                  id={survey._id}
+                  checked={(multiple && survey.checked) || survey.checked}
+                  onChange={this.checkSurvey}
+                />
+                <label htmlFor={survey._id}>
+                  <span className={classes.td_data}>{survey.survey_title}</span>
+                </label>
+              </div>
+              <div className={`${classes.cads_radio_active}`}>
+                {survey.checked && !multiple_remove ? (
+                  <button
+                    type="button"
+                    className={`${classes.check_remove}`}
+                    onClick={() => this.toggleDeleteSurvey(survey.survey_id)}
+                  >
+                    <img src={Trash} alt="" />
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          </td>
+          <td className={classes.cads_td}>
+            <span
+              className={`${
+                survey.survey_active
+                  ? classes.cads_active_dot
+                  : classes.cads_deactive_dot
+              }`}
+            >
+              <span className={classes.cads_dot}></span>{" "}
+              {`${survey.survey_active ? "Active" : "Deactive"}`}
+            </span>
+          </td>
+          <td className={classes.cads_td}>
+            <span className={classes.td_data}>
+              {" "}
+              {survey.survey_audience_count}
+            </span>
+          </td>
+          <td className={classes.cads_td}>
+            <span className={classes.td_data}>{survey.survey_budget}</span>
+          </td>
+          <td className={classes.cads_td}>
+            <span className={classes.td_data}>{survey.survey_location}</span>
+          </td>
+          {/*<td className={classes.cads_td}>
+                <span className={`${classes.td_data} ${survey.paid ? classes.success : classes.failed}`}>
+                  {survey.paid ? "Paid" : 'Not Paid'}
                 </span>
-              </td>
-              <td className={classes.cads_td}>
-                <span className={classes.td_data}>
-                  {" "}
-                  {survey.survey_audience_count}
-                </span>
-              </td>
-              <td className={classes.cads_td}>
-                <span className={classes.td_data}>{survey.survey_price}</span>
-              </td>
-              <td className={classes.cads_td}>
-                <span className={classes.td_data}>
-                  {survey.survey_location}
-                </span>
-              </td>
-              <td className={classes.cads_td}>
-                <Link
-                  to={`/surveys/create-survey?survey_id=${survey.survey_id}`}
-                  className={classes.details_link}
-                  onClick={() =>
-                    this.props.toggleToEditAndViewMode()
-                  }
-                >
-                  Details
-                  <img
-                    src={ArrowRight}
-                    alt=""
-                    className={classes.details_img}
-                  />
-                </Link>
-              </td>
-            </tr>
-          );
-        });
-      }
-    }
+                </td>*/}
+          <td className={classes.cads_td}>
+            <Link
+              to={`/surveys/update-survey?survey_id=${survey.survey_id}`}
+              className={classes.details_link}
+              onClick={() => this.props.toggleToEditAndViewMode()}
+            >
+              Details
+              <img src={ArrowRight} alt="" className={classes.details_img} />
+            </Link>
+          </td>
+        </tr>
+      );
+    });
 
     return murmurCampaigns;
   };
 
-
   toggleDeleteMultipleSurveys = () => {
-    const surveys = this.state.surveys
-    const list_of_ids = [] 
+    const surveys = this.state.surveys;
+    const list_of_ids = [];
     this.setState({ ...this.state, loading: true });
-    for(let i=0;i<surveys.length;i++){
-        const keys = Object.keys(surveys[i])
-        if(!surveys[i][keys[0]]){
-            list_of_ids.push(surveys[i].id)
-        }
+    for (let survey of surveys) {
+      if (survey.checked) {
+        list_of_ids.push(survey._id);
+      }
     }
-  
-    axios.delete(`https://backendapp.murmurcars.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`)
-    .then(() => {
-      window.location.reload();
-      this.setState({ ...this.state, loading: false });
-    })
-    .catch(err => {
-      this.setState({ ...this.state, loading: false });
-    })
-  }
+
+    axios
+      .delete(
+        `https://backendapp.murmurcars.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`
+      )
+      .then(() => {
+        window.location.reload();
+        this.setState({ ...this.state, loading: false });
+      })
+      .catch((err) => {
+        this.setState({ ...this.state, loading: false });
+      });
+  };
   render() {
-    const { multiple } = this.state;
-  
+    const { multiple, multiple_remove } = this.state;
+    console.log(this.state);
     return (
       <Fragment>
         {this.state.loading && (
@@ -321,12 +278,12 @@ class PullSurveys extends Component {
                   >
                     <input
                       type="checkbox"
-                      id="invoice-txt"
+                      id="survey"
                       onChange={this.checkAllSurveys}
-                      checked={this.state.checked}
+                      checked={multiple}
                     />
-                    <label htmlFor="invoice-txt">Name</label>
-                    {multiple && (
+                    <label htmlFor="survey">Name</label>
+                    {multiple_remove && (
                       <button
                         type="button"
                         className={`${classes.check_remove} ${classes.multiple_remove}`}
@@ -349,6 +306,9 @@ class PullSurveys extends Component {
                 <th className={classes.cads_th}>
                   <span>Area</span>
                 </th>
+                {/*} <th className={classes.cads_th}>
+                  <span>Payment</span>
+                    </th>*/}
                 <th></th>
               </tr>
             </thead>

@@ -14,9 +14,7 @@ import Preview from "./preview";
 
 import Profile from "../../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 
-
 import {
-  
   publish_survey,
   fetch_survey,
   fetch_map_position,
@@ -24,20 +22,20 @@ import {
 import { connect } from "react-redux";
 import { queryForEmail } from "../../../helpers/fakebackend_helper";
 
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import Geocode from "react-geocode";
 
-Geocode.setApiKey("AIzaSyBIz-CXJ0CDRPjUrNpXKi67fbl-0Fbedio");
+Geocode.setApiKey(`${process.env.REACT_APP_GOOGLEMAPSKEY}`);
 
 class Survey extends Component {
   constructor(props) {
     super(props);
     this.state = {
-     loading:true,
+      loading: true,
       first: true,
       survey_id: "",
-      user_id: "",
+      publish: false,
       hasSurvey: false,
       email: sessionStorage.getItem("authUser"),
       menu: {
@@ -45,7 +43,6 @@ class Survey extends Component {
         preview: false,
       },
     };
-    this.timeout = null;
   }
   togleMenuItem = (menu) => {
     this.setState({
@@ -68,154 +65,150 @@ class Survey extends Component {
 
   componentWillUnmount() {
     document.body.classList.remove("grey-background");
-    clearTimeout(this.timeout);
   }
   componentDidMount() {
-    const search = this.props.history.location.search;
-    let survey_id = "";
-    if (search) {
-      survey_id = search.split("=")[1];
-    }
-    document.body.classList.add("grey-background");
-    let loading = this.state.loading
-    if (survey_id.length) {
+    const url = this.props.location.search; //search property of history props
+    const survey_id = new URLSearchParams(url).get("survey_id"); //extracting id
 
-      if(survey_id.length){
-        loading=this.props.loading
-      }
+    document.body.classList.add("grey-background");
+
+    if (survey_id) {
       this.setState({
         ...this.state,
         hasSurvey: true,
       });
 
-      queryForEmail(
-        `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
-        {
-          email: this.state.email,
-        }
-      )
-        .then((user) => {
-          const { _id } = user.resp;
-          this.props.fetch_survey(
-            `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-admin-survey?survey_id=${survey_id}`
-          );
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const lat = position.coords.latitude;
-              const lng = position.coords.longitude;
-              this.setState({
-                ...this.state,
-                survey_id,
-                user_id: _id
-              });
-
-              this.handleReverseGeocode({ lat, lng });
-              //this.handleLocationChange();
-            },
-            (err) => {
-              this.setState({
-                ...this.state,
-                survey_id,
-                user_id: _id,
-              });
-            }
-          );
-        })
-        .catch((err) => {
+      this.props.fetch_survey(
+        `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`
+      );
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
           this.setState({
+            ...this.state,
             survey_id,
+            loading: false,
           });
-        });
-    } else {
-      queryForEmail(
-        `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
-        {
-          email: this.state.email,
+          const { country, target_audience } = this.props.survey;
+          //this.handleReverseGeocode({ lat, lng });
+          this.handleGeocode(country, target_audience.location);
+          //this.handleLocationChange();
+        },
+        (err) => {
+          const { country, target_audience } = this.props.survey;
+          this.handleGeocode(country, target_audience.location);
+          this.setState({
+            ...this.state,
+            survey_id,
+            loading: false,
+          });
         }
-      ).then((user) => {
-        const { _id } = user.resp;
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            this.setState({
-              ...this.state,
-              survey_id,
-              user_id: _id,
-              loading:false
-            });
+      );
+    } else {
+      const url = this.props.location.search; //search property of history props
+      const publish =
+        new URLSearchParams(url).get("publish") === "true" ? true : false;
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          this.setState({
+            ...this.state,
+            survey_id,
+            loading: false,
+            publish,
+          });
 
-            this.handleReverseGeocode({ lat, lng });
-            //this.handleLocationChange();
-          },
-          (err) => {
-            this.setState({
-              ...this.state,
-              user_id: _id,
-              loading:false
-            });
-          }
-        );
-      });
+          this.handleReverseGeocode({ lat, lng });
+        },
+        (err) => {
+          this.handleReverseGeocode({ lat: 41.8781, lng: -87.6298 });
+          this.setState({
+            ...this.state,
+            loading: false,
+          });
+        }
+      );
     }
   }
-
-  componentDidUpdate() {
- if (this.props.loading !== this.state.loading ) {
-      this.setState({
-        ...this.state,
-        loading: this.props.loading,
-      });
-    }
-  }
-
- 
 
   //publish or update
-  submitNewSurvey = (event) => {
+  submitNewSurvey = (event, stripe, no_stripe_surveys, user_id) => {
     event.preventDefault();
-    let url = "";
+
     const {
       survey_questions,
       survey_title,
       survey_earnings,
+      survey_budget,
       target_audience,
       survey_audience_number,
       survey_image,
       survey_active,
       survey_caption,
-    } = this.props;
-    const { user_id, survey_id } = this.state;
+      country,
+      survey_specific,
+    } = this.props.survey;
+    const { survey_id } = this.state;
     const formData = new FormData();
     formData.append("survey_title", survey_title);
     formData.append("survey_earnings", survey_earnings);
+    formData.append("survey_budget", survey_budget);
     formData.append("target_audience", JSON.stringify(target_audience));
     formData.append("survey_audience_count", survey_audience_number);
-    formData.append("photo", survey_image.image_name);
+    formData.append("photo", JSON.stringify(survey_image.image_name));
     formData.append("survey_active", JSON.stringify(survey_active));
     formData.append("survey_caption", survey_caption);
-    //formData.append("file", survey_image.image_file);
-   
-    if(survey_questions.length){
-    for (let i = 0; i < survey_questions.length; i++) {
-     formData.append("survey_questions", JSON.stringify(survey_questions[i]));
-    }}else{
-      formData.append('survey_questions',  JSON.stringify(survey_questions))
-    }
-  
-    let method = "POST";
+    formData.append("file", survey_image.image_file);
+    formData.append("survey_specific", JSON.stringify(survey_specific));
+    formData.append("country", country);
+    formData.append("no_stripe_surveys", JSON.stringify(no_stripe_surveys));
 
-    if (this.state.survey_id.length) {
-      url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}`;
-      method = "PUT";
+    if (survey_questions.length) {
+      for (let i = 0; i < survey_questions.length; i++) {
+        formData.append(
+          "survey_questions",
+          JSON.stringify(survey_questions[i])
+        );
+      }
     } else {
-      url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/create/${user_id}`;
+      formData.append("survey_questions", JSON.stringify(survey_questions));
+    }
+
+    const backend = {};
+
+    if (survey_id) {
+      backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}`;
+      backend.method = "PUT";
+      backend.update = true;
+    } else {
+      //backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/publish-survey/${user_id}?withoutStripeCheckout=${stripe}`;
+      backend.url = `http://localhost:4000/api/v1/surveys/survey/publish-survey/${user_id}?withoutStripeCheckout=${!stripe}`;
+      backend.method = "POST";
+      backend.update = false;
+      backend.stripe = stripe;
     }
     this.props.publish_survey({
-      url,
+      backend,
       data: formData,
       history: this.props.history,
-      method,
+    });
+  };
+  checkout = (survey_id) => {
+    const { survey_audience_number, survey_earnings } = this.props.survey;
+
+    const backend = {};
+    backend.url = `http://localhost:4000/api/v1/surveys/survey/handle-checkout/${survey_id}`;
+    backend.method = "POST";
+    backend.stripe = true;
+    this.props.publish_survey({
+      backend,
+      data: {
+        survey_audience_count: survey_audience_number,
+        survey_earnings: survey_earnings,
+      },
+      history: this.props.history,
     });
   };
 
@@ -224,10 +217,9 @@ class Survey extends Component {
   handleReverseGeocode = ({ lat, lng }) => {
     Geocode.fromLatLng(lat, lng).then(
       (response) => {
-        console.log(response);
-        const address = response.results[5].formatted_address;
-
-        this.props.fetch_map_position(address, {
+        const address = response.plus_code.compound_code;
+        const country = address.split(",").at(-1);
+        this.props.fetch_map_position(address, country, {
           lat,
           lng,
         });
@@ -239,15 +231,35 @@ class Survey extends Component {
       }
     );
   };
+  handleGeocode = (country, location) => {
+
+    Geocode.fromAddress(country + " " + location)
+      .then((response) => {
+        const { lat, lng } = response.results[0].geometry.location;
+        const center = { lat, lng };
+        console.log(center);
+        this.handleReverseGeocode(center);
+      })
+      .catch((err) => console.log(err));
+  };
+
   render() {
-    const { menu, loading } = this.state;
+    const { menu, loading, survey_id, publish } = this.state;
     const { menu_item, preview: preview_mode } = menu;
-   
-    const {analytics} = this.props
-  
+
+    const { survey, payment, user_id } = this.props;
+
+    const { analytics } = survey;
+    console.log(this.props);
+    let stripe = payment.stripe;
+
+    if (survey_id) {
+      stripe = survey.stripe;
+    }
+
     return (
       <Fragment>
-        {loading && (
+        {survey.loading || loading ? (
           <div id="status">
             <div className="spinner-chase">
               <div className="chase-dot"></div>
@@ -258,8 +270,7 @@ class Survey extends Component {
               <div className="chase-dot"></div>
             </div>
           </div>
-        )}
-        {!loading && (
+        ) : (
           <div className={classes.dash_right}>
             <header className={classes.header}>
               <div className={classes.mur_contain}>
@@ -267,11 +278,26 @@ class Survey extends Component {
                   <img src={Logo} alt="logo" />
                 </a>
               </div>
-              <div className={`${classes.menu_self_flex} ${ analytics.length? classes.menu_self_flex_hasSurvey: null}`}>
-                <div className={`${classes.menu_flex} ${analytics.length ? classes.menu_flex_hasSurvey: null}`}>
+              <div
+                className={`${classes.menu_self_flex} ${
+                  survey_id ? classes.update : null
+                }`}
+              >
+                <div
+                  className={`${classes.menu_flex} ${
+                    survey_id ? classes.update : null
+                  }`}
+                >
                   <div className={classes.button_containers}>
                     {" "}
-                    <button onClick={() => this.togleMenuItem("questions")}>
+                    <button
+                      onClick={() => this.togleMenuItem("questions")}
+                      className={`${classes.navbar_btn} ${
+                        menu_item === "questions"
+                          ? classes.navbar_btn_active
+                          : null
+                      }`}
+                    >
                       Questions
                     </button>
                     <span
@@ -281,9 +307,16 @@ class Survey extends Component {
                     ></span>
                   </div>
 
-                  {analytics.length > 0 && (
+                  {survey_id ? (
                     <div className={classes.button_containers}>
-                      <button onClick={() => this.togleMenuItem("analytics")}>
+                      <button
+                        onClick={() => this.togleMenuItem("analytics")}
+                        className={`${classes.navbar_btn} ${
+                          menu_item === "analytics"
+                            ? classes.navbar_btn_active
+                            : null
+                        }`}
+                      >
                         Analytics
                       </button>
 
@@ -295,10 +328,18 @@ class Survey extends Component {
                         }`}
                       ></span>
                     </div>
-                  )}
-                  {analytics.length >0  && (
+                  ) : null}
+
+                  {survey_id ? (
                     <div className={classes.button_containers}>
-                      <button onClick={() => this.togleMenuItem("answers")}>
+                      <button
+                        onClick={() => this.togleMenuItem("answers")}
+                        className={`${classes.navbar_btn} ${
+                          menu_item === "answers"
+                            ? classes.navbar_btn_active
+                            : null
+                        }`}
+                      >
                         Answers
                       </button>
                       <span
@@ -307,9 +348,17 @@ class Survey extends Component {
                         }`}
                       ></span>
                     </div>
-                  )}
+                  ) : null}
+
                   <div className={classes.button_containers}>
-                    <button onClick={() => this.togleMenuItem("settings")}>
+                    <button
+                      onClick={() => this.togleMenuItem("settings")}
+                      className={`${classes.navbar_btn} ${
+                        menu_item === "settings"
+                          ? classes.navbar_btn_active
+                          : null
+                      }`}
+                    >
                       Settings
                     </button>
                     <span
@@ -321,7 +370,11 @@ class Survey extends Component {
                 </div>
               </div>
               <div className={classes.dash_relative}>
-                <div className={classes.search_box_flex}>
+                <div
+                  className={`${classes.search_box_flex} ${
+                    stripe && survey_id ? classes.checkout : null
+                  }`}
+                >
                   <button className={classes.pass_eye}>
                     <img
                       src={`${preview_mode ? Eye_Slash : Eye}`}
@@ -329,89 +382,78 @@ class Survey extends Component {
                       onClick={this.togglePreviewMode}
                     />
                   </button>
-                  <form>
-                    <button
-                      className={classes.publish_survey}
-                      onClick={this.submitNewSurvey}
-                    >
-                      <span>{`${
-                        this.state.survey_id.length ? "Update" : "Publish"
-                      }`}</span>
+                  <form
+                    onSubmit={(e) =>
+                      this.submitNewSurvey(
+                        e,
+                        payment.stripe,
+                        payment.no_stripe_surveys,
+                        user_id
+                      )
+                    }
+                  >
+                    {stripe && survey_id ? (
+                      <button
+                        className={classes.publish_survey}
+                        onClick={() => this.checkout(survey_id)}
+                      >
+                        <span>Checkout</span>
+                      </button>
+                    ) : null}
+                    <button className={classes.publish_survey} type="submit">
+                      <span>{`${survey_id ? "Update" : "Publish"}`}</span>
                     </button>
                   </form>
                   <Profile scope={"survey"} />
                 </div>
               </div>
             </header>
-            {this.props.message && (
-              <h1 className={classes.publish_update_success}>
-                {this.props.message}
-              </h1>
-            )}
+
             {!preview_mode && menu_item === "questions" && (
               <SurveyQuestion
                 hasSurvey={this.state.hasSurvey}
-                surveys={this.props.survey_questions}
-                survey_title={this.props.survey_title}
-                survey_caption={this.props.survey_caption}
-                survey_earnings={this.props.survey_earnings}
-                survey_image={this.props.survey_image}
-                survey_audience_number={this.props.survey_audience_number}
+                surveys={survey.survey_questions}
+                survey_title={survey.survey_title}
+                survey_caption={survey.survey_caption}
+                survey_earnings={survey.survey_earnings}
+                survey_budget={survey.survey_budget}
+                survey_image={survey.survey_image}
+                survey_audience_number={survey.survey_audience_number}
+                publish={publish}
               />
             )}
             {!preview_mode && menu_item === "settings" && (
               <SurveySettings
-                survey_active={this.props.survey_active}
-                survey_location={this.props.target_audience.location}
-                survey_gender={this.props.target_audience.gender}
-                survey_age={this.props.target_audience.age}
+                survey_active={survey.survey_active}
+                survey_specific={survey.survey_specific}
+                country={survey.country}
+                survey_location={survey.target_audience.location}
+                survey_gender={survey.target_audience.gender}
+                survey_age={survey.target_audience.age}
+                paid={survey.paid}
                 handleLocationChange={this.handleLocationChange}
-                map={this.props.map}
+                map={survey.map}
               />
             )}
-            {!preview_mode && menu_item === "analytics"  && <SurveyAnalytics />}
-            {!preview_mode && menu_item === "answers" && <SurveyAnswers analytics={this.props.analytics}/>}
-            {preview_mode && <Preview surveys={this.props.survey_questions}/>}
+            {!preview_mode && menu_item === "analytics" && (
+              <SurveyAnalytics id={survey._id} />
+            )}
+            {!preview_mode && menu_item === "answers" && (
+              <SurveyAnswers
+                analytics={analytics}
+                survey_questions={survey.survey_questions}
+                id={survey._id}
+              />
+            )}
+            {preview_mode && <Preview surveys={survey.survey_questions} />}
           </div>
         )}
       </Fragment>
     );
   }
 }
-const mapPropsToState = (state) => {
-  const {
-    survey_questions,
-    survey_title,
-    survey_caption,
-    survey_earnings,
-    survey_image,
-    target_audience,
-    survey_audience_number,
-    survey_active,
-    analytics,
-    map,
-    loading,
-    message,
-  } = state.Survey;
 
-  return {
-    survey_questions,
-    survey_title,
-    survey_caption,
-    survey_earnings,
-    survey_image,
-    target_audience,
-    survey_audience_number,
-    survey_active,
-    analytics,
-    map,
-    loading,
-    message,
-  };
-};
-
-export default connect(mapPropsToState, {
-  
+export default connect(null, {
   publish_survey,
   fetch_survey,
   fetch_map_position,

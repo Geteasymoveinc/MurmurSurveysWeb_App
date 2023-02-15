@@ -30,18 +30,16 @@ function* loginUser({ payload: { user, history } }) {
           role: '2'
         }
       );
-      
-
+  
+    
       const image = response.resp.at(-1).profilePhoto;
-
-      
       sessionStorage.setItem("authUser", response.resp.at(-1).email);
       if (image) {
         sessionStorage.setItem("profileImage", image);
       }
       yield put(loginSuccess(response));
     }
-    history.push("/dashboard");
+   history.push("/dashboard");
   } catch (error) {
     if (error.status) {
       yield put(apiError(error.message));

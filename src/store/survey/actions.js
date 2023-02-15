@@ -26,9 +26,9 @@ const add_title = ({ title, caption, image }) => {
   };
 };
 
-const add_price = ({ price, amount }) => {
+const add_price = ({ price, amount, budget }) => {
   return {
-    payload: { price, amount },
+    payload: { price, amount, budget },
     type: ADDPRICE,
   };
 };
@@ -40,9 +40,9 @@ const add_settings = (settings) => {
   };
 };
 
-const publish_survey = ({url, data,  history, method }) => {
+const publish_survey = ({backend, data,  history }) => {
   return {
-    payload: { url,data, history, method },
+    payload: { backend, data,  history  },
     type: SUBMITSURVEYTOBACKEND,
   };
 };
@@ -52,6 +52,7 @@ const publish_survey_success = (message) => {
   return {
     type:SUBMITSURVEYTOBACKENDSUCCESS,
     payload: message
+
   }
 };
 const publish_survey_failed= (err) => {
@@ -82,11 +83,11 @@ const fetch_survey_failed= (err) => {
   }
 }
 
-const fetch_map_position = (address,center) => {
+const fetch_map_position = (address,country, center) => {
  
   return {
     type:FETCHINGMAPLOCATIONANDADDRESS,
-    payload: {address,center}
+    payload: {address,country, center}
   }
 }
 

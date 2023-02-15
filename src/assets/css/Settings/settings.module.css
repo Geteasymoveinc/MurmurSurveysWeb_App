@@ -17,6 +17,7 @@
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
+  padding-inline: 100px;
 }
 .dash_h1{
   color:#3F2B89;
@@ -126,14 +127,7 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: flex-start;
-  -webkit-justify-content: flex-start;
-  -ms-flex-pack: flex-start;
-  justify-content: flex-start;
-  -webkit-box-align: flex-start;
-  -webkit-align-items: flex-start;
-  -ms-flex-align: flex-start;
-  align-items: flex-start;
+justify-content: center;
 }
 .setting_left{
   width:calc(100% - 432px);
@@ -516,3 +510,4 @@ margin: 0;
   width:100%;
   padding: 50px;
 }
+

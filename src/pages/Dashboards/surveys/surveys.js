@@ -20,6 +20,8 @@ class Surveys extends Component {
     super(props);
     this.state = {
       create_edit_survey_mode: false,
+      stripe: true,
+      no_stripe_surveys: 0,
       user_id: "",
       loading: true,
     };
@@ -31,10 +33,10 @@ class Surveys extends Component {
   componentDidMount() {
     let create_edit_survey_mode = false;
     if (
-      this.props.history.location.pathname.includes("/create-survey")
+      this.props.history.location.pathname.includes("/create-survey") ||
+      this.props.history.location.pathname.includes("/update-survey")
     ) {
       create_edit_survey_mode = true;
- 
     }
     document.body.classList.add("grey-background");
     this.props.toggleSideBar(false);
@@ -43,52 +45,61 @@ class Surveys extends Component {
       `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
       {
         email: sessionStorage.getItem("authUser"),
+        role: "2",
       }
     )
       .then((user) => {
-         const {_id} = user.resp
+        const { _id, survey_payment } = user.resp;
         this.setState({
           ...this.state,
           user_id: _id,
           loading: false,
-          create_edit_survey_mode
+          create_edit_survey_mode,
+          stripe: survey_payment.no_stripe_surveys === 0 ? true : false,
+          no_stripe_surveys: survey_payment.no_stripe_surveys,
         });
       })
       .catch((err) =>
         this.setState({
           ...this.state,
           loading: false,
-         create_edit_survey_mode
+          create_edit_survey_mode,
         })
       );
   }
 
- componentDidUpdate(prevProps){
-     const current =  this.props.history.location.pathname.includes("/create-survey")
-     if(current ===false &&  this.state.create_edit_survey_mode===true){
-         window.location.reload()
-     }
- }
+  componentDidUpdate(prevProps) {
+    const current =
+      this.props.history.location.pathname.includes("/create-survey") ||
+      this.props.history.location.pathname.includes("/update-survey");
+    if (current === false && this.state.create_edit_survey_mode === true) {
+      window.location.reload();
+    }
+  }
 
   toggleToCreateSurveyMode = () => {
-    this.props.history.push("/surveys/create-survey");
+    this.props.history.push("/surveys/create-survey?publish=true");
     this.setState({
       ...this.state,
       create_edit_survey_mode: true,
     });
   };
 
-
   toggleToEditAndViewMode = () => {
-         
-          this.setState({
-            ...this.state,
-            create_edit_survey_mode: true
-          })
-  }
+    this.setState({
+      ...this.state,
+      create_edit_survey_mode: true,
+    });
+  };
 
   render() {
-    const { create_edit_survey_mode, loading, user_id } = this.state;
+    const {
+      create_edit_survey_mode,
+      loading,
+      user_id,
+      stripe,
+      no_stripe_surveys,
+    } = this.state;
     return (
       <Fragment>
         {loading && (
@@ -126,15 +137,14 @@ class Surveys extends Component {
                     <div className={classes2.cads_head_left}>
                       <h4 className={classes2.cads_h4}>Your Current Surveys</h4>
                       <p className={classes2.cads_p}>
-                        Here you can view the status of your surveys with all the
-                        necessary details
+                        Here you can view the status of your surveys with all
+                        the necessary details
                       </p>
                     </div>
                     <button
                       onClick={this.toggleToCreateSurveyMode}
                       type="button"
                       className={classes2.create_ads_btn}
-                      to={"/create-survey"}
                     >
                       Create Survey
                       <svg
@@ -162,7 +172,10 @@ class Surveys extends Component {
                       </svg>
                     </button>
                   </div>
-                  <PullSurveys toggleToEditAndViewMode={this.toggleToEditAndViewMode} user_id={user_id} />
+                  <PullSurveys
+                    toggleToEditAndViewMode={this.toggleToEditAndViewMode}
+                    user_id={user_id}
+                  />
                 </div>
               </div>
             </div>
@@ -171,7 +184,24 @@ class Surveys extends Component {
         {create_edit_survey_mode && (
           <Switch>
             <Route path="/surveys/create-survey">
-              <Survey/>
+              <Survey
+                survey={{ ...this.props.survey, loading: false }}
+                payment={{
+                  stripe,
+                  no_stripe_surveys,
+                }}
+                user_id={user_id}
+              />
+            </Route>
+            <Route path="/surveys/update-survey">
+              <Survey
+                survey={this.props.survey}
+                payment={{
+                  stripe,
+                  no_stripe_surveys,
+                }}
+                user_id={user_id}
+              />
             </Route>
           </Switch>
         )}
@@ -180,4 +210,50 @@ class Surveys extends Component {
   }
 }
 
-export default connect(null, { toggleSideBar })(withRouter(Surveys));
+const mapPropsToState = (state) => {
+  const {
+    survey_questions,
+    survey_title,
+    survey_caption,
+    survey_earnings,
+    survey_budget,
+    survey_image,
+    target_audience,
+    survey_audience_number,
+    survey_active,
+    survey_specific,
+    country,
+    analytics,
+    map,
+    loading,
+    message,
+    paid,
+    stripe,
+    _id,
+  } = state.Survey;
+
+  return {
+    survey: {
+      survey_questions,
+      survey_title,
+      survey_caption,
+      survey_earnings,
+      survey_budget,
+      survey_image,
+      target_audience,
+      survey_audience_number,
+      survey_active,
+      survey_specific,
+      country,
+      analytics,
+      map,
+      loading,
+      message,
+      paid,
+      stripe,
+      _id,
+    },
+  };
+};
+
+export default connect(mapPropsToState, { toggleSideBar })(withRouter(Surveys));

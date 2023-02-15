@@ -6,6 +6,8 @@
   "dependencies": {
     "@fullcalendar/bootstrap": "^4.3.0",
     "@fullcalendar/core": "^4.3.0",
+    "@stripe/react-stripe-js": "^1.9.0",
+    "@stripe/stripe-js": "^1.32.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^11.0.0",
     "@testing-library/user-event": "^13.5.0",
@@ -13,6 +15,7 @@
     "apexcharts": "^3.35.0",
     "axios": "^0.27.2",
     "bootstrap": "^4.4.1",
+    "caniuse-lite": "^1.0.30001451",
     "firebase": "^7.24.0",
     "google-maps-react": "^2.0.6",
     "react": "^16.14.0",

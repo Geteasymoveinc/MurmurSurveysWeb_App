@@ -1,4 +1,4 @@
-import { GOOGLE_SIGNUP, GOOGLE_LOGIN, GOOGLE_SUCCESS} from "./actionTypes";
+import { GOOGLE_SIGNUP, GOOGLE_LOGIN, GOOGLE_SUCCESS,GOOGLE_FAILED} from "./actionTypes";
 const initialState = {
   email: "",
   fullName: "",
@@ -33,6 +33,12 @@ const GoogleAuth = (state = initialState, action) => {
       };
 
       break;
+    case GOOGLE_FAILED:
+      state = {
+        ...state,
+        loading:false
+      }
+      break
   }
   return state;
 };

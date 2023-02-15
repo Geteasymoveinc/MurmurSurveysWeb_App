@@ -12,19 +12,19 @@ const items = [
   {
     text: "Advertise via Murmur",
     paragraph:
-      "Create your own ad via our digital platform and show it to the world via car-top, backpacks and online ways of advertising",
+      "Create the survey for your business by indicating specific area, demographics and age of the responders",
     id: "1",
   },
   {
     text: "Work with Us",
     paragraph:
-      "Become Murmur’s backpack carrier and customized car driver and start to earn additional income",
+      "Be ready to receive the first responses within a couple of hours",
     id: "2",
   },
   {
     text: "Improve trade industry via Murmur’s Survey Rewards App",
     paragraph:
-      "Become Murmur’s Survey taker, fill out as many surveys as you want, get rewards from each of it",
+      "Murmur Surveys Analytics are able to segment gender, age and locations of the responders of your survey for you to save the time ",
     id: "3",
   },
 ];

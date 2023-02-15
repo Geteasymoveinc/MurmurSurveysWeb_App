@@ -181,7 +181,7 @@ class Register extends React.Component {
     }
   }
   render() {
-  
+  console.log(this.props)  
     return (
       <React.Fragment>
         <div className={classes.login_register}>
@@ -200,7 +200,23 @@ class Register extends React.Component {
             </div>
           </div>
           <div className={classes.log_reg_right}>
+     
             <div className={classes.signup_section}>
+            { this.props.error ? (
+                  <Alert
+                    color="danger"
+                    className={`d-flex justify-content-between align-items-center ${classes.alert}`}
+             
+                  >
+                    <span>
+                      {`${
+                        this.props.error
+                      
+                      }`}
+                    </span>
+             
+                  </Alert>
+                ) : null}
               <h1 className={classes.signup_h1}>Signup</h1>
               <form onSubmit={this.handleValidSubmit}>
                 <div className={classes.signup_form}>

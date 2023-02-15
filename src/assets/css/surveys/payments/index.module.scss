@@ -1,0 +1,31 @@
+
+
+.main_container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  img {
+    width: 50%;
+    height: 70%;
+  }
+  
+  span {
+    font-size: 16px;
+    font-family: Montserrat;
+    color: #7356C0;
+    font-weight: 500;
+
+    &:first-of-type{
+      font-weight: 1000;
+    }
+  }
+  
+  a{
+    text-decoration: none;
+    color: #7356C0;
+    font-size: 16px;
+  }
+}
+

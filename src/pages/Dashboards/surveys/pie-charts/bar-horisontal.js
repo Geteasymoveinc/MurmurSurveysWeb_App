@@ -56,12 +56,7 @@ class BarHorisontal extends Component {
         xaxis: {
           type: "number",
           categories: [
-            "18-24",
-            "25-35",
-            "36-48",
-            "49-55",
-            "56-78",
-            "78+",
+              
           ],
           labels: {
             show: true,
