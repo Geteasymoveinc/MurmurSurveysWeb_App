@@ -31,7 +31,6 @@ function* post_survey({ payload: { backend, data, history } }) {
    yield put(publish_survey_success(message));
     backend.stripe ?  setTimeout(() =>  window.location = payment_link, 1000) : history.replace('/surveys')
   } catch (err) {
-    alert(err)
     yield put(publish_survey_failed(err));
   }
 }

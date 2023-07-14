@@ -1,0 +1,121 @@
+.modal {
+    width: 304px !important;
+    h5 {
+      width: 100%;
+  
+      .modal_header {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        button {
+          background-color: transparent;
+          border: transparent;
+          outline: none;
+        }
+        span {
+          /* Headline/Medium/H6-M */
+  
+          font-family: "Montserrat";
+          font-style: normal;
+          font-weight: 500;
+          font-size: 20px;
+          line-height: 28px;
+          /* identical to box height, or 140% */
+  
+          letter-spacing: 0.0015em;
+  
+          /* Brand Color/Purple/Purple 500 */
+  
+          color: #7356c0;
+        }
+      }
+    }
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      button {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 14px 24px;
+        gap: 10px;
+  
+        width: 108px;
+        height: 40px;
+        border-radius: 4px;
+        border: transparent;
+        outline: none;
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 20px;
+        &:first-child {
+          background: #eadffc;
+          color: #2E3A59;
+        }
+        &:last-child {
+          background: #7356c0;
+          color: #ffffff;
+          transition: all 1s;
+          &:hover {
+            background-color: #ffffff;
+            color: #7356c0;
+            border: 1px solid #7356c0;
+          }
+        }
+      }
+    }
+    .locmodal_form_country {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      position: relative;
+      margin-bottom: 25px;
+  
+      select {
+        border: 1px solid #e4e9f2;
+        border-radius: 8px;
+        background: #fff;
+        padding-left: 8px;
+        padding-right: 38px;
+        width: 100%;
+        height: 44px;
+        color: #2e3a59;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 28px;
+        transition: all 0.4s ease;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        /* Basic colors/Neutral 200 */
+  
+        background: #f7f9fc;
+        /* Basic colors/Neutral 400 */
+  
+        border: 1px solid #edf1f7;
+        border-radius: 8px;
+        font-family: "Montserrat";
+        font-style: normal;
+        font-weight: 300;
+        font-size: 14px;
+        line-height: 20px;
+        /* identical to box height, or 143% */
+  
+        letter-spacing: 0.0015em;
+  
+        /* Basic colors/Neutral 600 */
+  
+        color: #8f9bb3;
+      }
+      img {
+        position: absolute;
+        right: 5px;
+      }
+    }
+  }
+  

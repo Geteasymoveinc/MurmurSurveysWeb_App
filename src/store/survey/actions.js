@@ -10,6 +10,7 @@ import {
   FETCHSURVEYFROMBACKENDSUCCESS,
   FETCHSURVEYFROMBACKENDFAILED,
   FETCHINGMAPLOCATIONANDADDRESS,
+  UPDATEQUESTIONS,
 } from "./actionTypes";
 
 const add_survey = (surveys) => {
@@ -34,6 +35,7 @@ const add_price = ({ price, amount, budget }) => {
 };
 
 const add_settings = (settings) => {
+  
   return {
     payload: settings,
     type: ADDSETTINGS,
@@ -83,13 +85,23 @@ const fetch_survey_failed= (err) => {
   }
 }
 
-const fetch_map_position = (address,country, center) => {
- 
+
+const fetch_map_position = (address,country,city, center) => {
+
   return {
     type:FETCHINGMAPLOCATIONANDADDRESS,
-    payload: {address,country, center}
+    payload: {address,country,city, center}
   }
 }
+
+
+const updateQuestions = (question, state) => {
+  return {
+    payload: {question, state},
+    type: UPDATEQUESTIONS
+  }
+}
+
 
 
 export {
@@ -104,5 +116,5 @@ export {
   fetch_survey_success,
   fetch_survey_failed,
   fetch_map_position,
-
+  updateQuestions
 };

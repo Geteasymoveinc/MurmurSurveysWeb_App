@@ -1,0 +1,10 @@
+.ant-pagination .ant-pagination-prev .ant-pagination-item-link .anticon{
+    vertical-align: middle !important;
+}
+.ant-pagination .ant-pagination-next .anticon.anticon-right{
+    vertical-align:  middle !important;
+}
+
+.ant-pagination .ant-pagination-options{
+    display: none
+}

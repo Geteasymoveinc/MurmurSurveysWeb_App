@@ -1,0 +1,109 @@
+.stripe {
+  max-width: 50%;
+  margin: auto;
+}
+.stripe form .stripe-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+.stripe input {
+  border: 1px solid slateblue !important;
+
+  display: inline-block;
+  margin-bottom: 30px;
+
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 14px;
+  width: 100%;
+  height: 44px;
+  //gap: 8px;
+
+  /* White */
+
+  background: #ffffff;
+  /* Gray/300 */
+
+  border: 1px solid #d0d5dd;
+  /* Shadow/xs */
+
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  border-radius: 8px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  //order: 1;
+  align-self: stretch;
+  flex-grow: 0;
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+
+  /* Gray/500 */
+
+  color: #667085;
+
+  /* Inside auto layout */
+  margin-bottom: 17px;
+  outline: none;
+
+  &:last-child {
+    margin-bottom: 23px;
+  }
+  &:hover {
+    border-color: #564ab1;
+    color: #564ab1;
+  }
+}
+
+.stripe .StripeElement {
+  width: 100%;
+}
+
+.stripe button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 24px;
+  gap: 10px;
+
+  width: 108px;
+  height: 40px;
+  border-radius: 4px;
+  border: transparent;
+  outline: none;
+  font-family: "Montserrat";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  position: absolute;
+  bottom: -57px;
+  right: 34px;
+  &.disabled{
+    background-color: #8f9bb3;
+    color: white
+  }
+  &.active {
+    &:last-child {
+      background: #7356c0;
+      color: #ffffff;
+      transition: all 1s;
+      &:hover {
+        background-color: #ffffff;
+        color: #7356c0;
+        border: 1px solid #7356c0;
+      }
+    }
+  }
+}

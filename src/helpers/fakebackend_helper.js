@@ -142,7 +142,7 @@ const get_survey = (url) => {
     .get(url)
     .then((response) => {
       const { survey } = response.data;
-    console.log("response",survey)
+
       const {
         survey_questions,
         survey_audience_number,
@@ -153,13 +153,17 @@ const get_survey = (url) => {
         target_audience,
         survey_active,
         survey_specific,
-        country,
+        participants,
         survey_image,
         analytics,
-        paid,
-        stripe,
+        payment,
+        researchConductedVia,
+        targetUsersFrom,
+        research,
         _id
       } = survey;
+
+
 
       return {
         survey_questions,
@@ -172,10 +176,12 @@ const get_survey = (url) => {
         survey_image,
         survey_active,
         survey_specific,
-        country,
         analytics,
-        paid,
-        stripe,
+        payment,
+        participants,
+        researchConductedVia,
+        targetUsersFrom,
+        research,
         _id
       };
   

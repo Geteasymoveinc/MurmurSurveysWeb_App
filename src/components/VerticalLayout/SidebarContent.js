@@ -14,32 +14,6 @@ class SidebarContent extends Component {
     this.state = {};
   }
 
-  componentDidMount() {
-    this.initMenu();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.type !== prevProps.type) {
-      this.initMenu();
-    }
-  }
-
-  initMenu() {
-    new MetisMenu("#side-menu");
-
-    var matchingMenuItem = null;
-    var ul = document.getElementById("side-menu");
-    var items = ul.getElementsByTagName("a");
-    for (var i = 0; i < items.length; ++i) {
-      if (this.props.location.pathname === items[i].pathname) {
-        matchingMenuItem = items[i];
-        break;
-      }
-    }
-    if (matchingMenuItem) {
-      this.activateParentDropdown(matchingMenuItem);
-    }
-  }
 
   activateParentDropdown = (item) => {
     item.classList.add("active");

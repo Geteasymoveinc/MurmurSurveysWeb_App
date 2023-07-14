@@ -1,0 +1,140 @@
+.modal {
+  /* Auto layout */
+
+  .modal_header {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+
+    button {
+      background-color: transparent;
+      border: transparent;
+      outline: none;
+    }
+  }
+
+  .btns {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    button {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 14px 24px;
+      gap: 10px;
+
+      width: 108px;
+      height: 40px;
+      border-radius: 4px;
+      border: transparent;
+      outline: none;
+      font-family: "Montserrat";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 20px;
+      &:first-child {
+        background: #eadffc;
+        color: #2e3a59;
+      }
+      &:last-child {
+        background: #7356c0;
+        color: #ffffff;
+      }
+
+
+    }
+    &__100{
+      width: 100% !important;
+      white-space: nowrap !important;
+      background: #7356c0;
+      color: #ffffff
+    }
+
+  }
+
+  &.light {
+    .uploader {
+      img {
+        background: #f9f5ff;
+      }
+    }
+  }
+
+  &.dark {
+    .uploader {
+      img {
+        background: #131313;
+      }
+    }
+  }
+
+  .uploader {
+    width: 100%;
+    height: 180px;
+    position: relative;
+    margin-bottom: 10px;
+     pointer-events: none;
+    input {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      position: absolute;
+      pointer-events: all;
+    }
+    img {
+      position: absolute;
+      width: 100%;
+      height: 85%;
+      top: 0;
+      left: 0;
+      object-fit: contain;
+      z-index: 100;
+    }
+
+    span{
+      position: absolute;
+      bottom: 0;
+      left: 40%;
+      color: #7356c0;
+      font-family: "Abhaya Libre";
+      font-weight: 700;
+      font-size: 21px;
+      z-index: 100;
+    }
+  }
+  h5 {
+    font-family: "Abhaya Libre";
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: rgba(52, 64, 84, 1);
+  }
+  p {
+    font-family: "Abhaya Libre";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: rgba(52, 64, 84, 1);
+    width: 282px;
+  }
+
+  .download-template {
+    font-family: "Abhaya Libre";
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    margin-bottom: 20px;
+    color: rgba(52, 64, 84, 1);
+  }
+}

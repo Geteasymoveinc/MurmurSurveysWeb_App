@@ -171,6 +171,7 @@ class Settings extends Component {
       `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
       {
         email: this.state.stng_email,
+        role: '2'
       }
     )
       .then((res) => {

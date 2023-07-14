@@ -8,6 +8,7 @@ import {
   FETCHSURVEYFROMBACKEND,
   FETCHSURVEYFROMBACKENDSUCCESS,
   FETCHINGMAPLOCATIONANDADDRESS,
+  UPDATEQUESTIONS,
 } from "./actionTypes";
 
 const initial_surveys = {
@@ -19,21 +20,29 @@ const initial_surveys = {
   survey_title: "Untitled",
   survey_caption: "Caption",
   survey_image: {
-    image_name: null,
+    image_name: "",
     image_file: {},
-    image_url: null,
+    image_url: "",
   },
   target_audience: {
     gender: "Both",
     age: "18-25",
     location: "",
+    country: "USA",
+    city: "Chicago",
+    interest: "",
+    income: { min: 300, max: 3000 },
   },
   survey_active: false,
   survey_specific: true,
-  country: 'US',
-  paid: false,
-  stripe: true,
+  //country: 'US',
+  //paid: false,
+  payment: {},
   analytics: [],
+  participants: [],
+  researchConductedVia: '',
+  targetUsersFrom: '',
+  research: '',
   map: {
     address: "",
     center: {
@@ -43,9 +52,15 @@ const initial_surveys = {
   },
   message: null,
   loading: true,
+  count: 0,
 };
 
 const Survey = (state = initial_surveys, actions) => {
+  let questions = state.survey_questions;
+  let index = 0;
+  let left = [];
+  let right = [];
+
   switch (actions.type) {
     case ADDSURVEY:
       state = {
@@ -66,6 +81,21 @@ const Survey = (state = initial_surveys, actions) => {
         survey_caption: actions.payload.caption,
       };
       break;
+      case UPDATEQUESTIONS:
+        index = questions.findIndex(
+          (el) => el.uid === actions.payload.question.uid
+        );
+        left = questions.slice(0, index);
+        right = questions.slice(index + 1, questions.length);
+        const { state: State } = actions.payload;
+  
+        state = {
+          ...state,
+          survey_questions: State
+            ? [...left, ...right]
+            : [...left, actions.payload.question, ...right],
+        };
+        break;
     case ADDPRICE:
       state = {
         ...state,
@@ -74,13 +104,14 @@ const Survey = (state = initial_surveys, actions) => {
         survey_budget: actions.payload.budget,
       };
       break;
-    case ADDSETTINGS:
-      state = {
-        ...state,
-        target_audience: actions.payload.settings,
-        survey_active: actions.payload.active,
-      };
-      break;
+      case ADDSETTINGS:
+        state = {
+          ...state,
+          target_audience: actions.payload.settings,
+          survey_active: actions.payload.active,
+          survey_specific: actions.payload.survey_specific,
+        };
+        break;
     case FETCHSURVEYFROMBACKEND:
       state = {
         ...state,
@@ -88,11 +119,33 @@ const Survey = (state = initial_surveys, actions) => {
       };
       break;
     case FETCHSURVEYFROMBACKENDSUCCESS:
-    
+      let count = state.count
+
+      const surveys = actions.payload.survey_questions;
+      questions = [];
+
+      for (let survey of surveys) {
+        if (count < survey.uid) {
+          count = survey.uid;
+        }
+      
+        if (survey.isConditional) {
+
+          for (let question of survey.questions) {
+            question.link = survey.uid;
+            if (count < question.uid) {
+              count = question.uid;
+            }
+            questions.push(question)
+          }
+          survey.questions = [];
+        }
+      }
+
       state = {
         ...state,
         _id: actions.payload._id,
-        survey_questions: actions.payload.survey_questions,
+        survey_questions: [...surveys, ...questions],
         survey_title: actions.payload.survey_title,
         survey_caption: actions.payload.survey_caption,
         survey_earnings: actions.payload.survey_earnings,
@@ -102,6 +155,7 @@ const Survey = (state = initial_surveys, actions) => {
         survey_specific: actions.payload.survey_specific,
         country: actions.payload.country,
         target_audience: actions.payload.target_audience,
+        participants: actions.payload.participants,
         survey_image: {
           ...state.survey_image,
           image_url: actions.payload.survey_image,
@@ -111,24 +165,32 @@ const Survey = (state = initial_surveys, actions) => {
               )[1]
             : null,
         },
-        paid: actions.payload.paid,
-        stripe: actions.payload.stripe,
+        //: actions.payload.paid,
+        payment: actions.payload.payment,
+        researchConductedVia: actions.payload.researchConductedVia,
+        targetUsersFrom: actions.payload.targetUsersFrom,
+        research: actions.payload.research,
         analytics: actions.payload.analytics,
         loading: false,
       };
       break;
 
-    case FETCHINGMAPLOCATIONANDADDRESS:
-      state = {
-        ...state,
-        country: actions.payload.country,
-        map: {
-          address: actions.payload.address,
-          center: actions.payload.center,
-        },
-    
-      };
-      break;
+      case FETCHINGMAPLOCATIONANDADDRESS:
+        state = {
+          ...state,
+          map: {
+            address: actions.payload.address,
+            country: actions.payload.country,
+            city: actions.payload.city,
+            center: actions.payload.center,
+          },
+          target_audience: {
+            ...state.target_audience,
+            country: actions.payload.country,
+            city: actions.payload.city,
+          },
+        };
+        break;
     case SUBMITSURVEYTOBACKEND:
       state = {
         ...state,

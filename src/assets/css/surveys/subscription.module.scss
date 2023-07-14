@@ -1,0 +1,222 @@
+.hero {
+  h1 {
+    font-family: "Abhaya Libre";
+    font-style: normal;
+    font-weight: 800;
+    font-size: 36px;
+    line-height: 48px;
+    /* identical to box height, or 133% */
+
+    /* Gray/700 */
+
+    color: #344054;
+    text-align: center;
+    margin-bottom: 0;
+  }
+  p {
+    font-family: "SF Pro Display";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    /* identical to box height, or 150% */
+
+    /* Gray/400 */
+
+    color: #98a2b3;
+
+    text-align: center;
+  }
+}
+
+.subscription {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  gap: 36px;
+
+  &__subscription-package {
+    cursor: pointer;
+    position: relative;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 24px;
+    gap: 12px;
+
+    width: 289px;
+    min-height: 482px;
+
+    background: #f9f5ff;
+    /* Primary/200 */
+
+    border: 1px solid #e9d7fe;
+    backdrop-filter: blur(120px);
+    -webkit-backdrop-filter: blur(120px);
+    -moz-backdrop-filter: blur(120px);
+    -ms-backdrop-filter: blur(120px);
+    -o-backdrop-filter: blur(120px);
+    /* Note: backdrop-filter has minimal browser support */
+
+    border-radius: 16px;
+
+    h5,
+    p,
+    strong {
+      font-family: "Abhaya Libre";
+      font-style: normal;
+      font-weight: 800;
+      font-size: 24px;
+      line-height: 32px;
+      /* identical to box height, or 133% */
+
+      /* Gray/700 */
+
+      color: #344054;
+      text-align: left;
+
+    }
+    h5 {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      span {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        gap: 8px;
+
+        width: 71px;
+        height: 26px;
+
+        /* Success/100 */
+
+        background: #d1fadf;
+        /* Success/500 */
+
+        border: 0.5px solid #12b76a;
+        border-radius: 16px;
+        font-family: "SF Pro Display";
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 18px;
+        /* identical to box height, or 150% */
+
+        /* Success/600 */
+
+        color: #039855;
+        margin-left: 15px;
+      }
+    }
+    p {
+      margin-top: 12px;
+    }
+    span,
+    li {
+      font-family: "Abhaya Libre";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      /* identical to box height, or 150% */
+
+      /* Gray/500 */
+
+      color: #667085;
+      text-align: left;
+    }
+    p {
+      font-family: "Abhaya Libre";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      /* or 143% */
+
+      /* Gray/700 */
+
+      color: #667085;
+      text-align: left;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+      width: 100%;
+    }
+    li {
+      border-top: 1px solid rgba(52, 64, 84, 0.08);
+      width: 100%;
+      padding: 8px 0;
+
+      &:last-child {
+        border-bottom: 1px solid rgba(52, 64, 84, 0.08);
+      }
+    }
+    button {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 18px;
+      gap: 8px;
+
+      width: 147px;
+      height: 44px;
+
+      background: #6941c6;
+      /* Primary/700 */
+
+      border: 1px solid #6941c6;
+      /* Shadow/xs */
+
+      box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+      border-radius: 38px;
+      font-family: "Abril Fatface";
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      /* identical to box height, or 150% */
+
+      /* Gray/25 */
+
+      color: #fcfcfd;
+      align-self: center;
+    }
+
+    &:hover {
+      box-shadow: 0px 8px 48px rgba(105, 65, 198, 0.24);
+      bottom: 30px;
+      transition: bottom 0.2s linear;
+    }
+    &--active{
+      box-shadow: 0px 8px 48px rgba(105, 65, 198, 0.24);
+      bottom: 30px;
+      transition: bottom 0.2s linear;
+    }
+  }
+}
+
+.billing-history-link {
+  display: block;
+  font-family: "SF Pro Display";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+
+  /* Gray/700 */
+
+  color: #344054;
+  width: 164px;
+  margin: auto;
+  svg {
+    margin-left: 16px;
+  }
+}

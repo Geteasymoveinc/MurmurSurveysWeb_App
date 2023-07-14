@@ -5,11 +5,12 @@ import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
+import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
+import './global.scss'
 
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+//import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(`${process.env.STRIPE_PUBLICK_KEY}`);
+//const stripePromise = loadStripe(`${process.env.STRIPE_PUBLICK_KEY}`);
 
 const app = (
   <Provider store={store}>

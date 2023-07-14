@@ -10,11 +10,13 @@ import {
   CHANGE_PRELOADER,
   HIDE_RIGHT_SIDEBAR,
   CHANGE_SIDEBAR_VISIBILITY,
-  TOGGLEADMINNAVBAR
+  CHANGE_LAYOUT_THEME,
+
 } from "./actionTypes";
 
 const INIT_STATE = {
   layoutType: "horizontal",
+  layoutTheme: 'light',
   layoutWidth: "fluid",
   leftSideBarTheme: "dark",
   leftSideBarType: "default",
@@ -32,6 +34,11 @@ const Layout = (state = INIT_STATE, action) => {
         ...state,
         layoutType: action.payload,
       };
+    case CHANGE_LAYOUT_THEME:
+      return {
+        ...state,
+        layoutTheme: action.payload
+      }
     case CHANGE_PRELOADER:
       return {
         ...state,

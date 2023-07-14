@@ -1,0 +1,62 @@
+
+
+
+
+.audio-recorder{
+    background: #f7f9fc;
+    border: 1px solid rgba(233, 215, 254, 1);
+    width: 92%;
+    margin: 20px auto;
+height: 50px;
+border-radius: 8px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 15px;
+position: relative;
+opacity: 0.8;
+button{
+    background-color: transparent;
+    border: none;
+    height: fit-content;
+    display: flex;
+}
+&__ctrl-btns{
+    display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 15px;
+button{
+    &:first-child{
+       color: rgba(52, 64, 84, 1);
+//styleName: Text md/Regular;
+font-family: 'SF Pro Display';
+font-size: 18px;
+font-weight: 400;
+line-height: 24px;
+letter-spacing: 0em;
+
+    }
+}
+}
+&__recording-time{
+   background-color:  rgba(127, 86, 217, 1);
+   font-family: 'SF Pro Display';
+font-size: 14px;
+font-weight: 400;
+line-height: 20px;
+letter-spacing: 0em;
+display: flex;
+justify-content: center;
+align-items: center;
+border-radius: 24px;
+color: rgba(255, 255, 255, 1);
+min-width: 42px;
+height: 28px;
+
+}
+audio{
+    visibility: hidden;
+    position: absolute;
+  }
+}

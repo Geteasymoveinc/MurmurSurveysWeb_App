@@ -1,0 +1,22 @@
+.custom-voice-recorder-ui {
+  height: 100%;
+  padding: 5px 0;
+  .audio-recorder.recording {
+    height: 100%;
+    background: transparent;
+    box-shadow: none;
+    .audio-recorder-timer {
+      display: none;
+    }
+    .audio-recorder-visualizer {
+      height: 100%;
+      canvas {
+        height: 100%;
+      }
+    }
+  }
+  img {
+    display: none;
+  }
+
+}

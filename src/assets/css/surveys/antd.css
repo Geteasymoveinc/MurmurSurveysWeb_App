@@ -12,10 +12,14 @@
 
  .img-dragger-2{
     width: 20px;
-    height: 20px;
+    height: fit-content;
 
  }
 
  .img-dragger-2 .ant-upload.ant-upload-drag .ant-upload{
      padding: 0;
+ }
+
+ .ant-upload.ant-upload-drag{
+    background-color: transparent !important;
  }

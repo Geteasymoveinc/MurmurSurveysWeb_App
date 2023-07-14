@@ -49,7 +49,7 @@ try{
     
     yield put(registerUserSuccessfull(response));
     sessionStorage.setItem('authUser', email)
-    history.push("/surveys");
+    history.push("/");
   } else {
     history.replace("/register");
   }

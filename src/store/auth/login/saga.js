@@ -31,15 +31,16 @@ function* loginUser({ payload: { user, history } }) {
         }
       );
   
-    
+      
       const image = response.resp.at(-1).profilePhoto;
       sessionStorage.setItem("authUser", response.resp.at(-1).email);
       if (image) {
         sessionStorage.setItem("profileImage", image);
       }
+      document.title = 'Murmur: Mobile Car-Top Advertising';
       yield put(loginSuccess(response));
     }
-   history.push("/dashboard");
+   history.push("/");
   } catch (error) {
     if (error.status) {
       yield put(apiError(error.message));

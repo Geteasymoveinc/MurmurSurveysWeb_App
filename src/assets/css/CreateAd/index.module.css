@@ -260,9 +260,7 @@
 .cads_table table tr th:last-child{
   border-top-right-radius:16px;
 }
-.first_tr,.cads_th{
-  background:rgba(247, 249, 252, 0.32);
-}
+
 .invoice_th label,.cads_th span{
   color:#8F9BB3;
   font-weight: 500;

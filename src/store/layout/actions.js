@@ -9,12 +9,21 @@ import {
   CHANGE_PRELOADER,
   HIDE_RIGHT_SIDEBAR,
   CHANGE_SIDEBAR_VISIBILITY,
-  TOGGLEADMINNAVBAR
+  CHANGE_LAYOUT_THEME,
+
 } from "./actionTypes";
+
+
+
 
 export const changeLayout = (layout) => ({
   type: CHANGE_LAYOUT,
   payload: layout,
+});
+
+export const changeLayoutTheme = (layoutTheme) => ({
+  type: CHANGE_LAYOUT_THEME,
+  payload: layoutTheme,
 });
 
 export const changePreloader = (layout) => ({

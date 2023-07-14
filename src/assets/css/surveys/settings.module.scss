@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 50px;
+  padding-top: 30px;
 }
 
 .settings_container {
@@ -10,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   width: 611px;
-  height: 392px;
+  height: 490px;
 
   /* Basic colors/Neutral 100 */
 
@@ -31,18 +31,29 @@
 }
 
 .smaller_container h3 {
-  align-self: flex-start;
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  /* identical to box height, or 125% */
 
-  /* Basic colors/Neutral 700 */
-
-  color: #2e3a59;
   margin-bottom: 15px;
+
+  font-family: "Abhaya Libre ExtraBold";
+  font-style: normal;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 30px;
+  color: #2e3a59;
+  padding: 0;
+  margin: 0 ;
+  margin-right: auto;
+}
+.smaller_container h5 {
+  //styleName: Text sm/Medium;
+  font-family: "SF Pro Display";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: rgba(52, 64, 84, 1);
+  margin-right: auto;
 }
 .smaller_container .audience_p {
   align-self: flex-start;
@@ -64,13 +75,18 @@
   height: 152px;
   margin-bottom: 25px;
 }
+.map-custom-btns {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+}
 .google_map_location_input {
   width: 80px;
   height: 30px;
   background-color: transparent;
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
+  position: relative;
   background: #f7f9fc;
   border: 1px solid #b69eea;
   box-sizing: border-box;
@@ -138,7 +154,7 @@
   letter-spacing: 0.0015em;
 
   color: #2e3a59;
-  margin-bottom: 7px !important;
+  margin-bottom: 7px;
 }
 .details_edit_select:first-child {
   width: 113px;
@@ -174,16 +190,7 @@
 
   justify-content: space-between;
 }
-.smaller_container.smaller_container_top div:first-child h3 {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: #2e3a59;
-  padding: 0;
-  margin: 0;
-}
+
 .smaller_container.smaller_container_top .survey_status_container {
   display: flex;
   justify-content: space-between;
@@ -193,7 +200,7 @@
 .smaller_container.smaller_container_top .survey_status_container p,
 label {
   padding: 0;
-  margin: 0 !important;
+  margin: 0;
   font-family: "Montserrat";
   font-style: normal;
   font-weight: 500;
@@ -235,4 +242,93 @@ label {
 
 .settings_container.survey_target_everybody {
   height: 150px;
+}
+
+.contacts {
+  width: 100%;
+  padding: 30px 0;
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+  border-left-width: 0;
+  border-right-width: 0;
+  border-style: solid;
+  border-color: rgba(208, 213, 221, 1);
+  margin-top: 20px;
+
+  &__field {
+    & > div {
+      display: flex;
+
+      border: 1px solid rgba(208, 213, 221, 1);
+      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+      width: 563px;
+      height: 44px;
+
+      border-radius: 8px;
+    }
+  label{
+    //styleName: Text sm/Medium;
+font-family: 'SF Pro Display';
+font-size: 14px;
+font-weight: 500;
+line-height: 20px;
+letter-spacing: 0em;
+text-align: left;
+color: rgba(52, 64, 84, 1);
+
+  }
+
+  }
+
+  &__select {
+    position: relative;
+    width: 86px;
+    height: 44px;
+    select {
+      /* for Firefox */
+      -moz-appearance: none;
+      /* for Chrome */
+      -webkit-appearance: none;
+
+      /* For IE10 */
+      &::-ms-expand {
+        display: none;
+      }
+
+      background-color: transparent;
+      border: none;
+
+      padding: 10px 12px 10px 14px;
+
+      //styleName: Text md/Regular;
+      font-family: "SF Pro Display";
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0em;
+      text-align: left;
+      color: rgba(16, 24, 40, 1);
+    }
+    svg {
+      position: absolute;
+      top: 12px;
+      right: 7px;
+    }
+  }
+  input {
+    //styleName: Text md/Regular;
+    font-family: "SF Pro Display";
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(102, 112, 133, 1);
+    border: none;
+    width: 100%;
+  }
+
+  &__mobile {
+    width: calc(100% - 86px);
+  }
 }
