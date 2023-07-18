@@ -39,7 +39,7 @@ class ChangeDefaultCard extends React.Component {
     }
     axios
       .get(
-        `http://localhost:4000/api/v1/surveys/user//list-payment-methods/${this.props.stripeCustomerId}`
+        `https://backendapp.murmurcars.com/api/v1/surveys/user//list-payment-methods/${this.props.stripeCustomerId}`
       )
       .then((response) => {
         const { data } = response.data.paymentMethods;

@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { add_settings, fetch_map_position } from "../../../store/actions";
+import {
+  add_settings,
+  fetch_map_position,
+  addResearchContactDetails,
+} from "../../../store/actions";
 
 import { withRouter } from "react-router-dom";
 
@@ -24,6 +28,7 @@ class SurveySettings extends Component {
       zoom: 12,
       marker: {},
     },
+    countryCode: "+994",
   };
 
   componentDidMount() {
@@ -169,7 +174,11 @@ class SurveySettings extends Component {
     const { map: thisMap } = this.state;
 
     return (
-      <div className={classes.container_center}>
+      <div
+        className={`${classes.container_center} ${
+          classes[this.props.layoutTheme]
+        }`}
+      >
         <div
           className={`${classes.settings_container} ${classes.settings_container_top} `}
         >
@@ -251,14 +260,14 @@ class SurveySettings extends Component {
               </p>
             </div>
           </div>
-          {survey_specific && (
+         
             <div className={classes.smaller_container}>
               <h5>Location (Zip):</h5>
               <div className={classes.map_container}>
                 <GoogleMap
                   state={{ ...thisMap, center: this.props.map.center }}
                 />
-                <div className={classes["map-custom-btns"]}>
+               <div className={classes["map-custom-btns"]}>
                   <button
                     style={{
                       width: "fit-content",
@@ -445,10 +454,10 @@ class SurveySettings extends Component {
                       className={classes.details_edit_arrow}
                     />
                   </div>
-                </div>
+                </div> 
               </div>
-              <h5 className={classes.audience_p}>Audience</h5>
-              <div className={classes.gender_age_container}>
+              {survey_specific ?  <h5 className={classes.audience_p}>Audience</h5> : null}
+              {survey_specific ?   <div className={classes.gender_age_container}>
                 <div
                   className={`${classes.details_edit_select} ${classes.mt_8}`}
                 >
@@ -548,8 +557,8 @@ class SurveySettings extends Component {
                     className={classes.details_edit_arrow}
                   />
                 </div>
-              </div>
-              <div className="icon-wrapper">
+              </div> : null}
+              {survey_specific ?  <div className="icon-wrapper">
                 <label htmlFor="income">Income</label>
 
                 <Slider
@@ -592,72 +601,115 @@ class SurveySettings extends Component {
                   </div>
                   <span>{income.max}</span>
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
+              </div> : null}
+            </div>  
+          
+        </div> 
 
-        <div
-          className={`${classes.settings_container} mt-5`}
-          style={{
-            height: "fit-content",
-            paddingBottom: "30px",
-            marginBottom: "30px",
-          }}
-        >
+        {this.props.researchConductedVia !== "survey app" ? (
           <div
-            className={`${classes.smaller_container} ${classes.smaller_container_top} flex-column justify-content-start`}
+            className={`${classes.settings_container} mt-5`}
+            style={{
+              height: "fit-content",
+              paddingBottom: "30px",
+              marginBottom: "30px",
+            }}
           >
-            <h3>Research type</h3>
-            <div className={classes.contacts}>
-              <h3 className="mb-3">Over the phone</h3>
+            <div
+              className={`${classes.smaller_container} ${classes.smaller_container_top} flex-column justify-content-start`}
+            >
+              <h3>Research type</h3>
+              <div className={classes.contacts}>
+                {this.props.researchConductedVia === "over phone" ? (
+                  <>
+                    {" "}
+                    <h3 className="mb-3">Over the phone</h3>
+                    <div className={classes.contacts__field}>
+                      <label>Mobile</label>
+                      <div>
+                        <div className={classes.contacts__select}>
+                          <select
+                            onChange={(e) => {
+                              const value = e.target.value.trim();
+                              this.setState((state) => ({
+                                ...state,
+                                countryCode: value,
+                              }));
+                            }}
+                          >
+                            <option value="+994">+994</option>
+                          </select>
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M5 7.5L10 12.5L15 7.5"
+                              stroke="#667085"
+                              strokeWidth="1.66667"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="(00) 000 00 00"
+                          defaultValue={this.props.researcherContacts.phone}
+                          className={classes.contacts__mobile}
+                          onChange={(e) => {
+                            const value =
+                              this.state.countryCode + e.target.value.trim();
 
-              <div className={classes.contacts__field}>
-                <label>Mobile</label>
-                <div>
-                  <div className={classes.contacts__select}>
-                    <select>
-                      <option value="+994">+994</option>
-                    </select>
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        stroke="#667085"
-                        strokeWidth="1.66667"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    defaultValue="(00) 000 00 00"
-                    className={classes.contacts__mobile}
-                  />
-                </div>
-              </div>
+                            this.props.addResearchContactDetails(
+                              "phone",
+                              value
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>{" "}
+                  </>
+                ) : null}
 
-              <h3 className="mb-3 mt-3">In person</h3>
-              <div className={classes.contacts__field}>
-                <label>Address</label>
-                <div>
-                  <input type="text" defaultValue="(00) 000 00 00" />
-                </div>
+                {this.props.researchConductedVia === "in person" ? (
+                  <>
+                    {" "}
+                    <h3 className="mb-3 mt-3">In person</h3>
+                    <div className={classes.contacts__field}>
+                      <label>Address</label>
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Add address here"
+                          defaultValue={this.props.researcherContacts.location}
+                          onChange={(e) => {
+                            const value = e.target.value.trim();
+
+                            this.props.addResearchContactDetails(
+                              "location",
+                              value
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>{" "}
+                  </>
+                ) : null}
               </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     );
   }
 }
 
-export default connect(null, { add_settings, fetch_map_position })(
-  withRouter(SurveySettings)
-);
+export default connect(null, {
+  add_settings,
+  fetch_map_position,
+  addResearchContactDetails,
+})(withRouter(SurveySettings));

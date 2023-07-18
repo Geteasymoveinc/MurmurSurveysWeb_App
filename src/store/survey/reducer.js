@@ -9,6 +9,8 @@ import {
   FETCHSURVEYFROMBACKENDSUCCESS,
   FETCHINGMAPLOCATIONANDADDRESS,
   UPDATEQUESTIONS,
+  UPDATERESEARCHMAINSETTINGS,
+  RESEARCHCONTACTINFORMATION,
 } from "./actionTypes";
 
 const initial_surveys = {
@@ -37,12 +39,17 @@ const initial_surveys = {
   survey_specific: true,
   //country: 'US',
   //paid: false,
-  payment: {},
-  analytics: [],
+  payment: '',
+  response: [],
   participants: [],
-  researchConductedVia: '',
-  targetUsersFrom: '',
-  research: '',
+  researchConductedVia: "",
+  targetUsersFrom: "",
+  research: "",
+  researcherContacts: {
+    phone: null,
+    location: null,
+    hyperlink: null,
+  },
   map: {
     address: "",
     center: {
@@ -60,6 +67,8 @@ const Survey = (state = initial_surveys, actions) => {
   let index = 0;
   let left = [];
   let right = [];
+
+  console.log(state.researcherContacts)
 
   switch (actions.type) {
     case ADDSURVEY:
@@ -81,21 +90,21 @@ const Survey = (state = initial_surveys, actions) => {
         survey_caption: actions.payload.caption,
       };
       break;
-      case UPDATEQUESTIONS:
-        index = questions.findIndex(
-          (el) => el.uid === actions.payload.question.uid
-        );
-        left = questions.slice(0, index);
-        right = questions.slice(index + 1, questions.length);
-        const { state: State } = actions.payload;
-  
-        state = {
-          ...state,
-          survey_questions: State
-            ? [...left, ...right]
-            : [...left, actions.payload.question, ...right],
-        };
-        break;
+    case UPDATEQUESTIONS:
+      index = questions.findIndex(
+        (el) => el.uid === actions.payload.question.uid
+      );
+      left = questions.slice(0, index);
+      right = questions.slice(index + 1, questions.length);
+      const { state: State } = actions.payload;
+
+      state = {
+        ...state,
+        survey_questions: State
+          ? [...left, ...right]
+          : [...left, actions.payload.question, ...right],
+      };
+      break;
     case ADDPRICE:
       state = {
         ...state,
@@ -104,14 +113,14 @@ const Survey = (state = initial_surveys, actions) => {
         survey_budget: actions.payload.budget,
       };
       break;
-      case ADDSETTINGS:
-        state = {
-          ...state,
-          target_audience: actions.payload.settings,
-          survey_active: actions.payload.active,
-          survey_specific: actions.payload.survey_specific,
-        };
-        break;
+    case ADDSETTINGS:
+      state = {
+        ...state,
+        target_audience: actions.payload.settings,
+        survey_active: actions.payload.active,
+        survey_specific: actions.payload.survey_specific,
+      };
+      break;
     case FETCHSURVEYFROMBACKEND:
       state = {
         ...state,
@@ -119,7 +128,7 @@ const Survey = (state = initial_surveys, actions) => {
       };
       break;
     case FETCHSURVEYFROMBACKENDSUCCESS:
-      let count = state.count
+      let count = state.count;
 
       const surveys = actions.payload.survey_questions;
       questions = [];
@@ -128,15 +137,14 @@ const Survey = (state = initial_surveys, actions) => {
         if (count < survey.uid) {
           count = survey.uid;
         }
-      
-        if (survey.isConditional) {
 
+        if (survey.isConditional) {
           for (let question of survey.questions) {
             question.link = survey.uid;
             if (count < question.uid) {
               count = question.uid;
             }
-            questions.push(question)
+            questions.push(question);
           }
           survey.questions = [];
         }
@@ -170,27 +178,28 @@ const Survey = (state = initial_surveys, actions) => {
         researchConductedVia: actions.payload.researchConductedVia,
         targetUsersFrom: actions.payload.targetUsersFrom,
         research: actions.payload.research,
-        analytics: actions.payload.analytics,
+        response: actions.payload.response,
+        researcherContacts: actions.payload.researcherContacts,
         loading: false,
       };
       break;
 
-      case FETCHINGMAPLOCATIONANDADDRESS:
-        state = {
-          ...state,
-          map: {
-            address: actions.payload.address,
-            country: actions.payload.country,
-            city: actions.payload.city,
-            center: actions.payload.center,
-          },
-          target_audience: {
-            ...state.target_audience,
-            country: actions.payload.country,
-            city: actions.payload.city,
-          },
-        };
-        break;
+    case FETCHINGMAPLOCATIONANDADDRESS:
+      state = {
+        ...state,
+        map: {
+          address: actions.payload.address,
+          country: actions.payload.country,
+          city: actions.payload.city,
+          center: actions.payload.center,
+        },
+        target_audience: {
+          ...state.target_audience,
+          country: actions.payload.country,
+          city: actions.payload.city,
+        },
+      };
+      break;
     case SUBMITSURVEYTOBACKEND:
       state = {
         ...state,
@@ -202,6 +211,21 @@ const Survey = (state = initial_surveys, actions) => {
         ...state,
         message: actions.payload,
         loading: false,
+      };
+      break;
+    case UPDATERESEARCHMAINSETTINGS:
+      state = {
+        ...state,
+        [actions.payload.type]: actions.payload.value,
+      };
+      break;
+    case RESEARCHCONTACTINFORMATION:
+      state = {
+        ...state,
+        researcherContacts: {
+          ...state.researcherContacts,
+        [actions.payload.contactType]: actions.payload.contact
+        }
       };
       break;
     default:

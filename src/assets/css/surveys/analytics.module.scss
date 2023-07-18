@@ -1,180 +1,189 @@
 
-
- .flex_container_2  .flexbox{
- margin-top: 20px;
-  margin-right: 50px;
-  margin-left: 50px;   
-  position: relative;
-  display: flex ;
-  flex-direction: column;
-  align-items: center;
-  
+.flex_container_2{
+  .flexbox{
+  margin-top: 20px;
+   margin-right: 50px;
+   margin-left: 50px;   
+   position: relative;
+   display: flex ;
+   flex-direction: column;
+   align-items: center;
+   
+ }
+  .flexbox .rows{
+   position: relative;
+   display: flex;
+   width: 95%;
+   background-color: transparent;
+ }
+  .flexbox .rows:first-child{
+   display: flex;
+  justify-content: space-between;
+ }
+   .flexbox .rows > div{
+     
+ 
+    background-color: white;
+    width:50%;
+ }
+ 
+  .flexbox .rows >div:first-child{
+   margin-right: 30px;
+ 
+ }
+ 
+ 
+ /*.flex_container_2 .flexbox >div:first-child{
+   grid-area: gender1;
+ }
+ .flex_container_2 .flexbox >div:nth-child(2){
+   grid-area: platform;
+ }
+ .flex_container_2 .flexbox >div:nth-child(3){
+   grid-area: gender2;
+ }
+ .flex_container_2 .flexbox >div:last-child{
+ 
+ grid-area: location;
+ }*/
+ 
+  .pies{
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   padding-block: 20px;
+   box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
+ }
+ 
+ 
+ //chart
+ .chart_contaioner{
+   width:80%;
+ }
+ /*@media (min-width:1700px) {
+   .flex_container_2{
+     display: flex;
+     justify-content: center;
+   }
+ 
+ .chart_contaioner{
+   width:100%;
+   margin-right: 170px;
+ }
+ @media (min-width: 1900px) {
+   .chart_contaioner{
+ 
+     margin-right: 170px;
+   }
+ }
+ }
+ @media (max-width:1400px) {
+   .chart_contaioner{
+     width:90%;
+     margin-right: 170px;
+   }
+ }
+ 
+ @media (max-width: 1200px) {
+   .flex_container_2  .flexbox> div{
+ width: 90%;
+ 
+   }
+   .flex_container_2 .flexbox{
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+   }
+ }*/
+ //chart
+ .pies{
+   position: relative;
+ }
+ .pies.pies_2{
+   /*max-width: 400px !important;*/
+   max-width: 30%;
+   align-self: flex-start;
+ }
+ .pies.pie_location{
+   width:  inherit !important
+ }
+ 
+ .pies .survey_info{
+   width:90%;
+   display: flex;
+   align-items: center;
+ 
+   margin-bottom: 20px;
+ }
+ 
+ 
+ .pies .survey_info.survey_info_2{
+   margin: 0;
+   position: absolute;
+   z-index: 100;
+ }
+ .pies .survey_info.survey_info_2 .question_answer{
+   position: relative
+ }
+ 
+ .survey_info{
+   width: 90%;
+   display: flex;
+   justify-content: flex-start;
+ 
+ 
+  h1{
+   /* Button/Aa/Large */
+ 
+ font-family: 'Montserrat';
+ font-style: normal;
+ font-weight: 500;
+ line-height: 20px;
+ /* identical to box height, or 125% */
+ 
+ 
+ /* Basic colors/Neutral 700 */
+ 
+ color: #2E3A59;
+ font-size: 15px;
+ }
+ }
+ 
+ 
+ .chart__gender_groups{
+   display: flex;
+   margin-bottom: 5px;
+   margin-left: 25px;
+ }
+ 
+ .chart__gender_groups button{
+   background-color: transparent;
+   border: transparent;
+   outline: none;
+ font-family: 'Montserrat';
+ font-style: normal;
+ font-weight: 500;
+ font-size: 12px;
+ line-height: 16px;
+ /* identical to box height, or 133% */
+ 
+ text-align: center;
+ letter-spacing: 0.0015em;
+ 
+ /* Brand Color/Purple/Purple 500 */
+ 
+ color: #7356C0;
+ 
+ }
+ &.dark{
+  .flexbox .rows > div{
+     
+ 
+  background: rgba(19, 19, 19, 1)
+ 
+ }
+ h1{
+  color: white
+ }
+ }
 }
-.flex_container_2 .flexbox .rows{
-  position: relative;
-  display: flex;
-  width: 95%;
-  background-color: transparent;
-}
-.flex_container_2 .flexbox .rows:first-child{
-  display: flex;
- justify-content: space-between;
-}
-.flex_container_2  .flexbox .rows > div{
-    
-
-   background-color: white;
-   width:50%;
-}
-
-.flex_container_2 .flexbox .rows >div:first-child{
-  margin-right: 30px;
-
-}
-
-
-/*.flex_container_2 .flexbox >div:first-child{
-  grid-area: gender1;
-}
-.flex_container_2 .flexbox >div:nth-child(2){
-  grid-area: platform;
-}
-.flex_container_2 .flexbox >div:nth-child(3){
-  grid-area: gender2;
-}
-.flex_container_2 .flexbox >div:last-child{
-
-grid-area: location;
-}*/
-
-.flex_container_2 .pies{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-block: 20px;
-  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
-}
-
-
-//chart
-.chart_contaioner{
-  width:80%;
-  margin-right: 150px;
-}
-/*@media (min-width:1700px) {
-  .flex_container_2{
-    display: flex;
-    justify-content: center;
-  }
-
-.chart_contaioner{
-  width:100%;
-  margin-right: 170px;
-}
-@media (min-width: 1900px) {
-  .chart_contaioner{
-
-    margin-right: 170px;
-  }
-}
-}
-@media (max-width:1400px) {
-  .chart_contaioner{
-    width:90%;
-    margin-right: 170px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .flex_container_2  .flexbox> div{
-width: 90%;
-
-  }
-  .flex_container_2 .flexbox{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}*/
-//chart
-.pies{
-  position: relative;
-}
-.pies.pies_2{
-  /*max-width: 400px !important;*/
-  max-width: 30%;
-  align-self: flex-start;
-}
-.pies.pie_location{
-  width:  inherit !important
-}
-
-.pies .survey_info{
-  width:90%;
-  display: flex;
-  align-items: center;
-
-  margin-bottom: 20px;
-}
-
-
-.pies .survey_info.survey_info_2{
-  margin: 0;
-  position: absolute;
-  z-index: 100;
-}
-.pies .survey_info.survey_info_2 .question_answer{
-  position: relative
-}
-
-.survey_info{
-  width: 90%;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.survey_info h1{
-  /* Button/Aa/Large */
-
-font-family: 'Montserrat';
-font-style: normal;
-font-weight: 500;
-font-size: 16px;
-line-height: 20px;
-/* identical to box height, or 125% */
-
-
-/* Basic colors/Neutral 700 */
-
-color: #2E3A59;
-
-}
-
-
-
-.chart__gender_groups{
-  display: flex;
-  margin-bottom: 5px;
-  margin-left: 25px;
-}
-
-.chart__gender_groups button{
-  background-color: transparent;
-  border: transparent;
-  outline: none;
-font-family: 'Montserrat';
-font-style: normal;
-font-weight: 500;
-font-size: 12px;
-line-height: 16px;
-/* identical to box height, or 133% */
-
-text-align: center;
-letter-spacing: 0.0015em;
-
-/* Brand Color/Purple/Purple 500 */
-
-color: #7356C0;
-
-}
-

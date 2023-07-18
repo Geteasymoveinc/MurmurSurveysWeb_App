@@ -450,6 +450,7 @@ height: 50px;
   display: flex;
   align-items: center;
   max-width: 500px;
+  margin-bottom: 20px;
 }
 
 .question_answer > h4 {
@@ -476,10 +477,10 @@ height: 50px;
   letter-spacing: 0.0015em;
   color: #2e3a59;
   margin-left: 10px;
-  margin-top: 10px;
 }
 .question_answer_span .options {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-left: 10px;
 }
 .survey_input.survey_selection {
@@ -643,6 +644,7 @@ img{
   align-items: center;
   justify-content: space-between;
   height: 100%;
+  cursor: pointer;
 }
 
 .input_type_select option {
@@ -884,12 +886,12 @@ right: 5px
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
-  color: #8f9bb3;
+  color:  #3f2b89;
   margin: 0;
-  margin-right: 20px;
+  margin-right: 5px;
 }
-.question_answer_setting label {
-  margin: 0;
+.question_answer_setting div label {
+  margin: 0
 }
 /*switch*/
 .switch {
@@ -919,7 +921,7 @@ right: 5px
 }
 .slider:before {
   background-color: #fff;
-  top: 0.56px;
+  top: 1px;
   content: "";
   width: 20px;
   height: 20px;

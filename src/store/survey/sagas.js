@@ -20,16 +20,23 @@ import { post_surveys, get_survey } from "../../helpers/fakebackend_helper";
 
 function* post_survey({ payload: { backend, data, history } }) {
   try {
-   const response = yield call(post_surveys, backend.url, data, backend.method);
-   if(backend.update){
-    const {message} = response.data
-    yield put(publish_survey_success(message));
-     return
-   }
-   const {payment_link, message} = response.data
+    const response = yield call(
+      post_surveys,
+      backend.url,
+      data,
+      backend.method
+    );
 
-   yield put(publish_survey_success(message));
-    backend.stripe ?  setTimeout(() =>  window.location = payment_link, 1000) : history.replace('/surveys')
+    const { payment_link, message } = response.data;
+
+    yield put(publish_survey_success(message));
+
+    if(backend.payment === 'checkout'){
+      setTimeout(() => (window.location = payment_link), 1000)
+    }else{
+      history.push("/")
+      history.replace('/surveys')
+    }
   } catch (err) {
     yield put(publish_survey_failed(err));
   }

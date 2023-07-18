@@ -56,13 +56,13 @@ class Subscription extends Component {
           user.resp;
 
         axios
-          .get(`http://localhost:4000/api/v1/surveys/user/subscriptions/${_id}`)
+          .get(`https://backendapp.murmurcars.com/api/v1/surveys/user/subscriptions/${_id}`)
           .then((response) => {
             const { subscriptions, stripeCustomerId } = response.data;
 
             axios
               .get(
-                `http://localhost:4000/api/v1/surveys/user/default-payment-method/${_id}`
+                `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${_id}`
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
@@ -205,7 +205,7 @@ class Subscription extends Component {
           <div className={classes.surveys_container}>
             <SuccessFeedback
               feedback={
-                subscribed ? "Subscription was created" : "Something went wrong"
+                subscribed ? "Subscription is updated" : "Subscription is created"
               }
               showFeedback={this.state.subscribedSuccesefulyFeedback}
             />
@@ -258,6 +258,7 @@ class Subscription extends Component {
                     </ul>
                     <button
                       onClick={() => {
+                        window.scrollTo({ top: 0, left: 0 });
                         if (subscribed) {
                           //if subscribed we change subscription we need to open modal (upgrade or downgrade)
                           const selectedPackageSize = subscription.size;
@@ -357,10 +358,10 @@ class Subscription extends Component {
                   }, 3000);
 
                   setTimeout(() => {
-                    window.location.reload();
+                    this.props.history.push("/");
                   }, 3500);
                 } else if (!state) {
-                  window.scrollTo({ top: 0, left: 0 });
+       
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
@@ -415,7 +416,7 @@ class Subscription extends Component {
                 }));
                 try {
                   const customer = await axios.post(
-                    "http://localhost:4000/api/v1/surveys/user/update-customer",
+                    "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
@@ -427,14 +428,14 @@ class Subscription extends Component {
                     //if already subscribed and want to upgrade or downgrade package
 
                     response = await axios.post(
-                      "http://localhost:4000/api/v1/surveys/user/change-subscription",
+                      "https://backendapp.murmurcars.com/api/v1/surveys/user/change-subscription",
                       {
                         user_id: profile?.id,
                         subscriptionId,
                         priceId,
                       }
                     );
-                    window.scrollTo({ top: 0, left: 0 });
+               
                     // setLoading(false);
                     this.setState((state) => ({
                       ...state,
@@ -458,7 +459,7 @@ class Subscription extends Component {
                   } else {
                     //creating new subscription
                     response = await axios.post(
-                      "http://localhost:4000/api/v1/surveys/user/create-subscription",
+                      "https://backendapp.murmurcars.com/api/v1/surveys/user/create-subscription",
                       {
                         user_id: profile?.id,
                         customerId: this.state.stripeCustomerId,
@@ -477,7 +478,7 @@ class Subscription extends Component {
                   );
 
                   if (result?.error) {
-                    window.scrollTo({ top: 0, left: 0 });
+             
                     this.setState((state) => ({
                       ...state,
 
@@ -494,7 +495,7 @@ class Subscription extends Component {
                     }, 3000);
                   } else {
                     // setLoading(false);
-                    window.scrollTo({ top: 0, left: 0 });
+               
                     this.setState((state) => ({
                       ...state,
                       selectPaymentMethodModal: false,
@@ -514,7 +515,7 @@ class Subscription extends Component {
                     }, 3500);
                   }
                 } catch (err) {
-                  window.scrollTo({ top: 0, left: 0 });
+            
                   this.setState((state) => ({
                     ...state,
                     selectPaymentMethodModal: false,

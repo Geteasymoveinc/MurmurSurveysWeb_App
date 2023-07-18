@@ -54,7 +54,6 @@ class Settings extends Component {
       profile_photo: "",
       loading: false,
       wrong_credentials: [],
-    
     };
     this.toggleEye = this.toggleEye.bind(this);
   }
@@ -90,9 +89,6 @@ class Settings extends Component {
 
     this.setState({ ...this.state, [name]: value });
   };
-
-
-
 
   submitUpdateSettings = (event) => {
     event.preventDefault();
@@ -138,8 +134,8 @@ class Settings extends Component {
       );
       formData.append("fullName", this.state.stng_fullName);
       formData.append("subscription_status", this.state.subscription_status);
-      if(this.state.profile_photo){
-      formData.append("photo", this.state.profile_photo);
+      if (this.state.profile_photo) {
+        formData.append("photo", this.state.profile_photo);
       }
       formData.append("companyAddress", this.state.stng_address);
       formData.append("profilePhoto", this.state.file);
@@ -171,35 +167,31 @@ class Settings extends Component {
       `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
       {
         email: this.state.stng_email,
-        role: '2'
+        role: "2",
       }
     )
       .then((res) => {
         const data = res.resp;
 
-
-              this.setState({
-                ...this.state,
-                stng_id: data._id,
-                stng_company: data.company,
-                stng_phone: data.phone_number,
-                stng_advertise_options: data.advertise_options,
-                stng_subscribedToMurmurNewsettler:
-                  data.subscribedToMurmurNewsettler,
-                stng_fullName: data.fullName,
-                stng_address: data.companyAddress,
-                stng_city: data.city,
-                stng_state: data.state,
-                subscription_status: data.subscription_status,
-                loading: false,
-                profile_photo: data.profilePhoto
-                  ? data.profilePhoto.split(
-                      "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
-                    )[1]
-                  : null,
-             
-              })
-            
+        this.setState({
+          ...this.state,
+          stng_id: data._id,
+          stng_company: data.company,
+          stng_phone: data.phone_number,
+          stng_advertise_options: data.advertise_options,
+          stng_subscribedToMurmurNewsettler: data.subscribedToMurmurNewsettler,
+          stng_fullName: data.fullName,
+          stng_address: data.companyAddress,
+          stng_city: data.city,
+          stng_state: data.state,
+          subscription_status: data.subscription_status,
+          loading: false,
+          profile_photo: data.profilePhoto
+            ? data.profilePhoto.split(
+                "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+              )[1]
+            : null,
+        });
       })
       .catch((err) =>
         this.setState({
@@ -225,8 +217,6 @@ class Settings extends Component {
       }
     }
 
-
-  
     return (
       <React.Fragment>
         {loading && (
@@ -244,8 +234,12 @@ class Settings extends Component {
           </div>
         )}
         {!loading && (
-          <div className={classes.dash_right}>
-            <HeadSearch page={'Settings'}/>
+          <div
+            className={`${classes.dash_right} ${
+              classes[this.props.layoutTheme]
+            }`}
+          >
+            <HeadSearch page={"Settings"} />
             {/*<!-- settings block -->*/}
             <div className={classes.setting_block}>
               <div className={classes.setting_left}>
@@ -606,7 +600,8 @@ class Settings extends Component {
 
 const mapStatetoProps = (state) => {
   const { user } = state.Login;
-  return { user };
+
+  return { user, ...state.Layout };
 };
 
 export default connect(mapStatetoProps)(Settings);

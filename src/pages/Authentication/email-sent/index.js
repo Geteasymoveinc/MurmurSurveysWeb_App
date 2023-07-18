@@ -7,8 +7,7 @@ import { connect } from "react-redux";
 
 //styles and icons
 import classes from "../../../assets/css/Authentication/email-sent/index.module.css";
-
-import Logo from "../../../assets/css/common/icons/logoBlue.svg";
+import Logo from "../../../assets/images/LogoWhiteThemeQuestions.png";
 import Slash from "../../../assets/css/common/icons/slash.svg";
 import Vector2 from "../../../assets/css/common/icons/copyrightblack.svg";
 import EmailSent from "../../../assets/css/Authentication/email-sent/email-sent.svg";
@@ -73,7 +72,7 @@ class EmailWasSent extends React.Component {
           <div className={`${classes.mur_contain} ${classes.mur_flex}`}>
             <p className={`${classes.footer_copyright} ${classes.mur_flex}`}>
               <img src={Vector2} alt="copyright icon" />
-              <span>{new Date().getFullYear()}, Murmur</span>
+              <span>{new Date().getFullYear()},  InsightsIQ</span>
             </p>
             <ul className={classes.footer_links}>
               <li>

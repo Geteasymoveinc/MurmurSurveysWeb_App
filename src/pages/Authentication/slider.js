@@ -7,24 +7,25 @@ import {
   CarouselCaption,
 } from "reactstrap";
 import classes from "../../assets/css/Authentication/Login/Login.module.css";
+import "../../assets/css/Authentication/Login/carousel.css";
 
 const items = [
   {
-    text: "Advertise via Murmur",
+    text: "Unlock Actionable Customer Insights:",
     paragraph:
-      "Create the survey for your business by indicating specific area, demographics and age of the responders",
+      "Our AI algorithms analyze vast amounts of customer data, including purchase history, browsing behavior, social media interactions, and customer feedback.",
     id: "1",
   },
   {
-    text: "Work with Us",
+    text: "Harness Valuable Customer Product Feedback:",
     paragraph:
-      "Be ready to receive the first responses within a couple of hours",
+      "Gathering feedback from your customers is crucial for continuous improvement.",
     id: "2",
   },
   {
-    text: "Improve trade industry via Murmur’s Survey Rewards App",
+    text: "Real-Time Monitoring and Alerts:",
     paragraph:
-      "Murmur Surveys Analytics are able to segment gender, age and locations of the responders of your survey for you to save the time ",
+      "Stay ahead of the competition with our real-time monitoring and alerts feature.",
     id: "3",
   },
 ];
@@ -89,7 +90,7 @@ class Slider extends React.Component {
     ));
 
     return (
-      <div className={`${classes.text_carousel} ${classes.log_reg_slider}`}>
+      <div className={`text_carousel ${classes.log_reg_slider}`}>
         <Carousel
           activeIndex={activeIndex}
           next={this.next}

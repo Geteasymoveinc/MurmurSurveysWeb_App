@@ -3,303 +3,321 @@
   flex-direction: column;
   align-items: center;
   padding-top: 30px;
-}
 
-.settings_container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 611px;
-  height: 490px;
+  .settings_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 611px;
+    height: 490px;
 
-  /* Basic colors/Neutral 100 */
+    /* Basic colors/Neutral 100 */
 
-  position: relative;
-  padding-top: 30px;
-  background: #ffffff;
-  box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
-  border-radius: 8px;
-}
-
-.smaller_container {
-  position: relative;
-  width: 90%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.smaller_container h3 {
-
-  margin-bottom: 15px;
-
-  font-family: "Abhaya Libre ExtraBold";
-  font-style: normal;
-  font-weight: 800;
-  font-size: 20px;
-  line-height: 30px;
-  color: #2e3a59;
-  padding: 0;
-  margin: 0 ;
-  margin-right: auto;
-}
-.smaller_container h5 {
-  //styleName: Text sm/Medium;
-  font-family: "SF Pro Display";
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  letter-spacing: 0em;
-  text-align: left;
-  color: rgba(52, 64, 84, 1);
-  margin-right: auto;
-}
-.smaller_container .audience_p {
-  align-self: flex-start;
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  /* identical to box height, or 125% */
-
-  /* Basic colors/Neutral 700 */
-
-  color: #2e3a59;
-}
-
-.map_container {
-  position: relative;
-  width: 100%;
-  height: 152px;
-  margin-bottom: 25px;
-}
-.map-custom-btns {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  display: flex;
-  align-items: center;
-}
-.google_map_location_input {
-  width: 80px;
-  height: 30px;
-  background-color: transparent;
-  position: relative;
-  background: #f7f9fc;
-  border: 1px solid #b69eea;
-  box-sizing: border-box;
-  border-radius: 4px;
-}
-.google_map_location_input input {
-  position: relative;
-  width: 100%;
-  background-color: transparent;
-  border: transparent;
-  outline: none;
-}
-
-.google_map_location_input input {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  /* identical to box height, or 150% */
-
-  letter-spacing: 0.0015em;
-
-  /* Brand Color/Purple/Purple 500 */
-
-  color: #7356c0;
-}
-
-.gender_age_container {
-  width: 82%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.details_edit_select {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.details_edit_select select {
-  border: 1px solid #e4e9f2;
-  border-radius: 8px;
-  background: #fff;
-  padding-left: 8px;
-  padding-right: 38px;
-  width: 100px;
-  height: 48px;
-  color: #2e3a59;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
-  transition: all 0.4s ease;
-}
-
-.details_edit_select label {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
-
-  letter-spacing: 0.0015em;
-
-  color: #2e3a59;
-  margin-bottom: 7px;
-}
-.details_edit_select:first-child {
-  width: 113px;
-}
-.details_edit_select:first-child select {
-  width: 113px;
-  height: 48px;
-}
-.details_edit_select select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-.details_edit_arrow {
-  position: absolute;
-  right: 12px;
-  top: 40px;
-}
-.details_edit_select select:focus {
-  outline: none;
-  border: 1px solid #7356c0;
-}
-
-.settings_container.settings_container_top {
-  height: 76px;
-  margin-bottom: 20px;
-  padding: 0;
-}
-.smaller_container.smaller_container_top {
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-
-  justify-content: space-between;
-}
-
-.smaller_container.smaller_container_top .survey_status_container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 35%;
-}
-.smaller_container.smaller_container_top .survey_status_container p,
-label {
-  padding: 0;
-  margin: 0;
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  color: #2e3a59;
-}
-
-.smaller_container.smaller_container_top .survey_status_container .active {
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  color: #8f9bb3;
-}
-
-.google_map_location_input.google_map_location_select {
-  width: 100px;
-}
-
-.location_select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  border: transparent;
-}
-.location_select:hover {
-  cursor: pointer;
-}
-.google_map_location_input.google_map_location_select img {
-  position: absolute;
-  top: 10px;
-  right: 1px;
-}
-
-.settings_container.survey_target_everybody {
-  height: 150px;
-}
-
-.contacts {
-  width: 100%;
-  padding: 30px 0;
-  border-top-width: 2px;
-  border-bottom-width: 2px;
-  border-left-width: 0;
-  border-right-width: 0;
-  border-style: solid;
-  border-color: rgba(208, 213, 221, 1);
-  margin-top: 20px;
-
-  &__field {
-    & > div {
-      display: flex;
-
-      border: 1px solid rgba(208, 213, 221, 1);
-      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-      width: 563px;
-      height: 44px;
-
-      border-radius: 8px;
-    }
-  label{
-    //styleName: Text sm/Medium;
-font-family: 'SF Pro Display';
-font-size: 14px;
-font-weight: 500;
-line-height: 20px;
-letter-spacing: 0em;
-text-align: left;
-color: rgba(52, 64, 84, 1);
-
-  }
-
-  }
-
-  &__select {
     position: relative;
-    width: 86px;
-    height: 44px;
-    select {
-      /* for Firefox */
-      -moz-appearance: none;
-      /* for Chrome */
-      -webkit-appearance: none;
+    padding-top: 30px;
+    background: #ffffff;
+    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+  }
 
-      /* For IE10 */
-      &::-ms-expand {
-        display: none;
+  .smaller_container {
+    position: relative;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .smaller_container h3 {
+    margin-bottom: 15px;
+
+    font-family: "Abhaya Libre ExtraBold";
+    font-style: normal;
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 30px;
+    color: #2e3a59;
+    padding: 0;
+    margin: 0;
+    margin-right: auto;
+  }
+  .smaller_container h5 {
+    //styleName: Text sm/Medium;
+    font-family: "SF Pro Display";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: rgba(52, 64, 84, 1);
+    margin-right: auto;
+  }
+  .smaller_container .audience_p {
+    align-self: flex-start;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    /* identical to box height, or 125% */
+
+    /* Basic colors/Neutral 700 */
+
+    color: #2e3a59;
+  }
+
+  .map_container {
+    position: relative;
+    width: 100%;
+    height: 152px;
+    margin-bottom: 25px;
+  }
+  .map-custom-btns {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .google_map_location_input {
+    width: 80px;
+    height: 30px;
+    background-color: transparent;
+    position: relative;
+    background: #f7f9fc;
+    border: 1px solid #b69eea;
+    box-sizing: border-box;
+    border-radius: 4px;
+  }
+  .google_map_location_input input {
+    position: relative;
+    width: 100%;
+    background-color: transparent;
+    border: transparent;
+    outline: none;
+  }
+
+  .google_map_location_input input {
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    /* identical to box height, or 150% */
+
+    letter-spacing: 0.0015em;
+
+    /* Brand Color/Purple/Purple 500 */
+
+    color: #7356c0;
+  }
+
+  .gender_age_container {
+    width: 82%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .details_edit_select {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .details_edit_select select {
+    border: 1px solid #e4e9f2;
+    border-radius: 8px;
+    background: #fff;
+    padding-left: 8px;
+    padding-right: 38px;
+    width: 100px;
+    height: 48px;
+    color: #2e3a59;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 28px;
+    transition: all 0.4s ease;
+  }
+
+  .details_edit_select label {
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+
+    letter-spacing: 0.0015em;
+
+    color: #2e3a59;
+    margin-bottom: 7px;
+  }
+  .details_edit_select:first-child {
+    width: 113px;
+  }
+  .details_edit_select:first-child select {
+    width: 113px;
+    height: 48px;
+  }
+  .details_edit_select select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+  .details_edit_arrow {
+    position: absolute;
+    right: 12px;
+    top: 40px;
+  }
+  .details_edit_select select:focus {
+    outline: none;
+    border: 1px solid #7356c0;
+  }
+
+  .settings_container.settings_container_top {
+    height: 76px;
+    margin-bottom: 20px;
+    padding: 0;
+  }
+  .smaller_container.smaller_container_top {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+  }
+
+  .smaller_container.smaller_container_top .survey_status_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 35%;
+  }
+  .smaller_container.smaller_container_top .survey_status_container p,
+  label {
+    padding: 0;
+    margin: 0;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #2e3a59;
+  }
+
+  .smaller_container.smaller_container_top .survey_status_container .active {
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #8f9bb3;
+  }
+
+  .google_map_location_input.google_map_location_select {
+    width: 100px;
+  }
+
+  .location_select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: transparent;
+  }
+  .location_select:hover {
+    cursor: pointer;
+  }
+  .google_map_location_input.google_map_location_select img {
+    position: absolute;
+    top: 10px;
+    right: 1px;
+  }
+
+  .settings_container.survey_target_everybody {
+    height: fit-content;
+  }
+
+  .contacts {
+    width: 100%;
+    padding: 30px 0;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-style: solid;
+    border-color: rgba(208, 213, 221, 1);
+    margin-top: 20px;
+
+    &__field {
+      & > div {
+        display: flex;
+        align-items: center;
+        //border: 1px solid rgba(208, 213, 221, 1);
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+        width: 563px;
+        height: 44px;
+
+        border-radius: 8px;
       }
+      label {
+        //styleName: Text sm/Medium;
+        font-family: "SF Pro Display";
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: 0em;
+        text-align: left;
+        color: rgba(52, 64, 84, 1);
+      }
+    }
 
-      background-color: transparent;
-      border: none;
+    &__select {
+      position: relative;
+      width: 86px;
+      height: 44px;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      select {
+        /* for Firefox */
+        -moz-appearance: none;
+        /* for Chrome */
+        -webkit-appearance: none;
 
-      padding: 10px 12px 10px 14px;
+        /* For IE10 */
+        &::-ms-expand {
+          display: none;
+        }
 
+        background-color: transparent;
+        border: none;
+
+        padding: 10px 12px 10px 14px;
+
+        //styleName: Text md/Regular;
+        font-family: "SF Pro Display";
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        letter-spacing: 0em;
+        text-align: left;
+        color: rgba(16, 24, 40, 1);
+        height: 100%;
+        width: 100%;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+      svg {
+        position: absolute;
+        top: 12px;
+        right: 2px;
+      }
+    }
+    input {
       //styleName: Text md/Regular;
       font-family: "SF Pro Display";
       font-size: 16px;
@@ -307,28 +325,44 @@ color: rgba(52, 64, 84, 1);
       line-height: 24px;
       letter-spacing: 0em;
       text-align: left;
-      color: rgba(16, 24, 40, 1);
+      color: rgba(102, 112, 133, 1);
+      border: none;
+      width: 100%;
+      outline: none;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      height: 100%;
     }
-    svg {
-      position: absolute;
-      top: 12px;
-      right: 7px;
+
+    &__mobile {
+      width: calc(100% - 86px);
     }
-  }
-  input {
-    //styleName: Text md/Regular;
-    font-family: "SF Pro Display";
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-    letter-spacing: 0em;
-    text-align: left;
-    color: rgba(102, 112, 133, 1);
-    border: none;
-    width: 100%;
   }
 
-  &__mobile {
-    width: calc(100% - 86px);
+  &.dark {
+    .settings_container {
+      background: linear-gradient(0deg, #131313, #131313),
+        linear-gradient(
+          0deg,
+          rgba(233, 215, 254, 0.04),
+          rgba(233, 215, 254, 0.04)
+        );
+      border: 1px solid rgba(233, 215, 254, 0.04);
+    }
+    select {
+      background-color: white;
+    }
+
+    h3,h5, label,p,span{
+      color: white !important;
+    }
+
+    input{
+      background-color: #16151a;
+      color: white;
+      &::placeholder{
+        color: white
+      }
+    }
   }
 }

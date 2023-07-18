@@ -61,7 +61,7 @@ class ProfileMenu extends Component {
         <Dropdown
           isOpen={this.state.menu && this.props.scope !== "local"}
           toggle={this.toggle}
-          className={`${"dropdown"}`}
+          className={`dropdown ${this.props.layoutTheme}`}
         >
           <DropdownToggle
             id="page-header-user-dropdown"
@@ -95,22 +95,26 @@ class ProfileMenu extends Component {
             />
           </DropdownToggle>
           <DropdownMenu right>
+          <DropdownItem tag="div">
+              <Link to="/settings" className="dropdown-item p-0">
+                <i className="bx bx-user font-size-16 align-middle mr-1"></i>
+                Profile
+              </Link>
+            </DropdownItem>
+            <div className="dropdown-divider"></div>
             <DropdownItem tag="div">
-              <Link to="/surveys" className="dropdown-item p-0">
+              <button  className="dropdown-item p-0" onClick={() => {
+                      this.props.history.push("/")
+                      this.props.history.replace('/surveys')
+              }}>
                 {" "}
                 <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>{" "}
                 My Surveys
-              </Link>
+              </button>
             </DropdownItem>
 
             <div className="dropdown-divider"></div>
-            <DropdownItem tag="div">
-              <Link to="/settings" className="dropdown-item p-0">
-                <i className="bx bx-user font-size-16 align-middle mr-1"></i>
-                Settings
-              </Link>
-            </DropdownItem>
-            <div className="dropdown-divider"></div>
+         
             <DropdownItem tag="div">
               <Link to="/billing" className="dropdown-item p-0">
                 <svg

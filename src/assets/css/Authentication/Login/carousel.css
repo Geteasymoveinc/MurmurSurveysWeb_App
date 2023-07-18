@@ -2,6 +2,12 @@
     display: flex;
     flex-direction: column-reverse;
   }
+  .text_carousel .carousel-inner{
+    order: 1
+  }
+  .text_carousel .carousel-item{
+    min-height: 85px;
+  }
   .text_carousel .carousel-indicators{
     position: static;
     margin:0;

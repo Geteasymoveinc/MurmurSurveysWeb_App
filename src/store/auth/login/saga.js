@@ -37,7 +37,7 @@ function* loginUser({ payload: { user, history } }) {
       if (image) {
         sessionStorage.setItem("profileImage", image);
       }
-      document.title = 'Murmur: Mobile Car-Top Advertising';
+      document.title = 'InsightsIQ | Transforming User Feedback into Actionable AI-driven Insights';
       yield put(loginSuccess(response));
     }
    history.push("/");

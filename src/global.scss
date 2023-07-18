@@ -41,8 +41,10 @@
   align-items: center;
   position: absolute;
   z-index: 100;
+  pointer-events: none;
   &__success,
-  &__error {
+  &__error,
+  &__warning {
     width: 483px;
     height: 80px;
     display: flex;
@@ -70,6 +72,9 @@
   }
   &__error {
     background: rgba(174, 25, 54, 1);
+  }
+  &__warning {
+    background: rgba(244, 120, 4, 1);
   }
   p {
     font-family: "Inter";

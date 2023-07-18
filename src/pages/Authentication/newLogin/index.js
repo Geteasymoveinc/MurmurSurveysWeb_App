@@ -18,7 +18,7 @@ import { loginUser, google_login } from "../../../store/actions";
 
 //import assets
 import Google from "../../../assets/css/common/icons/google.svg";
-import Logo from "../../../assets/css/common/icons/logo.svg";
+import Logo from "../../../assets/images/LogoWhiteTheme.png";
 import Survey from "../../../assets/css/common/icons/Survey.png";
 import Eye from "../../../assets/css/common/icons/icon.svg";
 import EyeSlash from "../../../assets/css/common/icons/eye-slash.svg";
@@ -170,7 +170,7 @@ class Login extends React.Component {
                   className={`${classes.footer_copyright} ${classes.mur_flex} ${classes.log_reg_footer}`}
                 >
                   <img src={Vector2} alt="" />
-                  <span>2022, Murmur</span>
+                  <span>{new Date().getFullYear()},  InsightsIQ</span>
                 </p>
               </div>
             </div>

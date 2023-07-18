@@ -37,7 +37,7 @@ class PullSurveys extends Component {
 
     axios
       .get(
-        `http://localhost:4000/api/v1/surveys/survey/fetch-surveys/${user_id}`
+        `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-surveys/${user_id}`
       )
       .then((response) => {
         const { surveys: surveys_data } = response.data;

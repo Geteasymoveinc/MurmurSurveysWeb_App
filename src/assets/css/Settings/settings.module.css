@@ -511,3 +511,18 @@ margin: 0;
   padding: 50px;
 }
 
+
+
+.dash_right.dark .setting_left{
+  background: #16151a;
+}
+
+.dash_right.dark .setting_left h4{
+
+  color: white
+}
+
+
+.dash_right.dark .setting_left .stng_profil_detail p{
+  color: white
+}

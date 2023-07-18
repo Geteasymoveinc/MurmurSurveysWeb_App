@@ -17,7 +17,7 @@ import { withRouter, Link } from "react-router-dom";
 //import assets
 
 import Google from "../../../assets/css/common/icons/google.svg";
-import Logo from "../../../assets/css/common/icons/logo.svg";
+import Logo from "../../../assets/images/LogoWhiteTheme.png";
 import Survey from "../../../assets/css/common/icons/Survey.png";
 import SMS from "../../../assets/css/common/icons/sms.svg";
 import Lock from "../../../assets/css/common/icons/lock.svg";
@@ -195,7 +195,7 @@ class Register extends React.Component {
                 className={`${classes.footer_copyright} ${classes.mur_flex} ${classes.log_reg_footer}`}
               >
                 <img src={Copyright} alt="" />
-                <span>{new Date().getFullYear()}, Murmur</span>
+                <span>{new Date().getFullYear()},  InsightsIQ</span>
               </p>
             </div>
           </div>

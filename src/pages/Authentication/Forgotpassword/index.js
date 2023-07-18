@@ -13,8 +13,7 @@ import { userForgetPassword } from "../../../store/actions";
 
 //styles and icons
 import classes from "../../../assets/css/Authentication/ForgotPassword/index.module.css";
-
-import Logo from "../../../assets/css/common/icons/logoBlue.svg";
+import Logo from "../../../assets/images/LogoWhiteThemeQuestions.png";
 import Resetkey from "../../../assets/css/Authentication/ForgotPassword/icons/resetkey.svg";
 import Slash from "../../../assets/css/common/icons/slash.svg";
 import SMS from "../../../assets/css/common/icons/sms.svg";
@@ -158,7 +157,7 @@ class ForgetPasswordPage extends React.Component {
                   className={`${classes.footer_copyright} ${classes.mur_flex}`}
                 >
                   <img src={Copyright} alt="copyright icon" />
-                  <span>{new Date().getFullYear()}, Murmur</span>
+                  <span>{new Date().getFullYear()},  InsightsIQ</span>
                 </p>
                 <ul className={classes.footer_links}>
                   <li>

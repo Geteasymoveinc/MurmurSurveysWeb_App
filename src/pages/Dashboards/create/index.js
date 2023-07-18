@@ -26,33 +26,32 @@ import SurveySettings from "./settings";
 import SurveyAnalytics from "./analytics";
 import SurveyAnswers from "./answers";
 import Preview from "../preview";
-
-import LocationModal from "../../../components/location-modal";
-import Profile from "../../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
+import PullParticipants from "./pullParticipants";
+import ResearchSetting from "./research-setting";
 
 import { Upload as Upload_Antd } from "antd";
 
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import axios from "axios";
-
+import { Link, withRouter } from "react-router-dom";
 import {
   publish_survey,
   fetch_survey,
   fetch_map_position,
 } from "../../../store/actions";
+
 import { connect } from "react-redux";
 //import { queryForEmail } from "../../../helpers/fakebackend_helper";
 
-import { Link, withRouter } from "react-router-dom";
-
+import LocationModal from "../../../components/location-modal";
+import Profile from "../../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import WebcamModal from "../../../components/modals/webcam";
 import AudioRecorder from "../../../components/audio-recorder";
+import AudioPlayer from "../../../components/audio-player";
+import { WarningFeedback } from "../../../components/feedbacks";
 
 import Geocode from "react-geocode";
-import AudioPlayer from "../../../components/audio-player";
-import PullParticipants from "./pullParticipants";
-import ResearchSetting from "./research-setting";
 Geocode.setApiKey(`${process.env.REACT_APP_GOOGLEMAPSKEY}`);
 
 const { Dragger } = Upload_Antd;
@@ -69,8 +68,9 @@ class Survey extends Component {
       locationModal: false,
       recordVideoModal: false,
       recordAudio: false,
-      recordedAudioUrl: "",
       creative: false,
+      warningFeedback: false,
+      warning: null,
       email: sessionStorage.getItem("authUser"),
       menu: {
         menu_item: "questions",
@@ -206,12 +206,15 @@ class Survey extends Component {
   componentDidMount() {
     const url = this.props.location.search; //search property of history props
     const survey_id = new URLSearchParams(url).get("survey_id"); //extracting id
-
     document.body.classList.add("grey-background");
 
     this.props.fetch_survey(
-      `http://localhost:4000/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`
+      `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`
     );
+    this.setState((state) => ({
+      ...state,
+      survey_id,
+    }));
     /* navigator.geolocation.getCurrentPosition(
         (position) => {
           this.setState({
@@ -237,7 +240,7 @@ class Survey extends Component {
   }
 
   //publish or update
-  submitNewSurvey = (event, stripe, no_stripe_surveys, user_id) => {
+  submitNewSurvey = (event, survey_id) => {
     event.preventDefault();
     const { form_caption, form_title, image } =
       this.state.form.survey_title_question_image.survey;
@@ -249,7 +252,22 @@ class Survey extends Component {
 
     const { target_audience, survey_active, survey_specific } =
       this.props.survey;
-    const { survey_id } = this.state;
+
+    if (!surveys.length) {
+      this.setState((state) => ({
+        ...state,
+        warningFeedback: true,
+        warning: "Please create at least one question",
+      }));
+      setTimeout(() => {
+        this.setState((state) => ({
+          ...state,
+          warningFeedback: false,
+          warning: null,
+        }));
+      }, 3000);
+      return;
+    }
     const formData = new FormData();
     formData.append("survey_title", form_title);
     formData.append("survey_earnings", price);
@@ -261,7 +279,16 @@ class Survey extends Component {
     formData.append("survey_specific", JSON.stringify(survey_specific));
     formData.append("survey_caption", form_caption);
     formData.append("file", image_file);
-
+    formData.append(
+      "researchConductedVia",
+      this.props.survey.researchConductedVia
+    );
+    formData.append("targetUsersFrom", this.props.survey.targetUsersFrom);
+    formData.append("research", this.props.survey.research);
+    formData.append(
+      "researcherContacts",
+      JSON.stringify(this.props.survey.researcherContacts)
+    );
     //formData.append("survey_title", survey_title);
     //formData.append("survey_earnings", survey_earnings);
     //formData.append("survey_budget", survey_budget);
@@ -273,7 +300,7 @@ class Survey extends Component {
     //formData.append("file", survey_image.image_file);
     //formData.append("survey_specific", JSON.stringify(survey_specific));
     //formData.append("country", country);
-    formData.append("no_stripe_surveys", JSON.stringify(no_stripe_surveys));
+    formData.append("payment", JSON.stringify(this.props.survey.payment));
 
     const conditionals = [];
     const main = [];
@@ -306,10 +333,10 @@ class Survey extends Component {
 
     const backend = {};
 
-    //backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}`;
-    backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}`;
+    backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}`;
+    //backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}`;
     backend.method = "PUT";
-    backend.update = true;
+    backend.payment = this.props.survey.payment;
 
     this.props.publish_survey({
       backend,
@@ -319,17 +346,17 @@ class Survey extends Component {
   };
 
   checkout = (survey_id) => {
-    const { survey_audience_number, survey_earnings } = this.props.survey;
+    const { amount, budget } = this.state.form.survey_price_amount.survey;
 
     const backend = {};
     backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
     backend.method = "POST";
-    backend.stripe = true;
+    backend.payment = this.props.survey.payment;
     this.props.publish_survey({
       backend,
       data: {
-        survey_audience_count: survey_audience_number,
-        survey_earnings: survey_earnings,
+        budget,
+        amount,
       },
       history: this.props.history,
     });
@@ -389,7 +416,7 @@ class Survey extends Component {
         );
       })
       .catch((err) => {
-        alert("network error");
+        console.log("network error");
       });
   };
 
@@ -1143,12 +1170,12 @@ class Survey extends Component {
       isQuestion,
     } = create_answers_questions;
 
-    const { survey, payment, user_id } = this.props;
+    const { survey } = this.props;
 
-    const { analytics } = survey;
+    const { response: analytics } = survey;
 
-    let checkout = payment.type === "checkout";
-
+    let checkout = survey.payment === "checkout";
+    console.log(survey.payment);
     return (
       <Fragment>
         {survey.loading || loading ? (
@@ -1164,6 +1191,10 @@ class Survey extends Component {
           </div>
         ) : (
           <div className={classes.dash_right}>
+            <WarningFeedback
+              showFeedback={this.state.warningFeedback}
+              feedback={this.state.warning}
+            />
             <header className={`${classes.header} ${classes.main}`}>
               <div className={classes.mur_contain}>
                 <a href="#" className={classes.logo}>
@@ -1187,11 +1218,7 @@ class Survey extends Component {
                     analytics.length ? classes.update : null
                   }`}
                 >
-                  <div className={classes.button_containers}>
-                    <Link to={`/`} className={`${classes.navbar_btn}`}>
-                        Nack
-                    </Link>
-                  </div>
+  
 
                   <div className={classes.button_containers}>
                     <button
@@ -1200,7 +1227,7 @@ class Survey extends Component {
                         menu_item === "research" ? classes.active : null
                       }`}
                     >
-                      Research
+                      Main
                     </button>
                     <span
                       className={`${
@@ -1225,8 +1252,8 @@ class Survey extends Component {
                     ></span>
                   </div>
 
-            
-                    {analytics.length ? <div className={classes.button_containers}>
+                  {analytics.length ? (
+                    <div className={classes.button_containers}>
                       <button
                         onClick={() => this.togleMenuItem("analytics")}
                         className={`${
@@ -1243,11 +1270,11 @@ class Survey extends Component {
                             : null
                         }`}
                       ></span>
-                    </div> : null}
-             
+                    </div>
+                  ) : null}
 
-           
-                    {analytics.length ?<div className={classes.button_containers}>
+                  {false ? (
+                    <div className={classes.button_containers}>
                       <button
                         onClick={() => this.togleMenuItem("answers")}
                         className={` ${
@@ -1261,8 +1288,8 @@ class Survey extends Component {
                           menu_item === "answers" ? classes.border_active : null
                         }`}
                       ></span>
-                    </div> : null}
-                 
+                    </div>
+                  ) : null}
 
                   <div className={classes.button_containers}>
                     <button
@@ -1287,7 +1314,7 @@ class Survey extends Component {
                           menu_item === "participants" ? classes.active : null
                         }`}
                       >
-                        Participants
+                        Users
                       </button>
                       <span
                         className={`${
@@ -1302,23 +1329,14 @@ class Survey extends Component {
               </div>
               <div className={classes.dash_relative}>
                 <div
-                  className={`${classes.search_box_flex} ${
-                    checkout && survey_id ? classes.checkout : null
-                  }`}
+                  className={`${classes.search_box_flex}`}
                 >
                   <form
-                    onSubmit={(e) =>
-                      this.submitNewSurvey(
-                        e,
-                        payment.stripe,
-                        payment.no_stripe_surveys,
-                        user_id
-                      )
-                    }
+                    onSubmit={(event) => this.submitNewSurvey(event, survey_id)}
                   >
-                    {checkout && survey_id ? (
+                    {false ? (
                       <button
-                        className={classes.publish_survey}
+                        className={`${classes.publish_survey} mr-3`}
                         onClick={() => this.checkout(survey_id)}
                       >
                         <span>Checkout</span>
@@ -2288,7 +2306,7 @@ class Survey extends Component {
                                               )}
 
                                               {/* adding new option or changing its value*/}
-                                              {survey.edit &&
+                                              {false &&
                                               survey.type !== "text" ? (
                                                 <span
                                                   className={`${
@@ -2396,10 +2414,18 @@ class Survey extends Component {
                                                       onClick={() =>
                                                         this.editSurvey(i)
                                                       }
+                                                      style={{
+                                                        cursor: "pointer",
+                                                      }}
+                                                      className="ml-3 mr-3 position-relative"
                                                     />
                                                     <img
                                                       src={Trash}
                                                       alt=""
+                                                      className="ml-3 mr-3 position-relative"
+                                                      style={{
+                                                        cursor: "pointer",
+                                                      }}
                                                       onClick={() =>
                                                         this.deleteCreatedSurvey(
                                                           i
@@ -2408,9 +2434,7 @@ class Survey extends Component {
                                                     />
                                                   </div>
                                                   <div
-                                                    className={
-                                                      classes.question_answer_setting
-                                                    }
+                                                    className={`${classes.question_answer_setting} ml-4`}
                                                   >
                                                     <div>
                                                       <p>Important</p>
@@ -2481,7 +2505,7 @@ class Survey extends Component {
                         }
                       >
                         {" "}
-                        {input && (
+                        {input ? (
                           <div
                             className={classes.user_setting}
                             style={{ height: "80px" }}
@@ -2556,7 +2580,7 @@ class Survey extends Component {
                               </g>
                             </svg>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                       <div
                         className={classes.create_question_subcontainer}
@@ -2617,7 +2641,7 @@ class Survey extends Component {
                               ) : (
                                 <AudioPlayer
                                   audio={expamle_asset.assetUrl}
-                                  key={expamle_asset.assetUrl}
+                                  keyProp={expamle_asset.assetUrl}
                                 />
                               )}
                             </div>
@@ -2712,45 +2736,47 @@ class Survey extends Component {
              </div>*/}
                         </div>
                         {this.state.recordAudio ? (
-                          <AudioRecorder
-                            onFinishRecording={(blob) => {
-                              const reader = new FileReader();
-                              const asset = {
-                                assetName: "",
-                                assetFile: blob,
-                                assetUrl: "",
-                                assetType: "audio/mp3",
-                              };
+                          <div className="mt-3 mb-3 pl-4">
+                            <AudioRecorder
+                              onFinishRecording={(blob) => {
+                                const reader = new FileReader();
+                                const asset = {
+                                  assetName: "",
+                                  assetFile: blob,
+                                  assetUrl: "",
+                                  assetType: "audio/mp3",
+                                };
 
-                              reader.readAsDataURL(blob);
+                                reader.readAsDataURL(blob);
 
-                              reader.onload = (e) => {
-                                //asset.assetFile = info.file;
-                                asset.assetUrl = e.target.result;
-                                //asset.assetName = info.file.name;
-                                //asset.assetType = info.file.type;
-                                console.log("asset", asset);
-                                this.setState({
-                                  ...this.state,
-                                  recordAudio: false,
-                                  form: {
-                                    ...this.state.form,
-                                    survey_answers_questions: {
-                                      ...this.state.form
-                                        .survey_answers_questions,
-                                      survey: {
+                                reader.onload = (e) => {
+                                  //asset.assetFile = info.file;
+                                  asset.assetUrl = e.target.result;
+                                  //asset.assetName = info.file.name;
+                                  //asset.assetType = info.file.type;
+                                  console.log("asset", asset);
+                                  this.setState({
+                                    ...this.state,
+                                    recordAudio: false,
+                                    form: {
+                                      ...this.state.form,
+                                      survey_answers_questions: {
                                         ...this.state.form
-                                          .survey_answers_questions.survey,
-                                        asset: {
-                                          ...asset,
+                                          .survey_answers_questions,
+                                        survey: {
+                                          ...this.state.form
+                                            .survey_answers_questions.survey,
+                                          asset: {
+                                            ...asset,
+                                          },
                                         },
                                       },
                                     },
-                                  },
-                                });
-                              };
-                            }}
-                          />
+                                  });
+                                };
+                              }}
+                            />
+                          </div>
                         ) : null}
                         <div
                           className={`${classes.question_answer} ${classes.margin_top}`}
@@ -2894,6 +2920,9 @@ class Survey extends Component {
                 handleLocationChange={this.handleLocationChange}
                 map={survey.map}
                 target_audience={this.props.survey.target_audience}
+                researchConductedVia={this.props.survey.researchConductedVia}
+                researcherContacts={this.props.survey.researcherContacts}
+                layoutTheme={this.props.layoutTheme}
                 toggleLocationModal={() => {
                   this.setState((state) => ({
                     ...state,
@@ -2903,7 +2932,10 @@ class Survey extends Component {
               />
             )}
             {!preview_mode && menu_item === "analytics" && (
-              <SurveyAnalytics id={survey._id} />
+              <SurveyAnalytics
+                id={survey._id}
+                layoutTheme={this.props.layoutTheme}
+              />
             )}
             {!preview_mode && menu_item === "answers" && (
               <SurveyAnswers
@@ -2912,7 +2944,7 @@ class Survey extends Component {
                 id={survey._id}
               />
             )}
-       
+
             {!preview_mode && menu_item === "participants" && (
               <div className={classes.surveys_container}>
                 <div className={classes.create_ads}>
@@ -2968,14 +3000,24 @@ class Survey extends Component {
             {preview_mode && <Preview surveys={survey.survey_questions} />}
           </div>
         )}
-     {!preview_mode && menu_item === "research" && (
-              <ResearchSetting
-                researchConductedVia={this.props.survey.researchConductedVia}
-                targetUsersFrom={this.props.survey.targetUsersFrom}
-                research={this.props.survey.research}
-                layoutTheme={this.props.layoutTheme}
-              />
-            )}
+        {!preview_mode && menu_item === "research" && (
+          <ResearchSetting
+            researchConductedVia={this.props.survey.researchConductedVia}
+            targetUsersFrom={this.props.survey.targetUsersFrom}
+            research={this.props.survey.research}
+            layoutTheme={this.props.layoutTheme}
+            company={this.props.company}
+            continue={() =>
+              this.setState((state) => ({
+                ...state,
+                menu: {
+                  ...state.menu,
+                  menu_item: "questions",
+                },
+              }))
+            }
+          />
+        )}
         <LocationModal
           modalStatus={locationModal}
           //country={map.country}

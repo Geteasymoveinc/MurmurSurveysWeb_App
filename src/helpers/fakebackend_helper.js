@@ -140,9 +140,8 @@ const post_surveys = (url, data, method) => {
 const get_survey = (url) => {
   return axios
     .get(url)
-    .then((response) => {
-      const { survey } = response.data;
-
+    .then((resp) => {
+      const { survey } = resp.data;
       const {
         survey_questions,
         survey_audience_number,
@@ -155,10 +154,11 @@ const get_survey = (url) => {
         survey_specific,
         participants,
         survey_image,
-        analytics,
+        response,
         payment,
         researchConductedVia,
         targetUsersFrom,
+        researcherContacts,
         research,
         _id
       } = survey;
@@ -176,12 +176,13 @@ const get_survey = (url) => {
         survey_image,
         survey_active,
         survey_specific,
-        analytics,
+        response,
         payment,
         participants,
         researchConductedVia,
         targetUsersFrom,
         research,
+        researcherContacts,
         _id
       };
   

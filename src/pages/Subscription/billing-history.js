@@ -52,7 +52,7 @@ class BillingHistory extends Component {
 
   toggleDeleteBilling = (id) => {
     axios
-      .delete(`http://localhost:4000/api/v1/surveys/user/delete-billing/${id}`)
+      .delete(`https://backendapp.murmurcars.com/api/v1/surveys/user/delete-billing/${id}`)
       .then(() => {
         window.location.reload();
         this.setState((state) => ({ ...state, loading: false }));
@@ -76,7 +76,7 @@ class BillingHistory extends Component {
 
         axios
           .get(
-            `http://localhost:4000/api/v1/surveys/user/fetch-billing-history/${_id}` //to get billing history and customer stripe id
+            `https://backendapp.murmurcars.com/api/v1/surveys/user/fetch-billing-history/${_id}` //to get billing history and customer stripe id
           )
           .then((response) => {
             const { invoices, stripeCustomerId, plan } = response.data;
@@ -85,7 +85,7 @@ class BillingHistory extends Component {
             }
             axios
               .get(
-                `http://localhost:4000/api/v1/surveys/user/default-payment-method/${_id}`
+                `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${_id}`
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
@@ -274,7 +274,7 @@ class BillingHistory extends Component {
 
     axios
       .delete(
-        `http://localhost:4000/api/v1/surveys/user/delete-multiple-billings/${list_of_ids}`
+        `https://backendapp.murmurcars.com/api/v1/surveys/user/delete-multiple-billings/${list_of_ids}`
       )
       .then(() => {
         window.location.reload();
@@ -458,7 +458,7 @@ class BillingHistory extends Component {
                     </div>
                     <button
                       onClick={() => {
-                        console.log("click");
+                        window.scrollTo({ top: 0, left: 0 });
                         this.setState((state) => ({
                           ...state,
                           changeDefaultPaymentMethodModal: true,
@@ -544,24 +544,50 @@ class BillingHistory extends Component {
               stripeCustomerId={this.state.stripeCustomerId}
               closeModal={(submit, state) => {
                 if (submit && state) {
-                  window.scrollTo({ top: 0, left: 0 });
-                  this.setState((state) => ({
-                    ...state,
-                    addCardModal: false,
-                    changeDefaultPaymentMethodModal: false,
-                    changeDefaultCardSuccess: true,
-                  }));
+                  axios
+                  .get(
+                    `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${profile?.id}`
+                  ) //fetch default payment method
+                  .then((response) => {
+                    const { paymentMethod } = response.data;
+              
+                    this.setState((state) => ({
+                      ...state, 
+                      defaultPaymentMethod: paymentMethod,
+                      addCardModal: false,
+                      changeDefaultPaymentMethodModal: false,
+                      changeDefaultCardSuccess: true,
+                    }));
 
-                  setTimeout(() => {
+                    setTimeout(() => {
+                      this.setState((state) => ({
+                        ...state,
+                        changeDefaultCardSuccess: false,
+                      }));
+                    }, 3000);
+                  })
+                  .catch((err) => {
+        
                     this.setState((state) => ({
                       ...state,
-                      changeDefaultCardSuccess: false,
+                      addCardModal: false,
+                      changeDefaultPaymentMethodModal: false,
+                      changeDefaultCardError: true,
                     }));
-                  }, 3000);
+                    setTimeout(() => {
+                      this.setState((state) => ({
+                        ...state,
+                        changeDefaultCardError: false,
+                      }));
+                    }, 3000);
+                  });
+             
 
                   
                 }else if (!state) {
-                  window.scrollTo({ top: 0, left: 0 });
+
+                  
+                
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
@@ -610,7 +636,7 @@ class BillingHistory extends Component {
                 }))
                 try {
                   const customer = await axios.post(
-                    "http://localhost:4000/api/v1/surveys/user/update-customer",
+                    "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
@@ -619,11 +645,11 @@ class BillingHistory extends Component {
                   );
                   axios
                     .get(
-                      `http://localhost:4000/api/v1/surveys/user/default-payment-method/${profile?.id}`
+                      `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${profile?.id}`
                     ) //fetch default payment method
                     .then((response) => {
                       const { paymentMethod } = response.data;
-                      window.scrollTo({ top: 0, left: 0 });
+                
                       this.setState((state) => ({
                         ...state,
                         changeDefaultPaymentMethodModal: false,
@@ -640,7 +666,7 @@ class BillingHistory extends Component {
                       }, 3000);
                     })
                     .catch((err) => {
-                      window.scrollTo({ top: 0, left: 0 });
+          
                       this.setState((state) => ({
                         ...state,
                         changeDefaultPaymentMethodModal: false,
@@ -655,7 +681,7 @@ class BillingHistory extends Component {
                       }, 3000);
                     });
                 } catch (err) {
-                  window.scrollTo({ top: 0, left: 0 });
+             
                   this.setState((state) => ({
                     ...state,
                     changeDefaultPaymentMethodModal: false,

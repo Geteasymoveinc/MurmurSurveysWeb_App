@@ -8,14 +8,12 @@ import { withRouter, Link } from "react-router-dom";
 
 // availity-reactstrap-validation
 import { AvForm, AvField } from "availity-reactstrap-validation";
-import axios from "axios";
 import GoogleLogin from "../../assets/images/GoogleLogin.png";
 
 // actions
 import { loginUser, apiError } from "../../store/actions";
 
 // import images
-import profile from "../../assets/images/profile-img.png";
 import logo from "../../assets/images/murmuricon.png";
 import { FirebaseAuth } from "../../helpers/firebaseAuth/firebaseAuth";
 //import { SocketFunction } from "./../../helpers/Socket/socket";

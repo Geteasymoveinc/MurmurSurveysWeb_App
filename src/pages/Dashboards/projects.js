@@ -13,7 +13,6 @@ import PullSurveys from "./pullSurveys";
 import Survey from "./create/index";
 
 import { queryForEmail } from "../../helpers/fakebackend_helper";
-import PullParticipants from "./create/pullParticipants";
 
 class Projects extends Component {
   constructor(props) {
@@ -23,6 +22,7 @@ class Projects extends Component {
       loading: true,
       payment: {},
       user_id: "",
+      company: "",
       selectedCampaign: {},
     };
   }
@@ -30,12 +30,15 @@ class Projects extends Component {
   componentDidMount() {
     const url = this.props.location.search; //search property of history props
     const create_edit_survey = new URLSearchParams(url).get("survey_id");
-    queryForEmail(`http://localhost:4000/api/v1/users/checkEmail/${false}`, {
-      email: sessionStorage.getItem("authUser"),
-      role: "2",
-    })
+    queryForEmail(
+      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      {
+        email: sessionStorage.getItem("authUser"),
+        role: "2",
+      }
+    )
       .then((user) => {
-        const { _id, payment } = user.resp;
+        const { _id, payment, company } = user.resp;
         this.setState({
           ...this.state,
           user_id: _id,
@@ -43,6 +46,7 @@ class Projects extends Component {
           //create_edit_survey_mode: true,
           create_edit_survey,
           payment,
+          company,
         });
       })
       .catch((err) =>
@@ -70,7 +74,7 @@ class Projects extends Component {
 
   render() {
     const { create_edit_survey, loading, user_id, payment } = this.state;
-  console.log(this.props.survey)
+
     return (
       <Fragment>
         {loading && (
@@ -167,9 +171,7 @@ class Projects extends Component {
                   <PullSurveys
                     toggleToEditAndViewMode={this.toggleToEditAndViewMode}
                     user_id={user_id}
-                
                   />
-      
                 </div>
               </div>
             </div>
@@ -180,8 +182,8 @@ class Projects extends Component {
           <Route path="/surveys/update-survey">
             <Survey
               survey={this.props.survey}
-              payment={payment}
               user_id={user_id}
+              company={this.state.company}
             />
           </Route>
         </Switch>
@@ -202,17 +204,18 @@ const mapPropsToState = (state) => {
     survey_audience_number,
     survey_active,
     survey_specific,
-   participants,
+    participants,
     researchConductedVia,
     targetUsersFrom,
     research,
-    analytics,
+    response,
     map,
     loading,
     message,
     payment,
     count,
     _id,
+    researcherContacts,
   } = state.Survey;
 
   return {
@@ -229,7 +232,6 @@ const mapPropsToState = (state) => {
       survey_specific,
       participants,
       count,
-      analytics,
       map,
       loading,
       message,
@@ -237,7 +239,9 @@ const mapPropsToState = (state) => {
       researchConductedVia,
       targetUsersFrom,
       research,
+      response,
       _id,
+      researcherContacts,
     },
     ...state.Layout,
   };

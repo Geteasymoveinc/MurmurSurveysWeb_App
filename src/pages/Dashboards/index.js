@@ -51,10 +51,13 @@ class Surveys extends Component {
   }
 
   componentDidMount() {
-    queryForEmail(`http://localhost:4000/api/v1/users/checkEmail/${false}`, {
-      email: sessionStorage.getItem("authUser"),
-      role: "2",
-    })
+    queryForEmail(
+      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      {
+        email: sessionStorage.getItem("authUser"),
+        role: "2",
+      }
+    )
       .then((user) => {
         const { fullName, company, _id, payment, subscription } = user.resp;
         this.setState({
@@ -77,10 +80,9 @@ class Surveys extends Component {
   }
 
   toggleToCreateSurveyMode = () => {
-
     axios
       .post(
-        `http://localhost:4000/api/v1/surveys/survey/publish-survey/${this.state.id}?payment=${this.state.payment.type}`,
+        `https://backendapp.murmurcars.com/api/v1/surveys/survey/publish-survey/${this.state.id}?payment=${this.state.payment.type}`,
         {
           research: this.state.constructResearch.research,
           targetUsersFrom: this.state.constructResearch.targetUsersFrom,
@@ -90,7 +92,6 @@ class Surveys extends Component {
         }
       )
       .then((response) => {
-
         this.props.history.push(
           `/surveys/update-survey?survey_id=${response.data.survey_id}`
         );
@@ -283,8 +284,8 @@ class Surveys extends Component {
                         </button>
                       </h5>
                       <p>
-                        Hipster ipsum tattooed brunch I'm baby. V man beer
-                        raclette letterpress.
+                        Get informed by the latest trends in design psychology
+                        directly from the audience by creating your own survey
                       </p>
                     </div>
                     <div className={classes.services__service}>
@@ -365,8 +366,10 @@ class Surveys extends Component {
                         </button>
                       </h5>
                       <p>
-                        Hipster ipsum tattooed brunch I'm baby. V man beer
-                        raclette letterpress.
+                        Analyze the most detailed insights about customer
+                        behavior, preferences, and satisfaction for the
+                        ecommerce service by conducting online surveys via
+                        InsightsIQ.
                       </p>
                     </div>
                     <div className={classes.services__service}>
@@ -433,8 +436,10 @@ class Surveys extends Component {
                         </button>
                       </h5>
                       <p>
-                        Hipster ipsum tattooed brunch I'm baby. V man beer
-                        raclette letterpress.
+                        Make sure that your future product will be a success in
+                        the market before the launch, by gathering useful
+                        feedback directly from the potential customers via
+                        InsightsIQ.
                       </p>
                     </div>
                     <div className={classes.services__service}>
@@ -483,7 +488,7 @@ class Surveys extends Component {
                               </g>
                             </svg>
                           ) : null}
-                          HR
+                          Marketing Agencies
                         </span>
                         <button onClick={() => this.enrollParticipants("hr")}>
                           {this.props.layoutTheme === "light" ? (
@@ -522,8 +527,10 @@ class Surveys extends Component {
                         </button>
                       </h5>
                       <p>
-                        Hipster ipsum tattooed brunch I'm baby. V man beer
-                        raclette letterpress.
+                        Make your marketing agency the most viral in the area by
+                        using insights from the online surveys for understanding
+                        customer needs and demands, conducting market research
+                        and building brand awareness.
                       </p>
                     </div>
                     <div className={classes.services__service}>
@@ -613,8 +620,9 @@ class Surveys extends Component {
                         </button>
                       </h5>
                       <p>
-                        Hipster ipsum tattooed brunch I'm baby. V man beer
-                        raclette letterpress.
+                        Use online surveys to gain a better understanding of the
+                        target market, competitors, and industry trends of your
+                        brand. By that, making more informed business decisions.
                       </p>
                     </div>
                     <div className={classes.services__service}>
@@ -704,8 +712,9 @@ class Surveys extends Component {
                         </button>
                       </h5>
                       <p>
-                        Hipster ipsum tattooed brunch I'm baby. V man beer
-                        raclette letterpress.
+                        Get direct validation and feedback from the audience for
+                        your brand new startup product by researching gathered
+                        insights via online surveys
                       </p>
                     </div>
                   </div>
@@ -829,7 +838,7 @@ class Surveys extends Component {
                       <button
                         className={`${classes["study-conduct__way"]} ${
                           this.state.constructResearch.researchConductedVia ===
-                          "via video"
+                          "survey app"
                             ? classes["study-conduct__way--active"]
                             : null
                         }`}
@@ -838,40 +847,15 @@ class Surveys extends Component {
                             ...state,
                             constructResearch: {
                               ...state.constructResearch,
-                              researchConductedVia: "via video",
+                              researchConductedVia: "survey app",
                             },
                           }));
                         }}
                       >
-                        <img src={ApplicationWindow} alt="" />
-                        <h5>Online via video</h5>
+                        <img src={Survey} alt="" />
+                        <h5>In App</h5>
                         <p>
-                          The session will be at a physical location, specified
-                          by you or the participant
-                        </p>
-                      </button>
-                      <button
-                        className={`${classes["study-conduct__way"]} ${
-                          this.state.constructResearch.researchConductedVia ===
-                          "over phone"
-                            ? classes["study-conduct__way--active"]
-                            : null
-                        }`}
-                        onClick={() => {
-                          this.setState((state) => ({
-                            ...state,
-                            constructResearch: {
-                              ...state.constructResearch,
-                              researchConductedVia: "over phone",
-                            },
-                          }));
-                        }}
-                      >
-                        <img src={Phone} alt="" />
-                        <h5>Over the phone</h5>
-                        <p>
-                          The session will be at a physical location, specified
-                          by you or the participant
+                          research will be conducted via InsightsIQ mobile app
                         </p>
                       </button>
                       <button
@@ -894,14 +878,15 @@ class Surveys extends Component {
                         <img src={PlaceMarker} alt="" />
                         <h5>In Person</h5>
                         <p>
-                          The session will be at a physical location, specified
-                          by you or the participant
+                          Research will be conducted in a physical location in
+                          face to face
                         </p>
                       </button>
+
                       <button
                         className={`${classes["study-conduct__way"]} ${
                           this.state.constructResearch.researchConductedVia ===
-                          "survey app"
+                          "via video"
                             ? classes["study-conduct__way--active"]
                             : null
                         }`}
@@ -910,17 +895,41 @@ class Surveys extends Component {
                             ...state,
                             constructResearch: {
                               ...state.constructResearch,
-                              researchConductedVia: "survey app",
+                              researchConductedVia: "via video",
                             },
                           }));
                         }}
                       >
-                        <img src={Survey} alt="" />
-                        <h5>Survey</h5>
-                        <p>
-                          The session will be at a physical location, specified
-                          by you or the participant
-                        </p>
+                        <img src={ApplicationWindow} alt="" />
+                        <h5>Online via video</h5>
+                        <p>Research will be conducted via video session</p>
+                        <div className={classes["study-conduct__beta"]}>
+                          Beta
+                        </div>
+                      </button>
+                      <button
+                        className={`${classes["study-conduct__way"]} ${
+                          this.state.constructResearch.researchConductedVia ===
+                          "over phone"
+                            ? classes["study-conduct__way--active"]
+                            : null
+                        }`}
+                        onClick={() => {
+                          this.setState((state) => ({
+                            ...state,
+                            constructResearch: {
+                              ...state.constructResearch,
+                              researchConductedVia: "over phone",
+                            },
+                          }));
+                        }}
+                      >
+                        <img src={Phone} alt="" />
+                        <h5>Over the phone</h5>
+                        <p>Research will be conducted via phone call</p>
+                        <div className={classes["study-conduct__beta"]}>
+                          Beta
+                        </div>
                       </button>
                     </div>
 
@@ -974,7 +983,7 @@ class Surveys extends Component {
             formData.append("company", this.state.company);
             axios
               .post(
-                "http://localhost:4000/api/v1/surveys/user/insertExternalParticipants",
+                "https://backendapp.murmurcars.com/api/v1/surveys/user/insertExternalParticipants",
                 formData
               )
               .then((response) => {

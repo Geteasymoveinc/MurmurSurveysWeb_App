@@ -125,7 +125,7 @@ function CheckoutForm({
       if (stripeCustomerId) {
         console.log("paymentMethod", paymentMethod);
         customer = await axios.post(
-          "http://localhost:4000/api/v1/surveys/user/update-customer",
+          "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
           {
             user_id,
             customerId: stripeCustomerId,
@@ -134,7 +134,7 @@ function CheckoutForm({
         );
       } else {
         customer = await axios.post(
-          "http://localhost:4000/api/v1/surveys/user/create-customer",
+          "https://backendapp.murmurcars.com/api/v1/surveys/user/create-customer",
           {
             user_id,
             customer: { email, name, phone },
@@ -155,7 +155,7 @@ function CheckoutForm({
        
 
         response = await axios.post(
-          "http://localhost:4000/api/v1/surveys/user/change-subscription",
+          "https://backendapp.murmurcars.com/api/v1/surveys/user/change-subscription",
           {
             user_id,
             subscriptionId,
@@ -168,7 +168,7 @@ function CheckoutForm({
         return;
       } else {
         response = await axios.post(
-          "http://localhost:4000/api/v1/surveys/user/create-subscription",
+          "https://backendapp.murmurcars.com/api/v1/surveys/user/create-subscription",
           {
             user_id,
             customerId: id,
@@ -209,7 +209,7 @@ function CheckoutForm({
       let customer;
       if (stripeCustomerId) {
         customer = await axios.post(
-          "http://localhost:4000/api/v1/surveys/user/update-customer",
+          "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
           {
             user_id,
             customerId: stripeCustomerId,
@@ -218,7 +218,7 @@ function CheckoutForm({
         );
       } else {
         customer = await axios.post(
-          "http://localhost:4000/api/v1/surveys/user/create-customer",
+          "https://backendapp:.murmurcars.com/api/v1/surveys/user/create-customer",
           {
             user_id,
             customer: { email, name, phone },

@@ -38,13 +38,13 @@ class Pie extends Component{
 
   render(){
       return(
-      <div id={`chart-survey ${!this.props.show_categories ? "labels-disabled" : null}`}>
+      <div className="chart2 chart-general">
           <ReactApexChart
             options={this.state.options}
             series={this.state.series}
             type="pie"
-            height={this.props.show_categories?160: 190}
-            width={500}
+            height={230}
+          width='100%'
           /> 
           </div>
       )

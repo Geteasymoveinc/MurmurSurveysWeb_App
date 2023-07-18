@@ -11,6 +11,8 @@ import {
   FETCHSURVEYFROMBACKENDFAILED,
   FETCHINGMAPLOCATIONANDADDRESS,
   UPDATEQUESTIONS,
+  UPDATERESEARCHMAINSETTINGS,
+  RESEARCHCONTACTINFORMATION,
 } from "./actionTypes";
 
 const add_survey = (surveys) => {
@@ -103,6 +105,20 @@ const updateQuestions = (question, state) => {
 }
 
 
+const updateResearchMainSettings = (type, value) => {
+  return {
+    payload: {type,value},
+    type: UPDATERESEARCHMAINSETTINGS
+  }
+}
+
+const addResearchContactDetails = (contactType, contact) => {
+  return {
+    payload: {contactType, contact},
+    type: RESEARCHCONTACTINFORMATION
+  }
+}
+
 
 export {
   add_survey,
@@ -116,5 +132,7 @@ export {
   fetch_survey_success,
   fetch_survey_failed,
   fetch_map_position,
-  updateQuestions
+  updateQuestions,
+  updateResearchMainSettings,
+  addResearchContactDetails
 };

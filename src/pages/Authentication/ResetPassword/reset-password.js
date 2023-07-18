@@ -12,7 +12,7 @@ import { resetPwd } from "../../../store/actions";
 //styles and icons
 import classes from "../../../assets/css/Authentication/resetPassword/index.module.css";
 
-import Logo from "../../../assets/css/common/icons/logoBlue.svg";
+import Logo from "../../../assets/images/LogoWhiteThemeQuestions.png";
 import Eye from "../../../assets/css/common/icons/icon.svg";
 import EyeSlash from "../../../assets/css/common/icons/eye-slash.svg";
 import Resetkey from "../../../assets/css/Authentication/ForgotPassword/icons/resetkey.svg";
@@ -239,7 +239,7 @@ class ResetPassword extends React.Component {
                   className={`${classes.footer_copyright} ${classes.mur_flex}`}
                 >
                   <img src={Copyright} alt="copyright icon" />
-                  <span>{new Date().getFullYear()}, MurmurCars</span>
+                  <span>{new Date().getFullYear()},  InsightsIQ</span>
                 </p>
                 <ul className={classes.footer_links}>
                   <li>

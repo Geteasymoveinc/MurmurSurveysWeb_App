@@ -4,8 +4,8 @@ import classes from "../../../assets/css/surveys/index.module.scss";
 import classes2 from "../../../assets/css/modals/modal.module.scss";
 import '../../../assets/css/modals/modal.scss'
 
-import BarDefault from "../pie-charts/bar-default";
-import Pie from "../pie-charts/pie";
+import BarDefault from "../charts/bar-default";
+import Pie from "../charts/pie";
 
 import { Row, Col, Modal, ModalBody, ModalFooter } from "reactstrap";
 import axios from "axios";
@@ -29,21 +29,23 @@ class SurveyAnswers extends Component {
     this.setState({
       ...this.state,
       modal: !this.state.modal,
+      loading: true,
     });
-
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/survey-answer-analytics?id=${id}&question=${question}`
+        `https://backendapp.murmurcars.com/api/v1/admin/survey-answer-analytics?id=${id}&question=${question}`
       )
       .then((response) => {
         const { Analytics } = response.data;
         this.setState({
           ...this.state,
           analytics: Analytics,
+          loading: false,
+          question,
         });
       })
       .catch((err) => {
-        console.log(err);
+        alert("error");
       });
   };
   componentDidMount() {
@@ -65,15 +67,15 @@ class SurveyAnswers extends Component {
         questions[question][answer] = 0;
       }
     }
-  
+  console.log(questions,types)
     axios
-      .post(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/survey-analytics/${id}`,
-        {
-          questions,
-          types,
-        }
-      )
+    .post(
+      `https://backendapp.murmurcars.com/api/v1/admin/survey-analytics/${id}`,
+      {
+        questions,
+        types,
+      }
+    )
       .then((response) => {
         const { data} = response;
         console.log(data)
@@ -99,7 +101,14 @@ class SurveyAnswers extends Component {
 
   render() {
     const { id, layoutTheme } = this.props;
-    const { modal, analytics, survey, loading, hasAnalytics } = this.state;
+    const {
+      modal,
+      generateCSVProgressModal,
+      analytics,
+      survey,
+      loading,
+      hasAnalytics,
+    } = this.state;
     const questions = Object.keys(survey);
     return (
       <>
