@@ -42,7 +42,7 @@ try{
       registered_user
     );
   if(response.status === 204){
-    console.log(response, 1)
+    
     yield put(registerUserError(response.message))
     return
   }

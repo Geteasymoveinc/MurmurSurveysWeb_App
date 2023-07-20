@@ -62,28 +62,27 @@ class Survey extends Component {
     this.state = {
       loading: true,
       //first: true,
-      survey_id: "",
+      survey_id: "", 
+      publish: true, //fetching from this.props.match.path survey production noolean 
       //publish: false,
-      hasSurvey: false,
-      locationModal: false,
-      recordVideoModal: false,
-      recordAudio: false,
-      creative: false,
-      warningFeedback: false,
-      warning: null,
+      locationModal: false, //country, city modal
+      recordVideoModal: false, //webcam
+      recordAudio: false, //audio
+      warningFeedback: false, //if u try publish without at least one question
+      warning: null, //warning message
       email: sessionStorage.getItem("authUser"),
-      menu: {
+      menu: {  //navigation
         menu_item: "questions",
         preview: false,
       },
-      form: {
+      form: { //app state
         survey_answers_questions: {
           //id: 0,
-          survey: {
+          survey: { //create question
             // main: true,
             count: this.props.survey.count + 1,
-            isQuestion: true,
-            isConditional: false,
+            isQuestion: true, //question or section(like container of conditional questions)
+            isConditional: false, //not main question
             type: "radio",
             asset: {
               assetName: "",
@@ -99,9 +98,9 @@ class Survey extends Component {
               },
             },
           },
-          surveys: this.props.survey.survey_questions,
+          surveys: this.props.survey.survey_questions,  //all questions
         },
-        survey_title_question_image: {
+        survey_title_question_image: {  
           survey: {
             form_title: this.props.survey.survey_title,
 
@@ -117,30 +116,38 @@ class Survey extends Component {
           survey: {
             price: 0.5,
             amount: 50,
-            budget: 25,
+            budget:
+              this.props.subscription != null &&
+              this.props.subscription.paymentStatus === "active"
+                ? 25 - 25 * this.props.subscription.discount
+                : 25,
           },
         },
       },
       activeBox: {
         //hovering: null,
-        name: null, //that is to add active classes
-        uid: null, //uid of hovered active box
-        section: [], //all linked section
-        linkedSections: {}, //key option name and value linked section
+        name: null, //box name like survey_price_amount survey_answer_questions
+        uid: null, //uid of hovered active survey box (survey_questions main item)
+        section: [], //main survey question might have more than one section linked to its options
+        linkedSections: {}, //key is main survey option and value is section name
       },
       inform_danger: {
         survey_question: false,
       },
+
+      urls: [] //assets to delete in backend
     };
     this.timeout = null;
     this.new_option = React.createRef(null);
   }
 
   componentDidUpdate(prevProps) {
+  
     if (
       prevProps.survey.survey_questions.length !==
         this.props.survey.survey_questions.length ||
-      this.props.survey.loading !== prevProps.survey.loading
+      this.props.survey.loading !== prevProps.survey.loading ||
+      this.props.subscription !== prevProps.subscription
     ) {
       this.setState((state) => ({
         ...state,
@@ -172,8 +179,15 @@ class Survey extends Component {
           survey_price_amount: {
             survey: {
               price: 0.5,
-              amount: +this.props.survey.survey_audience_number,
-              budget: +this.props.survey.survey_budget,
+              amount: this.props.survey.survey_audience_number,
+              //budget: +this.props.survey.survey_budget,
+              budget:
+                this.props.subscription != null &&
+                this.props.subscription.paymentStatus === "active"
+                  ? this.props.survey.survey_budget -
+                    this.props.survey.survey_budget *
+                      this.props.subscription.discount
+                  : this.props.survey.survey_budget,
             },
           },
         },
@@ -206,6 +220,9 @@ class Survey extends Component {
   componentDidMount() {
     const url = this.props.location.search; //search property of history props
     const survey_id = new URLSearchParams(url).get("survey_id"); //extracting id
+
+    const publish = this.props.match.path.includes("/publish-survey");
+
     document.body.classList.add("grey-background");
 
     this.props.fetch_survey(
@@ -214,6 +231,7 @@ class Survey extends Component {
     this.setState((state) => ({
       ...state,
       survey_id,
+      publish,
     }));
     /* navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -240,13 +258,14 @@ class Survey extends Component {
   }
 
   //publish or update
-  submitNewSurvey = (event, survey_id) => {
+  submitNewSurvey = async (event, survey_id, urls) => {
     event.preventDefault();
+
     const { form_caption, form_title, image } =
       this.state.form.survey_title_question_image.survey;
     const { image_file, image_name } = image;
 
-    const { price, amount, budget } =
+    const { amount, budget } =
       this.state.form.survey_price_amount.survey;
     const { surveys } = this.state.form.survey_answers_questions;
 
@@ -270,13 +289,13 @@ class Survey extends Component {
     }
     const formData = new FormData();
     formData.append("survey_title", form_title);
-    formData.append("survey_earnings", price);
+    //formData.append("survey_earnings", price);
     formData.append("survey_budget", budget);
     formData.append("target_audience", JSON.stringify(target_audience));
     formData.append("survey_audience_count", amount);
-    formData.append("photo", JSON.stringify(image_name));
-    formData.append("survey_active", JSON.stringify(survey_active));
-    formData.append("survey_specific", JSON.stringify(survey_specific));
+    formData.append("photo", image_name);
+    formData.append("survey_active", survey_active);
+    formData.append("survey_specific", survey_specific);
     formData.append("survey_caption", form_caption);
     formData.append("file", image_file);
     formData.append(
@@ -333,10 +352,20 @@ class Survey extends Component {
 
     const backend = {};
 
-    backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}`;
-    //backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}`;
+    backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
+    //backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
     backend.method = "PUT";
     backend.payment = this.props.survey.payment;
+    backend.paid = this.props.survey.paid;
+    backend.publish = this.state.publish;
+
+    for await (let url of urls){
+      axios
+      .post(
+        "https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-asset",
+        { url }
+      )
+    }
 
     this.props.publish_survey({
       backend,
@@ -352,6 +381,7 @@ class Survey extends Component {
     backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
     backend.method = "POST";
     backend.payment = this.props.survey.payment;
+    backend.publish = true; // couse it is checkout
     this.props.publish_survey({
       backend,
       data: {
@@ -635,7 +665,7 @@ class Survey extends Component {
     };
   };
 
-  uploadSurveyQuestionToServer = (asset, uid) => {
+  uploadSurveyAssetToServer = (asset, uid) => {
     const form = new FormData();
     form.append("file", asset.assetFile);
     form.append("assetName", asset.assetName);
@@ -647,9 +677,13 @@ class Survey extends Component {
       )
       .then((response) => {
         const surveys = this.state.form.survey_answers_questions.surveys;
+        
         const index = surveys.findIndex((el) => el.uid === uid);
         const survey = surveys.at(index);
+
+        //survey.asset = asset
         survey.asset.assetUrl = response.data.url;
+
         delete survey.asset.status;
 
         const left = surveys.slice(0, index);
@@ -669,6 +703,32 @@ class Survey extends Component {
       .catch((err) => console.log(err));
   };
 
+  removeSurveyAsset = (url, index, stateChange) => {
+
+        if (!stateChange) return;
+        const surveys = this.state.form.survey_answers_questions.surveys;
+        //const index = surveys.findIndex((el) => el.uid === uid);
+        const survey = surveys.at(index);
+        survey.asset.assetUrl = "";
+
+        const left = surveys.slice(0, index);
+        const right = surveys.slice(index + 1, surveys.length);
+
+        this.setState((state) => ({
+          ...state,
+          form: {
+            ...state.form,
+            survey_answers_questions: {
+              ...state.form.survey_answers_questions,
+              surveys: [...left, survey, ...right],
+            },
+          },
+
+          urls:[...state.urls, url]
+        }));
+
+  };
+
   getUserInput = (e, segment, type) => {
     let value = e.target.value;
     let rate = 0.5;
@@ -679,11 +739,7 @@ class Survey extends Component {
     if (Number.isNaN(value) && segment === "survey_price_amount") {
       value = "";
     }
-    if (value > 250 && value <= 600) {
-      rate = 0.3;
-    } else if (value > 600) {
-      rate = 0.2;
-    }
+
     const input = {
       [type]: value,
     };
@@ -691,6 +747,14 @@ class Survey extends Component {
     if (segment === "survey_price_amount") {
       input.price = rate;
       input.budget = +Number(rate * value).toFixed(2);
+    }
+
+    if (
+      this.props.subscription != null &&
+      this.props.subscription.paymentStatus === "active"
+    ) {
+      input.budget =
+        input.budget - input.budget * this.props.subscription.discount;
     }
 
     this.setState({
@@ -797,6 +861,13 @@ class Survey extends Component {
           survey: {
             ...state.form.survey_answers_questions.survey,
             type: value,
+            answers: {
+              ...state.form.survey_answers_questions.survey.answers,
+              count: 1,
+              options: {
+                option_1: "Answer 1",
+              },
+            },
           },
         },
       },
@@ -809,9 +880,18 @@ class Survey extends Component {
 
     const { image, question, answers, type, isConditional, count, asset } =
       survey;
-
+    if (!question.length) {
+      this.setState({
+        ...this.state,
+        inform_danger: {
+          ...this.state.inform_danger,
+          survey_question: true,
+        },
+      });
+      return;
+    }
     if (asset.assetUrl) {
-      this.uploadSurveyQuestionToServer(asset, count);
+      this.uploadSurveyAssetToServer(asset, count);
       asset.status = "uploading";
     } else {
       asset.assetUrl = null;
@@ -844,48 +924,38 @@ class Survey extends Component {
       delete newQuestion["type"];
     }
 
-    if (question.length > 0 || isSection) {
-      this.setState((state) => ({
-        ...state,
-        recordAudio: false,
-        form: {
-          ...state.form,
+    this.setState((state) => ({
+      ...state,
+      recordAudio: false,
+      form: {
+        ...state.form,
 
-          survey_answers_questions: {
-            ...state.form.survey_answers_questions,
-            survey: {
-              //important: true,
-              ...state.form.survey_answers_questions.survey,
-              count: state.form.survey_answers_questions.survey.count + 1,
-              isQuestion: true,
-              isConditional: false,
-              type: "radio",
-              asset: {
-                assetUrl: "",
-                assetFile: {},
-                assetType: "",
-              },
-              question: "",
-              answers: {
-                count: 1,
-                options: {
-                  option_1: "Answer 1",
-                },
+        survey_answers_questions: {
+          ...state.form.survey_answers_questions,
+          survey: {
+            //important: true,
+            ...state.form.survey_answers_questions.survey,
+            count: state.form.survey_answers_questions.survey.count + 1,
+            isQuestion: true,
+            isConditional: false,
+            type: "radio",
+            asset: {
+              assetUrl: "",
+              assetFile: {},
+              assetType: "",
+            },
+            question: "",
+            answers: {
+              count: 1,
+              options: {
+                option_1: "Answer 1",
               },
             },
-            surveys: [...surveys, newQuestion],
           },
+          surveys: [...surveys, newQuestion],
         },
-      }));
-    } else {
-      this.setState({
-        ...this.state,
-        inform_danger: {
-          ...this.state.inform_danger,
-          survey_question: true,
-        },
-      });
-    }
+      },
+    }));
   };
   deleteCreatedSurvey = (index) => {
     const { surveys } = this.state.form.survey_answers_questions;
@@ -921,6 +991,34 @@ class Survey extends Component {
     });
   };
 
+  removeOption = () => {
+    const options = {
+      ...this.state.form.survey_answers_questions.survey.answers.options,
+    };
+
+    const keys = Object.keys(options);
+    delete options[keys[keys.length - 1]];
+
+    this.setState((state) => ({
+      ...state,
+      form: {
+        ...state.form,
+        survey_answers_questions: {
+          ...state.form.survey_answers_questions,
+          survey: {
+            ...state.form.survey_answers_questions.survey,
+            answers: {
+              ...state.form.survey_answers_questions.survey.answers,
+              count:
+                state.form.survey_answers_questions.survey.answers.count - 1,
+              options,
+            },
+          },
+        },
+      },
+    }));
+  };
+
   returnAnswerOptions = () => {
     const { survey, input } = this.state.form.survey_answers_questions;
     const { answers, type } = survey;
@@ -930,13 +1028,15 @@ class Survey extends Component {
       for (let i = 0; i < answers.count; i++) {
         let htmlElement = (
           <span key={i}>
-            {type !== "dropdown" && (
-              <input
-                id={`answer-${i}`}
-                type={`${type === "radio" ? "radio" : "checkbox"}`}
-                name={`answer`}
+            {i === answers.count - 1 ? (
+              <img
+                src={Option_Delete}
+                alt=""
+                className={classes.option_delete}
+                onClick={() => this.removeOption(i)}
               />
-            )}
+            ) : null}
+
             {input && type !== "dropdown" ? (
               <input
                 type="text"
@@ -990,6 +1090,7 @@ class Survey extends Component {
 
       answers_array.push(htmlElement);
     }
+
     return answers_array;
   };
   toggleSurveyImportance = (e) => {
@@ -1138,6 +1239,7 @@ class Survey extends Component {
       activeBox,
       inform_danger,
       survey_id,
+      urls
     } = this.state;
 
     const { menu_item, preview: preview_mode } = menu;
@@ -1174,8 +1276,8 @@ class Survey extends Component {
 
     const { response: analytics } = survey;
 
-    let checkout = survey.payment === "checkout";
-    console.log(survey.payment);
+    
+
     return (
       <Fragment>
         {survey.loading || loading ? (
@@ -1218,7 +1320,9 @@ class Survey extends Component {
                     analytics.length ? classes.update : null
                   }`}
                 >
-  
+                  <div className={classes.button_containers}>
+                    <Link to={`/`}>Main</Link>
+                  </div>
 
                   <div className={classes.button_containers}>
                     <button
@@ -1227,7 +1331,7 @@ class Survey extends Component {
                         menu_item === "research" ? classes.active : null
                       }`}
                     >
-                      Main
+                      Research
                     </button>
                     <span
                       className={`${
@@ -1328,25 +1432,25 @@ class Survey extends Component {
                 </div>
               </div>
               <div className={classes.dash_relative}>
-                <div
-                  className={`${classes.search_box_flex}`}
-                >
+                <div className={`${classes.search_box_flex}`}>
                   <form
-                    onSubmit={(event) => this.submitNewSurvey(event, survey_id)}
+                    onSubmit={(event) => this.submitNewSurvey(event, survey_id, urls)}
                   >
-                    {false ? (
+                    {this.state.publish || this.props.paid ? null : (
                       <button
                         className={`${classes.publish_survey} mr-3`}
                         onClick={() => this.checkout(survey_id)}
                       >
                         <span>Checkout</span>
                       </button>
-                    ) : null}
+                    )}
                     <button className={classes.publish_survey} type="submit">
-                      <span>{`${survey_id ? "Update" : "Publish"}`}</span>
+                      <span>{`${
+                        this.state.publish ? "Publish" : "Update"
+                      }`}</span>
                     </button>
                   </form>
-                  <Profile scope={"survey"} />
+                  <Profile scope="survey" />
                 </div>
               </div>
             </header>
@@ -1402,7 +1506,8 @@ class Survey extends Component {
 
                         {activeBox.name === "survey_price_amount" ? (
                           <input
-                            type="text"
+                            type="number"
+                            min="0"
                             style={{ pointerEvents: "all" }}
                             className={classes.survey_amount_price_input}
                             value={amount}
@@ -1417,6 +1522,7 @@ class Survey extends Component {
                         ) : (
                           <p>{amount}</p>
                         )}
+                        <div className={classes.foreground} />
                       </div>
                     </div>
                   </div>
@@ -1478,7 +1584,7 @@ class Survey extends Component {
                             <input
                               type="text"
                               className={`${classes.survey_input} ${classes.bottom_border} ${classes.extra_bottom_margin}`}
-                              value={form_title}
+                              placeholder={form_title}
                               onChange={(e) => {
                                 this.getUserInput(
                                   e,
@@ -1494,7 +1600,7 @@ class Survey extends Component {
                             <input
                               type="text"
                               className={`${classes.survey_input} ${classes.bottom_border}`}
-                              value={form_caption}
+                              placeholder={form_caption}
                               onChange={(e) => {
                                 this.getUserInput(
                                   e,
@@ -1581,11 +1687,6 @@ class Survey extends Component {
                                                 classes.survey_question
                                               }
                                               onChange={(e) => {
-                                                /*this.surveyInputValueChange(
-                                       e,
-                                       i,
-                                       null
-                                     )*/
                                                 const value = e.target.value;
                                                 const surveys =
                                                   this.state.form
@@ -1640,7 +1741,7 @@ class Survey extends Component {
                                                       className={
                                                         classes.question_answer_span
                                                       }
-                                                      key={n}
+                                                      key={el.count}
                                                     >
                                                       <input
                                                         type="checkbox"
@@ -1694,11 +1795,7 @@ class Survey extends Component {
                                                               index + 1,
                                                               surveys.length
                                                             );
-                                                          console.log(
-                                                            left,
-                                                            question,
-                                                            right
-                                                          );
+
                                                           this.setState(
                                                             (state) => ({
                                                               ...state,
@@ -1871,7 +1968,22 @@ class Survey extends Component {
                                                       role="status"
                                                     />
                                                   </div>
-                                                ) : null}
+                                                ) : (
+                                                  <img
+                                                    src={Option_Delete}
+                                                    alt=""
+                                                    className={
+                                                      classes.option_delete
+                                                    }
+                                                    onClick={() =>
+                                                      this.removeSurveyAsset(
+                                                        survey.asset.assetUrl,
+                                                        i,
+                                                        true
+                                                      )
+                                                    }
+                                                  />
+                                                )}
                                               </div>
                                             ) : null}
                                             {/*question*/}
@@ -1944,8 +2056,9 @@ class Survey extends Component {
                                                   ) : (
                                                     survey.answers.map(
                                                       (answer, index) => (
-                                                        <React.Fragment
-                                                          key={index}
+                                                        <div
+                                                          key={answer}
+                                                          className="d-flex align-items-center"
                                                         >
                                                           <input
                                                             type="text"
@@ -2088,7 +2201,7 @@ class Survey extends Component {
                                                               )
                                                             }
                                                           />
-                                                        </React.Fragment>
+                                                        </div>
                                                       )
                                                     )
                                                   )}
@@ -2644,6 +2757,28 @@ class Survey extends Component {
                                   keyProp={expamle_asset.assetUrl}
                                 />
                               )}
+                              <img
+                                src={Option_Delete}
+                                alt=""
+                                className={classes.option_delete}
+                                onClick={() =>
+                                  this.setState((state) => ({
+                                    ...state,
+                                    form: {
+                                      ...this.state.form,
+                                      survey_answers_questions: {
+                                        ...this.state.form
+                                          .survey_answers_questions,
+                                        survey: {
+                                          ...this.state.form
+                                            .survey_answers_questions.survey,
+                                          asset: {},
+                                        },
+                                      },
+                                    },
+                                  }))
+                                }
+                              />
                             </div>
                           ) : null}
                         </div>
@@ -2754,7 +2889,7 @@ class Survey extends Component {
                                   asset.assetUrl = e.target.result;
                                   //asset.assetName = info.file.name;
                                   //asset.assetType = info.file.type;
-                                  console.log("asset", asset);
+
                                   this.setState({
                                     ...this.state,
                                     recordAudio: false,
@@ -2826,7 +2961,7 @@ class Survey extends Component {
                               }))
                             }
                           >
-                            Record Audio
+                            {this.state.recordAudio ? "Cancel" : "Record Audio"}
                             <img src={RecordAudio} alt="" />
                           </button>{" "}
                           <button

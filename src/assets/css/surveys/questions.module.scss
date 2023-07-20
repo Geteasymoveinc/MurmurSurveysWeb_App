@@ -159,6 +159,15 @@
   height: fit-content;
   position: relative;
   overflow: hidden;
+  display: flex;
+  gap: 30px;
+
+
+  img{
+    &:last-child{
+      width: 20px;
+    }
+  }
 }
 .profil_cover_img {
   width: 100%;
@@ -279,7 +288,19 @@
   position: relative;
   display: flex;
   flex-direction: column;
+ >div:last-child{
+  .foreground{
+    position: absolute;
+    top: 30px;
+right: 20px;
+pointer-events: none;
+    width: 55px;
+    height: 55px;
+    background-color: white;
+  }
 }
+}
+
 .survey_amount_price.active {
   border: 1px solid #7356c0;
 }
@@ -451,6 +472,8 @@ height: 50px;
   align-items: center;
   max-width: 500px;
   margin-bottom: 20px;
+
+
 }
 
 .question_answer > h4 {
@@ -477,6 +500,7 @@ height: 50px;
   letter-spacing: 0.0015em;
   color: #2e3a59;
   margin-left: 10px;
+  margin-bottom: 0;
 }
 .question_answer_span .options {
   display: flex;
@@ -701,7 +725,7 @@ right: 5px
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 25px;
+  padding: 0 22px;
   position: relative;
 }
 .survey_input_align_center .flex_row {
@@ -716,13 +740,13 @@ right: 5px
   position: relative;
   display: flex;
   flex-direction: column;
-  margin-left: 11px;
+  margin-left: 22px;
   margin-right: 17px;
   width: 100%;
   max-width: 50%;
   max-height: 500px;
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
 }
 
 
@@ -850,7 +874,7 @@ right: 5px
   font-size: 14px;
   line-height: 20px;
   /* identical to box height, or 143% */
-  width: 600px;
+  width: 100%;
   letter-spacing: 0.0015em;
 
   /* Basic colors/Neutral 600 */

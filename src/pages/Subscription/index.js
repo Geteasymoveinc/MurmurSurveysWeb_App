@@ -7,18 +7,25 @@ import { Link, withRouter } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
 
-import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import { queryForEmail } from "../../helpers/fakebackend_helper";
+
+import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import CheckoutForm from "../../components/modals/stripe-form";
 import ChangeDefaultCard from "../../components/modals/change-card";
 import UpgradeSubscription from "../../components/modals/upgrade-subscription";
-import { ErrorFeedback, SuccessFeedback } from "../../components/feedbacks";
+import DowngradeSubscription from "../../components/modals/degrade-subscription";
+import {
+  ErrorFeedback,
+  SuccessFeedback,
+  WarningFeedback,
+} from "../../components/feedbacks";
 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import DowngradeSubscription from "../../components/modals/degrade-subscription";
 
-const stripe = loadStripe(process.env.REACT_APP_TEST_STRIPEKEY);
+
+
+const stripe = loadStripe(process.env.REACT_APP_LIVE_STRIPEKEY);
 
 class Subscription extends Component {
   constructor(props) {
@@ -34,15 +41,17 @@ class Subscription extends Component {
       defaultPaymentMethod: {},
       subscription: "",
       subscriptions: [{ features: [] }, { features: [] }, { features: [] }],
+      paymentStatus: "",
       loading: true,
       subscribeWithDefaultCardLoading: false,
       subscribedSuccesefulyFeedback: false,
       subscribeErrorFeedback: false,
+      successFeedback: ''
     };
   }
 
   componentDidMount() {
-    document.body.style.overflow = "hidden";
+  
     window.scrollTo({ top: 0, left: 0 });
     queryForEmail(
       `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`, //to get customer profile
@@ -56,10 +65,38 @@ class Subscription extends Component {
           user.resp;
 
         axios
-          .get(`https://backendapp.murmurcars.com/api/v1/surveys/user/subscriptions/${_id}`)
+          .get(
+            `https://backendapp.murmurcars.com/api/v1/surveys/user/subscriptions/${_id}`
+          )
           .then((response) => {
             const { subscriptions, stripeCustomerId } = response.data;
-
+            const subscribed = subscriptions.some((el) => el.active);
+            const index = subscriptions.findIndex((el) => el.active);
+            const paymentStatus = subscriptions[index]?.paymentStatus;
+            if (!stripeCustomerId) {
+              this.setState((state) => ({
+                ...state,
+                loading: false,
+                subscriptions,
+                paymentStatus,
+                profile: {
+                  id: _id,
+                  fullName,
+                  email,
+                  address: companyAddress,
+                  phone_number,
+                },
+                stripeCustomerId,
+                successFeedback: "Subscription is created"
+              }));
+              setTimeout(() => {
+                this.setState((state) => ({
+                  ...state,
+                  paymentStatus: "",
+                }));
+              }, 5000);
+              return;
+            }
             axios
               .get(
                 `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${_id}`
@@ -71,6 +108,8 @@ class Subscription extends Component {
                   ...state,
                   loading: false,
                   subscriptions,
+                  paymentStatus,
+                  stripeCustomerId,
                   profile: {
                     id: _id,
                     fullName,
@@ -80,14 +119,25 @@ class Subscription extends Component {
                   },
                   stripeCustomerId,
                   defaultPaymentMethod: paymentMethod.id,
+                  successFeedback:subscribed
+                  ? "Subscription is updated"
+                  : "Subscription is created"
                 }));
-                document.body.style.overflow = "initial";
+           
+
+                setTimeout(() => {
+                  this.setState((state) => ({
+                    ...state,
+                    paymentStatus: "",
+                  }));
+                }, 5000);
               })
               .catch((err) => {
                 this.setState((state) => ({
                   ...state,
                   loading: false,
                   subscriptions,
+                  paymentStatus,
                   profile: {
                     id: _id,
                     fullName,
@@ -96,8 +146,11 @@ class Subscription extends Component {
                     phone_number,
                   },
                   stripeCustomerId,
+                  successFeedback: subscribed
+                  ? "Subscription is updated"
+                  : "Subscription is created"
                 }));
-                document.body.style.overflow = "initial";
+ 
               });
           })
           .catch((err) => {
@@ -111,6 +164,7 @@ class Subscription extends Component {
                 address: companyAddress,
                 phone_number,
               },
+              successFeedback: "Subscription is created"
             }));
             document.body.style.overflow = "initial";
           });
@@ -125,7 +179,8 @@ class Subscription extends Component {
   }
 
   render() {
-    const { loading, subscriptions, profile, subscription } = this.state;
+    const { loading, subscriptions, profile, subscription, paymentStatus } =
+      this.state;
 
     const subscribed = subscriptions.some((el) => el.active);
     const index = subscriptions.findIndex((el) => el.active);
@@ -133,6 +188,7 @@ class Subscription extends Component {
     const subscribedPackageSize = subscriptions[index]?.size;
 
     const priceId = subscription.priceId; //selected subscription priceId
+
 
     return (
       <Fragment>
@@ -187,10 +243,10 @@ class Subscription extends Component {
                   {" "}
                   <Link
                     //onClick={this.toggleToCreateSurveyMode}
-                    to="/surveys/create-survey?publish=true"
+                    to="/surveys"
                     className={`${classes.navbar_btn} ${classes.main}`}
                   >
-                    Questions
+                    Surveys
                   </Link>
                 </div>
               </div>
@@ -204,14 +260,15 @@ class Subscription extends Component {
 
           <div className={classes.surveys_container}>
             <SuccessFeedback
-              feedback={
-                subscribed ? "Subscription is updated" : "Subscription is created"
-              }
+              feedback={this.state.successFeedback}
               showFeedback={this.state.subscribedSuccesefulyFeedback}
             />
 
             <ErrorFeedback showFeedback={this.state.subscribeErrorFeedback} />
-
+            <WarningFeedback
+              showFeedback={paymentStatus === "incomplete"}
+              feedback="You have unpaid subscription"
+            />
             <div
               className={classes.create_ads}
               style={{
@@ -259,6 +316,57 @@ class Subscription extends Component {
                     <button
                       onClick={() => {
                         window.scrollTo({ top: 0, left: 0 });
+
+                        if (subscription.active) {
+                          this.setState(state => ({
+                            ...state,
+                            loading: true
+                          }))
+                          axios.delete(
+                            `https://backendapp.murmurcars.com/api/v1/surveys/user/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
+                          ).then(response => {
+                            this.setState(state => ({
+                              ...state,
+                              loading: false,
+                              subscribedSuccesefulyFeedback: true,
+                              successFeedback: 'Canceled'
+                            }))
+
+
+                            setTimeout(() => {
+                              this.setState((state) => ({
+                                ...state,
+                                subscribedSuccesefulyFeedback: false,
+                                successFeedback:  subscribed
+                                ? "Subscription is updated"
+                                : "Subscription is created"
+                              }));
+
+                          
+                            }, 3000);
+
+                            setTimeout(() => {
+                              this.props.history.push("/");
+                            }, 3500)
+        
+                          }).catch(err => {
+                            this.setState(state => ({
+                              ...state,
+                              loading: false,
+                              subscribeErrorFeedback: true
+                            }))
+
+                            setTimeout(() => {
+                              this.setState((state) => ({
+                                ...state,
+                                subscribeErrorFeedback: false,
+                              
+                              }));
+                          
+                            }, 3000);
+                          })
+                          return;
+                        }
                         if (subscribed) {
                           //if subscribed we change subscription we need to open modal (upgrade or downgrade)
                           const selectedPackageSize = subscription.size;
@@ -286,8 +394,13 @@ class Subscription extends Component {
                           selectPaymentMethodModal: true,
                         }));
                       }}
+                      className={`${classes.subscription__btn} ${
+                        subscription.active
+                          ? classes["subscription__btn--cancel"]
+                          : null
+                      }`}
                     >
-                      {subscription.active ? "Current" : "Get started"}
+                      {subscription.active ? "Cansel" : "Get started"}
                       <svg
                         width="21"
                         height="20"
@@ -361,7 +474,6 @@ class Subscription extends Component {
                     this.props.history.push("/");
                   }, 3500);
                 } else if (!state) {
-       
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
@@ -399,6 +511,7 @@ class Subscription extends Component {
             subscribe={true}
             loading={this.state.subscribeWithDefaultCardLoading}
             closeModal={async (modalState, paymentMethod) => {
+              window.scrollTo({ top: 0, left: 0 });
               if (paymentMethod === "add card") {
                 //checking if customer want to add a new card
                 setTimeout(() => {
@@ -435,7 +548,7 @@ class Subscription extends Component {
                         priceId,
                       }
                     );
-               
+
                     // setLoading(false);
                     this.setState((state) => ({
                       ...state,
@@ -478,7 +591,6 @@ class Subscription extends Component {
                   );
 
                   if (result?.error) {
-             
                     this.setState((state) => ({
                       ...state,
 
@@ -495,7 +607,7 @@ class Subscription extends Component {
                     }, 3000);
                   } else {
                     // setLoading(false);
-               
+
                     this.setState((state) => ({
                       ...state,
                       selectPaymentMethodModal: false,
@@ -515,7 +627,6 @@ class Subscription extends Component {
                     }, 3500);
                   }
                 } catch (err) {
-            
                   this.setState((state) => ({
                     ...state,
                     selectPaymentMethodModal: false,

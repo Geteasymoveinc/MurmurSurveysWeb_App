@@ -50,7 +50,7 @@ class HeadSearch extends React.Component{
               <div
                 className={`${classes.dash_relative} ${classes.search_box}`}
               >
-                <input type="text" placeholder="Search" />
+                <input type="text"  disabled/>
                 <div className={classes.search_box_flex}>
     
                   <button type="button" className={classes.search_maximize}>

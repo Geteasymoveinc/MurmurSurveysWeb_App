@@ -24,7 +24,7 @@ import { ErrorFeedback, SuccessFeedback } from "../../components/feedbacks";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 
-const stripe = loadStripe(process.env.REACT_APP_TEST_STRIPEKEY);
+const stripe = loadStripe(process.env.REACT_APP_LIVE_STRIPEKEY);
 
 const appearance = {
   theme: "stripe",
@@ -44,7 +44,7 @@ class BillingHistory extends Component {
       profile: {},
       stripeCustomerId: "",
       defaultPaymentMethod: {},
-      changeDefaultCardLoading:false,
+      changeDefaultCardLoading: false,
       changeDefaultCardSuccess: false,
       changeDefaultCardError: false,
     };
@@ -52,7 +52,9 @@ class BillingHistory extends Component {
 
   toggleDeleteBilling = (id) => {
     axios
-      .delete(`https://backendapp.murmurcars.com/api/v1/surveys/user/delete-billing/${id}`)
+      .delete(
+        `https://backendapp.murmurcars.com/api/v1/surveys/user/delete-billing/${id}`
+      )
       .then(() => {
         window.location.reload();
         this.setState((state) => ({ ...state, loading: false }));
@@ -154,10 +156,9 @@ class BillingHistory extends Component {
     if (checked) {
       count++;
     }
-    console.log(checked);
-    console.log(id);
+  
     for (let i = 0; i < billings.length; i++) {
-      console.log(billings[i]._id);
+    
       if (billings[i]._id === id) {
         billings[i].checked = checked;
       }
@@ -235,10 +236,85 @@ class BillingHistory extends Component {
             <span className={classes.td_data}>{billing.subscription}</span>
           </td>
           <td className={classes.cads_td}>
-            <span className={classes.td_data}>{billing.status}</span>
-            <a href={billing.pdf} download={true}>
-              Download
-            </a>
+            <span className={classes.td_data}>
+              {billing.status === "paid" ? (
+                <svg
+                  viewBox="0 0 512 512"
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#54920b"
+                  stroke="#54920b"
+                  width='20'
+                  height='20'
+                >
+                  <g strokeWidth="0"></g>
+                  <g
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  ></g>
+                  <g>
+                    {" "}
+                    <title>success</title>{" "}
+                    <g
+                      id="Page-1"
+                      stroke="none"
+                      strokeWidth="1"
+                      fill="none"
+                      fillRule="evenodd"
+                    >
+                      {" "}
+                      <g
+                      
+                        fill="#54920b"
+                        transform="translate(42.666667, 42.666667)"
+                      >
+                        {" "}
+                        <path
+                          d="M213.333333,3.55271368e-14 C95.51296,3.55271368e-14 3.55271368e-14,95.51296 3.55271368e-14,213.333333 C3.55271368e-14,331.153707 95.51296,426.666667 213.333333,426.666667 C331.153707,426.666667 426.666667,331.153707 426.666667,213.333333 C426.666667,95.51296 331.153707,3.55271368e-14 213.333333,3.55271368e-14 Z M213.333333,384 C119.227947,384 42.6666667,307.43872 42.6666667,213.333333 C42.6666667,119.227947 119.227947,42.6666667 213.333333,42.6666667 C307.43872,42.6666667 384,119.227947 384,213.333333 C384,307.43872 307.438933,384 213.333333,384 Z M293.669333,137.114453 L323.835947,167.281067 L192,299.66912 L112.916693,220.585813 L143.083307,190.4192 L192,239.335893 L293.669333,137.114453 Z"
+                    
+                        >
+                          {" "}
+                        </path>{" "}
+                      </g>{" "}
+                    </g>{" "}
+                  </g>
+                </svg>
+              ) : (
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                >
+                  <g strokeWidth="0"></g>
+                  <g strokeLinecap="round" strokeLinejoin="round"></g>
+                  <g>
+                    {" "}
+                    <path
+                      d="M6.30928 9C8.59494 5 9.96832 3 12 3C14.3107 3 15.7699 5.58716 18.6883 10.7615L19.0519 11.4063C21.4771 15.7061 22.6897 17.856 21.5937 19.428C20.4978 21 17.7864 21 12.3637 21H11.6363C6.21356 21 3.50217 21 2.40626 19.428C1.45498 18.0635 2.24306 16.2635 4.05373 13"
+                      stroke="#ae1936"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    ></path>{" "}
+                    <path
+                      d="M12 8V13"
+                      stroke="#ae1936"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    ></path>{" "}
+                    <circle cx="12" cy="16" r="1" fill="#ae1936"></circle>{" "}
+                  </g>
+                </svg>
+              )}
+            </span>
+          </td>
+          <td className={classes.cads_td}>
+            <span className={classes.td_data}>
+              <a href={billing.pdf} download={true}>
+                Download
+              </a>
+            </span>
           </td>
           {/*<td className={classes.cads_td}>
                 <span className={`${classes.td_data} ${survey.paid ? classes.success : classes.failed}`}>
@@ -293,7 +369,7 @@ class BillingHistory extends Component {
       profile,
       defaultPaymentMethod,
     } = this.state;
-    console.log(defaultPaymentMethod);
+  
 
     let cardImage = "";
 
@@ -367,10 +443,10 @@ class BillingHistory extends Component {
                   {" "}
                   <Link
                     //onClick={this.toggleToCreateSurveyMode}
-                    to="/surveys/create-survey?publish=true"
+                    to="/surveys"
                     className={`${classes.navbar_btn} ${classes.main}`}
                   >
-                    Questions
+                    Surveys
                   </Link>
                 </div>
               </div>
@@ -411,16 +487,19 @@ class BillingHistory extends Component {
                   </svg>
                   <span className="ml-2">Go Back</span>
                 </Link>
-                <div
-                  className={`d-flex flex-column justify-content-between h-100 ${classes["current-subscription__info"]}`}
-                >
-                  <span>
-                    Subscription: <span>{this.state.subscription.package}</span>
-                  </span>
-                  <span>
-                    New payment date: {this.state.subscription.expiration}
-                  </span>
-                </div>
+                {this.state.subscription != null ? (
+                  <div
+                    className={`d-flex flex-column justify-content-between h-100 ${classes["current-subscription__info"]}`}
+                  >
+                    <span>
+                      Subscription:{" "}
+                      <span>{this.state.subscription.package}</span>
+                    </span>
+                    <span>
+                      New payment date: {this.state.subscription.expiration}
+                    </span>
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -520,7 +599,12 @@ class BillingHistory extends Component {
                         >
                           <span>Subscription</span>
                         </th>
-
+                        <th
+                          className={classes.cads_th}
+                          style={{ minWidth: "100px" }}
+                        >
+                          <span>Status</span>
+                        </th>
                         <th style={{ minWidth: "200px" }}></th>
                       </tr>
                     </thead>
@@ -545,49 +629,42 @@ class BillingHistory extends Component {
               closeModal={(submit, state) => {
                 if (submit && state) {
                   axios
-                  .get(
-                    `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${profile?.id}`
-                  ) //fetch default payment method
-                  .then((response) => {
-                    const { paymentMethod } = response.data;
-              
-                    this.setState((state) => ({
-                      ...state, 
-                      defaultPaymentMethod: paymentMethod,
-                      addCardModal: false,
-                      changeDefaultPaymentMethodModal: false,
-                      changeDefaultCardSuccess: true,
-                    }));
+                    .get(
+                      `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${profile?.id}`
+                    ) //fetch default payment method
+                    .then((response) => {
+                      const { paymentMethod } = response.data;
 
-                    setTimeout(() => {
                       this.setState((state) => ({
                         ...state,
-                        changeDefaultCardSuccess: false,
+                        defaultPaymentMethod: paymentMethod,
+                        addCardModal: false,
+                        changeDefaultPaymentMethodModal: false,
+                        changeDefaultCardSuccess: true,
                       }));
-                    }, 3000);
-                  })
-                  .catch((err) => {
-        
-                    this.setState((state) => ({
-                      ...state,
-                      addCardModal: false,
-                      changeDefaultPaymentMethodModal: false,
-                      changeDefaultCardError: true,
-                    }));
-                    setTimeout(() => {
+
+                      setTimeout(() => {
+                        this.setState((state) => ({
+                          ...state,
+                          changeDefaultCardSuccess: false,
+                        }));
+                      }, 3000);
+                    })
+                    .catch((err) => {
                       this.setState((state) => ({
                         ...state,
-                        changeDefaultCardError: false,
+                        addCardModal: false,
+                        changeDefaultPaymentMethodModal: false,
+                        changeDefaultCardError: true,
                       }));
-                    }, 3000);
-                  });
-             
-
-                  
-                }else if (!state) {
-
-                  
-                
+                      setTimeout(() => {
+                        this.setState((state) => ({
+                          ...state,
+                          changeDefaultCardError: false,
+                        }));
+                      }, 3000);
+                    });
+                } else if (!state) {
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
@@ -601,11 +678,11 @@ class BillingHistory extends Component {
                       changeDefaultCardError: false,
                     }));
                   }, 3000);
-                }else{
+                } else {
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
-                    changeDefaultPaymentMethodModal:true,
+                    changeDefaultPaymentMethodModal: true,
                   }));
                 }
               }}
@@ -621,7 +698,6 @@ class BillingHistory extends Component {
             email={profile?.email}
             loading={this.state.changeDefaultCardLoading}
             closeModal={async (modalState, paymentMethod) => {
-          
               if (paymentMethod === "add card") {
                 setTimeout(() => {
                   this.setState((state) => ({
@@ -630,10 +706,10 @@ class BillingHistory extends Component {
                   }));
                 }, 200);
               } else if (modalState) {
-                this.setState(state => ({
+                this.setState((state) => ({
                   ...state,
-                  changeDefaultCardLoading: true
-                }))
+                  changeDefaultCardLoading: true,
+                }));
                 try {
                   const customer = await axios.post(
                     "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
@@ -649,13 +725,13 @@ class BillingHistory extends Component {
                     ) //fetch default payment method
                     .then((response) => {
                       const { paymentMethod } = response.data;
-                
+
                       this.setState((state) => ({
                         ...state,
                         changeDefaultPaymentMethodModal: false,
                         changeDefaultCardSuccess: true,
                         defaultPaymentMethod: paymentMethod,
-                        changeDefaultCardLoading: false
+                        changeDefaultCardLoading: false,
                       }));
 
                       setTimeout(() => {
@@ -666,12 +742,11 @@ class BillingHistory extends Component {
                       }, 3000);
                     })
                     .catch((err) => {
-          
                       this.setState((state) => ({
                         ...state,
                         changeDefaultPaymentMethodModal: false,
                         changeDefaultCardError: true,
-                        changeDefaultCardLoading: false
+                        changeDefaultCardLoading: false,
                       }));
                       setTimeout(() => {
                         this.setState((state) => ({
@@ -681,12 +756,11 @@ class BillingHistory extends Component {
                       }, 3000);
                     });
                 } catch (err) {
-             
                   this.setState((state) => ({
                     ...state,
                     changeDefaultPaymentMethodModal: false,
                     changeDefaultCardError: true,
-                    changeDefaultCardLoading: false
+                    changeDefaultCardLoading: false,
                   }));
 
                   setTimeout(() => {
@@ -696,10 +770,10 @@ class BillingHistory extends Component {
                     }));
                   }, 3000);
                 }
-              }else{
+              } else {
                 this.setState((state) => ({
                   ...state,
-                 changeDefaultPaymentMethodModal: false
+                  changeDefaultPaymentMethodModal: false,
                 }));
               }
             }}

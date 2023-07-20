@@ -146,7 +146,7 @@ class Settings extends Component {
         data: formData,
       })
         .then((res) => {
-          console.log(res);
+        
           sessionStorage.removeItem("profileImage");
           sessionStorage.setItem(
             "profileImage",

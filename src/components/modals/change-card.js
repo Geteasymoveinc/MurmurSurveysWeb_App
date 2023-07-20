@@ -20,22 +20,22 @@ class ChangeDefaultCard extends React.Component {
     this.state = {
       defaultPaymentMethod: this.props.defaultPaymentMethod,
       paymentMethods: [],
-      loading:false
+      loading: false,
     };
   }
 
   componentDidMount() {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      loading: true
-    }))
+      loading: true,
+    }));
 
-    if(!this.props.stripeCustomerId){
-      this.setState(state => ({
+    if (!this.props.stripeCustomerId) {
+      this.setState((state) => ({
         ...state,
-        loading: false
-      }))
-      return
+        loading: false,
+      }));
+      return;
     }
     axios
       .get(
@@ -58,15 +58,20 @@ class ChangeDefaultCard extends React.Component {
           ...state,
           paymentMethods,
           defaultPaymentMethod: this.props.defaultPaymentMethod,
-          loading: false
+          loading: false,
         }));
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        this.setState((state) => ({
+          ...state,
+          loading: false,
+        }))
+      );
   }
 
   render() {
     const { modalStatus, closeModal, layoutTheme } = this.props;
-    const {loading} = this.state
+    const { loading } = this.state;
 
     return (
       <Modal
@@ -100,16 +105,18 @@ class ChangeDefaultCard extends React.Component {
           <div
             className={`stripe ${classes.card} border-bottom-0 border-left-0 border-right-0`}
           >
-                    {loading  || this.props.loading   ?   <div id="status">
-            <div className="spinner-chase">
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-              <div className="chase-dot"></div>
-            </div>
-          </div> : null}
+            {loading || this.props.loading ? (
+              <div id="status">
+                <div className="spinner-chase">
+                  <div className="chase-dot"></div>
+                  <div className="chase-dot"></div>
+                  <div className="chase-dot"></div>
+                  <div className="chase-dot"></div>
+                  <div className="chase-dot"></div>
+                  <div className="chase-dot"></div>
+                </div>
+              </div>
+            ) : null}
             {this.state.paymentMethods.map((card, i) => {
               let cardImage =
                 card.brand === "visa"

@@ -181,7 +181,7 @@ class Register extends React.Component {
     }
   }
   render() {
-  console.log(this.props)  
+
     return (
       <React.Fragment>
         <div className={classes.login_register}>

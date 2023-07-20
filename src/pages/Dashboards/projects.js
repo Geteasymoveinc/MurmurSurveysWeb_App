@@ -5,14 +5,17 @@ import LogoWhiteTheme from "../../assets/images/LogoWhiteTheme.png";
 import classes from "../../assets/css/surveys/index.module.scss";
 
 import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
+import { WarningFeedback } from "../../components/feedbacks";
 
 import { connect } from "react-redux";
 import { Link, withRouter, Switch, Route } from "react-router-dom";
+import axios from "axios";
 
 import PullSurveys from "./pullSurveys";
 import Survey from "./create/index";
 
 import { queryForEmail } from "../../helpers/fakebackend_helper";
+
 
 class Projects extends Component {
   constructor(props) {
@@ -20,16 +23,18 @@ class Projects extends Component {
     this.state = {
       create_edit_survey: false,
       loading: true,
-      payment: {},
       user_id: "",
       company: "",
       selectedCampaign: {},
+      subscription: null,
+      warningFeedback: null
     };
   }
 
   componentDidMount() {
     const url = this.props.location.search; //search property of history props
     const create_edit_survey = new URLSearchParams(url).get("survey_id");
+    
     queryForEmail(
       `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
       {
@@ -38,16 +43,64 @@ class Projects extends Component {
       }
     )
       .then((user) => {
-        const { _id, payment, company } = user.resp;
-        this.setState({
-          ...this.state,
-          user_id: _id,
-          loading: false,
-          //create_edit_survey_mode: true,
-          create_edit_survey,
-          payment,
-          company,
-        });
+        const { _id, company, subscription } = user.resp;
+        if (subscription == null) {
+          this.setState({
+            ...this.state,
+            user_id: _id,
+            loading: false,
+            //create_edit_survey_mode: true,
+            create_edit_survey,
+            subscription: null,
+            company,
+          });
+
+          return;
+        }
+        
+        axios
+          .get(`https://backendapp.murmurcars.com/api/v1/surveys/user/subscriptions/${_id}`)
+          .then((response) => {
+            const { subscriptions } = response.data;
+
+            const index = subscriptions.findIndex((el) => el.active);
+            const paymentStatus = subscriptions[index]?.paymentStatus;
+            const plan = subscriptions[index]?.package;
+            const discount = subscriptions[index].discount;
+ 
+  
+            this.setState({
+              ...this.state,
+              user_id: _id,
+              loading: false,
+              //create_edit_survey_mode: true,
+              subscription: { paymentStatus, plan, discount },
+              warningFeedback: paymentStatus === 'incomplete',
+              create_edit_survey,
+              company,
+            });
+           
+
+            setTimeout(() => {
+              this.setState(state => ({
+
+                ...state,
+                warningFeedback: null
+              }))
+            }, 5000)
+
+          })
+          .catch((err) =>
+            this.setState({
+              ...this.state,
+              loading: false,
+              user_id: _id,
+              //create_edit_survey_mode: true,
+              subscription: null,
+              create_edit_survey,
+              company,
+            })
+          );
       })
       .catch((err) =>
         this.setState({
@@ -73,7 +126,7 @@ class Projects extends Component {
   };
 
   render() {
-    const { create_edit_survey, loading, user_id, payment } = this.state;
+    const { create_edit_survey, loading, user_id, warningFeedback } = this.state;
 
     return (
       <Fragment>
@@ -91,6 +144,13 @@ class Projects extends Component {
         )}
         {!loading && !create_edit_survey ? (
           <div className={classes.dash_right}>
+                <WarningFeedback
+              showFeedback={warningFeedback}
+              feedback="You have unpaid subscription"
+            />
+
+          
+            
             <header className={classes.header}>
               <div className={classes.mur_contain}>
                 <a href="#" className={classes.logo}>
@@ -184,6 +244,15 @@ class Projects extends Component {
               survey={this.props.survey}
               user_id={user_id}
               company={this.state.company}
+              subscription={this.state.subscription}
+            />
+          </Route>
+          <Route path="/surveys/publish-survey">
+            <Survey
+              survey={this.props.survey}
+              user_id={user_id}
+              company={this.state.company}
+              subscription={this.state.subscription}
             />
           </Route>
         </Switch>
@@ -216,6 +285,7 @@ const mapPropsToState = (state) => {
     count,
     _id,
     researcherContacts,
+    paid
   } = state.Survey;
 
   return {
@@ -242,6 +312,7 @@ const mapPropsToState = (state) => {
       response,
       _id,
       researcherContacts,
+      paid
     },
     ...state.Layout,
   };

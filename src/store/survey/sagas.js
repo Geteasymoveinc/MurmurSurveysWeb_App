@@ -31,7 +31,7 @@ function* post_survey({ payload: { backend, data, history } }) {
 
     yield put(publish_survey_success(message));
 
-    if(backend.payment === 'checkout'){
+    if(backend.payment === 'checkout' && !backend.paid && backend.publish){
       setTimeout(() => (window.location = payment_link), 1000)
     }else{
       history.push("/")

@@ -141,7 +141,7 @@ class Login extends React.Component {
     document.body.classList.remove("bg-transparent");
   }
   render() {
-    console.log(this.props)
+ 
     return (
       <React.Fragment>
         {(this.props.loading || this.props.loading2) && (

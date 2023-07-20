@@ -41,7 +41,6 @@ class PullSurveys extends Component {
       )
       .then((response) => {
         const { surveys: surveys_data } = response.data;
-
         for (let survey of surveys_data) {
           survey.checked = false;
         }
@@ -202,13 +201,13 @@ class PullSurveys extends Component {
           <td className={classes.cads_td}>
             <span
               className={`${
-                survey.survey_active
+                survey.paid
                   ? classes.cads_active_dot
                   : classes.cads_deactive_dot
               }`}
             >
               <span className={classes.cads_dot}></span>{" "}
-              {`${survey.survey_active ? "Active" : "Deactive"}`}
+              {`${survey.paid ? "Active" : "Deactive"}`}
             </span>
           </td>
           <td className={classes.cads_td}>

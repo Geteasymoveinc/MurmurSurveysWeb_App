@@ -17,7 +17,7 @@ const postRegister = (url, data) => {
   return axios
     .post(url, data)
     .then((response) => {
-      console.log(response);
+
       if (response.status >= 200 || response.status <= 299)
         return response.data;
       throw response.data;
@@ -46,7 +46,7 @@ const postRegister = (url, data) => {
     });
 };
 const subscribeBackend = (url, data) => {
-  console.log(url);
+  
   return axios
     .post(url, data)
 
@@ -160,11 +160,12 @@ const get_survey = (url) => {
         targetUsersFrom,
         researcherContacts,
         research,
+        paid,
         _id
       } = survey;
 
 
-
+   
       return {
         survey_questions,
         survey_audience_number,
@@ -182,6 +183,7 @@ const get_survey = (url) => {
         researchConductedVia,
         targetUsersFrom,
         research,
+        paid,
         researcherContacts,
         _id
       };

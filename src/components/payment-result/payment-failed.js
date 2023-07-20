@@ -12,7 +12,7 @@ const PaymentFailedIcon = () => {
 
         </span>
         <span>
-        Please try again or contact our help team by emailing to <strong>info@murmurcars.com</strong>
+        Please try again or contact our help team by emailing to <strong>getinsightiq@gmail.com</strong>
         </span>
         <Link to='/surveys'>
             Back to Dashboard

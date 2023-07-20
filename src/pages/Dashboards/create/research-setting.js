@@ -33,6 +33,7 @@ class ResearchSetting extends Component {
 
       uploadParticipantsModal: false,
       downloadCSVTemplateModal: false,
+      uploadParticipantsModalLoader: false,
       uploadCsvSuccess: false,
       uploadCsvError: false,
     };
@@ -731,7 +732,7 @@ class ResearchSetting extends Component {
                     className={`${
                       classes["participants__enroll-participants"]
                     } ${
-                      this.state.constructResearch.targetUsersFrom !== "murmur"
+                      this.state.constructResearch.targetUsersFrom !== "murmur" &&  this.state.constructResearch.targetUsersFrom != null
                         ? classes["participants__enroll-participants--active"]
                         : null
                     }`}
@@ -881,6 +882,7 @@ class ResearchSetting extends Component {
         )}
         <ParticipantsModal
           modalStatus={this.state.uploadParticipantsModal}
+          loading={this.state.uploadParticipantsModalLoader}
           closeModal={(state, asset) => {
             if (state == "download" && asset == null) {
               this.setState((state) => ({
@@ -896,6 +898,10 @@ class ResearchSetting extends Component {
               }));
               return;
             }
+            this.setState((state) => ({
+              ...state,
+              uploadParticipantsModalLoader: true,
+            }));
             const formData = new FormData();
             formData.append("csvFile", asset.csvFile);
             formData.append("fileName", asset.name);
@@ -915,7 +921,11 @@ class ResearchSetting extends Component {
                     ...state.constructResearch,
                     targetUsersFrom: this.props.company,
                   },*/
+                  uploadParticipantsModalLoader: false,
                 }));
+
+        
+
                 this.props.updateResearchMainSettings(
                   "targetUsersFrom",
                   this.props.company
@@ -932,11 +942,13 @@ class ResearchSetting extends Component {
                   ...state,
                   uploadCsvError: true,
                   uploadParticipantsModal: false,
+                  uploadParticipantsModalLoader: false,
                 }));
                 setTimeout(() => {
                   this.setState((state) => ({
                     ...state,
                     uploadCsvError: false,
+
                   }));
                 }, 3000);
               });

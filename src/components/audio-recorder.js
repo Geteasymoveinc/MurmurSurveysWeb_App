@@ -13,8 +13,6 @@ function AudioRecorderComponent({onFinishRecording}) {
 
 
   const addAudioElement = (blob) => {
-
-   console.log(blob)
     onFinishRecording(blob)
   };
 

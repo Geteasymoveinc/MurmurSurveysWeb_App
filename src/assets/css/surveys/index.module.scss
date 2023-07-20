@@ -636,6 +636,7 @@
         text-align: center;
 
         /* Gray/700 */
+        min-height: 60px;
       }
     }
     &__btn {
@@ -746,7 +747,13 @@
           border: 1px solid rgba(233, 215, 254, 0.04);
         }
       }
+
+      &>div:last-child{
+      .foreground{
+        background: #131313;
+      }
     }
+  }
 
     .survey-question,
     .create_question {
@@ -1354,6 +1361,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  margin: 0;
 }
 .cads_check label:before {
   content: "";

@@ -67,7 +67,7 @@ class SurveyAnswers extends Component {
         questions[question][answer] = 0;
       }
     }
-  console.log(questions,types)
+
     axios
     .post(
       `https://backendapp.murmurcars.com/api/v1/admin/survey-analytics/${id}`,
@@ -78,7 +78,7 @@ class SurveyAnswers extends Component {
     )
       .then((response) => {
         const { data} = response;
-        console.log(data)
+   
         this.setState((state) => {
           return {
             ...state,

@@ -56,12 +56,11 @@ function CheckoutForm({
   stripeCustomerId,
   subscriptionId,
   email,
-  address,
-  name,
   phone,
 }) {
   const [checkoutError, setCheckoutError] = useState();
   const [loading, setLoading] = useState(false);
+  const [name, setFullName] = useState('')
 
   const stripe = useStripe();
   const elements = useElements();
@@ -116,14 +115,13 @@ function CheckoutForm({
           name,
           email,
           phone,
-          address
         },
       });
 
       let customer = {};
 
       if (stripeCustomerId) {
-        console.log("paymentMethod", paymentMethod);
+     
         customer = await axios.post(
           "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
           {
@@ -151,9 +149,6 @@ function CheckoutForm({
       const id = stripeCustomerId ? stripeCustomerId : customer.data.id;
       let response = {};
       if (subscribed) {
-        
-       
-
         response = await axios.post(
           "https://backendapp.murmurcars.com/api/v1/surveys/user/change-subscription",
           {
@@ -167,6 +162,7 @@ function CheckoutForm({
         setLoading(false);
         return;
       } else {
+      
         response = await axios.post(
           "https://backendapp.murmurcars.com/api/v1/surveys/user/create-subscription",
           {
@@ -206,6 +202,7 @@ function CheckoutForm({
           phone,
         },
       });
+
       let customer;
       if (stripeCustomerId) {
         customer = await axios.post(
@@ -234,7 +231,7 @@ function CheckoutForm({
     }
   };
 
-  const disabled = !stripe
+  const disabled = !stripe || !name.length;
 
   return (
     <Modal
@@ -265,7 +262,8 @@ function CheckoutForm({
         </div>
       </ModalHeader>
       <ModalBody>
-        {loading ?       <div id="status">
+        {loading ? (
+          <div id="status">
             <div className="spinner-chase">
               <div className="chase-dot"></div>
               <div className="chase-dot"></div>
@@ -274,8 +272,13 @@ function CheckoutForm({
               <div className="chase-dot"></div>
               <div className="chase-dot"></div>
             </div>
-          </div> : null}
-        <div className={`stripe ${classes["card"]} ${loading ? classes['card--opacity-50'] : null}`}>
+          </div>
+        ) : null}
+        <div
+          className={`stripe ${classes["card"]} ${
+            loading ? classes["card--opacity-50"] : null
+          }`}
+        >
           <label htmlFor="new card">
             <div className={classes["card__input-container"]}>
               <input type="radio" id="new card" checked={true} />
@@ -287,6 +290,18 @@ function CheckoutForm({
             <span>Add new card</span>
           </label>
           <form className="d-flex flex-column mt-4" id="myForm">
+            <label className="card-element w-100 mb-4">
+              <input
+                type="text"
+                onChange={(event) => {
+                  const value = event.target.value;
+
+                  setFullName(value);
+                }}
+                placeholder="Name on the card"
+              />
+            </label>
+
             <label className="card-number">
               <CardNumberElement
                 options={options}
@@ -315,7 +330,11 @@ function CheckoutForm({
             </div>
           </form>
         </div>
-        <div className={`${classes.btns} ${loading ? classes['card--opacity-50'] : null}`}>
+        <div
+          className={`${classes.btns} ${
+            loading ? classes["card--opacity-50"] : null
+          }`}
+        >
           <button
             type="button"
             disabled={loading}

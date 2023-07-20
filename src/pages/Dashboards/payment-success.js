@@ -1,9 +1,8 @@
 
 import React from "react";
 
-import Logo from "../../assets/images/surveys/logoBlue.svg";
+import Logo from "../../assets/images/LogoWhiteTheme.png";
 import classes from "../../assets/css/surveys/index.module.scss";
-import classes2 from "../../assets/css/CreateAd/index.module.css";
 import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 
 import PaymentSuccessIcon from "../../components/payment-result/payment-ok";
@@ -20,10 +19,10 @@ class PaymentSuccess extends React.Component {
     
         axios.post(`https://backendapp.murmurcars.com/api/v1/surveys/survey/handle-payment-status?temp_token=${token}`)
         .then((res) => {
-            console.log(res)
+     
         })
         .catch((err) => {
-            console.log(err)
+     
         })
     }
     render(){

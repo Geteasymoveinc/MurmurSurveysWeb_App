@@ -21,7 +21,7 @@ function* loginUser({ payload: { profile, history } }) {
       }
     );
     const data = response.resp;
-    console.log('from backend', data)
+    
     if(data.status!==204){
     sessionStorage.setItem("authUser", data.email);
     const image = data.profilePhoto

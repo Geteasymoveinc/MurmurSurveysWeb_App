@@ -64,7 +64,7 @@ class DownloadTemplateComponent extends React.Component {
                 Import them via CSV. You’ll be able to sort, filter, tag,
                 organize and invite them to research
               </p>
-              <a className={classes["download-template"]} download={true} href={Template}>
+              <a className={classes["download-template"]} download='participants.csv' href={Template}>
                 Download CSV file example{" "}
                 <svg
                   width="20"

@@ -10,7 +10,7 @@ const handleLogin = (url, data) => {
       return response.data;
     })
     .catch((err) => {
-      console.log({ err });
+  
       throw err[1];
     });
 };

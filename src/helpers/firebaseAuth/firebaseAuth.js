@@ -9,7 +9,7 @@ const providerFacebook = new firebase.auth.FacebookAuthProvider();
 const providerGoogle = new firebase.auth.GoogleAuthProvider();
 
 function FirebaseAuth(value, props) {
-  console.log(value, props);
+
   if (value === "GoogleLoginRegister") {
     firebase
       .auth()
@@ -52,7 +52,7 @@ function FirebaseAuth(value, props) {
       .auth()
       .signInWithPopup(providerFacebook)
       .then((result) => {
-        console.log(result);
+   
         var credential = result.credential;
 
         // This gives you a Google Access Token. You can use it to access the Google API.
@@ -80,10 +80,10 @@ function FirebaseSignout() {
     .signOut()
     .then((response) => {
       // Sign-out successful.
-      console.log(response);
+  
     })
     .catch((error) => {
-      console.log(error);
+
       // An error happened.
     });
 }

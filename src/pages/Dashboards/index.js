@@ -42,7 +42,7 @@ class Surveys extends Component {
         targetUsersFrom: "",
         researchConductedVia: "",
       },
-
+      uploadParticipantsModalLoader: false,
       uploadParticipantsModal: false,
       downloadCSVTemplateModal: false,
       uploadCsvSuccess: false,
@@ -93,7 +93,7 @@ class Surveys extends Component {
       )
       .then((response) => {
         this.props.history.push(
-          `/surveys/update-survey?survey_id=${response.data.survey_id}`
+          `/surveys/publish-survey?survey_id=${response.data.survey_id}`
         );
         this.setState({
           ...this.state,
@@ -166,7 +166,7 @@ class Surveys extends Component {
               </div>
               <div className={classes.dash_relative}>
                 <div className={classes.search_box_flex_end}>
-                  <Profile scope={"survey"} />
+                  <Profile scope="survey" />
                 </div>
               </div>
             </header>
@@ -962,6 +962,7 @@ class Surveys extends Component {
         )}
         <ParticipantsModal
           modalStatus={this.state.uploadParticipantsModal}
+          loading={this.state.uploadParticipantsModalLoader}
           closeModal={(state, asset) => {
             if (state == "download" && asset == null) {
               this.setState((state) => ({
@@ -977,6 +978,10 @@ class Surveys extends Component {
               }));
               return;
             }
+            this.setState((state) => ({
+              ...state,
+              uploadParticipantsModalLoader: true,
+            }));
             const formData = new FormData();
             formData.append("csvFile", asset.csvFile);
             formData.append("fileName", asset.name);
@@ -996,6 +1001,7 @@ class Surveys extends Component {
                     ...state.constructResearch,
                     targetUsersFrom: this.state.company,
                   },
+                  uploadParticipantsModalLoader: false,
                 }));
 
                 setTimeout(() => {
@@ -1010,6 +1016,7 @@ class Surveys extends Component {
                   ...state,
                   uploadCsvError: true,
                   uploadParticipantsModal: false,
+                  uploadParticipantsModalLoader: false,
                 }));
                 setTimeout(() => {
                   this.setState((state) => ({

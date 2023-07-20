@@ -25,7 +25,7 @@ class EmailWasSent extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+
     return (
       <React.Fragment>
         <header className={classes.header}>

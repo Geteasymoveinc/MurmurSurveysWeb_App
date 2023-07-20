@@ -40,7 +40,7 @@ class ResetPassword extends React.Component {
   handlePasswordChange(event) {
     const name = event.target.name;
     const value = event.target.value;
-    console.log(name, value);
+
     this.setState({ [name]: value });
     if (
       name === "password" &&
@@ -109,7 +109,7 @@ class ResetPassword extends React.Component {
   }
 
   render() {
-    console.log(this.state);
+
     return (
       <React.Fragment>
         {this.props.loading && (

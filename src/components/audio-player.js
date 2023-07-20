@@ -15,7 +15,7 @@ function AudioPlayer({ audio, keyProp }) {
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
-    if(!isPlaying) return
+    if (!isPlaying) return;
     timer = setInterval(() => {
       if (audioRef.current.ended) {
         audioRef.current.pause();
@@ -30,7 +30,6 @@ function AudioPlayer({ audio, keyProp }) {
       clearInterval(timer);
     };
   });
-
 
 
 
@@ -125,11 +124,23 @@ function AudioPlayer({ audio, keyProp }) {
           }}
         />
       </div>
-      <audio controls ref={audioRef} key={keyProp} onDurationChange={e => {
-        const duration = e.target.duration 
-        setCurrentTime(Math.floor(duration));
-      }}>
-        <source src={audio} type="audio/ogg" />
+      <audio
+        controls
+        ref={audioRef}
+        key={keyProp}
+        preload="metadata"
+        onLoadedMetadata={e => {
+          const duration = e.target.duration;
+          if (duration === Infinity) {
+           const newAudio = new Audio(audio)
+            audioRef.current = newAudio
+            return;
+          }
+          setCurrentTime(Math.floor(duration));
+        }}
+
+      >
+        <source src={audio} />
       </audio>
 
       <div className={classes["audio-recorder__recording-time"]}>

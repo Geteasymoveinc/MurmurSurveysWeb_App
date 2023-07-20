@@ -6,24 +6,36 @@ import classes from "../../assets/css/modals/modal.module.scss";
 import UploadCSV from "../../assets/images/openCSV.png";
 import "../../assets/css/modals/modal.scss";
 
+import { WarningFeedback, SuccessFeedback } from "../feedbacks";
+
 class UploadParticipants extends React.Component {
   constructor() {
     super();
-    this.asset = {};
+    this.state = { asset: {}, warning: false, successFeedback: false };
   }
 
   uploadCSV = (event) => {
-    console.log(event.target.files);
     const file = Array.from(event.target.files).at(0);
+
+    if (!file.name.includes("csv")) {
+      this.setState(() => ({ warning: true }));
+
+      setTimeout(() => this.setState(() => ({ warning: false })), 3000);
+
+      return;
+    }
     const reader = new FileReader();
     reader.readAsDataURL(file);
 
     reader.onload = (event) => {
-      this.asset = { csvFile: file, name: file.name };
+      this.setState(() => ({ successFeedback: true }));
+
+      setTimeout(() => this.setState(() => ({ successFeedback: false })), 3000);
+      this.setState(() => ({ asset: { csvFile: file, name: file.name } }));
     };
   };
   render() {
-    const { modalStatus, closeModal, layoutTheme } = this.props;
+    const { modalStatus, closeModal, layoutTheme, loading } = this.props;
 
     return (
       <Modal
@@ -53,14 +65,39 @@ class UploadParticipants extends React.Component {
           </div>
         </ModalHeader>
         <ModalBody>
+          <WarningFeedback
+            showFeedback={this.state.warning}
+            feedback="Please upload CSV file"
+          />
+
+          <SuccessFeedback
+            showFeedback={this.state.successFeedback}
+            feedback={"Success. File is ready for upload"}
+          />
           <Row>
             <Col className="d-flex flex-column align-items-center pl-4 pr-4">
+              {loading ? (
+                <div id="status">
+                  <div className="spinner-chase">
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                    <div className="chase-dot"></div>
+                  </div>
+                </div>
+              ) : null}
               <div className={`${classes.uploader}`}>
-                <input type="file" onChange={this.uploadCSV} />
+                <input
+                  type="file"
+                  onChange={this.uploadCSV}
+                  disabled={loading}
+                />
 
                 <img src={UploadCSV} alt="" className="mb-4" />
 
-                <span>Upload</span>
+                <span>Click here</span>
               </div>
 
               <h5>If you already have a list or participianta</h5>
@@ -74,6 +111,7 @@ class UploadParticipants extends React.Component {
                   closeModal("download", null);
                   //this.props.uploadCSV(this.asset)
                 }}
+                disabled={loading}
               >
                 Check CSV file example{" "}
                 <svg
@@ -99,18 +137,18 @@ class UploadParticipants extends React.Component {
                     closeModal(false, null);
                     //this.props.uploadCSV(this.asset)
                   }}
+                  disabled={loading}
                 >
                   Cansel
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    closeModal(true, this.asset);
+                    closeModal(true, this.state.asset);
                   }}
-                  disabled={!this.asset.name}
+                  disabled={!this.state.asset.name || loading}
                 >
-          
-                 Continue
+                  Continue
                 </button>
               </div>
             </Col>

@@ -60,6 +60,7 @@ const initial_surveys = {
   message: null,
   loading: true,
   count: 0,
+  paid: false,
 };
 
 const Survey = (state = initial_surveys, actions) => {
@@ -68,7 +69,7 @@ const Survey = (state = initial_surveys, actions) => {
   let left = [];
   let right = [];
 
-  console.log(state.researcherContacts)
+ 
 
   switch (actions.type) {
     case ADDSURVEY:
@@ -180,7 +181,9 @@ const Survey = (state = initial_surveys, actions) => {
         research: actions.payload.research,
         response: actions.payload.response,
         researcherContacts: actions.payload.researcherContacts,
+        paid: actions.payload.paid,
         loading: false,
+        count
       };
       break;
 

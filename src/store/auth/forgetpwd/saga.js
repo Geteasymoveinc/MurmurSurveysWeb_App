@@ -24,15 +24,15 @@ function* forgetUser({ payload: { email, history } }) {
         );
       }
     } else {
-      console.log(email)
+  
       const response = yield call(
         postForgetPwd,
         "https://backendapp.murmurcars.com/api/v1/users/forgot-password",
         //"http://localhost:4000/api/v1/users/forgot-password",
-         {email}
+         {email, role: '2'}
       );
       if (response) {
-        console.log(response)
+        
         yield put(
           userForgetPasswordSuccess(
             {message:response.message, email}

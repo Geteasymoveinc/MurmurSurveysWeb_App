@@ -41,7 +41,7 @@ class ForgetPasswordPage extends React.Component {
   handleValidSubmit(event) {
     event.preventDefault();
 
-    console.log(this.state.email);
+
     this.props.userForgetPassword({
       email: this.state.email,
       history: this.props.history,
@@ -61,7 +61,7 @@ class ForgetPasswordPage extends React.Component {
     }
   }
   render() {
-    console.log(this.props);
+
     return (
       <React.Fragment>
         {this.props.loading && (

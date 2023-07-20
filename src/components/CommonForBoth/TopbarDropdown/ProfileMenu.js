@@ -105,7 +105,8 @@ class ProfileMenu extends Component {
             <DropdownItem tag="div">
               <button  className="dropdown-item p-0" onClick={() => {
                       this.props.history.push("/")
-                      this.props.history.replace('/surveys')
+
+                      setTimeout(() => this.props.history.replace('/surveys'), 100)  //without this component does not get mounted if called from child path
               }}>
                 {" "}
                 <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>{" "}

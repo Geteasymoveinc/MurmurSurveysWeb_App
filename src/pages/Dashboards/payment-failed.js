@@ -2,11 +2,10 @@
 
 import React from "react";
 
-import Logo from "../../assets/images/surveys/logoBlue.svg";
+import Logo from "../../assets/images/LogoWhiteTheme.png";
 import classes from "../../assets/css/surveys/index.module.scss";
-import classes2 from "../../assets/css/CreateAd/index.module.css";
-import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 
+import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
 import PaymentFailedIcon from "../../components/payment-result/payment-failed";
 
 import {withRouter} from 'react-router-dom'
@@ -28,14 +27,14 @@ class PaymentFailed extends React.Component {
                     <div className={classes.menu_self_flex}></div>
                     <div className={classes.dash_relative}>
                       <div className={classes.search_box_flex_end}>
-                        <Profile scope={"survey"} />
+                        <Profile scope="survey" />
                       </div>
                     </div>
                   </header>
       
                   <div className={classes.surveys_container}>
                     <div className={classes.create_ads}>
-                      <div className={classes2.ads_section}>
+                      <div className={classes.ads_section}>
                        <PaymentFailedIcon/>
                        
                       </div>
