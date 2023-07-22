@@ -62,23 +62,27 @@ class Survey extends Component {
     this.state = {
       loading: true,
       //first: true,
-      survey_id: "", 
-      publish: true, //fetching from this.props.match.path survey production noolean 
+      survey_id: "",
+      publish: true, //fetching from this.props.match.path survey production noolean
       //publish: false,
       locationModal: false, //country, city modal
       recordVideoModal: false, //webcam
       recordAudio: false, //audio
       warningFeedback: false, //if u try publish without at least one question
       warning: null, //warning message
+      info: true, //information
       email: sessionStorage.getItem("authUser"),
-      menu: {  //navigation
+      menu: {
+        //navigation
         menu_item: "questions",
         preview: false,
       },
-      form: { //app state
+      form: {
+        //app state
         survey_answers_questions: {
           //id: 0,
-          survey: { //create question
+          survey: {
+            //create question
             // main: true,
             count: this.props.survey.count + 1,
             isQuestion: true, //question or section(like container of conditional questions)
@@ -98,9 +102,9 @@ class Survey extends Component {
               },
             },
           },
-          surveys: this.props.survey.survey_questions,  //all questions
+          surveys: this.props.survey.survey_questions, //all questions
         },
-        survey_title_question_image: {  
+        survey_title_question_image: {
           survey: {
             form_title: this.props.survey.survey_title,
 
@@ -135,20 +139,22 @@ class Survey extends Component {
         survey_question: false,
       },
 
-      urls: [] //assets to delete in backend
+      urls: [], //assets to delete in backend
     };
     this.timeout = null;
     this.new_option = React.createRef(null);
   }
 
   componentDidUpdate(prevProps) {
-  
+    
     if (
       prevProps.survey.survey_questions.length !==
         this.props.survey.survey_questions.length ||
       this.props.survey.loading !== prevProps.survey.loading ||
       this.props.subscription !== prevProps.subscription
     ) {
+      console.log(this.props.survey)
+      console.log(this.props.subscription)
       this.setState((state) => ({
         ...state,
         loading: false,
@@ -181,13 +187,12 @@ class Survey extends Component {
               price: 0.5,
               amount: this.props.survey.survey_audience_number,
               //budget: +this.props.survey.survey_budget,
-              budget:
-                this.props.subscription != null &&
-                this.props.subscription.paymentStatus === "active"
-                  ? this.props.survey.survey_budget -
-                    this.props.survey.survey_budget *
-                      this.props.subscription.discount
-                  : this.props.survey.survey_budget,
+              budget:    this.props.subscription != null &&
+              this.props.subscription.paymentStatus === "active"
+                ? this.props.survey.survey_budget -
+                  this.props.survey.survey_budget *
+                    this.props.subscription.discount
+                : this.props.survey.survey_budget,
             },
           },
         },
@@ -265,8 +270,7 @@ class Survey extends Component {
       this.state.form.survey_title_question_image.survey;
     const { image_file, image_name } = image;
 
-    const { amount, budget } =
-      this.state.form.survey_price_amount.survey;
+    const { amount, budget } = this.state.form.survey_price_amount.survey;
     const { surveys } = this.state.form.survey_answers_questions;
 
     const { target_audience, survey_active, survey_specific } =
@@ -319,7 +323,10 @@ class Survey extends Component {
     //formData.append("file", survey_image.image_file);
     //formData.append("survey_specific", JSON.stringify(survey_specific));
     //formData.append("country", country);
-    formData.append("payment", JSON.stringify(this.props.survey.payment));
+    formData.append(
+      "payment",
+      JSON.stringify({ type: this.props.survey.payment })
+    );
 
     const conditionals = [];
     const main = [];
@@ -359,12 +366,11 @@ class Survey extends Component {
     backend.paid = this.props.survey.paid;
     backend.publish = this.state.publish;
 
-    for await (let url of urls){
-      axios
-      .post(
+    for await (let url of urls) {
+      axios.post(
         "https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-asset",
         { url }
-      )
+      );
     }
 
     this.props.publish_survey({
@@ -677,7 +683,7 @@ class Survey extends Component {
       )
       .then((response) => {
         const surveys = this.state.form.survey_answers_questions.surveys;
-        
+
         const index = surveys.findIndex((el) => el.uid === uid);
         const survey = surveys.at(index);
 
@@ -704,29 +710,27 @@ class Survey extends Component {
   };
 
   removeSurveyAsset = (url, index, stateChange) => {
+    if (!stateChange) return;
+    const surveys = this.state.form.survey_answers_questions.surveys;
+    //const index = surveys.findIndex((el) => el.uid === uid);
+    const survey = surveys.at(index);
+    survey.asset.assetUrl = "";
 
-        if (!stateChange) return;
-        const surveys = this.state.form.survey_answers_questions.surveys;
-        //const index = surveys.findIndex((el) => el.uid === uid);
-        const survey = surveys.at(index);
-        survey.asset.assetUrl = "";
+    const left = surveys.slice(0, index);
+    const right = surveys.slice(index + 1, surveys.length);
 
-        const left = surveys.slice(0, index);
-        const right = surveys.slice(index + 1, surveys.length);
+    this.setState((state) => ({
+      ...state,
+      form: {
+        ...state.form,
+        survey_answers_questions: {
+          ...state.form.survey_answers_questions,
+          surveys: [...left, survey, ...right],
+        },
+      },
 
-        this.setState((state) => ({
-          ...state,
-          form: {
-            ...state.form,
-            survey_answers_questions: {
-              ...state.form.survey_answers_questions,
-              surveys: [...left, survey, ...right],
-            },
-          },
-
-          urls:[...state.urls, url]
-        }));
-
+      urls: [...state.urls, url],
+    }));
   };
 
   getUserInput = (e, segment, type) => {
@@ -1239,7 +1243,8 @@ class Survey extends Component {
       activeBox,
       inform_danger,
       survey_id,
-      urls
+      urls,
+      info,
     } = this.state;
 
     const { menu_item, preview: preview_mode } = menu;
@@ -1275,8 +1280,6 @@ class Survey extends Component {
     const { survey } = this.props;
 
     const { response: analytics } = survey;
-
-    
 
     return (
       <Fragment>
@@ -1434,7 +1437,9 @@ class Survey extends Component {
               <div className={classes.dash_relative}>
                 <div className={`${classes.search_box_flex}`}>
                   <form
-                    onSubmit={(event) => this.submitNewSurvey(event, survey_id, urls)}
+                    onSubmit={(event) =>
+                      this.submitNewSurvey(event, survey_id, urls)
+                    }
                   >
                     {this.state.publish || this.props.paid ? null : (
                       <button
@@ -3000,47 +3005,104 @@ class Survey extends Component {
                     </div>
                   </div>
                 </div>
-                <div className={classes.create_right_info}>
-                  <div className={classes.create_info}>
-                    <p className={classes.create_info_icon}>
-                      <img
-                        src={
-                          this.props.layoutTheme === "light"
-                            ? Info_Circle
-                            : Info_Circle_White
-                        }
-                        alt=""
-                      />
-                      <span>Information</span>
-                    </p>
-                    <ul className={classes.create_info_ul}>
-                      <li>
-                        <p className={classes.create_ul_p}>
-                          Responses from 50 to 250
-                        </p>
-                        <div className={classes.create_ul_txt}>
-                          Rate is gonna be 0.5 USD
-                        </div>
-                      </li>
-                      <li>
-                        <p className={classes.create_ul_p}>
-                          Responses from 250 to 600
-                        </p>
-                        <div className={classes.create_ul_txt}>
-                          Rate will drop to be 0.3 USD
-                        </div>
-                      </li>
-                      <li>
-                        <p className={classes.create_ul_p}>
-                          Responses from 600
-                        </p>
-                        <div className={classes.create_ul_txt}>
-                          Rate will decrease to 0.2 USD
-                        </div>
-                      </li>
-                    </ul>
+                {info ? (
+                  <div className={`${classes.create_right_info}`}>
+                    <div className={classes.create_info}>
+                      <p className={classes.create_info_icon}>
+                    
+               
+                          <img
+                            src={
+                              this.props.layoutTheme === "light"
+                                ? Info_Circle
+                                : Info_Circle_White
+                            }
+                            alt=""
+                          />
+                  
+                        <span>Information</span>
+
+                        <button
+                          className={classes.close_info}
+                          onClick={() =>
+                            this.setState((state) => ({
+                              ...state,
+                              info: false,
+                            }))
+                          }
+                        >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M18 6L6 18M6 6L18 18"
+                              stroke="#192038"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </p>
+                      <ul className={classes.create_info_ul}>
+                        <li>
+                          <p className={classes.create_ul_p}>
+                            Responses from 50 to 250
+                          </p>
+                          <div className={classes.create_ul_txt}>
+                            Rate is gonna be 0.5 USD
+                          </div>
+                        </li>
+                        <li>
+                          <p className={classes.create_ul_p}>
+                            Responses from 250 to 600
+                          </p>
+                          <div className={classes.create_ul_txt}>
+                            Rate will drop to be 0.3 USD
+                          </div>
+                        </li>
+                        <li>
+                          <p className={classes.create_ul_p}>
+                            Responses from 600
+                          </p>
+                          <div className={classes.create_ul_txt}>
+                            Rate will decrease to 0.2 USD
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className={`${classes.create_right_info} ${classes.hidden}`}>
+                    <div className={classes.create_info}>
+                      <p className={classes.create_info_icon}>
+                      <button
+                          className={`${classes.open_info} ${classes.active}`}
+                          onClick={() => {
+                            
+                            this.setState((state) => ({
+                              ...state,
+                              info: true,
+                            }))
+                          }
+                        }>
+                        <img
+                          src={
+                            this.props.layoutTheme === "light"
+                              ? Info_Circle
+                              : Info_Circle_White
+                          }
+                          alt=""
+                        />
+                        </button>
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {!preview_mode && menu_item === "settings" && (

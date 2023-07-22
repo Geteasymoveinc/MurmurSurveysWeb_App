@@ -19,13 +19,17 @@
     transition:all .4s ease;
   }
   
-
-
-.dropdown.dark > div{
- background: #16151a;
+.dropdown-item{
+  background-color: transparent;
 }
 
+.dropdown.dark > div{
+ background: #16151a
+}
 
+.dropdown.dark .dropdown-item:hover{
+  background: #16151a ;
+}
 .dropdown.dark button, .dropdown.dark a{
   color: white;
   background-color: transparent;
@@ -33,13 +37,11 @@
 .dropdown.dark button svg path, .dropdown.dark a svg path{
  stroke: white;
 }
-.dropdown.dark button:hover, .dropdown.dark a:hover{
-     color: #16151a
-}
-.dropdown.dark a:hover span{
-  color: white
-}
 
-.dropdown.dark button:hover svg path, .dropdown.dark a:hover svg path{
-  stroke: #16151a
+ .dropdown.dark button:hover, .dropdown.dark a:hover{
+  background: #16151a ;
+ }
+
+ .dropdown.dark .dropdown-divider{
+  visibility: hidden;
  }

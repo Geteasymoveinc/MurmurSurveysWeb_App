@@ -95,7 +95,7 @@ class ProfileMenu extends Component {
             />
           </DropdownToggle>
           <DropdownMenu right>
-          <DropdownItem tag="div">
+            <DropdownItem tag="div">
               <Link to="/settings" className="dropdown-item p-0">
                 <i className="bx bx-user font-size-16 align-middle mr-1"></i>
                 Profile
@@ -103,11 +103,14 @@ class ProfileMenu extends Component {
             </DropdownItem>
             <div className="dropdown-divider"></div>
             <DropdownItem tag="div">
-              <button  className="dropdown-item p-0" onClick={() => {
-                      this.props.history.push("/")
+              <button
+                className="dropdown-item p-0"
+                onClick={() => {
+                  this.props.history.push("/");
 
-                      setTimeout(() => this.props.history.replace('/surveys'), 100)  //without this component does not get mounted if called from child path
-              }}>
+                  setTimeout(() => this.props.history.replace("/surveys"), 100); //without this component does not get mounted if called from child path
+                }}
+              >
                 {" "}
                 <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>{" "}
                 My Surveys
@@ -115,7 +118,7 @@ class ProfileMenu extends Component {
             </DropdownItem>
 
             <div className="dropdown-divider"></div>
-         
+
             <DropdownItem tag="div">
               <Link to="/billing" className="dropdown-item p-0">
                 <svg

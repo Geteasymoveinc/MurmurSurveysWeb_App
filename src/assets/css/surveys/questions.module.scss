@@ -80,12 +80,27 @@
 .create_right_info {
   grid-area: info;
   width: 100%;
-}
-
-.create_right_info {
   width: 268px;
   padding-bottom: 120px;
 }
+
+.create_right_info.hidden {
+    width: fit-content;
+}
+
+.open_info, .close_info{
+  background-color: transparent;
+  border: none;
+
+}
+.close_info{
+  margin-left: 40px;
+}
+.open_info.active,
+.close_info{
+  cursor: pointer;
+}
+
 .create_info {
   border: 1px solid #e4e9f2;
   border-radius: 6px;
@@ -265,7 +280,7 @@
 .title_image_container .bottom_border {
   background-color: transparent;
   border: transparent;
-  border-bottom: 2px solid #8f9bb3;
+  border-bottom: 2px solid #7356c0;
 }
 .title_image_container .user_input_setting img {
   position: absolute;
@@ -291,7 +306,7 @@
  >div:last-child{
   .foreground{
     position: absolute;
-    top: 30px;
+    top: 28px;
 right: 20px;
 pointer-events: none;
     width: 55px;
@@ -357,7 +372,7 @@ pointer-events: none;
   display: flex;
   justify-content: center;
   outline: none;
-  border-bottom:1px solid  #7356c0;
+  border-bottom:2px solid  #7356c0;
 }
 
 .user_input_setting_hotisontal {
@@ -735,7 +750,6 @@ right: 5px
 }
 
 
-
 .survey_input_and_question_type {
   position: relative;
   display: flex;
@@ -768,16 +782,18 @@ right: 5px
 
 .survey_input {
   background: #f7f9fc;
-  border: 1px solid #edf1f7;
+  border:1px solid #7356c0;
   box-sizing: border-box;
-  border-radius: 8px;
   width: 200px;
   height: 48px;
   outline: none;
   padding-left: 10px;
 }
-.survey_input_danger {
-  border: 1px solid #2e3a59;
+.survey_input_align_center .survey_input{
+  border: none;
+}
+.survey_input_align_center .survey_input_danger {
+  border:1px solid #7356c0;
 }
 .survey_input::placeholder {
   font-family: "Montserrat";
@@ -845,7 +861,7 @@ right: 5px
 .input_option {
   background-color: transparent;
   border: transparent;
-  border-bottom: 2px solid #8f9bb3;
+  border-bottom:  2px solid #7356c0;
   margin-left: 10px;
   outline: none;
   font-size: 18px;
@@ -986,7 +1002,7 @@ input:checked + .slider:before {
   border-bottom-color: transparent;
   border-bottom-style: none;
   border-bottom-width: medium;
-  border-bottom: 2px solid #8f9bb3;
+  border-bottom: 2px solid #7356c0;
   box-sizing: border-box;
   width: 343px;
   height: 48px;
