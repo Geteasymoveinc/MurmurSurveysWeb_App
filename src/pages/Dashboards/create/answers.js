@@ -33,7 +33,7 @@ class SurveyAnswers extends Component {
     });
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/admin/survey-answer-analytics?id=${id}&question=${question}`
+        `https://backendapp.getinsightiq.com/api/v1/admin/survey-answer-analytics?id=${id}&question=${question}`
       )
       .then((response) => {
         const { Analytics } = response.data;
@@ -70,7 +70,7 @@ class SurveyAnswers extends Component {
 
     axios
     .post(
-      `https://backendapp.murmurcars.com/api/v1/admin/survey-analytics/${id}`,
+      `https://backendapp.getinsightiq.com/api/v1/admin/survey-analytics/${id}`,
       {
         questions,
         types,

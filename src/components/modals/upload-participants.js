@@ -135,17 +135,22 @@ class UploadParticipants extends React.Component {
                   type="button"
                   onClick={() => {
                     closeModal(false, null);
+                    this.setState(state => ({
+                      ...state,
+                      asset: {}
+                    }))
                     //this.props.uploadCSV(this.asset)
                   }}
                   disabled={loading}
                 >
-                  Cansel
+                  Cancel
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     closeModal(true, this.state.asset);
                   }}
+                  className={!this.state.asset.name || loading ? classes.disabled : null}
                   disabled={!this.state.asset.name || loading}
                 >
                   Continue

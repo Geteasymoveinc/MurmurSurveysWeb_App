@@ -52,10 +52,9 @@ class Surveys extends Component {
 
   componentDidMount() {
     queryForEmail(
-      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
       {
-        email: sessionStorage.getItem("authUser"),
-        role: "2",
+        email: sessionStorage.getItem("authUser")
       }
     )
       .then((user) => {
@@ -82,7 +81,7 @@ class Surveys extends Component {
   toggleToCreateSurveyMode = () => {
     axios
       .post(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/publish-survey/${this.state.id}?payment=${this.state.payment.type}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/publish-survey/${this.state.id}?payment=${this.state.payment.type}`,
         {
           research: this.state.constructResearch.research,
           targetUsersFrom: this.state.constructResearch.targetUsersFrom,
@@ -100,7 +99,7 @@ class Surveys extends Component {
           create_edit_survey_mode: true,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>{});
   };
 
   enrollParticipants = (research) => {
@@ -200,7 +199,7 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                          {this.props.layoutTheme === "dark" ? (
+                      
                             <svg
                               width="24"
                               height="24"
@@ -242,7 +241,7 @@ class Surveys extends Component {
                                 />
                               </g>
                             </svg>
-                          ) : null}
+              
                           UX & Design
                         </span>
                         <button
@@ -291,7 +290,7 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                          {this.props.layoutTheme === "dark" ? (
+                    
                             <svg
                               width="24"
                               height="24"
@@ -324,7 +323,7 @@ class Surveys extends Component {
                                 fill="#7F56D9"
                               />
                             </svg>
-                          ) : null}
+                  
                           Ecommerce
                         </span>
                         <button
@@ -375,7 +374,7 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                          {this.props.layoutTheme === "dark" ? (
+                      
                             <svg
                               width="24"
                               height="24"
@@ -394,7 +393,7 @@ class Surveys extends Component {
                                 fill="#7F56D9"
                               />
                             </svg>
-                          ) : null}
+                  
                           Product
                         </span>
                         <button
@@ -445,7 +444,7 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                          {this.props.layoutTheme === "dark" ? (
+                     
                             <svg
                               width="24"
                               height="24"
@@ -487,7 +486,7 @@ class Surveys extends Component {
                                 />
                               </g>
                             </svg>
-                          ) : null}
+                   
                           Marketing Agencies
                         </span>
                         <button onClick={() => this.enrollParticipants("hr")}>
@@ -536,7 +535,7 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                          {this.props.layoutTheme === "dark" ? (
+          
                             <svg
                               width="24"
                               height="24"
@@ -578,7 +577,7 @@ class Surveys extends Component {
                                 />
                               </g>
                             </svg>
-                          ) : null}
+         
                           Marketing
                         </span>
                         <button
@@ -628,7 +627,7 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                          {this.props.layoutTheme === "dark" ? (
+               
                             <svg
                               width="24"
                               height="24"
@@ -670,7 +669,7 @@ class Surveys extends Component {
                                 />
                               </g>
                             </svg>
-                          ) : null}
+               
                           Startup & VC’s
                         </span>
                         <button
@@ -988,7 +987,7 @@ class Surveys extends Component {
             formData.append("company", this.state.company);
             axios
               .post(
-                "https://backendapp.murmurcars.com/api/v1/surveys/user/insertExternalParticipants",
+                "https://backendapp.getinsightiq.com/api/v1/surveys/user/insertExternalParticipants",
                 formData
               )
               .then((response) => {

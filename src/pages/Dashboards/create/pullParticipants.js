@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 
 import classes from "../../../assets/css/surveys/index.module.scss";
-import Trash from "../../../assets/css/CreateAd/trash.svg";
+import Trash from "../../../assets/images/trash.svg";
 
 import axios from "axios";
 
@@ -129,7 +129,7 @@ class PullParticipants extends Component {
 
     axios
       .delete(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/remove-participants/${list_of_ids}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/remove-participants/${list_of_ids}`
       )
       .then(() => {
         this.setState({
@@ -138,9 +138,7 @@ class PullParticipants extends Component {
           participants: leftParticipants,
         });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
   render() {

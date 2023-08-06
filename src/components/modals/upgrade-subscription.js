@@ -63,7 +63,7 @@ class UpgradeSubscription extends React.Component {
                     //this.props.uploadCSV(this.asset)
                   }}
                 >
-                  Cansel
+                  Cancel
                 </button>
                 <button
                   type="button"

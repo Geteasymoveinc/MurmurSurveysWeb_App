@@ -54,10 +54,9 @@ class Subscription extends Component {
   
     window.scrollTo({ top: 0, left: 0 });
     queryForEmail(
-      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`, //to get customer profile
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`, //to get customer profile
       {
-        email: sessionStorage.getItem("authUser"),
-        role: "2",
+        email: sessionStorage.getItem("authUser")
       }
     )
       .then((user) => {
@@ -66,9 +65,11 @@ class Subscription extends Component {
 
         axios
           .get(
-            `https://backendapp.murmurcars.com/api/v1/surveys/user/subscriptions/${_id}`
+            `https://backendapp.getinsightiq.com/api/v1/surveys/user/subscriptions/${_id}`
           )
           .then((response) => {
+
+           
             const { subscriptions, stripeCustomerId } = response.data;
             const subscribed = subscriptions.some((el) => el.active);
             const index = subscriptions.findIndex((el) => el.active);
@@ -99,7 +100,7 @@ class Subscription extends Component {
             }
             axios
               .get(
-                `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${_id}`
+                `https://backendapp.getinsightiq.com/api/v1/surveys/user/default-payment-method/${_id}`
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
@@ -300,7 +301,7 @@ class Subscription extends Component {
                       <h5>
                         {subscription.package}{" "}
                         {subscription.bestSeller ? (
-                          <span>Best Seller</span>
+                          <span className={classes['best-seller']}>Best Seller</span>
                         ) : null}
                       </h5>
                       <span>
@@ -323,7 +324,7 @@ class Subscription extends Component {
                             loading: true
                           }))
                           axios.delete(
-                            `https://backendapp.murmurcars.com/api/v1/surveys/user/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
+                            `https://backendapp.getinsightiq.com/api/v1/surveys/user/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
                           ).then(response => {
                             this.setState(state => ({
                               ...state,
@@ -400,7 +401,7 @@ class Subscription extends Component {
                           : null
                       }`}
                     >
-                      {subscription.active ? "Cansel" : "Get started"}
+                      {subscription.active ? "Cancel" : "Get started"}
                       <svg
                         width="21"
                         height="20"
@@ -529,7 +530,7 @@ class Subscription extends Component {
                 }));
                 try {
                   const customer = await axios.post(
-                    "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
+                    "https://backendapp.getinsightiq.com/api/v1/surveys/user/update-customer",
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
@@ -541,7 +542,7 @@ class Subscription extends Component {
                     //if already subscribed and want to upgrade or downgrade package
 
                     response = await axios.post(
-                      "https://backendapp.murmurcars.com/api/v1/surveys/user/change-subscription",
+                      "https://backendapp.getinsightiq.com/api/v1/surveys/user/change-subscription",
                       {
                         user_id: profile?.id,
                         subscriptionId,
@@ -572,7 +573,7 @@ class Subscription extends Component {
                   } else {
                     //creating new subscription
                     response = await axios.post(
-                      "https://backendapp.murmurcars.com/api/v1/surveys/user/create-subscription",
+                      "https://backendapp.getinsightiq.com/api/v1/surveys/user/create-subscription",
                       {
                         user_id: profile?.id,
                         customerId: this.state.stripeCustomerId,

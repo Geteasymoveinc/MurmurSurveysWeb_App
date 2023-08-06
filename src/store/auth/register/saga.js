@@ -31,14 +31,13 @@ try{
       password,
       email,
       phone_number,
-      company,
-      role:'2'
+      company
     };
 
     const response = yield call(
       postRegister,
-      "https://backendapp.murmurcars.com/api/v1/users/signup",
-      //"http://localhost:4000/api/v1/users/signup",
+      "https://backendapp.getinsightiq.com/api/v1/surveys/customers/signup",
+      //"http://localhost:4000/api/v1/surveys/customers/signup",
       registered_user
     );
   if(response.status === 204){

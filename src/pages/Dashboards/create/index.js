@@ -1,57 +1,58 @@
-import React from "react";
-import { Component, Fragment } from "react";
+import React from 'react';
+import { Component, Fragment } from 'react';
 
-import classes from "../../../assets/css/surveys/index.module.scss";
+import classes from '../../../assets/css/surveys/index.module.scss';
 
 //questions
-import LogoWhiteThemeQuestions from "../../../assets/images/LogoWhiteThemeQuestions.png";
-import LogoWhiteTheme from "../../../assets/images/LogoWhiteTheme.png";
-import Radio from "../../../assets/images/surveys/radio.svg";
-import Upload from "../../../assets/images/surveys/upload.png";
-import Trash from "../../../assets/images/surveys/trash.svg";
-import Chevron_Down from "../../../assets/images/surveys/chevron-down.svg";
-import Add_Icon from "../../../assets/images/surveys/add.svg";
-import Gallery_Add from "../../../assets/images/surveys/gallery-add.svg";
-import Edit from "../../../assets/css/CreateAd/ads-details/edit.svg";
-import Info_Circle from "../../../assets/css/CreateAd/info-circle.svg";
-import Info_Circle_White from "../../../assets/css/CreateAd/info-circle-white.svg";
-import Option_Delete from "../../../assets/images/surveys/option-delete.svg";
-import RecordVideo from "../../../assets/images/video.png";
-import RecordAudio from "../../../assets/images/microphone.png";
-import "../../../assets/css/surveys/antd.css";
-import "../../../assets/css/common/css/spinner.scss";
+import LogoWhiteThemeQuestions from '../../../assets/images/LogoWhiteThemeQuestions.png';
+import LogoWhiteTheme from '../../../assets/images/LogoWhiteTheme.png';
+import Radio from '../../../assets/images/surveys/radio.svg';
+import Upload from '../../../assets/images/surveys/upload.png';
+import Trash from '../../../assets/images/surveys/trash.svg';
+import Chevron_Down from '../../../assets/images/surveys/chevron-down.svg';
+import Add_Icon from '../../../assets/images/surveys/add.svg';
+import Gallery_Add from '../../../assets/images/surveys/gallery-add.svg';
+import Edit from '../../../assets/images/edit.svg';
+import Info_Circle from '../../../assets/images/info-circle.svg';
+import Info_Circle_White from '../../../assets/images/info-circle-white.svg';
+import Option_Delete from '../../../assets/images/surveys/option-delete.svg';
+import RecordVideo from '../../../assets/images/video.png';
+import RecordAudio from '../../../assets/images/microphone.png';
+import ArrowLeft from '../../../assets/images/arrow-left.svg';
+import '../../../assets/css/surveys/antd.css';
+import '../../../assets/css/common/css/spinner.scss';
 
 //import SurveyQuestion from "./questions";
-import SurveySettings from "./settings";
-import SurveyAnalytics from "./analytics";
-import SurveyAnswers from "./answers";
-import Preview from "../preview";
-import PullParticipants from "./pullParticipants";
-import ResearchSetting from "./research-setting";
+import SurveySettings from './settings';
+import SurveyAnalytics from './analytics';
+import SurveyAnswers from './answers';
+import Preview from '../preview';
+import PullParticipants from './pullParticipants';
+import ResearchSetting from './research-setting';
 
-import { Upload as Upload_Antd } from "antd";
+import { Upload as Upload_Antd } from 'antd';
 
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-import axios from "axios";
-import { Link, withRouter } from "react-router-dom";
+import axios from 'axios';
+import { Link, withRouter } from 'react-router-dom';
 import {
   publish_survey,
   fetch_survey,
   fetch_map_position,
-} from "../../../store/actions";
+} from '../../../store/actions';
 
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 //import { queryForEmail } from "../../../helpers/fakebackend_helper";
 
-import LocationModal from "../../../components/location-modal";
-import Profile from "../../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
-import WebcamModal from "../../../components/modals/webcam";
-import AudioRecorder from "../../../components/audio-recorder";
-import AudioPlayer from "../../../components/audio-player";
-import { WarningFeedback } from "../../../components/feedbacks";
+import LocationModal from '../../../components/location-modal';
+import Profile from '../../../components/CommonForBoth/TopbarDropdown/ProfileMenu';
+import WebcamModal from '../../../components/modals/webcam';
+import AudioRecorder from '../../../components/audio-recorder';
+import AudioPlayer from '../../../components/audio-player';
+import { WarningFeedback } from '../../../components/feedbacks';
 
-import Geocode from "react-geocode";
+import Geocode from 'react-geocode';
 Geocode.setApiKey(`${process.env.REACT_APP_GOOGLEMAPSKEY}`);
 
 const { Dragger } = Upload_Antd;
@@ -62,7 +63,7 @@ class Survey extends Component {
     this.state = {
       loading: true,
       //first: true,
-      survey_id: "",
+      survey_id: '',
       publish: true, //fetching from this.props.match.path survey production noolean
       //publish: false,
       locationModal: false, //country, city modal
@@ -71,10 +72,10 @@ class Survey extends Component {
       warningFeedback: false, //if u try publish without at least one question
       warning: null, //warning message
       info: true, //information
-      email: sessionStorage.getItem("authUser"),
+      email: sessionStorage.getItem('authUser'),
       menu: {
         //navigation
-        menu_item: "questions",
+        menu_item: 'questions',
         preview: false,
       },
       form: {
@@ -87,18 +88,18 @@ class Survey extends Component {
             count: this.props.survey.count + 1,
             isQuestion: true, //question or section(like container of conditional questions)
             isConditional: false, //not main question
-            type: "radio",
+            type: 'radio',
             asset: {
-              assetName: "",
+              assetName: '',
               assetFile: {},
-              assetUrl: "",
-              assetType: "",
+              assetUrl: '',
+              assetType: '',
             },
-            question: "",
+            question: '',
             answers: {
               count: 1,
               options: {
-                option_1: "Answer 1",
+                option_1: 'Answer 1',
               },
             },
           },
@@ -122,7 +123,7 @@ class Survey extends Component {
             amount: 50,
             budget:
               this.props.subscription != null &&
-              this.props.subscription.paymentStatus === "active"
+              this.props.subscription.paymentStatus === 'active'
                 ? 25 - 25 * this.props.subscription.discount
                 : 25,
           },
@@ -146,15 +147,14 @@ class Survey extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    
+ 
     if (
       prevProps.survey.survey_questions.length !==
         this.props.survey.survey_questions.length ||
       this.props.survey.loading !== prevProps.survey.loading ||
       this.props.subscription !== prevProps.subscription
     ) {
-      console.log(this.props.survey)
-      console.log(this.props.subscription)
+  
       this.setState((state) => ({
         ...state,
         loading: false,
@@ -187,12 +187,13 @@ class Survey extends Component {
               price: 0.5,
               amount: this.props.survey.survey_audience_number,
               //budget: +this.props.survey.survey_budget,
-              budget:    this.props.subscription != null &&
-              this.props.subscription.paymentStatus === "active"
-                ? this.props.survey.survey_budget -
-                  this.props.survey.survey_budget *
-                    this.props.subscription.discount
-                : this.props.survey.survey_budget,
+              budget:
+                this.props.subscription != null &&
+                this.props.subscription.paymentStatus === 'active'
+                  ? this.props.survey.survey_budget -
+                    this.props.survey.survey_budget *
+                      this.props.subscription.discount
+                  : this.props.survey.survey_budget,
             },
           },
         },
@@ -220,18 +221,18 @@ class Survey extends Component {
   };
 
   componentWillUnmount() {
-    document.body.classList.remove("grey-background");
+    document.body.classList.remove('grey-background');
   }
   componentDidMount() {
     const url = this.props.location.search; //search property of history props
-    const survey_id = new URLSearchParams(url).get("survey_id"); //extracting id
+    const survey_id = new URLSearchParams(url).get('survey_id'); //extracting id
 
-    const publish = this.props.match.path.includes("/publish-survey");
+    const publish = this.props.match.path.includes('/publish-survey');
 
-    document.body.classList.add("grey-background");
+    document.body.classList.add('grey-background');
 
     this.props.fetch_survey(
-      `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`
+      `https://backendapp.getinsightiq.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`,
     );
     this.setState((state) => ({
       ...state,
@@ -280,7 +281,7 @@ class Survey extends Component {
       this.setState((state) => ({
         ...state,
         warningFeedback: true,
-        warning: "Please create at least one question",
+        warning: 'Please create at least one question',
       }));
       setTimeout(() => {
         this.setState((state) => ({
@@ -292,25 +293,25 @@ class Survey extends Component {
       return;
     }
     const formData = new FormData();
-    formData.append("survey_title", form_title);
+    formData.append('survey_title', form_title);
     //formData.append("survey_earnings", price);
-    formData.append("survey_budget", budget);
-    formData.append("target_audience", JSON.stringify(target_audience));
-    formData.append("survey_audience_count", amount);
-    formData.append("photo", image_name);
-    formData.append("survey_active", survey_active);
-    formData.append("survey_specific", survey_specific);
-    formData.append("survey_caption", form_caption);
-    formData.append("file", image_file);
+    formData.append('survey_budget', budget);
+    formData.append('target_audience', JSON.stringify(target_audience));
+    formData.append('survey_audience_count', amount);
+    formData.append('photo', image_name);
+    formData.append('survey_active', survey_active);
+    formData.append('survey_specific', survey_specific);
+    formData.append('survey_caption', form_caption);
+    formData.append('file', image_file);
     formData.append(
-      "researchConductedVia",
-      this.props.survey.researchConductedVia
+      'researchConductedVia',
+      this.props.survey.researchConductedVia,
     );
-    formData.append("targetUsersFrom", this.props.survey.targetUsersFrom);
-    formData.append("research", this.props.survey.research);
+    formData.append('targetUsersFrom', this.props.survey.targetUsersFrom);
+    formData.append('research', this.props.survey.research);
     formData.append(
-      "researcherContacts",
-      JSON.stringify(this.props.survey.researcherContacts)
+      'researcherContacts',
+      JSON.stringify(this.props.survey.researcherContacts),
     );
     //formData.append("survey_title", survey_title);
     //formData.append("survey_earnings", survey_earnings);
@@ -324,8 +325,8 @@ class Survey extends Component {
     //formData.append("survey_specific", JSON.stringify(survey_specific));
     //formData.append("country", country);
     formData.append(
-      "payment",
-      JSON.stringify({ type: this.props.survey.payment })
+      'payment',
+      JSON.stringify({ type: this.props.survey.payment }),
     );
 
     const conditionals = [];
@@ -354,22 +355,22 @@ class Survey extends Component {
 
     for (let survey of publish) {
       delete survey.asset.assetFile;
-      formData.append("survey_questions", JSON.stringify(survey));
+      formData.append('survey_questions', JSON.stringify(survey));
     }
 
     const backend = {};
 
-    backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
+    backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
     //backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
-    backend.method = "PUT";
+    backend.method = 'PUT';
     backend.payment = this.props.survey.payment;
     backend.paid = this.props.survey.paid;
     backend.publish = this.state.publish;
 
     for await (let url of urls) {
       axios.post(
-        "https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-asset",
-        { url }
+        'https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-asset',
+        { url },
       );
     }
 
@@ -384,8 +385,8 @@ class Survey extends Component {
     const { amount, budget } = this.state.form.survey_price_amount.survey;
 
     const backend = {};
-    backend.url = `https://backendapp.murmurcars.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
-    backend.method = "POST";
+    backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
+    backend.method = 'POST';
     backend.payment = this.props.survey.payment;
     backend.publish = true; // couse it is checkout
     this.props.publish_survey({
@@ -406,17 +407,17 @@ class Survey extends Component {
         const address = response.plus_code.compound_code;
         const country = address
           .split(/\s|[,]/i)
-          .filter((el) => el !== "")
+          .filter((el) => el !== '')
           .at(-1)
           .trim();
         let city = address
           .split(/\s|[,]/i)
-          .filter((el) => el !== "")
+          .filter((el) => el !== '')
           .at(-2)
           .trim();
 
-        if (country === "USA") {
-          city = city === "Illinois" ? "Chicago" : "SF";
+        if (country === 'USA') {
+          city = city === 'Illinois' ? 'Chicago' : 'SF';
         }
         this.props.fetch_map_position(address, country, city, {
           lat,
@@ -428,7 +429,7 @@ class Survey extends Component {
           ...this.state,
           loading: false,
         });
-      }
+      },
     );
   };
 
@@ -448,12 +449,10 @@ class Survey extends Component {
           `${country}, ${city}`,
           country,
           city,
-          center
+          center,
         );
       })
-      .catch((err) => {
-        console.log("network error");
-      });
+      .catch((err) => {});
   };
 
   //questions
@@ -641,10 +640,10 @@ class Survey extends Component {
   onSurveyQuestionCretiveUpload = (info) => {
     const reader = new FileReader();
     const asset = {
-      assetName: "",
+      assetName: '',
       assetFile: {},
-      assetUrl: "",
-      assetType: "",
+      assetUrl: '',
+      assetType: '',
     };
 
     reader.readAsDataURL(info.file);
@@ -673,13 +672,13 @@ class Survey extends Component {
 
   uploadSurveyAssetToServer = (asset, uid) => {
     const form = new FormData();
-    form.append("file", asset.assetFile);
-    form.append("assetName", asset.assetName);
+    form.append('file', asset.assetFile);
+    form.append('assetName', asset.assetName);
 
     axios
       .post(
-        "https://stagingapp.murmurcars.com/api/v1/surveys/survey/upload-asset",
-        form
+        'https://backendapp.getinsightiq.com/api/v1/surveys/survey/upload-asset',
+        form,
       )
       .then((response) => {
         const surveys = this.state.form.survey_answers_questions.surveys;
@@ -706,7 +705,7 @@ class Survey extends Component {
           },
         }));
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>{});
   };
 
   removeSurveyAsset = (url, index, stateChange) => {
@@ -714,7 +713,7 @@ class Survey extends Component {
     const surveys = this.state.form.survey_answers_questions.surveys;
     //const index = surveys.findIndex((el) => el.uid === uid);
     const survey = surveys.at(index);
-    survey.asset.assetUrl = "";
+    survey.asset.assetUrl = '';
 
     const left = surveys.slice(0, index);
     const right = surveys.slice(index + 1, surveys.length);
@@ -736,26 +735,26 @@ class Survey extends Component {
   getUserInput = (e, segment, type) => {
     let value = e.target.value;
     let rate = 0.5;
-    if (segment === "survey_price_amount") {
+    if (segment === 'survey_price_amount') {
       value = Number.parseInt(value.trim());
     }
 
-    if (Number.isNaN(value) && segment === "survey_price_amount") {
-      value = "";
+    if (Number.isNaN(value) && segment === 'survey_price_amount') {
+      value = '';
     }
 
     const input = {
       [type]: value,
     };
 
-    if (segment === "survey_price_amount") {
+    if (segment === 'survey_price_amount') {
       input.price = rate;
       input.budget = +Number(rate * value).toFixed(2);
     }
 
     if (
       this.props.subscription != null &&
-      this.props.subscription.paymentStatus === "active"
+      this.props.subscription.paymentStatus === 'active'
     ) {
       input.budget =
         input.budget - input.budget * this.props.subscription.discount;
@@ -799,7 +798,7 @@ class Survey extends Component {
         },
       },
     }));
-    document.getElementById("add-new-option").value = "";
+    document.getElementById('add-new-option').value = '';
   };
   //creating options
   createAnOption = (event, option) => {
@@ -869,7 +868,7 @@ class Survey extends Component {
               ...state.form.survey_answers_questions.survey.answers,
               count: 1,
               options: {
-                option_1: "Answer 1",
+                option_1: 'Answer 1',
               },
             },
           },
@@ -896,7 +895,7 @@ class Survey extends Component {
     }
     if (asset.assetUrl) {
       this.uploadSurveyAssetToServer(asset, count);
-      asset.status = "uploading";
+      asset.status = 'uploading';
     } else {
       asset.assetUrl = null;
       asset.assetType = null;
@@ -917,15 +916,15 @@ class Survey extends Component {
       asset,
     };
     if (isSection) {
-      newQuestion["isQuestion"] = false;
-      newQuestion["isConditional"] = true;
-      newQuestion["questions"] = [];
-      newQuestion["section_name"] = "Section name";
-      newQuestion["link"] = null;
-      delete newQuestion["image"];
-      delete newQuestion["question"];
-      delete newQuestion["answers"];
-      delete newQuestion["type"];
+      newQuestion['isQuestion'] = false;
+      newQuestion['isConditional'] = true;
+      newQuestion['questions'] = [];
+      newQuestion['section_name'] = 'Section name';
+      newQuestion['link'] = null;
+      delete newQuestion['image'];
+      delete newQuestion['question'];
+      delete newQuestion['answers'];
+      delete newQuestion['type'];
     }
 
     this.setState((state) => ({
@@ -942,17 +941,17 @@ class Survey extends Component {
             count: state.form.survey_answers_questions.survey.count + 1,
             isQuestion: true,
             isConditional: false,
-            type: "radio",
+            type: 'radio',
             asset: {
-              assetUrl: "",
+              assetUrl: '',
               assetFile: {},
-              assetType: "",
+              assetType: '',
             },
-            question: "",
+            question: '',
             answers: {
               count: 1,
               options: {
-                option_1: "Answer 1",
+                option_1: 'Answer 1',
               },
             },
           },
@@ -1028,7 +1027,7 @@ class Survey extends Component {
     const { answers, type } = survey;
     const answers_array = [];
     let htmlElement = [];
-    if (type !== "text") {
+    if (type !== 'text') {
       for (let i = 0; i < answers.count; i++) {
         let htmlElement = (
           <span key={i}>
@@ -1041,7 +1040,7 @@ class Survey extends Component {
               />
             ) : null}
 
-            {input && type !== "dropdown" ? (
+            {input && type !== 'dropdown' ? (
               <input
                 type="text"
                 className={classes.input_option}
@@ -1050,7 +1049,7 @@ class Survey extends Component {
                   this.createAnOption(event, `option_${i + 1}`);
                 }}
               />
-            ) : type === "dropdown" ? (
+            ) : type === 'dropdown' ? (
               <span className={classes.dropdown_option}>
                 <span className={classes.dropdown_option_counter}>
                   {i + 1}.
@@ -1081,8 +1080,8 @@ class Survey extends Component {
       htmlElement = (
         <span key="1">
           <input
-            className={`${type === "text" && classes.survey_input} ${
-              type === "text" && classes.survey_input_2
+            className={`${type === 'text' && classes.survey_input} ${
+              type === 'text' && classes.survey_input_2
             }`}
             onChange={(event) => {
               this.createAnOption(event, `option_1`);
@@ -1305,7 +1304,7 @@ class Survey extends Component {
                 <a href="#" className={classes.logo}>
                   <img
                     src={
-                      this.props.layoutTheme === "light"
+                      this.props.layoutTheme === 'light'
                         ? LogoWhiteThemeQuestions
                         : LogoWhiteTheme
                     }
@@ -1329,32 +1328,32 @@ class Survey extends Component {
 
                   <div className={classes.button_containers}>
                     <button
-                      onClick={() => this.togleMenuItem("research")}
+                      onClick={() => this.togleMenuItem('research')}
                       className={` ${
-                        menu_item === "research" ? classes.active : null
+                        menu_item === 'research' ? classes.active : null
                       }`}
                     >
                       Research
                     </button>
                     <span
                       className={`${
-                        menu_item === "research" ? classes.border_active : null
+                        menu_item === 'research' ? classes.border_active : null
                       }`}
                     ></span>
                   </div>
                   <div className={classes.button_containers}>
-                    {" "}
+                    {' '}
                     <button
-                      onClick={() => this.togleMenuItem("questions")}
+                      onClick={() => this.togleMenuItem('questions')}
                       className={`${
-                        menu_item === "questions" ? classes.active : null
+                        menu_item === 'questions' ? classes.active : null
                       }`}
                     >
                       Questions
                     </button>
                     <span
                       className={`${
-                        menu_item === "questions" ? classes.border_active : null
+                        menu_item === 'questions' ? classes.border_active : null
                       }`}
                     ></span>
                   </div>
@@ -1362,9 +1361,9 @@ class Survey extends Component {
                   {analytics.length ? (
                     <div className={classes.button_containers}>
                       <button
-                        onClick={() => this.togleMenuItem("analytics")}
+                        onClick={() => this.togleMenuItem('analytics')}
                         className={`${
-                          menu_item === "analytics" ? classes.active : null
+                          menu_item === 'analytics' ? classes.active : null
                         }`}
                       >
                         Analytics
@@ -1372,7 +1371,7 @@ class Survey extends Component {
 
                       <span
                         className={`${
-                          menu_item === "analytics"
+                          menu_item === 'analytics'
                             ? classes.border_active
                             : null
                         }`}
@@ -1383,16 +1382,16 @@ class Survey extends Component {
                   {false ? (
                     <div className={classes.button_containers}>
                       <button
-                        onClick={() => this.togleMenuItem("answers")}
+                        onClick={() => this.togleMenuItem('answers')}
                         className={` ${
-                          menu_item === "answers" ? classes.active : null
+                          menu_item === 'answers' ? classes.active : null
                         }`}
                       >
                         Answers
                       </button>
                       <span
                         className={`${
-                          menu_item === "answers" ? classes.border_active : null
+                          menu_item === 'answers' ? classes.border_active : null
                         }`}
                       ></span>
                     </div>
@@ -1400,32 +1399,32 @@ class Survey extends Component {
 
                   <div className={classes.button_containers}>
                     <button
-                      onClick={() => this.togleMenuItem("settings")}
+                      onClick={() => this.togleMenuItem('settings')}
                       className={` ${
-                        menu_item === "settings" ? classes.active : null
+                        menu_item === 'settings' ? classes.active : null
                       }`}
                     >
                       Settings
                     </button>
                     <span
                       className={`${
-                        menu_item === "settings" ? classes.border_active : null
+                        menu_item === 'settings' ? classes.border_active : null
                       }`}
                     ></span>
                   </div>
-                  {this.props.survey.targetUsersFrom !== "murmur" ? (
+                  {this.props.survey.targetUsersFrom !== 'murmur' ? (
                     <div className={classes.button_containers}>
                       <button
-                        onClick={() => this.togleMenuItem("participants")}
+                        onClick={() => this.togleMenuItem('participants')}
                         className={`${
-                          menu_item === "participants" ? classes.active : null
+                          menu_item === 'participants' ? classes.active : null
                         }`}
                       >
                         Users
                       </button>
                       <span
                         className={`${
-                          menu_item === "participants"
+                          menu_item === 'participants'
                             ? classes.border_active
                             : null
                         }`}
@@ -1441,7 +1440,9 @@ class Survey extends Component {
                       this.submitNewSurvey(event, survey_id, urls)
                     }
                   >
-                    {this.state.publish || this.props.paid ? null : (
+                    {this.state.publish ||
+                    this.props.survey.paid ||
+                    this.props.survey.payment === 'free' ? null : (
                       <button
                         className={`${classes.publish_survey} mr-3`}
                         onClick={() => this.checkout(survey_id)}
@@ -1451,7 +1452,7 @@ class Survey extends Component {
                     )}
                     <button className={classes.publish_survey} type="submit">
                       <span>{`${
-                        this.state.publish ? "Publish" : "Update"
+                        this.state.publish ? 'Publish' : 'Update'
                       }`}</span>
                     </button>
                   </form>
@@ -1459,19 +1460,53 @@ class Survey extends Component {
                 </div>
               </div>
             </header>
+            <button
+              to={`/surveys`}
+              className={classes.ads_back_icon}
+              onClick={() => {
+                this.props.history.push('/');
+                setTimeout(() => this.props.history.replace('/surveys'), 100); //without this component does not get mounted if called from child path
+              }}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.57 5.92999L3.5 12L9.57 18.07"
+                  stroke="#292D32"
+                  strokeWidth="1.5"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M20.4999 12H3.66992"
+                  stroke="#292D32"
+                  strokeWidth="1.5"
+                  strokeMiterlimit="10"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
 
-            {!preview_mode && menu_item === "questions" && (
+              <span>Back</span>
+            </button>
+            {!preview_mode && menu_item === 'questions' && (
               <div className={classes.grid_container}>
                 <div className={classes.left_container}>
                   <div
                     className={`${classes.survey_amount_price} ${
-                      activeBox.name === "survey_price_amount" && classes.active
+                      activeBox.name === 'survey_price_amount' && classes.active
                     }`}
                     onMouseEnter={() => {
                       this.setState((state) => ({
                         ...state,
                         activeBox: {
-                          name: "survey_price_amount",
+                          name: 'survey_price_amount',
                         },
                       }));
                     }}
@@ -1509,18 +1544,18 @@ class Survey extends Component {
                       <div>
                         <h6>Number of people:</h6>
 
-                        {activeBox.name === "survey_price_amount" ? (
+                        {activeBox.name === 'survey_price_amount' ? (
                           <input
                             type="number"
                             min="0"
-                            style={{ pointerEvents: "all" }}
+                            style={{ pointerEvents: 'all' }}
                             className={classes.survey_amount_price_input}
                             value={amount}
                             onChange={(e) =>
                               this.getUserInput(
                                 e,
-                                "survey_price_amount",
-                                "amount"
+                                'survey_price_amount',
+                                'amount',
                               )
                             }
                           />
@@ -1536,7 +1571,7 @@ class Survey extends Component {
                   <div className={`${classes.flexbox}`}>
                     <div
                       className={`${classes.title_image_container} ${
-                        activeBox.name === "survey_title_question_image"
+                        activeBox.name === 'survey_title_question_image'
                           ? classes.active
                           : null
                       }`}
@@ -1547,7 +1582,7 @@ class Survey extends Component {
                           this.setState((state) => ({
                             ...state,
                             activeBox: {
-                              name: "survey_title_question_image",
+                              name: 'survey_title_question_image',
                             },
                           }));
                         }}
@@ -1585,7 +1620,7 @@ class Survey extends Component {
                           </Dragger>
                         </div>
                         <div className={classes.title_and_caption}>
-                          {activeBox.name === "survey_title_question_image" ? (
+                          {activeBox.name === 'survey_title_question_image' ? (
                             <input
                               type="text"
                               className={`${classes.survey_input} ${classes.bottom_border} ${classes.extra_bottom_margin}`}
@@ -1593,15 +1628,15 @@ class Survey extends Component {
                               onChange={(e) => {
                                 this.getUserInput(
                                   e,
-                                  "survey_title_question_image",
-                                  "form_title"
+                                  'survey_title_question_image',
+                                  'form_title',
                                 );
                               }}
                             />
                           ) : (
                             <h4>{form_title}</h4>
                           )}
-                          {activeBox.name === "survey_title_question_image" ? (
+                          {activeBox.name === 'survey_title_question_image' ? (
                             <input
                               type="text"
                               className={`${classes.survey_input} ${classes.bottom_border}`}
@@ -1609,8 +1644,8 @@ class Survey extends Component {
                               onChange={(e) => {
                                 this.getUserInput(
                                   e,
-                                  "survey_title_question_image",
-                                  "form_caption"
+                                  'survey_title_question_image',
+                                  'form_caption',
                                 );
                               }}
                             />
@@ -1643,7 +1678,7 @@ class Survey extends Component {
                                         {...provided.draggableProps}
                                         ref={provided.innerRef}
                                         className={`${
-                                          classes["survey-question"]
+                                          classes['survey-question']
                                         } ${
                                           activeBox.name ===
                                           `survey_created_input_${i}`
@@ -1652,7 +1687,7 @@ class Survey extends Component {
                                         } ${
                                           survey.isConditional &&
                                           survey.isQuestion
-                                            ? classes["active--conditional"]
+                                            ? classes['active--conditional']
                                             : null
                                         }`}
                                         //style={{borderLeft: survey.isConditional ? '2px solid red' : 'transparent'}}
@@ -1699,11 +1734,11 @@ class Survey extends Component {
                                                     .surveys;
                                                 const left = surveys.slice(
                                                   0,
-                                                  i
+                                                  i,
                                                 );
                                                 const right = surveys.slice(
                                                   i + 1,
-                                                  surveys.length
+                                                  surveys.length,
                                                 );
                                                 const survey = {
                                                   ...surveys[i],
@@ -1739,7 +1774,7 @@ class Survey extends Component {
                                                       el.isConditional &&
                                                       el.isQuestion &&
                                                       (el.link == null ||
-                                                        el.link === survey.uid)
+                                                        el.link === survey.uid),
                                                   )
                                                   .map((el, n) => (
                                                     <span
@@ -1763,7 +1798,7 @@ class Survey extends Component {
                                                             surveys.findIndex(
                                                               (question) =>
                                                                 question.uid ===
-                                                                el.uid
+                                                                el.uid,
                                                             ); //index of a cond question
 
                                                           const question =
@@ -1793,12 +1828,12 @@ class Survey extends Component {
                                                           const left =
                                                             surveys.slice(
                                                               0,
-                                                              index
+                                                              index,
                                                             );
                                                           const right =
                                                             surveys.slice(
                                                               index + 1,
-                                                              surveys.length
+                                                              surveys.length,
                                                             );
 
                                                           this.setState(
@@ -1818,13 +1853,13 @@ class Survey extends Component {
                                                                     ],
                                                                   },
                                                               },
-                                                            })
+                                                            }),
                                                           );
                                                         }}
                                                       />
 
                                                       <label htmlFor={el.uid}>
-                                                        {" "}
+                                                        {' '}
                                                         {el.question}
                                                       </label>
                                                     </span>
@@ -1855,7 +1890,7 @@ class Survey extends Component {
                                                     alt=""
                                                     onClick={() =>
                                                       this.deleteCreatedSurvey(
-                                                        i
+                                                        i,
                                                       )
                                                     }
                                                   />
@@ -1868,14 +1903,14 @@ class Survey extends Component {
                                             className={classes.question_answer}
                                             onMouseEnter={() => {
                                               const sections = surveys.filter(
-                                                (el) => !el.isQuestion
+                                                (el) => !el.isQuestion,
                                               );
                                               const linkedSections =
                                                 sections.filter(
                                                   (el) =>
                                                     el.link != null &&
                                                     el.link.question ===
-                                                      survey.question
+                                                      survey.question,
                                                 );
                                               const links = {};
                                               //linked sections to this main question
@@ -1923,7 +1958,7 @@ class Survey extends Component {
                                                 className={`${classes.survey_asset_container}`}
                                               >
                                                 {survey.asset.assetType.includes(
-                                                  "image"
+                                                  'image',
                                                 ) ? (
                                                   <img
                                                     src={survey.asset.assetUrl}
@@ -1937,7 +1972,7 @@ class Survey extends Component {
                                                     }`}
                                                   />
                                                 ) : survey.asset.assetType.includes(
-                                                    "video"
+                                                    'video',
                                                   ) ? (
                                                   <video
                                                     controls
@@ -1984,7 +2019,7 @@ class Survey extends Component {
                                                       this.removeSurveyAsset(
                                                         survey.asset.assetUrl,
                                                         i,
-                                                        true
+                                                        true,
                                                       )
                                                     }
                                                   />
@@ -2014,7 +2049,7 @@ class Survey extends Component {
                                                   this.surveyInputValueChange(
                                                     e,
                                                     i,
-                                                    null
+                                                    null,
                                                   )
                                                 }
                                               />
@@ -2026,7 +2061,7 @@ class Survey extends Component {
                                                 classes.question_answers_container
                                               }
                                             >
-                                              {survey.type === "dropdown" ? (
+                                              {survey.type === 'dropdown' ? (
                                                 <span
                                                   className={
                                                     classes.selection_options_container
@@ -2047,7 +2082,7 @@ class Survey extends Component {
                                                             >
                                                               {answer}
                                                             </option>
-                                                          )
+                                                          ),
                                                         )}
                                                       </select>
                                                       <img
@@ -2075,14 +2110,14 @@ class Survey extends Component {
                                                               this.surveyInputValueChange(
                                                                 e,
                                                                 i,
-                                                                index
+                                                                index,
                                                               )
                                                             }
                                                           />
                                                           <select
                                                             name="section"
                                                             onChange={(
-                                                              event
+                                                              event,
                                                             ) => {
                                                               /*this.changeCreatedQuestionsInputType(
                                                        event,
@@ -2095,17 +2130,17 @@ class Survey extends Component {
                                                                 surveys.findIndex(
                                                                   (el) =>
                                                                     el.section_name ===
-                                                                    value
+                                                                    value,
                                                                 );
                                                               const left =
                                                                 surveys.slice(
                                                                   0,
-                                                                  index
+                                                                  index,
                                                                 );
                                                               const right =
                                                                 surveys.slice(
                                                                   index + 1,
-                                                                  surveys.length
+                                                                  surveys.length,
                                                                 );
                                                               const surveyCopy =
                                                                 {
@@ -2123,7 +2158,7 @@ class Survey extends Component {
 
                                                               this.props.updateQuestions(
                                                                 surveyCopy,
-                                                                false
+                                                                false,
                                                               );
                                                               this.setState(
                                                                 (state) => ({
@@ -2143,7 +2178,7 @@ class Survey extends Component {
                                                                           ],
                                                                       },
                                                                   },
-                                                                })
+                                                                }),
                                                               );
                                                             }}
                                                             className={
@@ -2178,7 +2213,7 @@ class Survey extends Component {
                                                             {surveys
                                                               .filter(
                                                                 (el) =>
-                                                                  !el.isQuestion
+                                                                  !el.isQuestion,
                                                               )
                                                               .map((el, i) => (
                                                                 <option
@@ -2192,7 +2227,7 @@ class Survey extends Component {
                                                                   }
                                                                 </option>
                                                               ))}
-                                                          </select>{" "}
+                                                          </select>{' '}
                                                           <img
                                                             src={Option_Delete}
                                                             alt=""
@@ -2202,12 +2237,12 @@ class Survey extends Component {
                                                             onClick={() =>
                                                               this.deleteOptionFromSurveyQuestion(
                                                                 i,
-                                                                index
+                                                                index,
                                                               )
                                                             }
                                                           />
                                                         </div>
-                                                      )
+                                                      ),
                                                     )
                                                   )}
                                                 </span>
@@ -2227,23 +2262,23 @@ class Survey extends Component {
                                                           }`}
                                                           type={`${
                                                             survey.type ===
-                                                            "radio"
-                                                              ? "radio"
+                                                            'radio'
+                                                              ? 'radio'
                                                               : survey.type ===
-                                                                "checkbox"
-                                                              ? "checkbox"
+                                                                'checkbox'
+                                                              ? 'checkbox'
                                                               : survey.type ===
-                                                                "text"
-                                                              ? "text"
+                                                                'text'
+                                                              ? 'text'
                                                               : null
                                                           }`}
                                                           className={`${
                                                             survey.type ===
-                                                              "text" &&
+                                                              'text' &&
                                                             classes.survey_input
                                                           } ${
                                                             survey.type ===
-                                                              "text" &&
+                                                              'text' &&
                                                             classes.survey_input_2
                                                           }`}
                                                           name={`options${
@@ -2251,22 +2286,22 @@ class Survey extends Component {
                                                           }`}
                                                           placeholder={`${
                                                             survey.type ===
-                                                              "text" && "Answer"
+                                                              'text' && 'Answer'
                                                           }`}
                                                         />
                                                         {survey.type !==
-                                                          "text" &&
+                                                          'text' &&
                                                         !survey.edit ? (
                                                           <label
                                                             htmlFor={`answer${
                                                               i + 1
                                                             }-${index + 1}`}
                                                           >
-                                                            {" "}
+                                                            {' '}
                                                             {answer}
                                                           </label>
                                                         ) : survey.type !==
-                                                          "text" ? (
+                                                          'text' ? (
                                                           <span
                                                             className={
                                                               classes.options
@@ -2280,14 +2315,14 @@ class Survey extends Component {
                                                                 this.surveyInputValueChange(
                                                                   e,
                                                                   i,
-                                                                  index
+                                                                  index,
                                                                 )
                                                               }
                                                             />
                                                             <select
                                                               name="section"
                                                               onChange={(
-                                                                event
+                                                                event,
                                                               ) => {
                                                                 /*this.changeCreatedQuestionsInputType(
                                                        event,
@@ -2300,17 +2335,17 @@ class Survey extends Component {
                                                                   surveys.findIndex(
                                                                     (el) =>
                                                                       el.section_name ===
-                                                                      value
+                                                                      value,
                                                                   );
                                                                 const left =
                                                                   surveys.slice(
                                                                     0,
-                                                                    index
+                                                                    index,
                                                                   );
                                                                 const right =
                                                                   surveys.slice(
                                                                     index + 1,
-                                                                    surveys.length
+                                                                    surveys.length,
                                                                   );
                                                                 const surveyCopy =
                                                                   {
@@ -2348,7 +2383,7 @@ class Survey extends Component {
                                                                             ],
                                                                         },
                                                                     },
-                                                                  })
+                                                                  }),
                                                                 );
                                                               }}
                                                               className={
@@ -2383,7 +2418,7 @@ class Survey extends Component {
                                                               {surveys
                                                                 .filter(
                                                                   (el) =>
-                                                                    !el.isQuestion
+                                                                    !el.isQuestion,
                                                                 )
                                                                 .map(
                                                                   (el, i) => (
@@ -2397,9 +2432,9 @@ class Survey extends Component {
                                                                         el.section_name
                                                                       }
                                                                     </option>
-                                                                  )
+                                                                  ),
                                                                 )}
-                                                            </select>{" "}
+                                                            </select>{' '}
                                                             <img
                                                               src={
                                                                 Option_Delete
@@ -2411,7 +2446,7 @@ class Survey extends Component {
                                                               onClick={() =>
                                                                 this.deleteOptionFromSurveyQuestion(
                                                                   i,
-                                                                  index
+                                                                  index,
                                                                 )
                                                               }
                                                             />
@@ -2419,17 +2454,17 @@ class Survey extends Component {
                                                         ) : null}
                                                       </span>
                                                     );
-                                                  }
+                                                  },
                                                 )
                                               )}
 
                                               {/* adding new option or changing its value*/}
                                               {false &&
-                                              survey.type !== "text" ? (
+                                              survey.type !== 'text' ? (
                                                 <span
                                                   className={`${
-                                                    survey.type !== "dropdown"
-                                                      ? " ml-4"
+                                                    survey.type !== 'dropdown'
+                                                      ? ' ml-4'
                                                       : null
                                                   }`}
                                                 >
@@ -2451,7 +2486,7 @@ class Survey extends Component {
                                                     }
                                                     onClick={() =>
                                                       this.addNewOptionToCreatedQuetion(
-                                                        i
+                                                        i,
                                                       )
                                                     }
                                                   />
@@ -2462,7 +2497,7 @@ class Survey extends Component {
                                             {activeBox.name ===
                                             `survey_created_input_${i}` ? (
                                               <>
-                                                {" "}
+                                                {' '}
                                                 <div
                                                   className={
                                                     classes.question_answer_border
@@ -2479,7 +2514,7 @@ class Survey extends Component {
                                                       onChange={(event) =>
                                                         this.changeCreatedQuestionsInputType(
                                                           event,
-                                                          i
+                                                          i,
                                                         )
                                                       }
                                                       className={
@@ -2487,28 +2522,28 @@ class Survey extends Component {
                                                       }
                                                     >
                                                       <option key={survey.type}>
-                                                        {survey.type === "radio"
-                                                          ? "Radio"
+                                                        {survey.type === 'radio'
+                                                          ? 'Radio'
                                                           : survey.type ===
-                                                            "checkbox"
-                                                          ? "Checkboxes"
+                                                            'checkbox'
+                                                          ? 'Checkboxes'
                                                           : survey.type ===
-                                                            "dropdown"
-                                                          ? "Dropdown"
+                                                            'dropdown'
+                                                          ? 'Dropdown'
                                                           : null}
                                                       </option>
                                                       {[
                                                         {
-                                                          value: "radio",
-                                                          type: "Radio",
+                                                          value: 'radio',
+                                                          type: 'Radio',
                                                         },
                                                         {
-                                                          value: "checkbox",
-                                                          type: "Checkboxes",
+                                                          value: 'checkbox',
+                                                          type: 'Checkboxes',
                                                         },
                                                         {
-                                                          value: "dropdown",
-                                                          type: "Dropdown",
+                                                          value: 'dropdown',
+                                                          type: 'Dropdown',
                                                         },
                                                       ].map((el, index) => {
                                                         if (
@@ -2533,7 +2568,7 @@ class Survey extends Component {
                                                         this.editSurvey(i)
                                                       }
                                                       style={{
-                                                        cursor: "pointer",
+                                                        cursor: 'pointer',
                                                       }}
                                                       className="ml-3 mr-3 position-relative"
                                                     />
@@ -2542,11 +2577,11 @@ class Survey extends Component {
                                                       alt=""
                                                       className="ml-3 mr-3 position-relative"
                                                       style={{
-                                                        cursor: "pointer",
+                                                        cursor: 'pointer',
                                                       }}
                                                       onClick={() =>
                                                         this.deleteCreatedSurvey(
-                                                          i
+                                                          i,
                                                         )
                                                       }
                                                     />
@@ -2572,7 +2607,7 @@ class Survey extends Component {
                                                           onChange={(e) =>
                                                             this.toggleCurrentSurveysImportance(
                                                               e,
-                                                              i
+                                                              i,
                                                             )
                                                           }
                                                         />
@@ -2604,29 +2639,29 @@ class Survey extends Component {
                     >
                       <div
                         style={{
-                          width: "660px",
-                          height: "100%",
-                          position: "absolute",
+                          width: '660px',
+                          height: '100%',
+                          position: 'absolute',
                           top: 0,
                         }}
                         onMouseEnter={() => {
                           this.toggleToInputState(
-                            "survey_answers_questions",
-                            "input"
+                            'survey_answers_questions',
+                            'input',
                           );
                         }}
                         onMouseLeave={() =>
                           this.togleFromInputState(
-                            "survey_answers_questions",
-                            "input"
+                            'survey_answers_questions',
+                            'input',
                           )
                         }
                       >
-                        {" "}
+                        {' '}
                         {input ? (
                           <div
                             className={classes.user_setting}
-                            style={{ height: "80px" }}
+                            style={{ height: '80px' }}
                           >
                             <svg
                               viewBox="0 -0.5 21 21"
@@ -2648,20 +2683,20 @@ class Survey extends Component {
                                   fill="none"
                                   fillRule="evenodd"
                                 >
-                                  {" "}
+                                  {' '}
                                   <g
                                     transform="translate(-179.000000, -600.000000)"
                                     fill="#2E3A59"
                                   >
-                                    {" "}
+                                    {' '}
                                     <g transform="translate(56.000000, 160.000000)">
-                                      {" "}
+                                      {' '}
                                       <path d="M137.7,450 C137.7,450.552 137.2296,451 136.65,451 L134.55,451 L134.55,453 C134.55,453.552 134.0796,454 133.5,454 C132.9204,454 132.45,453.552 132.45,453 L132.45,451 L130.35,451 C129.7704,451 129.3,450.552 129.3,450 C129.3,449.448 129.7704,449 130.35,449 L132.45,449 L132.45,447 C132.45,446.448 132.9204,446 133.5,446 C134.0796,446 134.55,446.448 134.55,447 L134.55,449 L136.65,449 C137.2296,449 137.7,449.448 137.7,450 M133.5,458 C128.86845,458 125.1,454.411 125.1,450 C125.1,445.589 128.86845,442 133.5,442 C138.13155,442 141.9,445.589 141.9,450 C141.9,454.411 138.13155,458 133.5,458 M133.5,440 C127.70085,440 123,444.477 123,450 C123,455.523 127.70085,460 133.5,460 C139.29915,460 144,455.523 144,450 C144,444.477 139.29915,440 133.5,440">
-                                        {" "}
-                                      </path>{" "}
-                                    </g>{" "}
-                                  </g>{" "}
-                                </g>{" "}
+                                        {' '}
+                                      </path>{' '}
+                                    </g>{' '}
+                                  </g>{' '}
+                                </g>{' '}
                               </g>
                             </svg>
                             <svg
@@ -2704,14 +2739,14 @@ class Survey extends Component {
                         className={classes.create_question_subcontainer}
                         onMouseEnter={() => {
                           this.toggleToInputState(
-                            "survey_answers_questions",
-                            "input"
+                            'survey_answers_questions',
+                            'input',
                           );
                         }}
                         onMouseLeave={() =>
                           this.togleFromInputState(
-                            "survey_answers_questions",
-                            "input"
+                            'survey_answers_questions',
+                            'input',
                           )
                         }
                       >
@@ -2732,7 +2767,7 @@ class Survey extends Component {
                             <div
                               className={` ${classes.survey_asset_container}`}
                             >
-                              {expamle_asset.assetType.includes("image") ? (
+                              {expamle_asset.assetType.includes('image') ? (
                                 <img
                                   src={expamle_asset.assetUrl}
                                   alt=""
@@ -2742,7 +2777,7 @@ class Survey extends Component {
                                       : null
                                   }`}
                                 />
-                              ) : expamle_asset.assetType.includes("video") ? (
+                              ) : expamle_asset.assetType.includes('video') ? (
                                 <video
                                   controls
                                   className={` ${classes.survey_img} ${
@@ -2798,8 +2833,8 @@ class Survey extends Component {
                             onChange={(event) => {
                               this.handleCreateQuestion(
                                 event,
-                                "survey_answers_questions",
-                                "question"
+                                'survey_answers_questions',
+                                'question',
                               );
                             }}
                           />
@@ -2817,8 +2852,8 @@ class Survey extends Component {
                                   this.onSurveyQuestionCretiveUpload(info)
                                 }
                                 style={{
-                                  background: "white",
-                                  borderColor: "transparent",
+                                  background: 'white',
+                                  borderColor: 'transparent',
                                 }}
                               >
                                 <div className={classes.profil_relative}>
@@ -2841,19 +2876,19 @@ class Survey extends Component {
                                 className={classes.input_type_select}
                               >
                                 <option key={type_dev}>
-                                  {type_dev === "radio"
-                                    ? "Radio"
-                                    : type_dev === "checkbox"
-                                    ? "Checkboxes"
-                                    : type_dev === "dropdown"
-                                    ? "Dropdown"
-                                    : "Short answers"}
+                                  {type_dev === 'radio'
+                                    ? 'Radio'
+                                    : type_dev === 'checkbox'
+                                    ? 'Checkboxes'
+                                    : type_dev === 'dropdown'
+                                    ? 'Dropdown'
+                                    : 'Short answers'}
                                 </option>
                                 {[
-                                  { value: "radio", type: "Radio" },
-                                  { value: "checkbox", type: "Checkboxes" },
-                                  { value: "dropdown", type: "Dropdown" },
-                                  { value: "text", type: "Short answers" },
+                                  { value: 'radio', type: 'Radio' },
+                                  { value: 'checkbox', type: 'Checkboxes' },
+                                  { value: 'dropdown', type: 'Dropdown' },
+                                  { value: 'text', type: 'Short answers' },
                                 ].map((el, index) => {
                                   if (el.value !== type_dev) {
                                     return (
@@ -2881,10 +2916,10 @@ class Survey extends Component {
                               onFinishRecording={(blob) => {
                                 const reader = new FileReader();
                                 const asset = {
-                                  assetName: "",
+                                  assetName: '',
                                   assetFile: blob,
-                                  assetUrl: "",
-                                  assetType: "audio/mp3",
+                                  assetUrl: '',
+                                  assetType: 'audio/mp3',
                                 };
 
                                 reader.readAsDataURL(blob);
@@ -2922,16 +2957,16 @@ class Survey extends Component {
                           className={`${classes.question_answer} ${classes.margin_top}`}
                         >
                           {this.returnAnswerOptions()}
-                          {type_dev !== "text" && (
+                          {type_dev !== 'text' && (
                             <span className={classes.add_question}>
-                              {type_dev !== "dropdown" ? (
+                              {type_dev !== 'dropdown' ? (
                                 <input
                                   id="answer"
                                   type={`${
-                                    type_dev === "radio"
-                                      ? "radio"
-                                      : type_dev === "checkbox"
-                                      ? "checkbox"
+                                    type_dev === 'radio'
+                                      ? 'radio'
+                                      : type_dev === 'checkbox'
+                                      ? 'checkbox'
                                       : null
                                   }`}
                                 />
@@ -2943,8 +2978,8 @@ class Survey extends Component {
                                 </span>
                               )}
                               <label htmlFor="answer">
-                                {" "}
-                                Add another or{" "}
+                                {' '}
+                                Add another or{' '}
                                 <span
                                   className={classes.link_color}
                                   onClick={this.addNewAnswerOption}
@@ -2958,7 +2993,7 @@ class Survey extends Component {
                         <div className={classes.question_answer_border}></div>
                         <div className={classes.question_answer_setting}>
                           <button
-                            className={classes["record-audio"]}
+                            className={classes['record-audio']}
                             onClick={() =>
                               this.setState((state) => ({
                                 ...state,
@@ -2966,11 +3001,11 @@ class Survey extends Component {
                               }))
                             }
                           >
-                            {this.state.recordAudio ? "Cancel" : "Record Audio"}
+                            {this.state.recordAudio ? 'Cancel' : 'Record Audio'}
                             <img src={RecordAudio} alt="" />
-                          </button>{" "}
+                          </button>{' '}
                           <button
-                            className={classes["record-video"]}
+                            className={classes['record-video']}
                             onClick={() =>
                               this.setState((state) => ({
                                 ...state,
@@ -3009,17 +3044,15 @@ class Survey extends Component {
                   <div className={`${classes.create_right_info}`}>
                     <div className={classes.create_info}>
                       <p className={classes.create_info_icon}>
-                    
-               
-                          <img
-                            src={
-                              this.props.layoutTheme === "light"
-                                ? Info_Circle
-                                : Info_Circle_White
-                            }
-                            alt=""
-                          />
-                  
+                        <img
+                          src={
+                            this.props.layoutTheme === 'light'
+                              ? Info_Circle
+                              : Info_Circle_White
+                          }
+                          alt=""
+                        />
+
                         <span>Information</span>
 
                         <button
@@ -3077,27 +3110,28 @@ class Survey extends Component {
                     </div>
                   </div>
                 ) : (
-                  <div className={`${classes.create_right_info} ${classes.hidden}`}>
+                  <div
+                    className={`${classes.create_right_info} ${classes.hidden}`}
+                  >
                     <div className={classes.create_info}>
                       <p className={classes.create_info_icon}>
-                      <button
+                        <button
                           className={`${classes.open_info} ${classes.active}`}
                           onClick={() => {
-                            
                             this.setState((state) => ({
                               ...state,
                               info: true,
-                            }))
-                          }
-                        }>
-                        <img
-                          src={
-                            this.props.layoutTheme === "light"
-                              ? Info_Circle
-                              : Info_Circle_White
-                          }
-                          alt=""
-                        />
+                            }));
+                          }}
+                        >
+                          <img
+                            src={
+                              this.props.layoutTheme === 'light'
+                                ? Info_Circle
+                                : Info_Circle_White
+                            }
+                            alt=""
+                          />
                         </button>
                       </p>
                     </div>
@@ -3105,7 +3139,7 @@ class Survey extends Component {
                 )}
               </div>
             )}
-            {!preview_mode && menu_item === "settings" && (
+            {!preview_mode && menu_item === 'settings' && (
               <SurveySettings
                 active={survey.survey_active}
                 survey_specific={survey.survey_specific}
@@ -3128,13 +3162,13 @@ class Survey extends Component {
                 }}
               />
             )}
-            {!preview_mode && menu_item === "analytics" && (
+            {!preview_mode && menu_item === 'analytics' && (
               <SurveyAnalytics
                 id={survey._id}
                 layoutTheme={this.props.layoutTheme}
               />
             )}
-            {!preview_mode && menu_item === "answers" && (
+            {!preview_mode && menu_item === 'answers' && (
               <SurveyAnswers
                 analytics={analytics}
                 survey_questions={survey.survey_questions}
@@ -3142,7 +3176,7 @@ class Survey extends Component {
               />
             )}
 
-            {!preview_mode && menu_item === "participants" && (
+            {!preview_mode && menu_item === 'participants' && (
               <div className={classes.surveys_container}>
                 <div className={classes.create_ads}>
                   <div className={classes.ads_section}>
@@ -3155,36 +3189,6 @@ class Survey extends Component {
                           Here you can view participants
                         </p>
                       </div>
-                      <button
-                        onClick={this.toggleToCreateSurveyMode}
-                        type="button"
-                        className={classes.create_ads_btn}
-                      >
-                        Create Survey
-                        <svg
-                          width="20"
-                          height="20"
-                          className={classes.create_ads_img}
-                          viewBox="0 0 20 20"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M5 10H15"
-                            stroke="white"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <path
-                            d="M10 15V5"
-                            stroke="white"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
                     </div>
                     <PullParticipants
                       user_id={this.props.user_id}
@@ -3197,7 +3201,7 @@ class Survey extends Component {
             {preview_mode && <Preview surveys={survey.survey_questions} />}
           </div>
         )}
-        {!preview_mode && menu_item === "research" && (
+        {!preview_mode && menu_item === 'research' && (
           <ResearchSetting
             researchConductedVia={this.props.survey.researchConductedVia}
             targetUsersFrom={this.props.survey.targetUsersFrom}
@@ -3209,7 +3213,7 @@ class Survey extends Component {
                 ...state,
                 menu: {
                   ...state.menu,
-                  menu_item: "questions",
+                  menu_item: 'questions',
                 },
               }))
             }
@@ -3226,7 +3230,7 @@ class Survey extends Component {
                 locationModal: false,
               });
               return;
-            } else if (country === "all") {
+            } else if (country === 'all') {
               this.setState({
                 ...this.state,
                 locationModal: false,
@@ -3235,7 +3239,7 @@ class Survey extends Component {
                 `${country}, ${city}`,
                 country,
                 city,
-                { lat: 41.8781, lng: -87.6298 }
+                { lat: 41.8781, lng: -87.6298 },
               );
               return;
             }
@@ -3255,10 +3259,10 @@ class Survey extends Component {
           uploadVideo={(blob, videoUrl) => {
             {
               const asset = {
-                assetName: videoUrl.substring(0, 25) + ".mp4",
+                assetName: videoUrl.substring(0, 25) + '.mp4',
                 assetFile: blob,
                 assetUrl: videoUrl,
-                assetType: "video/mp4",
+                assetType: 'video/mp4',
               };
 
               this.setState({

@@ -36,14 +36,15 @@ class Projects extends Component {
     const create_edit_survey = new URLSearchParams(url).get("survey_id");
     
     queryForEmail(
-      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
       {
-        email: sessionStorage.getItem("authUser"),
-        role: "2",
+        email: sessionStorage.getItem("authUser")
       }
     )
       .then((user) => {
         const { _id, company, subscription } = user.resp;
+
+       
         if (subscription == null) {
           this.setState({
             ...this.state,
@@ -59,7 +60,7 @@ class Projects extends Component {
         }
         
         axios
-          .get(`https://backendapp.murmurcars.com/api/v1/surveys/user/subscriptions/${_id}`)
+          .get(`https://backendapp.getinsightiq.com/api/v1/surveys/user/subscriptions/${_id}`)
           .then((response) => {
             const { subscriptions } = response.data;
 

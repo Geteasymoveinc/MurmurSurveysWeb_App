@@ -134,7 +134,7 @@ const post_surveys = (url, data, method) => {
     .then((response) => {
       return response;
     })
-    .catch((err) => console.log(err));
+    .catch((err) =>  err);
 };
 
 const get_survey = (url) => {

@@ -35,7 +35,7 @@ class SurveyAnalytics extends Component {
 
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/admin/users-analytics/${id}`
+        `https://backendapp.getinsightiq.com/api/v1/admin/users-analytics/${id}`
       )
       .then((response) => {
         const { location, gender, age, interest, income } = response.data;
@@ -84,7 +84,7 @@ class SurveyAnalytics extends Component {
                     }));
                     axios
                       .post(
-                        "https://stagingapp.murmurcars.com/api/v1/admin/to_csv",
+                        "https://backendapp.getinsightiq.com/api/v1/admin/to_csv",
                         {
                           //analytics: survey,
                           surveyTitle: this.props.surveyTitle,
@@ -245,7 +245,7 @@ class SurveyAnalytics extends Component {
                     }));
                     axios
                       .get(
-                        `https://stagingapp.murmurcars.com/api/v1/admin/pdf?surveyTitle=${survey}&id=${id}&page=survey`
+                        `https://backendapp.getinsightiq.com/api/v1/admin/pdf?surveyTitle=${survey}&id=${id}&page=survey`
                       )
                       .then((response) => {
                         const { link } = response.data;

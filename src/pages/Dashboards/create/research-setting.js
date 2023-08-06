@@ -908,7 +908,7 @@ class ResearchSetting extends Component {
             formData.append("company", this.props.company);
             axios
               .post(
-                "https://backendapp.murmurcars.com/api/v1/surveys/user/insertExternalParticipants",
+                "https://backendapp.getinsightiq.com/api/v1/surveys/user/insertExternalParticipants",
                 formData
               )
               .then((response) => {

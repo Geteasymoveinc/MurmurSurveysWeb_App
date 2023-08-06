@@ -44,7 +44,9 @@
         color: #ffffff;
       }
 
-
+     &.disabled {
+      background: gray
+     }
     }
     &__100{
       width: 100% !important;

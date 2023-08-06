@@ -47,7 +47,7 @@ class ProfileMenu extends Component {
       image = new Image();
       image.src = url;
       image.name = url.split(
-        "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+        "https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/"
       )[1];
     }
     this.setState({
@@ -107,7 +107,6 @@ class ProfileMenu extends Component {
                 className="dropdown-item p-0"
                 onClick={() => {
                   this.props.history.push("/");
-
                   setTimeout(() => this.props.history.replace("/surveys"), 100); //without this component does not get mounted if called from child path
                 }}
               >

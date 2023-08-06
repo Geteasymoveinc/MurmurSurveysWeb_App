@@ -3,9 +3,9 @@ import React from "react";
 import { Modal, ModalBody, ModalHeader, Row, Col } from "reactstrap";
 
 import classes from "../assets/css/modals/locations.module.scss";
-import ArrowDown from "../assets/css/CreateAd/arrow-down.svg";
+import ArrowDown from "../assets/images/arrow-down.svg";
 import AIQMap from "../assets/images/aiq-map.png";
-import CloseBtn from "../assets/css/common/icons/close.svg";
+import CloseBtn from "../assets/images/close.svg";
 
 class LocationModal extends React.Component {
   constructor(props) {

@@ -39,7 +39,7 @@ class ChangeDefaultCard extends React.Component {
     }
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/surveys/user//list-payment-methods/${this.props.stripeCustomerId}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/user//list-payment-methods/${this.props.stripeCustomerId}`
       )
       .then((response) => {
         const { data } = response.data.paymentMethods;
@@ -196,7 +196,7 @@ class ChangeDefaultCard extends React.Component {
                 closeModal(false, null);
               }}
             >
-              Cansel
+              Cancel
             </button>
 
             <input

@@ -38,7 +38,7 @@ class Register extends Component {
 
   // handleValidSubmit
   handleValidSubmit(event, values) {
-    console.log(values);
+  
     this.props.registerUser(values, this.props.history);
     // axios
     //   .post("http://localhost:4000/api/v1/users/signup", this.state)

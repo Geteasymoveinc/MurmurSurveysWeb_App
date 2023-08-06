@@ -13,11 +13,10 @@ function* loginUser({ payload: { profile, history } }) {
   try {
     const response = yield call(
       queryForEmail,
-      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${true}`,
-      //`http://localhost:4000/api/v1/users/checkemail/${true}`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
+      //`http://localhost:4000/api/v1/surveys/customers/checkEmail`,
       {
-        email: profile.email,
-        role: '2'
+        email: profile.email
       }
     );
     const data = response.resp;

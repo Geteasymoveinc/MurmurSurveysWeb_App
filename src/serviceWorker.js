@@ -30,13 +30,13 @@ export function register(config) {
 			// serve assets; see https://github.com/facebook/create-react-app/issues/2374
 			return;
 		}
-
+        console.log('registering service worker')
 		window.addEventListener('load', () => {
 			const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
-
+            console.log('service worker url', swUrl)
 			if (isLocalhost) {
 				// This is running on localhost. Let's check if a service worker still exists or not.
-				checkValidServiceWorker(swUrl, config);
+				checkValidServiceWorker(swUrl);
 
 				// Add some additional logging to localhost, pointing developers to the
 				// service worker/PWA documentation.

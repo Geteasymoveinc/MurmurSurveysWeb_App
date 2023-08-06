@@ -823,7 +823,7 @@
         strong {
           color: white;
         }
-        span,
+        span:not(.best-seller),
         li {
           color: #f2f4f7;
         }
@@ -954,6 +954,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    margin-top: 30px;
   }
 
   .surveys_container .create_ads {
@@ -1226,7 +1227,12 @@
         box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
       }
     }
+
+
+    .ads_back_icon span {
+      color: #192038;
   }
+}
   &.dark {
     .default-payment-method {
       & > div:first-child {
@@ -1247,6 +1253,17 @@
         color: white;
       }
     }
+
+    .ads_back_icon  {
+      svg{
+        path{
+          stroke: white
+        }
+      }
+      span{
+      color: white;
+      }
+  }
   }
 
   .current-subscription {
@@ -1461,6 +1478,12 @@
   color: #6941c6 !important;
   margin-left: 25px;
 }
+.cads_td span{
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+}
+
 .cads_table table tr td {
   padding: 14px 4px;
 }
@@ -1676,4 +1699,24 @@ input:checked + .slider:before {
   margin: 0;
   margin-bottom: 0;
   position: relative;
+}
+
+
+
+.ads_back_icon {
+  text-decoration: none;
+  display: flex;
+  position: relative;
+  background-color: transparent;
+  border: none;
+top: 30px;
+left: 30px;
+ span {
+  
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  margin-left: 12px;
+}
+
 }

@@ -26,8 +26,8 @@ function* resetPassword({ payload: { token, password, history } }) {
 
       const response = yield call(
         postForgetPwd,
-        "https://backendapp.murmurcars.com/api/v1/users/reset-password",
-        //"http://localhost:4000/api/v1/users/reset-password",
+        "https://backendapp.getinsightiq.com/api/v1/surveys/customers/reset-password",
+        //"http://localhost:4000/api/v1/surveys/customers/reset-password",
         { password, token }
       );
       

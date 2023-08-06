@@ -1,33 +1,31 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment } from 'react';
 
-import classes from "../../assets/css/surveys/index.module.scss";
-import LogoWhiteTheme from "../../assets/images/LogoWhiteTheme.png";
-import Trash from "../../assets/css/CreateAd/trash.svg";
-import ArrowRight from "../../assets/css/CreateAd/arrow-right.svg";
-import Visa from "../../assets/images/cards/visa.png";
-import AmericanExpress from "../../assets/images/cards/americanexpress.png";
-import MasterCard from "../../assets/images/cards/mastercard.png";
-import VisaDark from "../../assets/images/cards/visa-dark.png";
-import AmericanExpressDark from "../../assets/images/cards/americanexpress-dark.png";
-import MasterCardDark from "../../assets/images/cards/mastercard-dark.png";
+import classes from '../../assets/css/surveys/index.module.scss';
+import LogoWhiteTheme from '../../assets/images/LogoWhiteTheme.png';
+import Visa from '../../assets/images/cards/visa.png';
+import AmericanExpress from '../../assets/images/cards/americanexpress.png';
+import MasterCard from '../../assets/images/cards/mastercard.png';
+import VisaDark from '../../assets/images/cards/visa-dark.png';
+import AmericanExpressDark from '../../assets/images/cards/americanexpress-dark.png';
+import MasterCardDark from '../../assets/images/cards/mastercard-dark.png';
 
-import { Link, withRouter } from "react-router-dom";
-import axios from "axios";
-import { connect } from "react-redux";
+import { Link, withRouter } from 'react-router-dom';
+import axios from 'axios';
+import { connect } from 'react-redux';
 
-import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
-import { queryForEmail } from "../../helpers/fakebackend_helper";
-import CheckoutForm from "../../components/modals/stripe-form";
-import ChangeDefaultCard from "../../components/modals/change-card";
-import { ErrorFeedback, SuccessFeedback } from "../../components/feedbacks";
+import Profile from '../../components/CommonForBoth/TopbarDropdown/ProfileMenu';
+import { queryForEmail } from '../../helpers/fakebackend_helper';
+import CheckoutForm from '../../components/modals/stripe-form';
+import ChangeDefaultCard from '../../components/modals/change-card';
+import { ErrorFeedback, SuccessFeedback } from '../../components/feedbacks';
 
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 const stripe = loadStripe(process.env.REACT_APP_LIVE_STRIPEKEY);
 
 const appearance = {
-  theme: "stripe",
+  theme: 'stripe',
 };
 
 class BillingHistory extends Component {
@@ -36,13 +34,13 @@ class BillingHistory extends Component {
     this.state = {
       addCardModal: false,
       changeDefaultPaymentMethodModal: false,
-      subscription: "",
+      subscription: '',
       loading: true,
       billings: [],
       multiple_remove: false,
       multiple: false,
       profile: {},
-      stripeCustomerId: "",
+      stripeCustomerId: '',
       defaultPaymentMethod: {},
       changeDefaultCardLoading: false,
       changeDefaultCardSuccess: false,
@@ -53,7 +51,7 @@ class BillingHistory extends Component {
   toggleDeleteBilling = (id) => {
     axios
       .delete(
-        `https://backendapp.murmurcars.com/api/v1/surveys/user/delete-billing/${id}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/user/delete-billing/${id}`,
       )
       .then(() => {
         window.location.reload();
@@ -66,11 +64,10 @@ class BillingHistory extends Component {
 
   componentDidMount() {
     queryForEmail(
-      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`, //to get customer profile
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`, //to get customer profile
       {
-        email: sessionStorage.getItem("authUser"),
-        role: "2",
-      }
+        email: sessionStorage.getItem('authUser')
+      },
     )
       .then((user) => {
         const { _id, fullName, email, companyAddress, phone_number } =
@@ -78,7 +75,7 @@ class BillingHistory extends Component {
 
         axios
           .get(
-            `https://backendapp.murmurcars.com/api/v1/surveys/user/fetch-billing-history/${_id}` //to get billing history and customer stripe id
+            `https://backendapp.getinsightiq.com/api/v1/surveys/user/fetch-billing-history/${_id}`, //to get billing history and customer stripe id
           )
           .then((response) => {
             const { invoices, stripeCustomerId, plan } = response.data;
@@ -87,7 +84,7 @@ class BillingHistory extends Component {
             }
             axios
               .get(
-                `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${_id}`
+                `https://backendapp.getinsightiq.com/api/v1/surveys/user/default-payment-method/${_id}`,
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
@@ -156,9 +153,8 @@ class BillingHistory extends Component {
     if (checked) {
       count++;
     }
-  
+
     for (let i = 0; i < billings.length; i++) {
-    
       if (billings[i]._id === id) {
         billings[i].checked = checked;
       }
@@ -202,28 +198,7 @@ class BillingHistory extends Component {
         <tr key={billing._id}>
           <td className={classes.cads_td}>
             <div className={classes.cads_flex_th}>
-              <div className={classes.cads_check}>
-                <input
-                  type="checkbox"
-                  id={billing._id}
-                  checked={(multiple && billing.checked) || billing.checked}
-                  onChange={this.checkBilling}
-                />
-                <label htmlFor={billing._id}>
-                  <span className={classes.td_data}>{billing.invoice}</span>
-                </label>
-              </div>
-              <div className={`${classes.cads_radio_active}`}>
-                {billing.checked && !multiple_remove ? (
-                  <button
-                    type="button"
-                    className={`${classes.check_remove}`}
-                    //onClick={() => this.toggleDeleteBilling(billing.id)}
-                  >
-                    <img src={Trash} alt="" />
-                  </button>
-                ) : null}
-              </div>
+              <span className={classes.td_data}>{billing.invoice}</span>
             </div>
           </td>
           <td className={classes.cads_td}>
@@ -237,24 +212,21 @@ class BillingHistory extends Component {
           </td>
           <td className={classes.cads_td}>
             <span className={classes.td_data}>
-              {billing.status === "paid" ? (
+              {billing.status === 'paid' ? (
                 <svg
                   viewBox="0 0 512 512"
                   version="1.1"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="#54920b"
                   stroke="#54920b"
-                  width='20'
-                  height='20'
+                  width="20"
+                  height="20"
                 >
                   <g strokeWidth="0"></g>
-                  <g
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  ></g>
+                  <g strokeLinecap="round" strokeLinejoin="round"></g>
                   <g>
-                    {" "}
-                    <title>success</title>{" "}
+                    {' '}
+                    <title>success</title>{' '}
                     <g
                       id="Page-1"
                       stroke="none"
@@ -262,21 +234,17 @@ class BillingHistory extends Component {
                       fill="none"
                       fillRule="evenodd"
                     >
-                      {" "}
+                      {' '}
                       <g
-                      
                         fill="#54920b"
                         transform="translate(42.666667, 42.666667)"
                       >
-                        {" "}
-                        <path
-                          d="M213.333333,3.55271368e-14 C95.51296,3.55271368e-14 3.55271368e-14,95.51296 3.55271368e-14,213.333333 C3.55271368e-14,331.153707 95.51296,426.666667 213.333333,426.666667 C331.153707,426.666667 426.666667,331.153707 426.666667,213.333333 C426.666667,95.51296 331.153707,3.55271368e-14 213.333333,3.55271368e-14 Z M213.333333,384 C119.227947,384 42.6666667,307.43872 42.6666667,213.333333 C42.6666667,119.227947 119.227947,42.6666667 213.333333,42.6666667 C307.43872,42.6666667 384,119.227947 384,213.333333 C384,307.43872 307.438933,384 213.333333,384 Z M293.669333,137.114453 L323.835947,167.281067 L192,299.66912 L112.916693,220.585813 L143.083307,190.4192 L192,239.335893 L293.669333,137.114453 Z"
-                    
-                        >
-                          {" "}
-                        </path>{" "}
-                      </g>{" "}
-                    </g>{" "}
+                        {' '}
+                        <path d="M213.333333,3.55271368e-14 C95.51296,3.55271368e-14 3.55271368e-14,95.51296 3.55271368e-14,213.333333 C3.55271368e-14,331.153707 95.51296,426.666667 213.333333,426.666667 C331.153707,426.666667 426.666667,331.153707 426.666667,213.333333 C426.666667,95.51296 331.153707,3.55271368e-14 213.333333,3.55271368e-14 Z M213.333333,384 C119.227947,384 42.6666667,307.43872 42.6666667,213.333333 C42.6666667,119.227947 119.227947,42.6666667 213.333333,42.6666667 C307.43872,42.6666667 384,119.227947 384,213.333333 C384,307.43872 307.438933,384 213.333333,384 Z M293.669333,137.114453 L323.835947,167.281067 L192,299.66912 L112.916693,220.585813 L143.083307,190.4192 L192,239.335893 L293.669333,137.114453 Z">
+                          {' '}
+                        </path>{' '}
+                      </g>{' '}
+                    </g>{' '}
                   </g>
                 </svg>
               ) : (
@@ -290,20 +258,20 @@ class BillingHistory extends Component {
                   <g strokeWidth="0"></g>
                   <g strokeLinecap="round" strokeLinejoin="round"></g>
                   <g>
-                    {" "}
+                    {' '}
                     <path
                       d="M6.30928 9C8.59494 5 9.96832 3 12 3C14.3107 3 15.7699 5.58716 18.6883 10.7615L19.0519 11.4063C21.4771 15.7061 22.6897 17.856 21.5937 19.428C20.4978 21 17.7864 21 12.3637 21H11.6363C6.21356 21 3.50217 21 2.40626 19.428C1.45498 18.0635 2.24306 16.2635 4.05373 13"
                       stroke="#ae1936"
                       strokeWidth="1.5"
                       strokeLinecap="round"
-                    ></path>{" "}
+                    ></path>{' '}
                     <path
                       d="M12 8V13"
                       stroke="#ae1936"
                       strokeWidth="1.5"
                       strokeLinecap="round"
-                    ></path>{" "}
-                    <circle cx="12" cy="16" r="1" fill="#ae1936"></circle>{" "}
+                    ></path>{' '}
+                    <circle cx="12" cy="16" r="1" fill="#ae1936"></circle>{' '}
                   </g>
                 </svg>
               )}
@@ -331,7 +299,7 @@ class BillingHistory extends Component {
               <img src={ArrowRight} alt="" className={classes.details_img} />
             </Link>
                 </td>*/}
-        </tr>
+        </tr>,
       );
     });
 
@@ -350,7 +318,7 @@ class BillingHistory extends Component {
 
     axios
       .delete(
-        `https://backendapp.murmurcars.com/api/v1/surveys/user/delete-multiple-billings/${list_of_ids}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/user/delete-multiple-billings/${list_of_ids}`,
       )
       .then(() => {
         window.location.reload();
@@ -369,23 +337,22 @@ class BillingHistory extends Component {
       profile,
       defaultPaymentMethod,
     } = this.state;
-  
 
-    let cardImage = "";
+    let cardImage = '';
 
     if (!loading && defaultPaymentMethod.card !== undefined) {
       cardImage =
-        defaultPaymentMethod.card.brand === "visa"
+        defaultPaymentMethod.card.brand === 'visa'
           ? Visa
-          : defaultPaymentMethod.card.brand === "mastercard"
+          : defaultPaymentMethod.card.brand === 'mastercard'
           ? MasterCard
           : AmericanExpress;
 
-      if (this.props.layoutTheme === "dark") {
+      if (this.props.layoutTheme === 'dark') {
         cardImage =
-          defaultPaymentMethod.card.brand === "visa"
+          defaultPaymentMethod.card.brand === 'visa'
             ? VisaDark
-            : defaultPaymentMethod.card.brand === "mastercard"
+            : defaultPaymentMethod.card.brand === 'mastercard'
             ? MasterCardDark
             : AmericanExpressDark;
       }
@@ -407,19 +374,19 @@ class BillingHistory extends Component {
         {loading ? (
           <div
             style={{
-              background: "white",
+              background: 'white',
               zIndex: 100,
-              position: "absolute",
+              position: 'absolute',
               top: 0,
-              width: "100vw",
-              height: "100vh",
+              width: '100vw',
+              height: '100vh',
               opacity: 0.8,
             }}
           />
         ) : null}
         <div
           className={`${classes.dash_right}  ${
-            this.state.changeSubsciptionModal ? classes["blur-page"] : null
+            this.state.changeSubsciptionModal ? classes['blur-page'] : null
           }`}
         >
           <header className={classes.header}>
@@ -430,7 +397,7 @@ class BillingHistory extends Component {
             </div>
             <div className={classes.menu_self_flex}>
               <div className={`${classes.menu_flex}`}>
-                {" "}
+                {' '}
                 <div className={classes.button_containers}>
                   <Link
                     to={`/`}
@@ -440,7 +407,7 @@ class BillingHistory extends Component {
                   </Link>
                 </div>
                 <div className={classes.button_containers}>
-                  {" "}
+                  {' '}
                   <Link
                     //onClick={this.toggleToCreateSurveyMode}
                     to="/surveys"
@@ -453,21 +420,21 @@ class BillingHistory extends Component {
             </div>
             <div className={classes.dash_relative}>
               <div className={classes.search_box_flex_end}>
-                <Profile scope={"survey"} />
+                <Profile scope={'survey'} />
               </div>
             </div>
           </header>
           <div
             className={`${classes.surveys_container} d-flex flex-column  align-items-center`}
           >
-            <div className={classes["current-subscription"]}>
+            <div className={classes['current-subscription']}>
               <div
                 className="d-flex align-items-center justify-content-between h-100"
-                style={{ width: "fit-content" }}
+                style={{ width: 'fit-content' }}
               >
                 <Link
                   to="/subscription"
-                  style={{ whiteSpace: "nowrap" }}
+                  style={{ whiteSpace: 'nowrap' }}
                   className="d-flex align-items-center mr-3"
                 >
                   <svg
@@ -489,10 +456,10 @@ class BillingHistory extends Component {
                 </Link>
                 {this.state.subscription != null ? (
                   <div
-                    className={`d-flex flex-column justify-content-between h-100 ${classes["current-subscription__info"]}`}
+                    className={`d-flex flex-column justify-content-between h-100 ${classes['current-subscription__info']}`}
                   >
                     <span>
-                      Subscription:{" "}
+                      Subscription:{' '}
                       <span>{this.state.subscription.package}</span>
                     </span>
                     <span>
@@ -513,18 +480,18 @@ class BillingHistory extends Component {
             {defaultPaymentMethod.card !== undefined ? (
               <div
                 className={classes.create_ads}
-                style={{ height: "78px", padding: 0 }}
+                style={{ height: '78px', padding: 0 }}
               >
-                <div className={classes["default-payment-method"]}>
+                <div className={classes['default-payment-method']}>
                   <div>
                     <span>Payment method</span>
                     <p>Change how you pay your plan</p>
                   </div>
-                  <div className={classes["default-payment-method__card"]}>
+                  <div className={classes['default-payment-method__card']}>
                     <img src={cardImage} />
                     <div
                       className={
-                        classes["default-payment-method__card-details"]
+                        classes['default-payment-method__card-details']
                       }
                     >
                       <span>
@@ -557,55 +524,39 @@ class BillingHistory extends Component {
                   <table>
                     <thead>
                       <tr className={classes.first_tr}>
-                        <th className={`${classes.cads_th}`}>
-                          <div
-                            className={`${classes.cads_check} ${classes.invoice_th}`}
-                          >
-                            <input
-                              type="checkbox"
-                              id="invoice"
-                              onChange={this.checkAllBillings}
-                              checked={multiple}
-                            />
-                            <label htmlFor="invoice">Invoice</label>
-                            {multiple_remove && (
-                              <button
-                                type="button"
-                                className={`${classes.check_remove} ${classes.multiple_remove}`}
-                                onClick={() =>
-                                  this.toggleDeleteMultipleSurveys()
-                                }
-                              >
-                                <img src={Trash} alt="" />
-                              </button>
-                            )}
+                        <th
+                          className={`${classes.cads_th}`}
+                          style={{ minWidth: '200px' }}
+                        >
+                          <div className={`${classes.cads_check}`}>
+                            <span>Invoice</span>
                           </div>
                         </th>
                         <th
                           className={classes.cads_th}
-                          style={{ minWidth: "100px" }}
+                          style={{ minWidth: '200px' }}
                         >
                           <span>Amount</span>
                         </th>
                         <th
                           className={classes.cads_th}
-                          style={{ minWidth: "100px" }}
+                          style={{ minWidth: '200px' }}
                         >
                           <span>Date</span>
                         </th>
                         <th
                           className={classes.cads_th}
-                          style={{ minWidth: "100px" }}
+                          style={{ minWidth: '200px' }}
                         >
                           <span>Subscription</span>
                         </th>
                         <th
                           className={classes.cads_th}
-                          style={{ minWidth: "100px" }}
+                          style={{ minWidth: '200px' }}
                         >
                           <span>Status</span>
                         </th>
-                        <th style={{ minWidth: "200px" }}></th>
+                        <th style={{ minWidth: '300px' }}></th>
                       </tr>
                     </thead>
                     <tbody>{this.handleBillings()}</tbody>
@@ -630,7 +581,7 @@ class BillingHistory extends Component {
                 if (submit && state) {
                   axios
                     .get(
-                      `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${profile?.id}`
+                      `https://backendapp.getinsightiq.com/api/v1/surveys/user/default-payment-method/${profile?.id}`,
                     ) //fetch default payment method
                     .then((response) => {
                       const { paymentMethod } = response.data;
@@ -698,7 +649,7 @@ class BillingHistory extends Component {
             email={profile?.email}
             loading={this.state.changeDefaultCardLoading}
             closeModal={async (modalState, paymentMethod) => {
-              if (paymentMethod === "add card") {
+              if (paymentMethod === 'add card') {
                 setTimeout(() => {
                   this.setState((state) => ({
                     ...state,
@@ -712,16 +663,16 @@ class BillingHistory extends Component {
                 }));
                 try {
                   const customer = await axios.post(
-                    "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
+                    'https://backendapp.getinsightiq.com/api/v1/surveys/user/update-customer',
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
                       paymentMethod,
-                    }
+                    },
                   );
                   axios
                     .get(
-                      `https://backendapp.murmurcars.com/api/v1/surveys/user/default-payment-method/${profile?.id}`
+                      `https://backendapp.getinsightiq.com/api/v1/surveys/user/default-payment-method/${profile?.id}`,
                     ) //fetch default payment method
                     .then((response) => {
                       const { paymentMethod } = response.data;

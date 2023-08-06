@@ -45,6 +45,11 @@ const useOptions = () => {
   return options;
 };
 
+const completed = {
+  cvc: false,
+  number: false,
+  expiry: false
+}
 function CheckoutForm({
   user_id,
   priceId,
@@ -59,6 +64,7 @@ function CheckoutForm({
   phone,
 }) {
   const [checkoutError, setCheckoutError] = useState();
+  const [disabled, setDisabledState] = useState(true)
   const [loading, setLoading] = useState(false);
   const [name, setFullName] = useState('')
 
@@ -68,14 +74,46 @@ function CheckoutForm({
 
   const handleCardDetailsChange = (event) => {
     event.error ? setCheckoutError(event.error.message) : setCheckoutError();
-
+   
     if (event.complete) {
       if (event.elementType === "cardNumber") {
         elements?.getElement(CardExpiryElement)?.focus();
+        completed.number = true
       }
 
       if (event.elementType === "cardExpiry") {
         elements?.getElement(CardCvcElement)?.focus();
+        completed.expiry = true
+      }
+      
+
+      if(event.elementType === 'cardCvc'){
+        completed.cvc = true
+      }
+
+
+      if(completed.number && completed.cvc && completed.expiry){
+        setDisabledState(false)
+      }
+    }else{
+      if (event.elementType === "cardNumber") {
+    
+        completed.number = false
+      }
+
+      if (event.elementType === "cardExpiry") {
+  
+        completed.expiry = false
+      }
+      
+
+      if(event.elementType === 'cardCvc'){
+        completed.cvc = false
+      }
+
+
+      if(!completed.number || !completed.cvc || !completed.expiry){
+        setDisabledState(true)
       }
     }
   };
@@ -123,7 +161,7 @@ function CheckoutForm({
       if (stripeCustomerId) {
      
         customer = await axios.post(
-          "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/user/update-customer",
           {
             user_id,
             customerId: stripeCustomerId,
@@ -132,7 +170,7 @@ function CheckoutForm({
         );
       } else {
         customer = await axios.post(
-          "https://backendapp.murmurcars.com/api/v1/surveys/user/create-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/user/create-customer",
           {
             user_id,
             customer: { email, name, phone },
@@ -146,11 +184,15 @@ function CheckoutForm({
         })
         .catch((err) => {})*/
       }
+
+   
       const id = stripeCustomerId ? stripeCustomerId : customer.data.id;
+
+ 
       let response = {};
       if (subscribed) {
         response = await axios.post(
-          "https://backendapp.murmurcars.com/api/v1/surveys/user/change-subscription",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/user/change-subscription",
           {
             user_id,
             subscriptionId,
@@ -164,7 +206,7 @@ function CheckoutForm({
       } else {
       
         response = await axios.post(
-          "https://backendapp.murmurcars.com/api/v1/surveys/user/create-subscription",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/user/create-subscription",
           {
             user_id,
             customerId: id,
@@ -206,7 +248,7 @@ function CheckoutForm({
       let customer;
       if (stripeCustomerId) {
         customer = await axios.post(
-          "https://backendapp.murmurcars.com/api/v1/surveys/user/update-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/user/update-customer",
           {
             user_id,
             customerId: stripeCustomerId,
@@ -215,7 +257,7 @@ function CheckoutForm({
         );
       } else {
         customer = await axios.post(
-          "https://backendapp:.murmurcars.com/api/v1/surveys/user/create-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/user/create-customer",
           {
             user_id,
             customer: { email, name, phone },
@@ -231,7 +273,7 @@ function CheckoutForm({
     }
   };
 
-  const disabled = !stripe || !name.length;
+
 
   return (
     <Modal
@@ -323,7 +365,7 @@ function CheckoutForm({
               <label className="card-element">
                 <CardCvcElement
                   options={options}
-                  onCHange={handleCardDetailsChange}
+                  onChange={handleCardDetailsChange}
                   disabled={loading}
                 />
               </label>
@@ -348,7 +390,8 @@ function CheckoutForm({
           <input
             type="button"
             form="myform"
-            disabled={disabled || loading}
+            disabled={!name || loading || disabled}
+            className={!name || loading || disabled ? classes.disabled : null}
             onClick={() => {
               const callFn = subscribe
                 ? createSubscription

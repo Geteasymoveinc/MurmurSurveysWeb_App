@@ -170,7 +170,7 @@ const Survey = (state = initial_surveys, actions) => {
           image_url: actions.payload.survey_image,
           image_name: actions.payload.survey_image
             ? actions.payload.survey_image.split(
-                "https://backendapp.murmurcars.com/advertisers/surveys/"
+                "https://backendapp.getinsightiq.com/advertisers/surveys/"
               )[1]
             : null,
         },

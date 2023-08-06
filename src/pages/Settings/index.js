@@ -1,31 +1,31 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import axios from "axios";
+import axios from 'axios';
 
-import { connect } from "react-redux";
-import { queryForEmail } from "../../helpers/fakebackend_helper";
+import { connect } from 'react-redux';
+import { queryForEmail } from '../../helpers/fakebackend_helper';
 
-import EditProfileImage from "../../assets/css/Settings/edit.svg";
-import SMS from "../../assets/css/common/icons/sms.svg";
-import Location from "../../assets/css/layout/location.svg";
-import Lock from "../../assets/css/common/icons/lock.svg";
-import Eye from "../../assets/css/common/icons/icon.svg";
-import EyeSlash from "../../assets/css/common/icons/eye-slash.svg";
-import Phone from "../../assets/css/Authentication/Register/mobile.svg";
-import Building from "../../assets/css/Settings/building.svg";
-import classes from "../../assets/css/Settings/settings.module.css";
+import EditProfileImage from '../../assets/css/Settings/edit.svg';
+import SMS from '../../assets/css/common/icons/sms.svg';
+import Location from '../../assets/css/layout/location.svg';
+import Lock from '../../assets/css/common/icons/lock.svg';
+import Eye from '../../assets/css/common/icons/icon.svg';
+import EyeSlash from '../../assets/css/common/icons/eye-slash.svg';
+import Phone from '../../assets/css/Authentication/Register/mobile.svg';
+import Building from '../../assets/css/Settings/building.svg';
+import classes from '../../assets/css/Settings/settings.module.css';
 
-import ProfileMenu from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
+import ProfileMenu from '../../components/CommonForBoth/TopbarDropdown/ProfileMenu';
 
-import { Upload } from "antd";
-import HeadSearch from "../../components/CommonForBoth/Headsearch";
+import { Upload } from 'antd';
+import HeadSearch from '../../components/CommonForBoth/Headsearch';
 const { Dragger } = Upload;
 
 const propsD = {
-  name: "file",
+  name: 'file',
   multiple: true,
   onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
+  
   },
 };
 
@@ -34,26 +34,28 @@ class Settings extends Component {
     super(props);
     this.state = {
       text: false,
-      canselModal: false,
-      updateModal: false,
-      stng_email: sessionStorage.getItem("authUser"),
-      stng_company: "",
-      stng_phone: "",
-      stng_password: "",
-      stng_fullName: "",
-      stng_address: "",
-      stng_city: "",
-      stng_state: "",
-      email: true,
-      fullName: true,
-      password: true,
-      phone_number: true,
-      company: true,
-      image: "",
-      file: "",
-      profile_photo: "",
+      company: '',
+      phone_number: '',
+      fullName: '',
+      companyAddress: '',
+      city: '',
+      state: '',
       loading: false,
+      profilePhoto: '',
+      email: sessionStorage.getItem('authUser'),
+      password: '',
+      disabled: {
+        email: true,
+        fullName: true,
+        password: true,
+        phone_number: true,
+        company: true,
+      },
+      image: '',
+      file: '',
+      profile_photo: '',
       wrong_credentials: [],
+      updates: {},
     };
     this.toggleEye = this.toggleEye.bind(this);
   }
@@ -62,24 +64,20 @@ class Settings extends Component {
     this.setState({ ...this.state, text: !this.state.text });
   }
 
-  openModal = (modal) => {
-    this.setState({ ...this.state, [modal]: true });
-  };
-
-  toggleModal = (modal) => {
-    this.setState({ ...this.state, [modal]: false });
-  };
-
   handleFileChange = (info) => {
     const reader = new FileReader();
+
     reader.readAsDataURL(info.file);
     reader.onload = (event) => {
-      this.setState({
-        ...this.state,
+      this.setState((state) => ({
+        ...state,
+        updates: {
+          ...state.updates,
+          profile_photo: info.file.name,
+          imageFile: info.file,
+        },
         image: event.target.result,
-        file: info.file,
-        profile_photo: info.file.name,
-      });
+      }));
     };
   };
 
@@ -87,108 +85,105 @@ class Settings extends Component {
     let name = event.target.name;
     const value = event.target.value;
 
-    this.setState({ ...this.state, [name]: value });
+    this.setState((state) => ({
+      ...state,
+      updates: { ...state.updates, [name]: value },
+    }));
   };
 
   submitUpdateSettings = (event) => {
     event.preventDefault();
     let wrong_credentials = [];
-    const password = this.state.stng_password;
-    const email = this.state.stng_email;
-    const password_edit = this.state.password;
-    const email_edit = this.state.email;
-    if (!password_edit || !email_edit) {
-      if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email)) {
-        wrong_credentials.push("email");
-        this.setState({
-          ...this.state,
-          wrong_credentials: [...this.state.wrong_credentials, "email"],
-        });
-      }
-      if (
-        !/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
-          password
-        )
-      ) {
-        wrong_credentials.push("password");
-        this.setState({
-          ...this.state,
-          wrong_credentials: [...this.state.wrong_credentials, "password"],
-        });
-      }
+    const password = this.state.updates.password;
+    const email = this.state.updates.email;
+    const password_edit = this.state.disabled.password;
+    const email_edit = this.state.disabled.email;
+    const updates = this.state.updates;
+
+    if (!email_edit && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(email)) {
+      wrong_credentials.push('email');
+      this.setState({
+        ...this.state,
+        wrong_credentials: [...this.state.wrong_credentials, 'email'],
+      });
     }
+    if (
+      !password_edit &&
+      !/^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/.test(
+        password,
+      )
+    ) {
+      wrong_credentials.push('password');
+      this.setState({
+        ...this.state,
+        wrong_credentials: [...this.state.wrong_credentials, 'password'],
+      });
+    }
+
     if (!wrong_credentials.length) {
       this.setState({ ...this.state, loading: true });
       const formData = new FormData();
-      formData.append("email", this.state.stng_email);
-      formData.append("phone_number", this.state.stng_phone);
-      formData.append("company", this.state.stng_company);
-      if (this.state.stng_password.length) {
-        formData.append("password", this.state.stng_password);
+
+      for (let update in updates) {
+        if (update === 'profile_photo') {
+          formData.append(
+            'profilePhoto',
+            `https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/${updates[update]}`,
+          );
+          continue;
+        }
+        if (update === 'imageFile') {
+          formData.append('imageFile', updates[update]);
+          continue;
+        }
+        formData.append([update], updates[update]);
       }
-      //formData.append("photo", this.state.image);
-      formData.append("advertise_options", this.state.stng_advertise_options);
-      formData.append(
-        "subscribedToMurmurNewsettler",
-        this.state.stng_subscribedToMurmurNewsettler
-      );
-      formData.append("fullName", this.state.stng_fullName);
-      formData.append("subscription_status", this.state.subscription_status);
-      if (this.state.profile_photo) {
-        formData.append("photo", this.state.profile_photo);
-      }
-      formData.append("companyAddress", this.state.stng_address);
-      formData.append("profilePhoto", this.state.file);
-      //formData.append('billing_id', this.state.user_billing._id)
+
       axios({
-        url: `https://backendapp.murmurcars.com/api/v1/users/update/${this.state.stng_id}`,
-        method: "PUT",
+        url: `https://backendapp.getinsightiq.com/api/v1/surveys/customers/update/${this.state._id}`,
+        method: 'PUT',
         data: formData,
       })
         .then((res) => {
-        
-          sessionStorage.removeItem("profileImage");
-          sessionStorage.setItem(
-            "profileImage",
-            `http://backendapp.murmurcars.com/advertisers/users/profilePhoto/${this.state.profile_photo}`
-          );
+          const { data } = res;
+          if(data.response.profilePhoto){
+          sessionStorage.removeItem('profileImage');
+          sessionStorage.setItem('profileImage', data.response.profilePhoto);
+          }
           this.setState({ ...this.state, loading: false });
         })
         .catch((err) => {
           this.setState({ ...this.state, loading: false });
-          alert(err);
         });
     }
   };
-
   componentDidMount() {
     this.setState({ ...this.state, loading: true });
     queryForEmail(
-      `https://backendapp.murmurcars.com/api/v1/users/checkEmail/${false}`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
       {
-        email: this.state.stng_email,
-        role: "2",
-      }
+        email: this.state.email
+      },
     )
       .then((res) => {
         const data = res.resp;
 
         this.setState({
           ...this.state,
-          stng_id: data._id,
-          stng_company: data.company,
-          stng_phone: data.phone_number,
-          stng_advertise_options: data.advertise_options,
-          stng_subscribedToMurmurNewsettler: data.subscribedToMurmurNewsettler,
-          stng_fullName: data.fullName,
-          stng_address: data.companyAddress,
-          stng_city: data.city,
-          stng_state: data.state,
+          _id: data._id,
+          company: data.company,
+          phone_number: data.phone_number,
+          //advertise_options: data.advertise_options,
+          //subscribedToMurmurNewsettler: data.subscribedToMurmurNewsettler,
+          fullName: data.fullName,
+          companyAddress: data.companyAddress,
+          city: data.city,
+          state: data.state,
           subscription_status: data.subscription_status,
           loading: false,
-          profile_photo: data.profilePhoto
+          profilePhoto: data.profilePhoto
             ? data.profilePhoto.split(
-                "https://backendapp.murmurcars.com/advertisers/users/profilePhoto/"
+                'https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/',
               )[1]
             : null,
         });
@@ -197,21 +192,21 @@ class Settings extends Component {
         this.setState({
           ...this.state,
           loading: false,
-        })
+        }),
       );
   }
 
   render() {
     const { wrong_credentials, loading } = this.state;
-
+    // const { hasBilling, hasSubscription } = user_billing;
     let email,
-      password = false;
+      password = false; // if failed validation
 
     if (wrong_credentials.length) {
       for (let i = 0; i < wrong_credentials.length; i++) {
-        if (wrong_credentials[i] === "email") {
+        if (wrong_credentials[i] === 'email') {
           email = true;
-        } else if (wrong_credentials[i] === "password") {
+        } else if (wrong_credentials[i] === 'password') {
           password = true;
         }
       }
@@ -239,7 +234,7 @@ class Settings extends Component {
               classes[this.props.layoutTheme]
             }`}
           >
-            <HeadSearch page={"Settings"} />
+            <HeadSearch page={'Settings'} />
             {/*<!-- settings block -->*/}
             <div className={classes.setting_block}>
               <div className={classes.setting_left}>
@@ -255,16 +250,16 @@ class Settings extends Component {
                     className="profil_img_edit"
                     onChange={(info) => this.handleFileChange(info)}
                     style={{
-                      background: "white",
-                      borderColor: "transparent",
+                      background: 'white',
+                      borderColor: 'transparent',
                     }}
                   >
                     <div className={classes.profil_relative}>
-                      <ProfileMenu scope={"local"} image={this.state.image} />
+                      <ProfileMenu scope={'local'} image={this.state.image} />
                       <img
                         className={classes.profil_img_edit}
                         src={EditProfileImage}
-                        alt="prfofile image edit"
+                        alt=""
                       />
                     </div>
                   </Dragger>
@@ -272,7 +267,7 @@ class Settings extends Component {
                   {/*} <input type="file" className={classes.profil_img_edit}/>*/}
 
                   <div className={classes.stng_profil_detail}>
-                    <p>{this.state.stng_fullName}</p>
+                    <p>{this.state.fullName}</p>
                     <span>Active</span>
                   </div>
                 </div>
@@ -295,18 +290,22 @@ class Settings extends Component {
                           <input
                             type="text"
                             className={classes.stng_element}
-                            name="stng_fullName"
+                            name="fullName"
                             id="stng-fullName"
-                            value={this.state.stng_fullName}
+                            defaultValue={this.state.fullName}
+                            value={this.state.updates?.fullName}
                             onChange={this.settingInputsChange}
-                            disabled={this.state.fullName}
+                            disabled={this.state.disabled.fullName}
                           />
                         </div>
                         <button
                           type="button"
                           className={classes.form_edit_btn}
                           onClick={() =>
-                            this.setState({ ...this.state, fullName: false })
+                            this.setState((state) => ({
+                              ...state,
+                              disabled: { ...state.disabled, fullName: false },
+                            }))
                           }
                         >
                           Edit
@@ -330,13 +329,14 @@ class Settings extends Component {
                           <input
                             type="text"
                             className={classes.stng_element}
-                            name="stng_email"
+                            name="email"
                             id="stng-email"
-                            value={this.state.stng_email}
+                            defaultValue={this.state.email}
+                            value={this.state.updates?.email}
                             onChange={(event) =>
                               this.settingInputsChange(event)
                             }
-                            disabled={this.state.email}
+                            disabled={this.state.disabled.email}
                           />
                           {email && (
                             <span className={classes.pass_error}>
@@ -348,7 +348,10 @@ class Settings extends Component {
                           type="button"
                           className={classes.form_edit_btn}
                           onClick={() =>
-                            this.setState({ ...this.state, email: false })
+                            this.setState((state) => ({
+                              ...state,
+                              disabled: { ...state.disabled, email: false },
+                            }))
                           }
                         >
                           Edit
@@ -365,16 +368,17 @@ class Settings extends Component {
                       <div className={classes.stng_form_flex}>
                         <div className={classes.stng_relative}>
                           <input
-                            type={this.state.text ? "text" : "password"}
+                            type={this.state.text ? 'text' : 'password'}
                             className={classes.stng_element}
-                            name="stng_password"
+                            name="password"
                             id="stng-password"
                             placeholder="123456"
                             onChange={(event) =>
                               this.settingInputsChange(event)
                             }
-                            value={this.state.stng_password}
-                            disabled={this.state.password}
+                            defaultValue={this.state.password}
+                            value={this.state.updates?.password}
+                            disabled={this.state.disabled.password}
                           />
 
                           <img
@@ -395,7 +399,7 @@ class Settings extends Component {
                           </button>
                           {password && (
                             <span className={classes.pass_error}>
-                              {" "}
+                              {' '}
                               upercase, special character and 8 long
                             </span>
                           )}
@@ -404,7 +408,10 @@ class Settings extends Component {
                           type="button"
                           className={classes.form_edit_btn}
                           onClick={() =>
-                            this.setState({ ...this.state, password: false })
+                            this.setState((state) => ({
+                              ...state,
+                              disabled: { ...state.disabled, password: false },
+                            }))
                           }
                         >
                           Edit
@@ -426,11 +433,12 @@ class Settings extends Component {
                           <input
                             type="phone"
                             className={classes.stng_element}
-                            name="stng_phone"
+                            name="phone_number"
                             id="stng-phone"
-                            value={this.state.stng_phone}
+                            defaultValue={this.state.phone_number}
+                            value={this.state.updates?.phone_number}
                             onChange={this.settingInputsChange}
-                            disabled={this.state.phone_number}
+                            disabled={this.state.disabled.phone_number}
                             placeholder=""
                           />
                           <img
@@ -443,10 +451,13 @@ class Settings extends Component {
                           type="button"
                           className={classes.form_edit_btn}
                           onClick={() =>
-                            this.setState({
-                              ...this.state,
-                              phone_number: false,
-                            })
+                            this.setState((state) => ({
+                              ...state,
+                              disabled: {
+                                ...state.disabled,
+                                phone_number: false,
+                              },
+                            }))
                           }
                         >
                           Edit
@@ -465,10 +476,11 @@ class Settings extends Component {
                           <input
                             type="text"
                             className={classes.stng_element}
-                            name="stng_company"
+                            name="company"
                             id="stng-company"
-                            value={this.state.stng_company}
-                            disabled={this.state.company}
+                            defaultValue={this.state.company}
+                            value={this.state.updates?.company}
+                            disabled={this.state.disabled.company}
                             onChange={this.settingInputsChange}
                           />
                           <img
@@ -481,7 +493,10 @@ class Settings extends Component {
                           type="button"
                           className={classes.form_edit_btn}
                           onClick={() =>
-                            this.setState({ ...this.state, company: false })
+                            this.setState((state) => ({
+                              ...state,
+                              disabled: { ...state.disabled, company: false },
+                            }))
                           }
                         >
                           Edit
@@ -499,10 +514,11 @@ class Settings extends Component {
                         <input
                           type="text"
                           className={classes.stng_element}
-                          name="stng_address"
+                          name="companyAddress"
                           id="stng-address"
                           placeholder="Company address"
-                          value={this.state.stng_address}
+                          defaultValue={this.state.companyAddress}
+                          value={this.state.updates?.companyAddress}
                           onChange={this.settingInputsChange}
                         />
                         <img
@@ -520,9 +536,10 @@ class Settings extends Component {
                         <input
                           type="text"
                           className={classes.stng_element}
-                          name="stng_city"
+                          name="city"
                           id="stng-city"
-                          value={this.state.stng_city}
+                          defaultValue={this.state.city}
+                          value={this.state.updates?.city}
                           onChange={this.settingInputsChange}
                         />
                         <img
@@ -545,9 +562,10 @@ class Settings extends Component {
                             <input
                               type="text"
                               className={classes.stng_element}
-                              name="stng_state"
+                              name="state"
                               id="stng-state"
-                              value={this.state.stng_state}
+                              defaultValue={this.state.state}
+                              value={this.state.updates?.state}
                               onChange={this.settingInputsChange}
                             />
                             <img
@@ -570,7 +588,7 @@ class Settings extends Component {
                             <input
                               type="text"
                               className={classes.stng_element}
-                              name="stng_zip"
+                              name="zip"
                               id="stng-zip"
                               placeholder="Zip"
                               onChange={this.settingInputsChange}

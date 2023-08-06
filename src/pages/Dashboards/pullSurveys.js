@@ -1,12 +1,12 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment } from 'react';
 
-import classes from "../../assets/css/surveys/index.module.scss";
-import Trash from "../../assets/css/CreateAd/trash.svg";
-import ArrowRight from "../../assets/css/CreateAd/arrow-right.svg";
+import classes from '../../assets/css/surveys/index.module.scss';
+import Trash from '../../assets/images/trash.svg';
+import ArrowRight from '../../assets/images/arrow-right.svg';
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import axios from "axios";
+import axios from 'axios';
 
 class PullSurveys extends Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class PullSurveys extends Component {
   toggleDeleteSurvey = (id) => {
     axios
       .delete(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/delete-survey/${id}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-survey/${id}`,
       )
       .then(() => {
         window.location.reload();
@@ -37,7 +37,7 @@ class PullSurveys extends Component {
 
     axios
       .get(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/fetch-surveys/${user_id}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/fetch-surveys/${user_id}`,
       )
       .then((response) => {
         const { surveys: surveys_data } = response.data;
@@ -176,28 +176,7 @@ class PullSurveys extends Component {
               </div>
             </div>
           </td>
-          <td className={classes.cads_td}>
-            {survey.survey_status !== "In Review" ? (
-              <span
-                className={`${
-                  survey.survey_status === "Approved"
-                    ? classes.cads_active_dot
-                    : classes.cads_deactive_dot
-                }`}
-              >
-                <span className={classes.cads_dot}></span>{" "}
-                {`${
-                  survey.survey_status === "Approved"
-                    ? "Approved"
-                    : survey.survey_status === "Declined"
-                    ? "Declined"
-                    : null
-                }`}
-              </span>
-            ) : (
-              <span className={classes.cads_review}>In Review</span>
-            )}
-          </td>
+
           <td className={classes.cads_td}>
             <span
               className={`${
@@ -206,13 +185,25 @@ class PullSurveys extends Component {
                   : classes.cads_deactive_dot
               }`}
             >
-              <span className={classes.cads_dot}></span>{" "}
-              {`${survey.paid ? "Active" : "Deactive"}`}
+              <span className={classes.cads_dot}></span>{' '}
+              {`${survey.paid ? 'Paid' : 'Not paid'}`}
+            </span>
+          </td>
+          <td className={classes.cads_td}>
+            <span
+              className={`${
+                survey.survey_active
+                  ? classes.cads_active_dot
+                  : classes.cads_deactive_dot
+              }`}
+            >
+              <span className={classes.cads_dot}></span>{' '}
+              {`${survey.survey_active ? 'Active' : 'Inactive'}`}
             </span>
           </td>
           <td className={classes.cads_td}>
             <span className={classes.td_data}>
-              {" "}
+              {' '}
               {survey.survey_audience_count}
             </span>
           </td>
@@ -228,6 +219,28 @@ class PullSurveys extends Component {
                 </span>
                 </td>*/}
           <td className={classes.cads_td}>
+            {survey.survey_status !== 'In Review' ? (
+              <span
+                className={`${
+                  survey.survey_status === 'Approved'
+                    ? classes.cads_active_dot
+                    : classes.cads_deactive_dot
+                }`}
+              >
+                <span className={classes.cads_dot}></span>{' '}
+                {`${
+                  survey.survey_status === 'Approved'
+                    ? 'Approved'
+                    : survey.survey_status === 'Declined'
+                    ? 'Declined'
+                    : null
+                }`}
+              </span>
+            ) : (
+              <span className={classes.cads_review}>In Review</span>
+            )}
+          </td>
+          <td className={classes.cads_td}>
             <Link
               to={`/surveys/update-survey?survey_id=${survey._id}`}
               className={classes.details_link}
@@ -237,7 +250,7 @@ class PullSurveys extends Component {
               <img src={ArrowRight} alt="" className={classes.details_img} />
             </Link>
           </td>
-        </tr>
+        </tr>,
       );
     });
 
@@ -247,7 +260,7 @@ class PullSurveys extends Component {
   toggleDeleteMultipleSurveys = () => {
     const surveys = this.state.surveys;
     const list_of_ids = [];
-    
+
     this.setState({ ...this.state, loading: true });
 
     for (let survey of surveys) {
@@ -258,7 +271,7 @@ class PullSurveys extends Component {
 
     axios
       .delete(
-        `https://backendapp.murmurcars.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`,
       )
       .then(() => {
         window.location.reload();
@@ -269,10 +282,9 @@ class PullSurveys extends Component {
       });
   };
 
-
   render() {
     const { multiple, multiple_remove } = this.state;
- 
+
     return (
       <Fragment>
         {this.state.loading && (
@@ -318,7 +330,7 @@ class PullSurveys extends Component {
                   </div>
                 </th>
                 <th className={classes.cads_th}>
-                  <span>Is Public</span>
+                  <span>Payment</span>
                 </th>
                 <th className={classes.cads_th}>
                   <span>Status</span>
@@ -335,6 +347,7 @@ class PullSurveys extends Component {
                 {/*} <th className={classes.cads_th}>
                   <span>Payment</span>
                     </th>*/}
+                <th></th>
                 <th></th>
               </tr>
             </thead>
