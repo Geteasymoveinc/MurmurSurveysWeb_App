@@ -17,7 +17,7 @@ class LocationModal extends React.Component {
         Azerbaijan: ["Baku"],
         USA: ["Chicago", "SF"],
         Georgia: ["Tbilisi"],
-        
+        Kazakhstan:['Almata']
       },
     };
   }
@@ -77,7 +77,7 @@ class LocationModal extends React.Component {
                   onChange={(e) => this.locationOnMapChange(e, "country")}
                 >
                   <option value={null}>Country</option>
-                  {["USA", "Azerbaijan", "Georgia"].map((el, i) => (
+                  {["USA", "Azerbaijan", "Georgia", 'Kazakhstan'].map((el, i) => (
                     <option key={i} value={ el}>
                       {el}
                     </option>

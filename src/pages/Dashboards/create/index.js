@@ -18,7 +18,6 @@ import Info_Circle_White from '../../../assets/images/info-circle-white.svg';
 import Option_Delete from '../../../assets/images/surveys/option-delete.svg';
 import RecordVideo from '../../../assets/images/video.png';
 import RecordAudio from '../../../assets/images/microphone.png';
-import ArrowLeft from '../../../assets/images/arrow-left.svg';
 import '../../../assets/css/surveys/antd.css';
 import '../../../assets/css/common/css/spinner.scss';
 
@@ -29,10 +28,8 @@ import SurveyAnswers from './answers';
 import Preview from '../preview';
 import PullParticipants from './pullParticipants';
 import ResearchSetting from './research-setting';
+import SurveyAWSReport from './aws-reports';
 
-import { Upload as Upload_Antd } from 'antd';
-
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 import axios from 'axios';
 import { Link, withRouter } from 'react-router-dom';
@@ -41,7 +38,6 @@ import {
   fetch_survey,
   fetch_map_position,
 } from '../../../store/actions';
-
 import { connect } from 'react-redux';
 //import { queryForEmail } from "../../../helpers/fakebackend_helper";
 
@@ -52,7 +48,12 @@ import AudioRecorder from '../../../components/audio-recorder';
 import AudioPlayer from '../../../components/audio-player';
 import { WarningFeedback } from '../../../components/feedbacks';
 
+import { Upload as Upload_Antd } from 'antd';
+
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+
 import Geocode from 'react-geocode';
+
 Geocode.setApiKey(`${process.env.REACT_APP_GOOGLEMAPSKEY}`);
 
 const { Dragger } = Upload_Antd;
@@ -73,6 +74,14 @@ class Survey extends Component {
       warning: null, //warning message
       info: true, //information
       email: sessionStorage.getItem('authUser'),
+      supportedCountry: {
+        country: '',
+        city: '',
+        districts: [],
+        countryCode: '',
+        language: '',
+        user_professions: [],
+      },
       menu: {
         //navigation
         menu_item: 'questions',
@@ -85,7 +94,7 @@ class Survey extends Component {
           survey: {
             //create question
             // main: true,
-            count: this.props.survey.count + 1,
+            count: 1,
             isQuestion: true, //question or section(like container of conditional questions)
             isConditional: false, //not main question
             type: 'radio',
@@ -103,17 +112,16 @@ class Survey extends Component {
               },
             },
           },
-          surveys: this.props.survey.survey_questions, //all questions
+          surveys: [], //all questions
         },
         survey_title_question_image: {
           survey: {
-            form_title: this.props.survey.survey_title,
-
-            form_caption: this.props.survey.survey_caption,
+            form_title: 'Title',
+            form_caption: 'Caption',
             image: {
-              image_url: this.props.survey.survey_image.image_url,
-              image_file: this.props.survey.survey_image.image_file,
-              image_name: this.props.survey.survey_image.image_name,
+              image_url: null,
+              image_file: null,
+              image_name: null,
             },
           },
         },
@@ -147,17 +155,14 @@ class Survey extends Component {
   }
 
   componentDidUpdate(prevProps) {
- 
     if (
       prevProps.survey.survey_questions.length !==
         this.props.survey.survey_questions.length ||
       this.props.survey.loading !== prevProps.survey.loading ||
       this.props.subscription !== prevProps.subscription
     ) {
-  
       this.setState((state) => ({
         ...state,
-        loading: false,
         form: {
           ...state.form,
           survey_answers_questions: {
@@ -197,8 +202,42 @@ class Survey extends Component {
             },
           },
         },
+        loading:false
       }));
     }
+
+    const { city, country } = this.props.survey.target_audience;
+    if (
+      prevProps.survey.target_audience.city === city &&
+      prevProps.survey.target_audience.country === country
+    ){
+      return
+    }
+    this.setState(state => ({
+      ...state,
+      loading: true
+    }))
+    axios
+      .get(
+        `https://stagingapp.murmurcars.com/api/v1/admin/fetch-supported-country?country=${country}&city=${city}`,
+      )
+      .then((response) => {
+
+        this.setState((state) => ({
+          ...state,
+          supportedCountry: {
+            country,
+            city,
+            countryCode: response.data.analytics.country_code,
+            districts: response.data.analytics.districts,
+            language: response.data.analytics.language,
+            user_professions: response.data.analytics.user_professions,
+   
+          },
+          loading: false,
+        }));
+      })
+      .catch((err) => console.log(err));
   }
 
   togleMenuItem = (menu) => {
@@ -232,7 +271,7 @@ class Survey extends Component {
     document.body.classList.add('grey-background');
 
     this.props.fetch_survey(
-      `https://backendapp.getinsightiq.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`,
+      `https://stagingapp.murmurcars.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`,
     );
     this.setState((state) => ({
       ...state,
@@ -298,7 +337,7 @@ class Survey extends Component {
     formData.append('survey_budget', budget);
     formData.append('target_audience', JSON.stringify(target_audience));
     formData.append('survey_audience_count', amount);
-    formData.append('photo', image_name);
+    formData.append('photo', JSON.stringify(image_name));
     formData.append('survey_active', survey_active);
     formData.append('survey_specific', survey_specific);
     formData.append('survey_caption', form_caption);
@@ -312,21 +351,6 @@ class Survey extends Component {
     formData.append(
       'researcherContacts',
       JSON.stringify(this.props.survey.researcherContacts),
-    );
-    //formData.append("survey_title", survey_title);
-    //formData.append("survey_earnings", survey_earnings);
-    //formData.append("survey_budget", survey_budget);
-    //formData.append("target_audience", JSON.stringify(target_audience));
-    //formData.append("survey_audience_count", survey_audience_number);
-    //formData.append("photo", JSON.stringify(survey_image.image_name));
-    //formData.append("survey_active", JSON.stringify(survey_active));
-    //formData.append("survey_caption", survey_caption);
-    //formData.append("file", survey_image.image_file);
-    //formData.append("survey_specific", JSON.stringify(survey_specific));
-    //formData.append("country", country);
-    formData.append(
-      'payment',
-      JSON.stringify({ type: this.props.survey.payment }),
     );
 
     const conditionals = [];
@@ -360,8 +384,8 @@ class Survey extends Component {
 
     const backend = {};
 
-    backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
-    //backend.url = `http://localhost:4000/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
+    backend.url = `https://stagingapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&payment=${this.props.survey.payment}`;
+    //backend.url = `https://stagingapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
     backend.method = 'PUT';
     backend.payment = this.props.survey.payment;
     backend.paid = this.props.survey.paid;
@@ -369,7 +393,7 @@ class Survey extends Component {
 
     for await (let url of urls) {
       axios.post(
-        'https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-asset',
+        'https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-asset',
         { url },
       );
     }
@@ -385,7 +409,7 @@ class Survey extends Component {
     const { amount, budget } = this.state.form.survey_price_amount.survey;
 
     const backend = {};
-    backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
+    backend.url = `https://stagingapp.murmurcars.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
     backend.method = 'POST';
     backend.payment = this.props.survey.payment;
     backend.publish = true; // couse it is checkout
@@ -433,8 +457,8 @@ class Survey extends Component {
     );
   };
 
-  changeLocation = (country, city) => {
-    Geocode.fromAddress(`${country}, ${city}`)
+  changeLocation = (location, country, city) => {
+    Geocode.fromAddress(location)
       .then((response) => {
         const { lat, lng } = response.results[0].geometry.location;
         const center = {
@@ -677,7 +701,7 @@ class Survey extends Component {
 
     axios
       .post(
-        'https://backendapp.getinsightiq.com/api/v1/surveys/survey/upload-asset',
+        'https://stagingapp.murmurcars.com/api/v1/surveys/survey/upload-asset',
         form,
       )
       .then((response) => {
@@ -705,7 +729,7 @@ class Survey extends Component {
           },
         }));
       })
-      .catch((err) =>{});
+      .catch((err) => {});
   };
 
   removeSurveyAsset = (url, index, stateChange) => {
@@ -1244,6 +1268,7 @@ class Survey extends Component {
       survey_id,
       urls,
       info,
+      supportedCountry,
     } = this.state;
 
     const { menu_item, preview: preview_mode } = menu;
@@ -1323,7 +1348,7 @@ class Survey extends Component {
                   }`}
                 >
                   <div className={classes.button_containers}>
-                    <Link to={`/`}>Main</Link>
+                    <Link to={`/`}>Home</Link>
                   </div>
 
                   <div className={classes.button_containers}>
@@ -1379,7 +1404,7 @@ class Survey extends Component {
                     </div>
                   ) : null}
 
-                  {false ? (
+                  {analytics.length ? (
                     <div className={classes.button_containers}>
                       <button
                         onClick={() => this.togleMenuItem('answers')}
@@ -1392,6 +1417,23 @@ class Survey extends Component {
                       <span
                         className={`${
                           menu_item === 'answers' ? classes.border_active : null
+                        }`}
+                      ></span>
+                    </div>
+                  ) : null}
+                           {this.props.survey.hasAwsReports ? (
+                    <div className={classes.button_containers}>
+                      <button
+                        onClick={() => this.togleMenuItem('aws-reports')}
+                        className={` ${
+                          menu_item === 'aws-reports' ? classes.active : null
+                        }`}
+                      >
+                        AWS Reports
+                      </button>
+                      <span
+                        className={`${
+                          menu_item === 'aws-reports' ? classes.border_active : null
                         }`}
                       ></span>
                     </div>
@@ -1456,16 +1498,14 @@ class Survey extends Component {
                       }`}</span>
                     </button>
                   </form>
-                  <Profile scope="survey" />
+                  <Profile scope="global" />
                 </div>
               </div>
             </header>
-            <button
-              to={`/surveys`}
+            {/*<button
               className={classes.ads_back_icon}
               onClick={() => {
-                this.props.history.push('/');
-                setTimeout(() => this.props.history.replace('/surveys'), 100); //without this component does not get mounted if called from child path
+                this.props.history.replace('/surveys');
               }}
             >
               <svg
@@ -1494,7 +1534,7 @@ class Survey extends Component {
               </svg>
 
               <span>Back</span>
-            </button>
+            </button>*/}
             {!preview_mode && menu_item === 'questions' && (
               <div className={classes.grid_container}>
                 <div className={classes.left_container}>
@@ -3143,17 +3183,13 @@ class Survey extends Component {
               <SurveySettings
                 active={survey.survey_active}
                 survey_specific={survey.survey_specific}
-                //country={survey.country}
-                //survey_location={survey.target_audience.location}
-                // survey_gender={survey.target_audience.gender}
-                // survey_age={survey.target_audience.age}
-                //paid={survey.paid}
                 handleLocationChange={this.handleLocationChange}
                 map={survey.map}
                 target_audience={this.props.survey.target_audience}
                 researchConductedVia={this.props.survey.researchConductedVia}
                 researcherContacts={this.props.survey.researcherContacts}
                 layoutTheme={this.props.layoutTheme}
+                supportedCountry={supportedCountry}
                 toggleLocationModal={() => {
                   this.setState((state) => ({
                     ...state,
@@ -3166,6 +3202,8 @@ class Survey extends Component {
               <SurveyAnalytics
                 id={survey._id}
                 layoutTheme={this.props.layoutTheme}
+                districts={supportedCountry.districts}
+                user_professions={supportedCountry.user_professions}
               />
             )}
             {!preview_mode && menu_item === 'answers' && (
@@ -3173,6 +3211,19 @@ class Survey extends Component {
                 analytics={analytics}
                 survey_questions={survey.survey_questions}
                 id={survey._id}
+                layoutTheme={this.props.layoutTheme}
+                districts={supportedCountry.districts}
+                user_professions={supportedCountry.user_professions}
+              />
+            )}
+                        {!preview_mode && menu_item === 'aws-reports' && (
+              <SurveyAWSReport
+                analytics={analytics}
+                survey_questions={survey.survey_questions}
+                id={survey._id}
+                layoutTheme={this.props.layoutTheme}
+                districts={supportedCountry.districts}
+                user_professions={supportedCountry.user_professions}
               />
             )}
 
@@ -3243,7 +3294,12 @@ class Survey extends Component {
               );
               return;
             }
-            this.changeLocation(country, city);
+
+            if (city === 'all') {
+              this.changeLocation(country, country, city); //location tofind gps , country,city
+              return;
+            }
+            this.changeLocation(country + ',' + city, country, city);
           }}
         />
 

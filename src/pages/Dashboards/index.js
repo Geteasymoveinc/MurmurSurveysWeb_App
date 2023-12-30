@@ -52,7 +52,7 @@ class Surveys extends Component {
 
   componentDidMount() {
     queryForEmail(
-      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
+      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`,
       {
         email: sessionStorage.getItem("authUser")
       }
@@ -81,13 +81,13 @@ class Surveys extends Component {
   toggleToCreateSurveyMode = () => {
     axios
       .post(
-        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/publish-survey/${this.state.id}?payment=${this.state.payment.type}`,
+        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/publish-survey/${this.state.id}`,
         {
           research: this.state.constructResearch.research,
           targetUsersFrom: this.state.constructResearch.targetUsersFrom,
           researchConductedVia:
             this.state.constructResearch.researchConductedVia,
-          no_payment_count: this.state.payment.count,
+          payment: this.state.payment
         }
       )
       .then((response) => {
@@ -149,7 +149,7 @@ class Surveys extends Component {
                       to={`/`}
                       className={`${classes.navbar_btn} ${classes.main} ${classes.active}`}
                     >
-                      Main
+                      Home
                     </Link>
                     <span className={`${classes.border_active}`} />
                   </div>
@@ -165,7 +165,7 @@ class Surveys extends Component {
               </div>
               <div className={classes.dash_relative}>
                 <div className={classes.search_box_flex_end}>
-                  <Profile scope="survey" />
+                  <Profile scope="global" />
                 </div>
               </div>
             </header>
@@ -987,7 +987,7 @@ class Surveys extends Component {
             formData.append("company", this.state.company);
             axios
               .post(
-                "https://backendapp.getinsightiq.com/api/v1/surveys/user/insertExternalParticipants",
+                "https://stagingapp.murmurcars.com/api/v1/surveys/user/insertExternalParticipants",
                 formData
               )
               .then((response) => {

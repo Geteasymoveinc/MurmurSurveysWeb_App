@@ -54,7 +54,7 @@ class Subscription extends Component {
   
     window.scrollTo({ top: 0, left: 0 });
     queryForEmail(
-      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`, //to get customer profile
+      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`, //to get customer profile
       {
         email: sessionStorage.getItem("authUser")
       }
@@ -65,7 +65,7 @@ class Subscription extends Component {
 
         axios
           .get(
-            `https://backendapp.getinsightiq.com/api/v1/surveys/user/subscriptions/${_id}`
+            `https://stagingapp.murmurcars.com/api/v1/surveys/customer/subscriptions/${_id}`
           )
           .then((response) => {
 
@@ -77,7 +77,7 @@ class Subscription extends Component {
             if (!stripeCustomerId) {
               this.setState((state) => ({
                 ...state,
-                loading: false,
+           
                 subscriptions,
                 paymentStatus,
                 profile: {
@@ -94,20 +94,21 @@ class Subscription extends Component {
                 this.setState((state) => ({
                   ...state,
                   paymentStatus: "",
+                  loading: false,
                 }));
               }, 5000);
               return;
             }
             axios
               .get(
-                `https://backendapp.getinsightiq.com/api/v1/surveys/user/default-payment-method/${_id}`
+                `https://stagingapp.murmurcars.com/api/v1/surveys/customer/default-payment-method/${_id}`
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
 
                 this.setState((state) => ({
                   ...state,
-                  loading: false,
+                 
                   subscriptions,
                   paymentStatus,
                   stripeCustomerId,
@@ -130,6 +131,7 @@ class Subscription extends Component {
                   this.setState((state) => ({
                     ...state,
                     paymentStatus: "",
+                     loading: false,
                   }));
                 }, 5000);
               })
@@ -237,7 +239,7 @@ class Subscription extends Component {
                     to={`/`}
                     className={`${classes.navbar_btn} ${classes.main}`}
                   >
-                    Main
+                    Home
                   </Link>
                 </div>
                 <div className={classes.button_containers}>
@@ -254,7 +256,7 @@ class Subscription extends Component {
             </div>
             <div className={classes.dash_relative}>
               <div className={classes.search_box_flex_end}>
-                <Profile scope={"survey"} />
+                <Profile scope='global' />
               </div>
             </div>
           </header>
@@ -324,7 +326,7 @@ class Subscription extends Component {
                             loading: true
                           }))
                           axios.delete(
-                            `https://backendapp.getinsightiq.com/api/v1/surveys/user/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
+                            `https://stagingapp.murmurcars.com/api/v1/surveys/customer/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
                           ).then(response => {
                             this.setState(state => ({
                               ...state,
@@ -376,7 +378,7 @@ class Subscription extends Component {
                             ...state,
                             subscription: {
                               package: subscription.package,
-                              priceId: subscription.priceId,
+                              priceId: subscription.priceTestId,
                             },
                             upgradeSubscriptionModal:
                               selectedPackageSize > subscribedPackageSize, //if selected package more expensive then true and upgrade modal popsup
@@ -390,7 +392,7 @@ class Subscription extends Component {
                           ...state,
                           subscription: {
                             package: subscription.package,
-                            priceId: subscription.priceId,
+                            priceId: subscription.priceTestId,
                           },
                           selectPaymentMethodModal: true,
                         }));
@@ -530,7 +532,7 @@ class Subscription extends Component {
                 }));
                 try {
                   const customer = await axios.post(
-                    "https://backendapp.getinsightiq.com/api/v1/surveys/user/update-customer",
+                    "https://stagingapp.murmurcars.com/api/v1/surveys/customer/update-customer",
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
@@ -542,7 +544,7 @@ class Subscription extends Component {
                     //if already subscribed and want to upgrade or downgrade package
 
                     response = await axios.post(
-                      "https://backendapp.getinsightiq.com/api/v1/surveys/user/change-subscription",
+                      "https://stagingapp.murmurcars.com/api/v1/surveys/customer/change-subscription",
                       {
                         user_id: profile?.id,
                         subscriptionId,
@@ -573,7 +575,7 @@ class Subscription extends Component {
                   } else {
                     //creating new subscription
                     response = await axios.post(
-                      "https://backendapp.getinsightiq.com/api/v1/surveys/user/create-subscription",
+                      "https://stagingapp.murmurcars.com/api/v1/surveys/customer/create-subscription",
                       {
                         user_id: profile?.id,
                         customerId: this.state.stripeCustomerId,

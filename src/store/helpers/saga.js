@@ -13,8 +13,8 @@ function* loginUser({ payload: { profile, history } }) {
   try {
     const response = yield call(
       queryForEmail,
-      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
-      //`http://localhost:4000/api/v1/surveys/customers/checkEmail`,
+      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`,
+      //`https://stagingapp.murmurcars.com/api/v1/surveys/customers/checkEmail`,
       {
         email: profile.email
       }

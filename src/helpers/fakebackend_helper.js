@@ -161,6 +161,7 @@ const get_survey = (url) => {
         researcherContacts,
         research,
         paid,
+        hasAwsReports,
         _id
       } = survey;
 
@@ -185,6 +186,7 @@ const get_survey = (url) => {
         research,
         paid,
         researcherContacts,
+        hasAwsReports,
         _id
       };
   

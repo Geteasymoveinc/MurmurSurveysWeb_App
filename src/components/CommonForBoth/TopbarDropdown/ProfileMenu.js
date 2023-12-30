@@ -47,7 +47,7 @@ class ProfileMenu extends Component {
       image = new Image();
       image.src = url;
       image.name = url.split(
-        "https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/"
+        "https://stagingapp.murmurcars.com/advertisers/users/profilePhoto/"
       )[1];
     }
     this.setState({
@@ -70,16 +70,12 @@ class ProfileMenu extends Component {
             className={`${
               this.props.scope === "global"
                 ? classes.search_profil
-                : this.props.scope === "survey"
-                ? classes.search_profil
                 : classes.profil_cover
             }`}
           >
             <img
               className={`${
                 this.props.scope === "global"
-                  ? classes.profil_img
-                  : this.props.scope === "survey"
                   ? classes.profil_img
                   : classes.profil_cover_img
               }`}
@@ -106,13 +102,13 @@ class ProfileMenu extends Component {
               <button
                 className="dropdown-item p-0"
                 onClick={() => {
-                  this.props.history.push("/");
-                  setTimeout(() => this.props.history.replace("/surveys"), 100); //without this component does not get mounted if called from child path
+               
+            this.props.history.replace("/surveys")
                 }}
               >
                 {" "}
                 <i className="bx bx-wallet font-size-16 align-middle mr-1"></i>{" "}
-                My Surveys
+                Surveys
               </button>
             </DropdownItem>
 

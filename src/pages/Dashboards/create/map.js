@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
 import {
   Map,
@@ -6,11 +6,11 @@ import {
   Marker,
   Polygon,
   InfoWindow,
-} from "google-maps-react";
+} from 'google-maps-react';
 
-import googleMapStyles from "../../../assets/google/google-styles";
+import googleMapStyles from '../../../assets/google/google-styles';
 
-import Geocode from "react-geocode";
+import Geocode from 'react-geocode';
 
 const GOOGLE_MAP_KEY = process.env.REACT_APP_GOOGLEMAPSKEY;
 Geocode.setApiKey(GOOGLE_MAP_KEY);
@@ -81,16 +81,14 @@ class GoogleMap extends Component {
         keyboardShortcuts={false}
         //onDragend={(coord) => this.centerMoved(coord)}
       >
-        {marker.position ? 
-        
-              <Marker
-                name={marker.name}
-                position={marker.position}
-                icon={marker.image}
-                // onMouseover={this.onMarkerClick}
-              />
-            
-          : null}
+        {marker.position ? (
+          <Marker
+            name={marker.name}
+            position={marker.position}
+            icon={marker.image}
+            // onMouseover={this.onMarkerClick}
+          />
+        ) : null}
         <InfoWindow
           marker={this.state.activeMarker}
           onClose={this.onInfoWindowClose}

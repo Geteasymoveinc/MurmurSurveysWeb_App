@@ -1,5 +1,8 @@
 .flexbox.flexbox_2 {
-
+  background-color: white;
+  margin-top: 20px;
+  max-width: 90%;
+  margin-inline: auto;
 
   .rows.rows_2 {
     display: flex;
@@ -16,6 +19,7 @@
         width: 90%;
        margin-top: 30px;
        font-size: 15px;
+   
         span{
           color: #7356c0;
         
@@ -52,8 +56,18 @@
         margin-block: 30px;
       }
     }
-  }
 
+  }
+  button{
+    background-color: transparent;
+    color: #7356c0;
+    outline: none;
+    border: transparent;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: right;
+    margin: 30px 15px 15px 25px;
+  }
   .no_block_shadow {
     display: flex;
     flex-direction: column;

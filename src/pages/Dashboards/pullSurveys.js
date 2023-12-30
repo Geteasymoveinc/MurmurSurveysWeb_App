@@ -22,7 +22,7 @@ class PullSurveys extends Component {
   toggleDeleteSurvey = (id) => {
     axios
       .delete(
-        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-survey/${id}`,
+        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-survey/${id}`,
       )
       .then(() => {
         window.location.reload();
@@ -37,7 +37,7 @@ class PullSurveys extends Component {
 
     axios
       .get(
-        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/fetch-surveys/${user_id}`,
+        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/fetch-surveys/${user_id}`,
       )
       .then((response) => {
         const { surveys: surveys_data } = response.data;
@@ -182,11 +182,11 @@ class PullSurveys extends Component {
               className={`${
                 survey.paid
                   ? classes.cads_active_dot
-                  : classes.cads_deactive_dot
+                  : survey.payment === 'free' ? null :  classes.cads_deactive_dot
               }`}
             >
               <span className={classes.cads_dot}></span>{' '}
-              {`${survey.paid ? 'Paid' : 'Not paid'}`}
+              {`${survey.paid ? 'Paid' : survey.payment === 'free' ? '' :  'Not paid'}`}
             </span>
           </td>
           <td className={classes.cads_td}>
@@ -242,7 +242,7 @@ class PullSurveys extends Component {
           </td>
           <td className={classes.cads_td}>
             <Link
-              to={`/surveys/update-survey?survey_id=${survey._id}`}
+              to={`/surveys/view-survey?survey_id=${survey._id}`}
               className={classes.details_link}
               onClick={() => this.props.toggleToEditAndViewMode()}
             >
@@ -271,7 +271,7 @@ class PullSurveys extends Component {
 
     axios
       .delete(
-        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`,
+        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`,
       )
       .then(() => {
         window.location.reload();

@@ -28,15 +28,15 @@ const initial_surveys = {
   },
   target_audience: {
     gender: "Both",
-    age: "18-25",
-    location: "",
-    country: "USA",
-    city: "Chicago",
-    interest: "",
+    age: "all",
+    location: "all",
+    country: "all",
+    city: "all",
+    interest: "all",
     income: { min: 300, max: 3000 },
   },
   survey_active: false,
-  survey_specific: true,
+  survey_specific: false,
   //country: 'US',
   //paid: false,
   payment: '',
@@ -61,6 +61,7 @@ const initial_surveys = {
   loading: true,
   count: 0,
   paid: false,
+  hasAwsReports:false
 };
 
 const Survey = (state = initial_surveys, actions) => {
@@ -170,7 +171,7 @@ const Survey = (state = initial_surveys, actions) => {
           image_url: actions.payload.survey_image,
           image_name: actions.payload.survey_image
             ? actions.payload.survey_image.split(
-                "https://backendapp.getinsightiq.com/advertisers/surveys/"
+                "https://stagingapp.murmurcars.com/advertisers/surveys/"
               )[1]
             : null,
         },
@@ -183,6 +184,7 @@ const Survey = (state = initial_surveys, actions) => {
         researcherContacts: actions.payload.researcherContacts,
         paid: actions.payload.paid,
         loading: false,
+        hasAwsReports: actions.payload.hasAwsReports,
         count
       };
       break;
@@ -192,8 +194,6 @@ const Survey = (state = initial_surveys, actions) => {
         ...state,
         map: {
           address: actions.payload.address,
-          country: actions.payload.country,
-          city: actions.payload.city,
           center: actions.payload.center,
         },
         target_audience: {

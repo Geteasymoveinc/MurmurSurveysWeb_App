@@ -91,8 +91,7 @@
   }
   .chart-general {
     position: absolute;
-    left: 25%;
-    top: 25%;
+    left: 15%;
   }
   @media screen and (max-width: 1400px) {
     #chart1 .apexcharts-theme-light,

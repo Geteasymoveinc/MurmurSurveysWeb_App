@@ -27,8 +27,8 @@ function* forgetUser({ payload: { email, history } }) {
   
       const response = yield call(
         postForgetPwd,
-        "https://backendapp.getinsightiq.com/api/v1/surveys/customers/forgot-password",
-        //"http://localhost:4000/api/v1/surveys/customers/forgot-password",
+        "https://stagingapp.murmurcars.com/api/v1/surveys/customer/forgot-password",
+        //"https://stagingapp.murmurcars.com/api/v1/surveys/customers/forgot-password",
          {email}
       );
       if (response) {

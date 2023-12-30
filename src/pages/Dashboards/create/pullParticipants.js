@@ -129,7 +129,7 @@ class PullParticipants extends Component {
 
     axios
       .delete(
-        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/remove-participants/${list_of_ids}`
+        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/remove-participants/${list_of_ids}`
       )
       .then(() => {
         this.setState({

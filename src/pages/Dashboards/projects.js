@@ -21,7 +21,7 @@ class Projects extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      create_edit_survey: false,
+
       loading: true,
       user_id: "",
       company: "",
@@ -32,11 +32,10 @@ class Projects extends Component {
   }
 
   componentDidMount() {
-    const url = this.props.location.search; //search property of history props
-    const create_edit_survey = new URLSearchParams(url).get("survey_id");
+
     
     queryForEmail(
-      `https://backendapp.getinsightiq.com/api/v1/surveys/customers/checkEmail`,
+      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`,
       {
         email: sessionStorage.getItem("authUser")
       }
@@ -51,7 +50,7 @@ class Projects extends Component {
             user_id: _id,
             loading: false,
             //create_edit_survey_mode: true,
-            create_edit_survey,
+            
             subscription: null,
             company,
           });
@@ -60,7 +59,7 @@ class Projects extends Component {
         }
         
         axios
-          .get(`https://backendapp.getinsightiq.com/api/v1/surveys/user/subscriptions/${_id}`)
+          .get(`https://stagingapp.murmurcars.com/api/v1/surveys/customer/subscriptions/${_id}`)
           .then((response) => {
             const { subscriptions } = response.data;
 
@@ -77,7 +76,6 @@ class Projects extends Component {
               //create_edit_survey_mode: true,
               subscription: { paymentStatus, plan, discount },
               warningFeedback: paymentStatus === 'incomplete',
-              create_edit_survey,
               company,
             });
            
@@ -98,7 +96,6 @@ class Projects extends Component {
               user_id: _id,
               //create_edit_survey_mode: true,
               subscription: null,
-              create_edit_survey,
               company,
             })
           );
@@ -127,8 +124,9 @@ class Projects extends Component {
   };
 
   render() {
-    const { create_edit_survey, loading, user_id, warningFeedback } = this.state;
-
+    const {loading, user_id, warningFeedback } = this.state;
+    const url = this.props.location.search; //search property of history props
+    const create_edit_survey = new URLSearchParams(url).get("survey_id");
     return (
       <Fragment>
         {loading && (
@@ -166,7 +164,7 @@ class Projects extends Component {
                       to={`/`}
                       className={`${classes.navbar_btn} ${classes.main}`}
                     >
-                      Main
+                      Home
                     </Link>
                   </div>
                   <div className={classes.button_containers}>
@@ -182,7 +180,7 @@ class Projects extends Component {
               </div>
               <div className={classes.dash_relative}>
                 <div className={classes.search_box_flex_end}>
-                  <Profile scope={"survey"} />
+                  <Profile scope="global" />
                 </div>
               </div>
             </header>
@@ -240,7 +238,7 @@ class Projects extends Component {
         ) : null}
 
         <Switch>
-          <Route path="/surveys/update-survey">
+          <Route path="/surveys/view-survey">
             <Survey
               survey={this.props.survey}
               user_id={user_id}
@@ -286,7 +284,8 @@ const mapPropsToState = (state) => {
     count,
     _id,
     researcherContacts,
-    paid
+    paid,
+    hasAwsReports
   } = state.Survey;
 
   return {
@@ -313,7 +312,8 @@ const mapPropsToState = (state) => {
       response,
       _id,
       researcherContacts,
-      paid
+      paid,
+      hasAwsReports
     },
     ...state.Layout,
   };
