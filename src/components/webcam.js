@@ -1,15 +1,14 @@
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 
-import Webcam from "react-webcam";
+import Webcam from 'react-webcam';
 
-import classes from "../assets/css/surveys/webcam.module.scss";
-import Play from "../assets/images/play-video.png";
-
+import classes from '../assets/css/surveys/webcam.module.scss';
+import Play from '../assets/images/play-video.png';
 
 function pad(val) {
-  var valString = val + "";
+  var valString = val + '';
   if (valString.length < 2) {
-    return "0" + valString;
+    return '0' + valString;
   } else {
     return valString;
   }
@@ -17,7 +16,8 @@ function pad(val) {
 
 let totalSeconds = 0;
 
-function WebcamStreamCapture({uploadVideo}) {
+function WebcamStreamCapture({ uploadVideo, exitWebcam }) {
+  const [availableVideoInput, toggleVideoInputDeviceAvailable] =useState(false)
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const [capturing, setCapturing] = useState(false);
@@ -25,23 +25,55 @@ function WebcamStreamCapture({uploadVideo}) {
 
   const [previewVideo, setPreviewVideo] = useState(null);
   const [playRecordedVideoState, setPlayRecordedVideoSsate] = useState(false);
-  const [time, setTime] = useState("00:00:00");
+  const [time, setTime] = useState('00:00:00');
+
+  const handleDevices = React.useCallback(
+    mediaDevices => {
+
+   
+      for(let device of mediaDevices){
+        if(device.kind === 'videoinput'){
+         // toggleVideoInputDeviceAvailable(true)
+      
+        }
+      }
+
+        if(!availableVideoInput){
+          exit()
+        }
+
+      
+    },
+    []
+  );
+  useEffect(
+    () => {
+      navigator.mediaDevices.enumerateDevices().then(
+        handleDevices
+      );
+
+  
+    },
+    []
+  );
+
 
   useEffect(() => {
+    
     if (recordedChunks.length && !capturing) {
       //const video = document.getElementById("preview");
 
       const blob = new Blob(recordedChunks, {
-        type: "video/webm",
+        type: 'video/webm',
       });
 
-      //const url = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(blob);
 
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onload = (event) => {
         setPreviewVideo(event.target.result);
-        //setRecordedChunks([]);
+        setRecordedChunks([]);
       };
     }
   }, [capturing, recordedChunks]);
@@ -56,7 +88,7 @@ function WebcamStreamCapture({uploadVideo}) {
 
         //let normalDate = new Date(sec).toLocaleString('en-GB',{timeZone:'UTC'})
 
-        setTime(hoursLabel + ":" + minutesLabel + ":" + secondsLabel);
+        setTime(hoursLabel + ':' + minutesLabel + ':' + secondsLabel);
       }, 1000);
     }
     return function cleanup() {
@@ -64,17 +96,16 @@ function WebcamStreamCapture({uploadVideo}) {
     };
   });
 
- 
-
   const handleStartCaptureClick = useCallback(() => {
     setCapturing(true);
     setPreviewVideo(null);
+    setPlayRecordedVideoSsate(false);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: "video/webm",
+      mimeType: 'video/webm',
     });
     mediaRecorderRef.current.addEventListener(
-      "dataavailable",
-      handleDataAvailable
+      'dataavailable',
+      handleDataAvailable,
     );
     mediaRecorderRef.current.start();
   }, [webcamRef, setCapturing, mediaRecorderRef]);
@@ -85,61 +116,67 @@ function WebcamStreamCapture({uploadVideo}) {
         setRecordedChunks((prev) => prev.concat(data));
       }
     },
-    [setRecordedChunks]
+    [setRecordedChunks],
   );
 
   const handleStopCaptureClick = useCallback(() => {
     mediaRecorderRef.current.stop();
 
     setCapturing(false);
-    setTime("00:00:00");
+    setTime('00:00:00');
     totalSeconds = 0;
   }, [mediaRecorderRef, webcamRef, setCapturing]);
 
   const handleUpload = useCallback(() => {
     if (previewVideo) {
       const blob = new Blob(recordedChunks, {
-        type: "video/webm",
+        type: 'video/webm',
       });
 
-        uploadVideo(blob,previewVideo)
-        setRecordedChunks([])
+      uploadVideo(blob, previewVideo);
+      setRecordedChunks([]);
     }
   }, [previewVideo]);
 
   const playVideoOnClick = () => {
-    const video = document.getElementById("preview-video");
+    const video = document.getElementById('preview-video');
     setPlayRecordedVideoSsate(true);
     video.play();
   };
 
   const stopPLayingVideo = () => {
-    const video = document.getElementById("preview-video");
+    const video = document.getElementById('preview-video');
     setPlayRecordedVideoSsate(false);
     video.pause();
   };
 
+  const exit = () =>  exitWebcam()
+
   return (
     <div className={classes.webcam}>
-      <div className={classes["webcam__video-stream"]}>
+      <div className={classes['webcam__video-stream']}>
         <div
           className={`${classes.webcam__camera} ${
             capturing || !previewVideo
-              ? classes["webcam__camera--active"]
+              ? classes['webcam__camera--active']
               : null
           }`}
         >
-          <Webcam audio={true} ref={webcamRef} muted={true} />
+          <Webcam
+            audio={true}
+            ref={webcamRef}
+            muted={true}
+            videoConstraints={{
+              facingMode: 'user',
+            }}
+          />
         </div>
         {!capturing && previewVideo ? (
           <video
-            className={`${classes["webcam__foreground"]} ${
-              previewVideo && !capturing
-                ? classes["webcam__foreground--active"]
-                : null
-            }`}
+            className={`${classes['webcam__foreground']}`}
             id="preview-video"
-            onEnded={() =>  setPlayRecordedVideoSsate(false)}
+            onEnded={() => setPlayRecordedVideoSsate(false)}
+            key={previewVideo}
           >
             <source src={previewVideo} type="video/webm" />
           </video>
@@ -152,7 +189,7 @@ function WebcamStreamCapture({uploadVideo}) {
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className={`${classes["webcam__foreground-svg"]}`}
+            className={`${classes['webcam__foreground-svg']}`}
             onClick={stopPLayingVideo}
           >
             <path
@@ -176,17 +213,17 @@ function WebcamStreamCapture({uploadVideo}) {
           <img
             src={Play}
             alt=""
-            className={`${classes["webcam__foreground-img"]}`}
+            className={`${classes['webcam__foreground-img']}`}
             onClick={playVideoOnClick}
           />
         ) : null}
       </div>
-      {capturing ? <p className={classes["webcam__timer"]}> {time}</p> : null}
-      <div className={classes["webcam__ctrl-btns"]}>
+      {capturing ? <p className={classes['webcam__timer']}> {time}</p> : null}
+      <div className={classes['webcam__ctrl-btns']}>
         {capturing ? (
           <button
             onClick={handleStopCaptureClick}
-            className={classes["webcam__stop-recording"]}
+            className={classes['webcam__stop-recording']}
           >
             <svg
               width="25"
@@ -208,20 +245,20 @@ function WebcamStreamCapture({uploadVideo}) {
             </svg>
             Stop recording
           </button>
-        ) : (
+        ) : availableVideoInput ? (
           <button
             onClick={handleStartCaptureClick}
-            className={`${classes["webcam__record-btn"]} ${
-              previewVideo ? classes["webcam__record-btn--new-record"] : null
+            className={`${classes['webcam__record-btn']} ${
+              previewVideo ? classes['webcam__record-btn--new-record'] : null
             }`}
           >
-            {previewVideo ? "Record again" : "Record"}
+            {previewVideo ? 'Record again' : 'Record'}
           </button>
-        )}
+        ) : null}
 
         {previewVideo && !capturing ? (
           <button onClick={handleUpload} className={classes.webcam__upload}>
-            Upload{" "}
+            Upload{' '}
             <svg
               width="25"
               height="24"

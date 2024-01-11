@@ -22,7 +22,7 @@ class PullSurveys extends Component {
   toggleDeleteSurvey = (id) => {
     axios
       .delete(
-        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-survey/${id}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-survey/${id}`,
       )
       .then(() => {
         window.location.reload();
@@ -37,9 +37,10 @@ class PullSurveys extends Component {
 
     axios
       .get(
-        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/fetch-surveys/${user_id}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/fetch-surveys/${user_id}`,
       )
       .then((response) => {
+
         const { surveys: surveys_data } = response.data;
         for (let survey of surveys_data) {
           survey.checked = false;
@@ -271,7 +272,7 @@ class PullSurveys extends Component {
 
     axios
       .delete(
-        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-multiple-surveys/${list_of_ids}`,
       )
       .then(() => {
         window.location.reload();

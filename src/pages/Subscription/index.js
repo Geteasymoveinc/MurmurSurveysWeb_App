@@ -54,7 +54,7 @@ class Subscription extends Component {
   
     window.scrollTo({ top: 0, left: 0 });
     queryForEmail(
-      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`, //to get customer profile
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/checkEmail`, //to get customer profile
       {
         email: sessionStorage.getItem("authUser")
       }
@@ -65,7 +65,7 @@ class Subscription extends Component {
 
         axios
           .get(
-            `https://stagingapp.murmurcars.com/api/v1/surveys/customer/subscriptions/${_id}`
+            `https://backendapp.getinsightiq.com/api/v1/surveys/customer/subscriptions/${_id}`
           )
           .then((response) => {
 
@@ -101,7 +101,7 @@ class Subscription extends Component {
             }
             axios
               .get(
-                `https://stagingapp.murmurcars.com/api/v1/surveys/customer/default-payment-method/${_id}`
+                `https://backendapp.getinsightiq.com/api/v1/surveys/customer/default-payment-method/${_id}`
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
@@ -326,7 +326,7 @@ class Subscription extends Component {
                             loading: true
                           }))
                           axios.delete(
-                            `https://stagingapp.murmurcars.com/api/v1/surveys/customer/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
+                            `https://backendapp.getinsightiq.com/api/v1/surveys/customer/customer/${profile?.id}/cancel-subscription/${subscriptionId}`
                           ).then(response => {
                             this.setState(state => ({
                               ...state,
@@ -532,7 +532,7 @@ class Subscription extends Component {
                 }));
                 try {
                   const customer = await axios.post(
-                    "https://stagingapp.murmurcars.com/api/v1/surveys/customer/update-customer",
+                    "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
@@ -544,7 +544,7 @@ class Subscription extends Component {
                     //if already subscribed and want to upgrade or downgrade package
 
                     response = await axios.post(
-                      "https://stagingapp.murmurcars.com/api/v1/surveys/customer/change-subscription",
+                      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/change-subscription",
                       {
                         user_id: profile?.id,
                         subscriptionId,
@@ -575,7 +575,7 @@ class Subscription extends Component {
                   } else {
                     //creating new subscription
                     response = await axios.post(
-                      "https://stagingapp.murmurcars.com/api/v1/surveys/customer/create-subscription",
+                      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-subscription",
                       {
                         user_id: profile?.id,
                         customerId: this.state.stripeCustomerId,

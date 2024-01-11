@@ -128,7 +128,7 @@ class Settings extends Component {
         if (update === 'profile_photo') {
           formData.append(
             'profilePhoto',
-            `https://stagingapp.murmurcars.com/advertisers/users/profilePhoto/${updates[update]}`,
+            `https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/${updates[update]}`,
           );
           continue;
         }
@@ -140,7 +140,7 @@ class Settings extends Component {
       }
 
       axios({
-        url: `https://stagingapp.murmurcars.com/api/v1/surveys/customer/update/${this.state._id}`,
+        url: `https://backendapp.getinsightiq.com/api/v1/surveys/customer/update/${this.state._id}`,
         method: 'PUT',
         data: formData,
       })
@@ -160,7 +160,7 @@ class Settings extends Component {
   componentDidMount() {
     this.setState({ ...this.state, loading: true });
     queryForEmail(
-      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/checkEmail`,
       {
         email: this.state.email
       },
@@ -183,7 +183,7 @@ class Settings extends Component {
           loading: false,
           profilePhoto: data.profilePhoto
             ? data.profilePhoto.split(
-                'https://stagingapp.murmurcars.com/advertisers/users/profilePhoto/',
+                'https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/',
               )[1]
             : null,
         });

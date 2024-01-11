@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom';
 
 function SuccessFeedback({ feedback, showFeedback }) {
   return ReactDOM.createPortal(
     <div
       className={`feedback__success  ${
-        showFeedback ? "feedback__success--show" : "feedback__success--hide"
+        showFeedback ? 'feedback__success--show' : 'feedback__success--hide'
       }`}
     >
       <div className="d-flex align-items-center">
@@ -44,15 +44,15 @@ function SuccessFeedback({ feedback, showFeedback }) {
         />
       </svg>
     </div>,
-    document.getElementById("feedback")
+    document.getElementById('feedback'),
   );
 }
 
-function ErrorFeedback({ showFeedback }) {
+function ErrorFeedback({ showFeedback, feedback }) {
   return ReactDOM.createPortal(
     <div
       className={`feedback__error  ${
-        showFeedback ? "feedback__error--show" : "feedback__error--hide"
+        showFeedback ? 'feedback__error--show' : 'feedback__error--hide'
       }`}
     >
       <div className="d-flex align-items-center">
@@ -73,7 +73,7 @@ function ErrorFeedback({ showFeedback }) {
           />
         </svg>
 
-        <p>Something went wrong</p>
+        <p>{feedback ? feedback : 'Something went wrong'}</p>
       </div>
       <svg
         width="16"
@@ -90,7 +90,7 @@ function ErrorFeedback({ showFeedback }) {
         />
       </svg>
     </div>,
-    document.getElementById("feedback")
+    document.getElementById('feedback'),
   );
 }
 
@@ -98,7 +98,7 @@ function WarningFeedback({ showFeedback, feedback }) {
   return ReactDOM.createPortal(
     <div
       className={`feedback__warning  ${
-        showFeedback ? "feedback__warning--show" : "feedback__warning--hide"
+        showFeedback ? 'feedback__warning--show' : 'feedback__warning--hide'
       }`}
     >
       <div className="d-flex align-items-center">
@@ -148,7 +148,7 @@ function WarningFeedback({ showFeedback, feedback }) {
         />
       </svg>
     </div>,
-    document.getElementById("feedback")
+    document.getElementById('feedback'),
   );
 }
 

@@ -21,6 +21,7 @@ class SurveyAWSReport extends Component {
   }
 
   componentDidMount() {
+
     this.setState((state) => {
       return {
         ...state,
@@ -41,7 +42,7 @@ class SurveyAWSReport extends Component {
     }
 
     axios
-      .get(`https://stagingapp.murmurcars.com/api/v1/aws-recognition/${id}`)
+      .get(`https://backendapp.getinsightiq.com/api/v1/aws-recognition/${id}`)
       .then((response) => {
         if (response.status !== 200) {
           throw Error();

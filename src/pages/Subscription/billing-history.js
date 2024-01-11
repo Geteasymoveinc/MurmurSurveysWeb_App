@@ -51,7 +51,7 @@ class BillingHistory extends Component {
   toggleDeleteBilling = (id) => {
     axios
       .delete(
-        `https://stagingapp.murmurcars.com/api/v1/surveys/customer/delete-billing/${id}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/customer/delete-billing/${id}`,
       )
       .then(() => {
         window.location.reload();
@@ -64,9 +64,9 @@ class BillingHistory extends Component {
 
   componentDidMount() {
     queryForEmail(
-      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`, //to get customer profile
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/checkEmail`, //to get customer profile
       {
-        email: sessionStorage.getItem('authUser')
+        email: sessionStorage.getItem('authUser'),
       },
     )
       .then((user) => {
@@ -75,7 +75,7 @@ class BillingHistory extends Component {
 
         axios
           .get(
-            `https://stagingapp.murmurcars.com/api/v1/surveys/customer/billing-history/${_id}`, //to get billing history and customer stripe id
+            `https://backendapp.getinsightiq.com/api/v1/surveys/customer/billing-history/${_id}`, //to get billing history and customer stripe id
           )
           .then((response) => {
             const { invoices, stripeCustomerId, plan } = response.data;
@@ -84,7 +84,7 @@ class BillingHistory extends Component {
             }
             axios
               .get(
-                `https://stagingapp.murmurcars.com/api/v1/surveys/customer/default-payment-method/${_id}`,
+                `https://backendapp.getinsightiq.com/api/v1/surveys/customer/default-payment-method/${_id}`,
               ) //fetch default payment method
               .then((response) => {
                 const { paymentMethod } = response.data;
@@ -318,7 +318,7 @@ class BillingHistory extends Component {
 
     axios
       .delete(
-        `https://stagingapp.murmurcars.com/api/v1/surveys/customer/delete-multiple-billings/${list_of_ids}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/customer/delete-multiple-billings/${list_of_ids}`,
       )
       .then(() => {
         window.location.reload();
@@ -340,19 +340,19 @@ class BillingHistory extends Component {
 
     let cardImage = '';
 
-    if (!loading && defaultPaymentMethod.card !== undefined) {
+    if (!loading && defaultPaymentMethod?.card !== undefined) {
       cardImage =
-        defaultPaymentMethod.card.brand === 'visa'
+        defaultPaymentMethod?.card.brand === 'visa'
           ? Visa
-          : defaultPaymentMethod.card.brand === 'mastercard'
+          : defaultPaymentMethod?.card.brand === 'mastercard'
           ? MasterCard
           : AmericanExpress;
 
       if (this.props.layoutTheme === 'dark') {
         cardImage =
-          defaultPaymentMethod.card.brand === 'visa'
+          defaultPaymentMethod?.card.brand === 'visa'
             ? VisaDark
-            : defaultPaymentMethod.card.brand === 'mastercard'
+            : defaultPaymentMethod?.card.brand === 'mastercard'
             ? MasterCardDark
             : AmericanExpressDark;
       }
@@ -406,12 +406,11 @@ class BillingHistory extends Component {
                     Home
                   </Link>
                 </div>
-       
               </div>
             </div>
             <div className={classes.dash_relative}>
               <div className={classes.search_box_flex_end}>
-                <Profile scope='global' />
+                <Profile scope="global" />
               </div>
             </div>
           </header>
@@ -468,7 +467,7 @@ class BillingHistory extends Component {
 
             <ErrorFeedback showFeedback={this.state.changeDefaultCardError} />
 
-            {defaultPaymentMethod.card !== undefined ? (
+            {defaultPaymentMethod?.card !== undefined ? (
               <div
                 className={classes.create_ads}
                 style={{ height: '78px', padding: 0, width: '90%' }}
@@ -486,11 +485,11 @@ class BillingHistory extends Component {
                       }
                     >
                       <span>
-                        **** **** **** {defaultPaymentMethod.card.last4}
+                        **** **** **** {defaultPaymentMethod?.card.last4}
                       </span>
                       <span>
-                        Expiry date: {defaultPaymentMethod.card.exp_month}/
-                        {defaultPaymentMethod.card.exp_year}
+                        Expiry date: {defaultPaymentMethod?.card.exp_month}/
+                        {defaultPaymentMethod?.card.exp_year}
                       </span>
                     </div>
                     <button
@@ -507,8 +506,29 @@ class BillingHistory extends Component {
                   </div>
                 </div>
               </div>
-            ) : null}
-            <div className={classes.create_ads} style={{width: '90%'}}>
+            ) : (
+              <div
+                className={classes.create_ads}
+                style={{ height: '78px', padding: 0, width: '90%' }}
+              >
+                <div className={classes['default-payment-method']}>
+                  <div className={classes['default-payment-method__card']}>
+                    <button
+                      onClick={() => {
+                        window.scrollTo({ top: 0, left: 0 });
+                        this.setState((state) => ({
+                          ...state,
+                          changeDefaultPaymentMethodModal: true,
+                        }));
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className={classes.create_ads} style={{ width: '90%' }}>
               <div className={classes.ads_section}>
                 <div className={classes.cads_table}>
                   <div />
@@ -572,7 +592,7 @@ class BillingHistory extends Component {
                 if (submit && state) {
                   axios
                     .get(
-                      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/default-payment-method/${profile?.id}`,
+                      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/default-payment-method/${profile?.id}`,
                     ) //fetch default payment method
                     .then((response) => {
                       const { paymentMethod } = response.data;
@@ -654,7 +674,7 @@ class BillingHistory extends Component {
                 }));
                 try {
                   const customer = await axios.post(
-                    'https://stagingapp.murmurcars.com/api/v1/surveys/customer/update-customer',
+                    'https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer',
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
@@ -663,7 +683,7 @@ class BillingHistory extends Component {
                   );
                   axios
                     .get(
-                      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/default-payment-method/${profile?.id}`,
+                      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/default-payment-method/${profile?.id}`,
                     ) //fetch default payment method
                     .then((response) => {
                       const { paymentMethod } = response.data;
@@ -720,7 +740,7 @@ class BillingHistory extends Component {
               }
             }}
             layoutTheme={this.props.layoutTheme}
-            defaultPaymentMethod={this.state.defaultPaymentMethod.id}
+            defaultPaymentMethod={this.state.defaultPaymentMethod?.id}
             stripeCustomerId={this.state.stripeCustomerId}
             subscribe={false}
           />

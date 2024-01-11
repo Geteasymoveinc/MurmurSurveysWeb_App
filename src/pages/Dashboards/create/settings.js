@@ -18,8 +18,6 @@ import '../../../assets/css/antd/range-slider.scss';
 
 import { Slider } from 'antd';
 
-
-
 import Geocode from 'react-geocode';
 const GOOGLE_MAP_KEY = process.env.REACT_APP_GOOGLEMAPSKEY;
 Geocode.setApiKey(GOOGLE_MAP_KEY);
@@ -32,14 +30,14 @@ class SurveySettings extends Component {
     },
   };
 
-
   componentDidMount() {
+    
     const { country, city, location } = this.props.target_audience;
-
+  
     Geocode.fromAddress(
       `${country}, ${city}, ${location} ${
-        country === "USA" ? "zip" : "district"
-      }`
+        country === 'USA' ? 'zip' : 'district'
+      }`,
     ).then((response) => {
       const { lat, lng } = response.results[0].geometry.location;
 
@@ -47,37 +45,36 @@ class SurveySettings extends Component {
         lat,
         lng,
       };
-      let zoom = this.state.map.zoom
+      let zoom = this.state.map.zoom;
       let marker = {
         image: Location,
         position: center,
         name: location,
-      }
+      };
       if (country === 'all' && city === 'all') {
         zoom = 1;
-        marker = {}
+        marker = {};
       } else if (city === 'all') {
         zoom = 3;
       }
-  
 
       this.props.fetch_map_position(
         `${(country, city)}`,
-        country,
-        city,
-        center
+        center,
+        {}
       );
       this.setState((state) => ({
         ...state,
         map: {
           ...state.map,
           zoom,
-         marker
+          marker,
         },
       }));
-    });
+    }).catch(err => {})
   }
   componentDidUpdate(prevProps) {
+    
     const { center, address } = this.props.map;
     const { country, city } = this.props.target_audience;
 
@@ -92,23 +89,22 @@ class SurveySettings extends Component {
       image: Location,
       position: center,
       name: address,
-    }
+    };
 
     if (country === 'all' && city === 'all') {
       zoom = 1;
-      marker = {}
+      marker = {};
     } else if (city === 'all') {
       zoom = 3;
-    }else{
-      zoom=12
+    } else {
+      zoom = 12;
     }
 
-    
     this.setState((state) => ({
       ...state,
       map: {
         zoom,
-        marker
+        marker,
       },
     }));
   }
@@ -125,12 +121,8 @@ class SurveySettings extends Component {
 
     this.props.add_settings({
       active,
-      settings: {
-        ...this.props.target_audience,
-        country: this.props.target_audience.country,
-        city: this.props.target_audience.city,
-      },
       survey_specific: this.props.survey_specific,
+      settings: {}
     });
   };
 
@@ -151,9 +143,6 @@ class SurveySettings extends Component {
       active: this.props.active,
       survey_specific: this.props.survey_specific,
       settings: {
-        ...this.props.target_audience,
-        country: this.props.target_audience.country,
-        city: this.props.target_audience.city,
         [type]: value,
       },
     });
@@ -169,16 +158,6 @@ class SurveySettings extends Component {
         },
       },
     });*/
-    this.props.add_settings({
-      active: this.props.active,
-      survey_specific: this.props.survey_specific,
-      settings: {
-        ...this.props.target_audience,
-        country: this.props.target_audience.country,
-        city: this.props.target_audience.city,
-        location,
-      },
-    });
 
     this.selectLocationAsTarget(country, city, location);
   };
@@ -195,12 +174,9 @@ class SurveySettings extends Component {
           lat,
           lng,
         };
-        this.props.fetch_map_position(
-          `${(country, city)}`,
-          country,
-          city,
-          center,
-        );
+        this.props.fetch_map_position(`${(country, city)}`, center, {
+          location,
+        });
         this.setState((state) => ({
           ...state,
           map: {
@@ -217,17 +193,23 @@ class SurveySettings extends Component {
   };
 
   render() {
-    const { target_audience, active, survey_specific, supportedCountry } =
-      this.props;
-    const { age, gender, interest, income, country, city } = target_audience;
+    const {
+      target_audience,
+      active,
+      survey_specific,
+      supportedCountry,
+      layoutTheme,
+      map,
+    } = this.props;
+    const { age, gender, interest, income, country, city, location } =
+      target_audience;
     const { map: thisMap } = this.state;
+    const user_professions = Object.keys(supportedCountry.user_professions);
+    const districts = Object.keys(supportedCountry.districts);
 
+  
     return (
-      <div
-        className={`${classes.container_center} ${
-          classes[this.props.layoutTheme]
-        }`}
-      >
+      <div className={`${classes.container_center} ${classes[layoutTheme]}`}>
         <div
           className={`${classes.settings_container} ${classes.settings_container_top} `}
         >
@@ -274,30 +256,22 @@ class SurveySettings extends Component {
                   id="target"
                   checked={survey_specific}
                   onChange={(e) => {
-                    const active = e.target.checked;
+                    const targetSpecificAudience = e.target.checked;
 
                     const settings = {
-                      age: active ? 'all' : this.props.target_audience.age,
-                      gender: active
-                        ? 'Both'
-                        : this.props.target_audience.gender,
-                      location: active
-                        ? 'all'
-                        : this.props.target_audience.location,
-                      income: active
+                      age: !targetSpecificAudience ? 'all' : age,
+                      gender: !targetSpecificAudience ? 'Both' : gender,
+                      location: !targetSpecificAudience ? 'all' : location,
+                      income: !targetSpecificAudience
                         ? { min: 300, max: 3000 }
-                        : this.props.target_audience.income,
-                      interest: active
-                        ? 'all'
-                        : this.props.target_audience.interest,
-                      country: active
-                        ? 'all'
-                        : this.props.target_audience.country,
-                      city: active ? 'all' : this.props.target_audience.city,
+                        : income,
+                      interest: !targetSpecificAudience ? 'all' : interest,
+                      country: !targetSpecificAudience ? 'all' : country,
+                      city: !targetSpecificAudience ? 'all' : city,
                     };
                     this.props.add_settings({
                       active: this.props.active,
-                      survey_specific: active,
+                      survey_specific: targetSpecificAudience,
                       settings,
                     });
                   }}
@@ -313,9 +287,7 @@ class SurveySettings extends Component {
           <div className={classes.smaller_container}>
             <h5>Location (Zip):</h5>
             <div className={classes.map_container}>
-              <GoogleMap
-                state={{ ...thisMap, center: this.props.map.center }}
-              />
+              <GoogleMap state={{ ...thisMap, center: map.center }} />
               <div className={classes['map-custom-btns']}>
                 <button
                   style={{
@@ -401,25 +373,30 @@ class SurveySettings extends Component {
                     </g>
                   </svg>
                 </button>
-                {country === 'all' || city === 'all' ? null :<div
-                  className={`${classes.google_map_location_input} ${classes.google_map_location_select}`}
-                >
-                  <select
-                    name="step-aud-location"
-                    id="step-aud-location"
-                    className={classes.location_select}
-                    onChange={(e) =>
-                      this.getLocationForSurvey(country, city, e.target.value)
-                    }
+                {country === 'all' || city === 'all' ? null : (
+                  <div
+                    className={`${classes.google_map_location_input} ${classes.google_map_location_select}`}
                   >
-                    <option value="">Select</option>
-                    {Object.keys(supportedCountry.districts).map((el, i) => (
-                      <option key={i} value={el}>
-                        {el}
+                    <select
+                      name="step-aud-location"
+                      id="step-aud-location"
+                      className={classes.location_select}
+                      onChange={(e) =>
+                        this.getLocationForSurvey(country, city, e.target.value)
+                      }
+                    >
+                      <option value={location != 'all' ? location : ''}>
+                        {location != 'all' ? location : 'Select'}
                       </option>
-                    ))}
+                      {districts
+                        .filter((el) => el != location)
+                        .map((el, i) => (
+                          <option key={i} value={el}>
+                            {el}
+                          </option>
+                        ))}
 
-                    {/*{country === "Azerbaijan"
+                      {/*{country === "Azerbaijan"
                         ? [
                             { key: "Nizami", value: "nizami" },
                             { key: "Nasimi", value: "nasimi" },
@@ -501,14 +478,15 @@ class SurveySettings extends Component {
                                 </option>
                               );
                             })}*/}
-                    <option value="all">Select All</option>
-                  </select>
-                  <img
-                    src={Chevron_Down}
-                    alt="arrow"
-                    className={classes.details_edit_arrow}
-                  />
-                </div>}
+                      <option value="all">Select All</option>
+                    </select>
+                    <img
+                      src={Chevron_Down}
+                      alt="arrow"
+                      className={classes.details_edit_arrow}
+                    />
+                  </div>
+                )}
               </div>
             </div>
             {survey_specific && country ? (
@@ -586,7 +564,7 @@ class SurveySettings extends Component {
                     }
                   >
                     <option value={interest}>{interest}</option>
-                    {supportedCountry.user_professions.map((el, i) => (
+                    {user_professions.map((el, i) => (
                       <option key={i} value={el}>
                         {el}
                       </option>
@@ -651,10 +629,7 @@ class SurveySettings extends Component {
                       active,
                       survey_specific,
                       settings: {
-                        ...target_audience,
-                        country: this.props.target_audience.country,
-                        city: this.props.target_audience.city,
-                        income: { min: value[0], max: value[1] },
+                        income: { min: value[0], max: value[1] }
                       },
                     });
                   }}
@@ -725,11 +700,14 @@ class SurveySettings extends Component {
                         <input
                           type="text"
                           placeholder="(00) 000 00 00"
-                          defaultValue={this.props.researcherContacts.phone}
+                          defaultValue={this.props.researcherContacts.phone
+                            .split(`${supportedCountry.countryCode}`)
+                            .at(-1)}
                           className={classes.contacts__mobile}
                           onChange={(e) => {
                             const value =
-                              this.state.countryCode + e.target.value.trim();
+                              supportedCountry.countryCode +
+                              e.target.value.trim();
 
                             this.props.addResearchContactDetails(
                               'phone',

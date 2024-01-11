@@ -36,8 +36,8 @@ try{
 
     const response = yield call(
       postRegister,
-      "https://stagingapp.murmurcars.com/api/v1/surveys/customer/signup",
-      //"https://stagingapp.murmurcars.com/api/v1/surveys/customers/signup",
+      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/signup",
+      //"https://backendapp.getinsightiq.com/api/v1/surveys/customers/signup",
       registered_user
     );
   if(response.status === 204){

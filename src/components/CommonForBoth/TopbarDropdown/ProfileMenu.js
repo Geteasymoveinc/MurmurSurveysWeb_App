@@ -47,7 +47,7 @@ class ProfileMenu extends Component {
       image = new Image();
       image.src = url;
       image.name = url.split(
-        "https://stagingapp.murmurcars.com/advertisers/users/profilePhoto/"
+        "https://backendapp.getinsightiq.com/advertisers/users/profilePhoto/"
       )[1];
     }
     this.setState({

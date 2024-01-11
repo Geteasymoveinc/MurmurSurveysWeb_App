@@ -1,46 +1,46 @@
-import React from "react";
-import { Component, Fragment } from "react";
+import React from 'react';
+import { Component, Fragment } from 'react';
 
-import LogoWhiteTheme from "../../assets/images/LogoWhiteTheme.png";
-import classes from "../../assets/css/surveys/index.module.scss";
-import RecruitParticipants from "../../assets/images/recruit-participants.png";
-import UploadParticipants from "../../assets/images/upload-participants.png";
-import HiIcon from "../../assets/images/hi.svg";
-import ChatRoom from "../../assets/images/Chat Room.png";
-import StudyGroup2 from "../../assets/images/study-group-2.png";
-import Calendar from "../../assets/images/Calendar.png";
-import Checklist from "../../assets/images/Checklist.png";
-import ApplicationWindow from "../../assets/images/Application Window.png";
-import Phone from "../../assets/images/Phone.png";
-import PlaceMarker from "../../assets/images/Place Marker.png";
-import Survey from "../../assets/images/Survey.png";
-import avatar from "../../assets/images/avatar.png";
+import LogoWhiteTheme from '../../assets/images/LogoWhiteTheme.png';
+import classes from '../../assets/css/surveys/index.module.scss';
+import RecruitParticipants from '../../assets/images/recruit-participants.png';
+import UploadParticipants from '../../assets/images/upload-participants.png';
+import HiIcon from '../../assets/images/hi.svg';
+import ChatRoom from '../../assets/images/Chat Room.png';
+import StudyGroup2 from '../../assets/images/study-group-2.png';
+import Calendar from '../../assets/images/Calendar.png';
+import Checklist from '../../assets/images/Checklist.png';
+import ApplicationWindow from '../../assets/images/Application Window.png';
+import Phone from '../../assets/images/Phone.png';
+import PlaceMarker from '../../assets/images/Place Marker.png';
+import Survey from '../../assets/images/Survey.png';
+import avatar from '../../assets/images/avatar.png';
 
-import { connect } from "react-redux";
-import { Link, withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import { Link, withRouter } from 'react-router-dom';
 
-import Profile from "../../components/CommonForBoth/TopbarDropdown/ProfileMenu";
-import ParticipantsModal from "../../components/modals/upload-participants";
-import { ErrorFeedback, SuccessFeedback } from "../../components/feedbacks";
-import DownloadTemplate from "../../components/modals/download-template";
+import Profile from '../../components/CommonForBoth/TopbarDropdown/ProfileMenu';
+import ParticipantsModal from '../../components/modals/upload-participants';
+import { ErrorFeedback, SuccessFeedback } from '../../components/feedbacks';
+import DownloadTemplate from '../../components/modals/download-template';
 
-import { queryForEmail } from "../../helpers/fakebackend_helper";
+import { queryForEmail } from '../../helpers/fakebackend_helper';
 
-import axios from "axios";
+import axios from 'axios';
 
 class Surveys extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullName: "",
-      company: "",
-      profile: sessionStorage.getItem("profileImage") || avatar,
+      fullName: '',
+      company: '',
+      profile: sessionStorage.getItem('profileImage') || avatar,
       loading: true,
-      page: "main",
+      page: 'main',
       constructResearch: {
-        research: "",
-        targetUsersFrom: "",
-        researchConductedVia: "",
+        research: '',
+        targetUsersFrom: '',
+        researchConductedVia: '',
       },
       uploadParticipantsModalLoader: false,
       uploadParticipantsModal: false,
@@ -52,60 +52,104 @@ class Surveys extends Component {
 
   componentDidMount() {
     queryForEmail(
-      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/checkEmail`,
       {
-        email: sessionStorage.getItem("authUser")
-      }
+        email: sessionStorage.getItem('authUser'),
+      },
     )
       .then((user) => {
         const { fullName, company, _id, payment, subscription } = user.resp;
-        this.setState({
-          ...this.state,
-          fullName,
-          company,
-          id: _id,
-          //free: survey_payment.count > 0,
-          payment,
-          subscription,
-          loading: false,
-        });
+        if (subscription == null) {
+          this.setState(state => ({
+            ...state,
+            fullName,
+            company,
+            id: _id,
+            //free: survey_payment.count > 0,
+            payment,
+            subscription,
+            loading: false,
+          }));
+          return;
+        }
+
+        axios
+          .get(
+            `https://backendapp.getinsightiq.com/api/v1/surveys/customer/subscriptions/${_id}`,
+          )
+          .then((response) => {
+            const { subscriptions } = response.data;
+
+            const index = subscriptions.findIndex((el) => el.active);
+            const paymentStatus = subscriptions[index]?.paymentStatus;
+            const plan = subscriptions[index]?.package;
+            const discount = subscriptions[index].discount;
+
+            this.setState(state => ({
+              ...state,
+              subscription: { paymentStatus, plan, discount },
+              fullName,
+              company,
+              id: _id,
+              //free: survey_payment.count > 0,
+              payment,
+              loading: false,
+            }));
+          })
+          .catch((err) =>
+            this.setState(state => ({
+              ...state,
+              fullName,
+              company,
+              id: _id,
+              //free: survey_payment.count > 0,
+              payment,
+              subscription: null,
+              loading: false,
+            })),
+          );
       })
       .catch((err) =>
-        this.setState({
-          ...this.state,
+        this.setState(state => ({
+          ...state,
           loading: false,
-        })
+        }))
       );
   }
 
   toggleToCreateSurveyMode = () => {
     axios
       .post(
-        `https://stagingapp.murmurcars.com/api/v1/surveys/survey/publish-survey/${this.state.id}`,
+        `https://backendapp.getinsightiq.com/api/v1/surveys/survey/publish-survey/${this.state.id}`,
         {
           research: this.state.constructResearch.research,
           targetUsersFrom: this.state.constructResearch.targetUsersFrom,
           researchConductedVia:
             this.state.constructResearch.researchConductedVia,
-          payment: this.state.payment
-        }
+          payment: this.state.payment,
+          budget:
+            this.state.subscription != null &&
+            this.state.subscription.paymentStatus === 'active'
+              ? 25 - 25 * this.state.subscription.discount
+              : 25,
+        },
       )
       .then((response) => {
         this.props.history.push(
-          `/surveys/publish-survey?survey_id=${response.data.survey_id}`
+          `/surveys/publish-survey?survey_id=${response.data.survey_id}`,
         );
-        this.setState({
-          ...this.state,
-          create_edit_survey_mode: true,
-        });
+ 
       })
-      .catch((err) =>{});
+      .catch((err) => {});
   };
+
+
+
 
   enrollParticipants = (research) => {
     this.setState((state) => ({
       ...state,
-      page: "enroll-participants",
+      page: 'enroll-participants',
       constructResearch: {
         ...state.constructResearch,
         research,
@@ -114,7 +158,7 @@ class Surveys extends Component {
   };
 
   render() {
-    const { create_edit_survey_mode, loading } = this.state;
+    const {  loading } = this.state;
     return (
       <Fragment>
         {loading && (
@@ -129,10 +173,10 @@ class Surveys extends Component {
             </div>
           </div>
         )}
-        {!loading && !create_edit_survey_mode && (
+        {!loading  && (
           <div
             className={`${classes.dash_right}  ${
-              this.state.uploadParticipantsModal ? classes["blur-page"] : null
+              this.state.uploadParticipantsModal ? classes['blur-page'] : null
             }`}
           >
             <header className={classes.header}>
@@ -143,7 +187,7 @@ class Surveys extends Component {
               </div>
               <div className={classes.menu_self_flex}>
                 <div className={`${classes.menu_flex}`}>
-                  {" "}
+                  {' '}
                   <div className={classes.button_containers}>
                     <Link
                       to={`/`}
@@ -174,80 +218,78 @@ class Surveys extends Component {
               <div
                 className={classes.create_ads}
                 style={{
-                  background: "transparent",
-                  boxShadow: "none",
-                  width: "fit-content",
-                  marginLeft: "auto",
-                  marginRight: "auto",
+                  background: 'transparent',
+                  boxShadow: 'none',
+                  width: 'fit-content',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
                 }}
               >
-                {this.state.page === "studyGroup" ||
-                this.state.page === "studyConduct" ? null : (
+                {this.state.page === 'studyGroup' ||
+                this.state.page === 'studyConduct' ? null : (
                   <div className={classes.profile}>
                     <img src={this.state.profile} alt="profile image" />
                     <div className={classes.profile__subcontainer}>
                       <img src={HiIcon} alt="" />
                       <p>
-                        <span>Welcome</span> {this.state.fullName}{" "}
+                        <span>Welcome</span> {this.state.fullName}{' '}
                       </p>
                     </div>
                   </div>
                 )}
 
-                {this.state.page === "main" ? (
+                {this.state.page === 'main' ? (
                   <div className={classes.services}>
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                      
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mr-3"
-                            >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-3"
+                          >
+                            <path
+                              d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
+                              fill="#7F56D9"
+                            />
+                            <g opacity="0.4">
                               <path
-                                d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                                opacity="0.4"
+                                d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
                                 fill="#7F56D9"
                               />
                               <path
-                                d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                                opacity="0.4"
+                                d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
                                 fill="#7F56D9"
                               />
-                              <path
-                                d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
-                                fill="#7F56D9"
-                              />
-                              <g opacity="0.4">
-                                <path
-                                  opacity="0.4"
-                                  d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
-                                  fill="#7F56D9"
-                                />
-                                <path
-                                  opacity="0.4"
-                                  d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
-                                  fill="#7F56D9"
-                                />
-                              </g>
-                            </svg>
-              
+                            </g>
+                          </svg>
                           UX & Design
                         </span>
                         <button
-                          onClick={() => this.enrollParticipants("uiux-design")}
+                          onClick={() => this.enrollParticipants('uiux-design')}
                         >
-                          {this.props.layoutTheme === "light" ? (
+                          {this.props.layoutTheme === 'light' ? (
                             <svg
                               width="16"
                               height="16"
@@ -290,46 +332,44 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                    
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mr-3"
-                            >
-                              <path
-                                opacity="0.4"
-                                d="M21.3699 11.39V17.38C21.3699 20.14 19.1299 22.38 16.3699 22.38H7.62988C4.86988 22.38 2.62988 20.14 2.62988 17.38V11.46C3.38988 12.28 4.46988 12.75 5.63988 12.75C6.89988 12.75 8.10988 12.12 8.86988 11.11C9.54988 12.12 10.7099 12.75 11.9999 12.75C13.2799 12.75 14.4199 12.15 15.1099 11.15C15.8799 12.14 17.0699 12.75 18.3099 12.75C19.5199 12.75 20.6199 12.26 21.3699 11.39Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M14.9899 1.25H8.98985L8.24985 8.61C8.18985 9.29 8.28985 9.93 8.53985 10.51C9.11985 11.87 10.4799 12.75 11.9999 12.75C13.5399 12.75 14.8699 11.89 15.4699 10.52C15.6499 10.09 15.7599 9.59 15.7699 9.08V8.89L14.9899 1.25Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                opacity="0.6"
-                                d="M22.3598 8.27L22.0698 5.5C21.6498 2.48 20.2798 1.25 17.3498 1.25H13.5098L14.2498 8.75C14.2598 8.85 14.2698 8.96 14.2698 9.15C14.3298 9.67 14.4898 10.15 14.7298 10.58C15.4498 11.9 16.8498 12.75 18.3098 12.75C19.6398 12.75 20.8398 12.16 21.5898 11.12C22.1898 10.32 22.4598 9.31 22.3598 8.27Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                opacity="0.6"
-                                d="M6.59014 1.25C3.65014 1.25 2.29014 2.48 1.86014 5.53L1.59014 8.28C1.49014 9.35 1.78014 10.39 2.41014 11.2C3.17014 12.19 4.34014 12.75 5.64014 12.75C7.10014 12.75 8.50014 11.9 9.21014 10.6C9.47014 10.15 9.64014 9.63 9.69014 9.09L10.4701 1.26H6.59014V1.25Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M11.3501 16.66C10.0801 16.79 9.12012 17.87 9.12012 19.15V22.38H14.8701V19.5C14.8801 17.41 13.6501 16.42 11.3501 16.66Z"
-                                fill="#7F56D9"
-                              />
-                            </svg>
-                  
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-3"
+                          >
+                            <path
+                              opacity="0.4"
+                              d="M21.3699 11.39V17.38C21.3699 20.14 19.1299 22.38 16.3699 22.38H7.62988C4.86988 22.38 2.62988 20.14 2.62988 17.38V11.46C3.38988 12.28 4.46988 12.75 5.63988 12.75C6.89988 12.75 8.10988 12.12 8.86988 11.11C9.54988 12.12 10.7099 12.75 11.9999 12.75C13.2799 12.75 14.4199 12.15 15.1099 11.15C15.8799 12.14 17.0699 12.75 18.3099 12.75C19.5199 12.75 20.6199 12.26 21.3699 11.39Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M14.9899 1.25H8.98985L8.24985 8.61C8.18985 9.29 8.28985 9.93 8.53985 10.51C9.11985 11.87 10.4799 12.75 11.9999 12.75C13.5399 12.75 14.8699 11.89 15.4699 10.52C15.6499 10.09 15.7599 9.59 15.7699 9.08V8.89L14.9899 1.25Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              opacity="0.6"
+                              d="M22.3598 8.27L22.0698 5.5C21.6498 2.48 20.2798 1.25 17.3498 1.25H13.5098L14.2498 8.75C14.2598 8.85 14.2698 8.96 14.2698 9.15C14.3298 9.67 14.4898 10.15 14.7298 10.58C15.4498 11.9 16.8498 12.75 18.3098 12.75C19.6398 12.75 20.8398 12.16 21.5898 11.12C22.1898 10.32 22.4598 9.31 22.3598 8.27Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              opacity="0.6"
+                              d="M6.59014 1.25C3.65014 1.25 2.29014 2.48 1.86014 5.53L1.59014 8.28C1.49014 9.35 1.78014 10.39 2.41014 11.2C3.17014 12.19 4.34014 12.75 5.64014 12.75C7.10014 12.75 8.50014 11.9 9.21014 10.6C9.47014 10.15 9.64014 9.63 9.69014 9.09L10.4701 1.26H6.59014V1.25Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M11.3501 16.66C10.0801 16.79 9.12012 17.87 9.12012 19.15V22.38H14.8701V19.5C14.8801 17.41 13.6501 16.42 11.3501 16.66Z"
+                              fill="#7F56D9"
+                            />
+                          </svg>
                           Ecommerce
                         </span>
                         <button
-                          onClick={() => this.enrollParticipants("ecommerce")}
+                          onClick={() => this.enrollParticipants('ecommerce')}
                         >
-                          {this.props.layoutTheme === "light" ? (
+                          {this.props.layoutTheme === 'light' ? (
                             <svg
                               width="16"
                               height="16"
@@ -374,32 +414,30 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                      
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mr-3"
-                            >
-                              <path
-                                opacity="0.4"
-                                d="M20.95 14.55L18.28 17.22L17.22 18.28L14.55 20.95C13.15 22.35 10.85 22.35 9.45002 20.95L6.78001 18.28L5.72001 17.22L3.05 14.55C1.65 13.15 1.65 10.85 3.05 9.45002L5.72001 6.78001L6.78001 5.72001L9.45002 3.05C10.85 1.65 13.15 1.65 14.55 3.05L17.22 5.72001L18.28 6.78001L20.95 9.45002C22.35 10.85 22.35 13.15 20.95 14.55Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M13.0602 12L18.2802 17.22L17.2202 18.28L12.0002 13.06L6.78021 18.28L5.72021 17.22L10.9402 12L5.72021 6.77997L6.78021 5.71997L12.0002 10.94L17.2202 5.71997L18.2802 6.77997L13.0602 12Z"
-                                fill="#7F56D9"
-                              />
-                            </svg>
-                  
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-3"
+                          >
+                            <path
+                              opacity="0.4"
+                              d="M20.95 14.55L18.28 17.22L17.22 18.28L14.55 20.95C13.15 22.35 10.85 22.35 9.45002 20.95L6.78001 18.28L5.72001 17.22L3.05 14.55C1.65 13.15 1.65 10.85 3.05 9.45002L5.72001 6.78001L6.78001 5.72001L9.45002 3.05C10.85 1.65 13.15 1.65 14.55 3.05L17.22 5.72001L18.28 6.78001L20.95 9.45002C22.35 10.85 22.35 13.15 20.95 14.55Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M13.0602 12L18.2802 17.22L17.2202 18.28L12.0002 13.06L6.78021 18.28L5.72021 17.22L10.9402 12L5.72021 6.77997L6.78021 5.71997L12.0002 10.94L17.2202 5.71997L18.2802 6.77997L13.0602 12Z"
+                              fill="#7F56D9"
+                            />
+                          </svg>
                           Product
                         </span>
                         <button
-                          onClick={() => this.enrollParticipants("product")}
+                          onClick={() => this.enrollParticipants('product')}
                         >
-                          {this.props.layoutTheme === "light" ? (
+                          {this.props.layoutTheme === 'light' ? (
                             <svg
                               width="16"
                               height="16"
@@ -444,53 +482,51 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-                     
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mr-3"
-                            >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-3"
+                          >
+                            <path
+                              d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
+                              fill="#7F56D9"
+                            />
+                            <g opacity="0.4">
                               <path
-                                d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                                opacity="0.4"
+                                d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
                                 fill="#7F56D9"
                               />
                               <path
-                                d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                                opacity="0.4"
+                                d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
                                 fill="#7F56D9"
                               />
-                              <path
-                                d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
-                                fill="#7F56D9"
-                              />
-                              <g opacity="0.4">
-                                <path
-                                  opacity="0.4"
-                                  d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
-                                  fill="#7F56D9"
-                                />
-                                <path
-                                  opacity="0.4"
-                                  d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
-                                  fill="#7F56D9"
-                                />
-                              </g>
-                            </svg>
-                   
+                            </g>
+                          </svg>
                           Marketing Agencies
                         </span>
-                        <button onClick={() => this.enrollParticipants("hr")}>
-                          {this.props.layoutTheme === "light" ? (
+                        <button onClick={() => this.enrollParticipants('hr')}>
+                          {this.props.layoutTheme === 'light' ? (
                             <svg
                               width="16"
                               height="16"
@@ -535,55 +571,53 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-          
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mr-3"
-                            >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-3"
+                          >
+                            <path
+                              d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
+                              fill="#7F56D9"
+                            />
+                            <g opacity="0.4">
                               <path
-                                d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                                opacity="0.4"
+                                d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
                                 fill="#7F56D9"
                               />
                               <path
-                                d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                                opacity="0.4"
+                                d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
                                 fill="#7F56D9"
                               />
-                              <path
-                                d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
-                                fill="#7F56D9"
-                              />
-                              <g opacity="0.4">
-                                <path
-                                  opacity="0.4"
-                                  d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
-                                  fill="#7F56D9"
-                                />
-                                <path
-                                  opacity="0.4"
-                                  d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
-                                  fill="#7F56D9"
-                                />
-                              </g>
-                            </svg>
-         
+                            </g>
+                          </svg>
                           Marketing
                         </span>
                         <button
-                          onClick={() => this.enrollParticipants("marketing")}
+                          onClick={() => this.enrollParticipants('marketing')}
                         >
-                          {this.props.layoutTheme === "light" ? (
+                          {this.props.layoutTheme === 'light' ? (
                             <svg
                               width="16"
                               height="16"
@@ -627,55 +661,53 @@ class Surveys extends Component {
                     <div className={classes.services__service}>
                       <h5>
                         <span>
-               
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="mr-3"
-                            >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="mr-3"
+                          >
+                            <path
+                              d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
+                              fill="#7F56D9"
+                            />
+                            <path
+                              d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
+                              fill="#7F56D9"
+                            />
+                            <g opacity="0.4">
                               <path
-                                d="M3 9C4.10457 9 5 8.10457 5 7C5 5.89543 4.10457 5 3 5C1.89543 5 1 5.89543 1 7C1 8.10457 1.89543 9 3 9Z"
+                                opacity="0.4"
+                                d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
                                 fill="#7F56D9"
                               />
                               <path
-                                d="M21 9C22.1046 9 23 8.10457 23 7C23 5.89543 22.1046 5 21 5C19.8954 5 19 5.89543 19 7C19 8.10457 19.8954 9 21 9Z"
+                                opacity="0.4"
+                                d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
                                 fill="#7F56D9"
                               />
-                              <path
-                                d="M7.5 16.5V18.5C7.5 19.11 7.13 19.64 6.61 19.86C6.42 19.95 6.22 20 6 20H4C3.17 20 2.5 19.33 2.5 18.5V16.5C2.5 15.67 3.17 15 4 15H6C6.83 15 7.5 15.67 7.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M21.5 16.5V18.5C21.5 19.33 20.83 20 20 20H18C17.78 20 17.58 19.95 17.39 19.86C16.87 19.64 16.5 19.11 16.5 18.5V16.5C16.5 15.67 17.17 15 18 15H20C20.83 15 21.5 15.67 21.5 16.5Z"
-                                fill="#7F56D9"
-                              />
-                              <path
-                                d="M15 5.5V8.5C15 9.32 14.32 10 13.5 10H10.5C9.68 10 9 9.32 9 8.5V5.5C9 4.68 9.68 4 10.5 4H13.5C14.32 4 15 4.68 15 5.5Z"
-                                fill="#7F56D9"
-                              />
-                              <g opacity="0.4">
-                                <path
-                                  opacity="0.4"
-                                  d="M9 6.25H5C4.59 6.25 4.25 6.59 4.25 7C4.25 7.41 4.59 7.75 5 7.75H7.57C5.52 9.27 4.25 11.79 4.25 14.5C4.25 14.7 4.26 14.89 4.29 15.09C4.33 15.47 4.66 15.75 5.03 15.75C5.06 15.75 5.09 15.75 5.12 15.75C5.53 15.7 5.83 15.33 5.78 14.92C5.76 14.78 5.76 14.65 5.76 14.51C5.76 11.91 7.17 9.50997 9.35 8.40997C9.72 8.21997 9.87 7.77002 9.68 7.40002C9.67 7.39002 9.66 7.38 9.66 7.37C9.72 7.26 9.77 7.14001 9.77 7.01001C9.75 6.59001 9.41 6.25 9 6.25Z"
-                                  fill="#7F56D9"
-                                />
-                                <path
-                                  opacity="0.4"
-                                  d="M16.43 7.75H19C19.41 7.75 19.75 7.41 19.75 7C19.75 6.59 19.41 6.25 19 6.25H15C14.59 6.25 14.25 6.59 14.25 7C14.25 7.13 14.29 7.24999 14.36 7.35999C14.35 7.36999 14.34 7.38001 14.34 7.39001C14.15 7.76001 14.3 8.21002 14.67 8.40002C16.85 9.50002 18.26 11.9 18.26 14.5C18.26 14.64 18.25 14.77 18.24 14.91C18.19 15.32 18.49 15.69 18.9 15.74C18.93 15.74 18.96 15.74 18.99 15.74C19.37 15.74 19.69 15.46 19.73 15.08C19.75 14.88 19.77 14.69 19.77 14.49C19.75 11.79 18.48 9.27 16.43 7.75Z"
-                                  fill="#7F56D9"
-                                />
-                              </g>
-                            </svg>
-               
+                            </g>
+                          </svg>
                           Startup & VC’s
                         </span>
                         <button
-                          onClick={() => this.enrollParticipants("startup-vcs")}
+                          onClick={() => this.enrollParticipants('startup-vcs')}
                         >
-                          {this.props.layoutTheme === "light" ? (
+                          {this.props.layoutTheme === 'light' ? (
                             <svg
                               width="16"
                               height="16"
@@ -717,11 +749,11 @@ class Surveys extends Component {
                       </p>
                     </div>
                   </div>
-                ) : this.state.page === "enroll-participants" ? (
+                ) : this.state.page === 'enroll-participants' ? (
                   <div className={classes.participants}>
                     <ErrorFeedback showFeedback={this.state.uploadCsvError} />
                     <div
-                      className={classes["participants__enroll-participants"]}
+                      className={classes['participants__enroll-participants']}
                     >
                       <img src={RecruitParticipants} alt="" />
                       <h5>Recruit our participants....</h5>
@@ -730,7 +762,7 @@ class Surveys extends Component {
                         onClick={() =>
                           this.setState((state) => ({
                             ...state,
-                            page: "studyConduct",
+                            page: 'studyConduct',
                             constructResearch: {
                               ...state.constructResearch,
                               targetUsersFrom: null,
@@ -742,7 +774,7 @@ class Surveys extends Component {
                       </button>
                     </div>
                     <div
-                      className={classes["participants__enroll-participants"]}
+                      className={classes['participants__enroll-participants']}
                     >
                       <img src={UploadParticipants} alt="" />
                       <h5>Do research with your own participants...</h5>
@@ -759,16 +791,16 @@ class Surveys extends Component {
                       </button>
                     </div>
                   </div>
-                ) : this.state.page === "studyGroup" ? (
-                  <div className={classes["study-groups"]}>
+                ) : this.state.page === 'studyGroup' ? (
+                  <div className={classes['study-groups']}>
                     <h1>Which type of study group would you like to run?</h1>
-                    <div className={classes["study-groups__row"]}>
+                    <div className={classes['study-groups__row']}>
                       <button
-                        className={classes["study-groups__group"]}
+                        className={classes['study-groups__group']}
                         onClick={() => {
                           this.setState((state) => ({
                             ...state,
-                            page: "studyConduct",
+                            page: 'studyConduct',
                           }));
                         }}
                       >
@@ -779,11 +811,11 @@ class Surveys extends Component {
                         </p>
                       </button>
                       <button
-                        className={classes["study-groups__group"]}
+                        className={classes['study-groups__group']}
                         onClick={() => {
                           this.setState((state) => ({
                             ...state,
-                            page: "studyConduct",
+                            page: 'studyConduct',
                           }));
                         }}
                       >
@@ -794,11 +826,11 @@ class Surveys extends Component {
                         </p>
                       </button>
                       <button
-                        className={classes["study-groups__group"]}
+                        className={classes['study-groups__group']}
                         onClick={() => {
                           this.setState((state) => ({
                             ...state,
-                            page: "studyConduct",
+                            page: 'studyConduct',
                           }));
                         }}
                       >
@@ -809,11 +841,11 @@ class Surveys extends Component {
                         </p>
                       </button>
                       <button
-                        className={classes["study-groups__group"]}
+                        className={classes['study-groups__group']}
                         onClick={() => {
                           this.setState((state) => ({
                             ...state,
-                            page: "studyConduct",
+                            page: 'studyConduct',
                           }));
                         }}
                       >
@@ -825,20 +857,20 @@ class Surveys extends Component {
                       </button>
                     </div>
                   </div>
-                ) : this.state.page === "studyConduct" ? (
-                  <div className={classes["study-conduct"]}>
+                ) : this.state.page === 'studyConduct' ? (
+                  <div className={classes['study-conduct']}>
                     <SuccessFeedback
                       showFeedback={this.state.uploadCsvSuccess}
-                      feedback={"csv file is uploaded"}
+                      feedback={'csv file is uploaded'}
                     />
 
                     <h1>How will this study be conducted?</h1>
-                    <div className={classes["study-conduct__row"]}>
+                    <div className={classes['study-conduct__row']}>
                       <button
-                        className={`${classes["study-conduct__way"]} ${
+                        className={`${classes['study-conduct__way']} ${
                           this.state.constructResearch.researchConductedVia ===
-                          "survey app"
-                            ? classes["study-conduct__way--active"]
+                          'survey app'
+                            ? classes['study-conduct__way--active']
                             : null
                         }`}
                         onClick={() => {
@@ -846,7 +878,7 @@ class Surveys extends Component {
                             ...state,
                             constructResearch: {
                               ...state.constructResearch,
-                              researchConductedVia: "survey app",
+                              researchConductedVia: 'survey app',
                             },
                           }));
                         }}
@@ -858,10 +890,10 @@ class Surveys extends Component {
                         </p>
                       </button>
                       <button
-                        className={`${classes["study-conduct__way"]} ${
+                        className={`${classes['study-conduct__way']} ${
                           this.state.constructResearch.researchConductedVia ===
-                          "in person"
-                            ? classes["study-conduct__way--active"]
+                          'in person'
+                            ? classes['study-conduct__way--active']
                             : null
                         }`}
                         onClick={() => {
@@ -869,7 +901,7 @@ class Surveys extends Component {
                             ...state,
                             constructResearch: {
                               ...state.constructResearch,
-                              researchConductedVia: "in person",
+                              researchConductedVia: 'in person',
                             },
                           }));
                         }}
@@ -883,10 +915,10 @@ class Surveys extends Component {
                       </button>
 
                       <button
-                        className={`${classes["study-conduct__way"]} ${
+                        className={`${classes['study-conduct__way']} ${
                           this.state.constructResearch.researchConductedVia ===
-                          "via video"
-                            ? classes["study-conduct__way--active"]
+                          'via video'
+                            ? classes['study-conduct__way--active']
                             : null
                         }`}
                         onClick={() => {
@@ -894,7 +926,7 @@ class Surveys extends Component {
                             ...state,
                             constructResearch: {
                               ...state.constructResearch,
-                              researchConductedVia: "via video",
+                              researchConductedVia: 'via video',
                             },
                           }));
                         }}
@@ -902,15 +934,15 @@ class Surveys extends Component {
                         <img src={ApplicationWindow} alt="" />
                         <h5>Online via video</h5>
                         <p>Research will be conducted via video session</p>
-                        <div className={classes["study-conduct__beta"]}>
+                        <div className={classes['study-conduct__beta']}>
                           Beta
                         </div>
                       </button>
                       <button
-                        className={`${classes["study-conduct__way"]} ${
+                        className={`${classes['study-conduct__way']} ${
                           this.state.constructResearch.researchConductedVia ===
-                          "over phone"
-                            ? classes["study-conduct__way--active"]
+                          'over phone'
+                            ? classes['study-conduct__way--active']
                             : null
                         }`}
                         onClick={() => {
@@ -918,7 +950,7 @@ class Surveys extends Component {
                             ...state,
                             constructResearch: {
                               ...state.constructResearch,
-                              researchConductedVia: "over phone",
+                              researchConductedVia: 'over phone',
                             },
                           }));
                         }}
@@ -926,17 +958,17 @@ class Surveys extends Component {
                         <img src={Phone} alt="" />
                         <h5>Over the phone</h5>
                         <p>Research will be conducted via phone call</p>
-                        <div className={classes["study-conduct__beta"]}>
+                        <div className={classes['study-conduct__beta']}>
                           Beta
                         </div>
                       </button>
                     </div>
 
                     <button
-                      className={classes["study-conduct__btn"]}
+                      className={classes['study-conduct__btn']}
                       onClick={this.toggleToCreateSurveyMode}
                     >
-                      Create and continue{" "}
+                      Create and continue{' '}
                       <svg
                         width="21"
                         height="20"
@@ -963,7 +995,7 @@ class Surveys extends Component {
           modalStatus={this.state.uploadParticipantsModal}
           loading={this.state.uploadParticipantsModalLoader}
           closeModal={(state, asset) => {
-            if (state == "download" && asset == null) {
+            if (state == 'download' && asset == null) {
               this.setState((state) => ({
                 ...state,
                 uploadParticipantsModal: false,
@@ -982,20 +1014,20 @@ class Surveys extends Component {
               uploadParticipantsModalLoader: true,
             }));
             const formData = new FormData();
-            formData.append("csvFile", asset.csvFile);
-            formData.append("fileName", asset.name);
-            formData.append("company", this.state.company);
+            formData.append('csvFile', asset.csvFile);
+            formData.append('fileName', asset.name);
+            formData.append('company', this.state.company);
             axios
               .post(
-                "https://stagingapp.murmurcars.com/api/v1/surveys/user/insertExternalParticipants",
-                formData
+                'https://backendapp.getinsightiq.com/api/v1/surveys/user/insertExternalParticipants',
+                formData,
               )
               .then((response) => {
                 this.setState((state) => ({
                   ...state,
                   uploadCsvSuccess: true,
                   uploadParticipantsModal: false,
-                  page: "studyConduct",
+                  page: 'studyConduct',
                   constructResearch: {
                     ...state.constructResearch,
                     targetUsersFrom: this.state.company,
@@ -1009,6 +1041,8 @@ class Surveys extends Component {
                     uploadCsvSuccess: false,
                   }));
                 }, 3000);
+
+                
               })
               .catch((err) => {
                 this.setState((state) => ({
@@ -1023,6 +1057,8 @@ class Surveys extends Component {
                     uploadCsvError: false,
                   }));
                 }, 3000);
+          
+
               });
           }}
           uploadCSV={this.uploadCSV}

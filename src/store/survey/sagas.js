@@ -19,6 +19,7 @@ import { SUBMITSURVEYTOBACKEND, FETCHSURVEYFROMBACKEND } from "./actionTypes";
 import { post_surveys, get_survey } from "../../helpers/fakebackend_helper";
 
 function* post_survey({ payload: { backend, data, history } }) {
+
   try {
     const response = yield call(
       post_surveys,
@@ -28,14 +29,13 @@ function* post_survey({ payload: { backend, data, history } }) {
     );
 
     const { payment_link, message } = response.data;
-
+    history.replace('/surveys')
+    if(backend.payment === 'checkout' && !backend.paid && backend.publish){
+      window.location = payment_link
+    }
     yield put(publish_survey_success(message));
 
-    if(backend.payment === 'checkout' && !backend.paid && backend.publish){
-      setTimeout(() => (window.location = payment_link), 1000)
-    }else{
-      history.replace('/surveys')
-    }
+
   } catch (err) {
     yield put(publish_survey_failed(err));
   }

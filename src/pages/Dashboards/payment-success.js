@@ -17,7 +17,7 @@ class PaymentSuccess extends React.Component {
         const url = this.props.location.search; //search property of history props
         const token = new URLSearchParams(url).get('temp_token') //extracting id 
     
-        axios.post(`https://stagingapp.murmurcars.com/api/v1/surveys/survey/handle-payment-status?temp_token=${token}`)
+        axios.post(`https://backendapp.getinsightiq.com/api/v1/surveys/survey/handle-payment-status?temp_token=${token}`)
         .then((res) => {
      
         })
@@ -38,7 +38,7 @@ class PaymentSuccess extends React.Component {
                     <div className={classes.menu_self_flex}></div>
                     <div className={classes.dash_relative}>
                       <div className={classes.search_box_flex_end}>
-                        <Profile scope={"survey"} />
+                      <Profile scope="global" />
                       </div>
                     </div>
                   </header>

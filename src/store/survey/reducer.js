@@ -61,7 +61,8 @@ const initial_surveys = {
   loading: true,
   count: 0,
   paid: false,
-  hasAwsReports:false
+  hasAwsReports:false,
+  answersCount: 0
 };
 
 const Survey = (state = initial_surveys, actions) => {
@@ -133,14 +134,14 @@ const Survey = (state = initial_surveys, actions) => {
       let count = state.count;
 
       const surveys = actions.payload.survey_questions;
-      questions = [];
+      //questions = [];
 
-      for (let survey of surveys) {
+      /*for (let survey of surveys) {
         if (count < survey.uid) {
           count = survey.uid;
         }
 
-        if (survey.isConditional) {
+        /*if (survey.isConditional) {
           for (let question of survey.questions) {
             question.link = survey.uid;
             if (count < question.uid) {
@@ -150,12 +151,12 @@ const Survey = (state = initial_surveys, actions) => {
           }
           survey.questions = [];
         }
-      }
+      }*/
 
       state = {
         ...state,
         _id: actions.payload._id,
-        survey_questions: [...surveys, ...questions],
+        survey_questions: [...surveys],
         survey_title: actions.payload.survey_title,
         survey_caption: actions.payload.survey_caption,
         survey_earnings: actions.payload.survey_earnings,
@@ -171,7 +172,7 @@ const Survey = (state = initial_surveys, actions) => {
           image_url: actions.payload.survey_image,
           image_name: actions.payload.survey_image
             ? actions.payload.survey_image.split(
-                "https://stagingapp.murmurcars.com/advertisers/surveys/"
+                "https://backendapp.getinsightiq.com/advertisers/surveys/"
               )[1]
             : null,
         },
@@ -185,7 +186,8 @@ const Survey = (state = initial_surveys, actions) => {
         paid: actions.payload.paid,
         loading: false,
         hasAwsReports: actions.payload.hasAwsReports,
-        count
+        count,
+        answersCount: actions.payload.answeredBy.length
       };
       break;
 
@@ -196,11 +198,7 @@ const Survey = (state = initial_surveys, actions) => {
           address: actions.payload.address,
           center: actions.payload.center,
         },
-        target_audience: {
-          ...state.target_audience,
-          country: actions.payload.country,
-          city: actions.payload.city,
-        },
+        target_audience: {...state.target_audience, ...actions.payload.settings}
       };
       break;
     case SUBMITSURVEYTOBACKEND:

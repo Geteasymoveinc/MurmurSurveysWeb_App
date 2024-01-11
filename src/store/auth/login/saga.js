@@ -22,8 +22,8 @@ function* loginUser({ payload: { user, history } }) {
     } else {
       const response = yield call(
         postLogin,
-        "https://stagingapp.murmurcars.com/api/v1/surveys/customer/login",
-        //"https://stagingapp.murmurcars.com/api/v1/surveys/customers/login",
+        "https://backendapp.getinsightiq.com/api/v1/surveys/customer/login",
+        //"https://backendapp.getinsightiq.com/api/v1/surveys/customers/login",
         {
           email: user.email,
           password: user.password

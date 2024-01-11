@@ -30,7 +30,6 @@ import PullParticipants from './pullParticipants';
 import ResearchSetting from './research-setting';
 import SurveyAWSReport from './aws-reports';
 
-
 import axios from 'axios';
 import { Link, withRouter } from 'react-router-dom';
 import {
@@ -46,7 +45,7 @@ import Profile from '../../../components/CommonForBoth/TopbarDropdown/ProfileMen
 import WebcamModal from '../../../components/modals/webcam';
 import AudioRecorder from '../../../components/audio-recorder';
 import AudioPlayer from '../../../components/audio-player';
-import { WarningFeedback } from '../../../components/feedbacks';
+import { WarningFeedback, ErrorFeedback } from '../../../components/feedbacks';
 
 import { Upload as Upload_Antd } from 'antd';
 
@@ -57,6 +56,9 @@ import Geocode from 'react-geocode';
 Geocode.setApiKey(`${process.env.REACT_APP_GOOGLEMAPSKEY}`);
 
 const { Dragger } = Upload_Antd;
+
+
+
 
 class Survey extends Component {
   constructor(props) {
@@ -70,8 +72,10 @@ class Survey extends Component {
       locationModal: false, //country, city modal
       recordVideoModal: false, //webcam
       recordAudio: false, //audio
-      warningFeedback: false, //if u try publish without at least one question
-      warning: null, //warning message
+      warningFeedback: null, //warning message
+      warning: false, //warning
+      error: false,
+      errorFeedback: null, //error feedback
       info: true, //information
       email: sessionStorage.getItem('authUser'),
       supportedCountry: {
@@ -192,52 +196,52 @@ class Survey extends Component {
               price: 0.5,
               amount: this.props.survey.survey_audience_number,
               //budget: +this.props.survey.survey_budget,
-              budget:
-                this.props.subscription != null &&
-                this.props.subscription.paymentStatus === 'active'
-                  ? this.props.survey.survey_budget -
-                    this.props.survey.survey_budget *
-                      this.props.subscription.discount
-                  : this.props.survey.survey_budget,
+              budget: this.props.survey.survey_budget,
             },
           },
         },
-        loading:false
+        loading: false,
       }));
     }
 
     const { city, country } = this.props.survey.target_audience;
     if (
       prevProps.survey.target_audience.city === city &&
-      prevProps.survey.target_audience.country === country
-    ){
-      return
+      prevProps.survey.target_audience.country === country 
+    ) {
+      return;
     }
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      loading: true
-    }))
+      loading: true,
+    }));
     axios
       .get(
-        `https://stagingapp.murmurcars.com/api/v1/admin/fetch-supported-country?country=${country}&city=${city}`,
+        `https://backendapp.getinsightiq.com/api/v1/admin/fetch-supported-country?country=${country}&city=${city}`,
       )
       .then((response) => {
-
+      
         this.setState((state) => ({
           ...state,
           supportedCountry: {
+            ...state.supportedCountry,
             country,
             city,
             countryCode: response.data.analytics.country_code,
             districts: response.data.analytics.districts,
             language: response.data.analytics.language,
             user_professions: response.data.analytics.user_professions,
-   
           },
           loading: false,
         }));
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        
+        this.setState((state) => ({
+          ...state,
+          loading: false,
+        }));
+      });
   }
 
   togleMenuItem = (menu) => {
@@ -271,7 +275,7 @@ class Survey extends Component {
     document.body.classList.add('grey-background');
 
     this.props.fetch_survey(
-      `https://stagingapp.murmurcars.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/survey/fetch-survey?survey_id=${survey_id}`,
     );
     this.setState((state) => ({
       ...state,
@@ -302,6 +306,9 @@ class Survey extends Component {
       );*/
   }
 
+
+
+
   //publish or update
   submitNewSurvey = async (event, survey_id, urls) => {
     event.preventDefault();
@@ -319,14 +326,13 @@ class Survey extends Component {
     if (!surveys.length) {
       this.setState((state) => ({
         ...state,
-        warningFeedback: true,
-        warning: 'Please create at least one question',
+        warningFeedback: 'Please create at least one question',
+        warning: true,
       }));
       setTimeout(() => {
         this.setState((state) => ({
           ...state,
-          warningFeedback: false,
-          warning: null,
+          warning: false,
         }));
       }, 3000);
       return;
@@ -356,7 +362,7 @@ class Survey extends Component {
     const conditionals = [];
     const main = [];
     const sections = [];
-    for (let question of surveys) {
+    /*for (let question of surveys) {
       delete question.edit;
       if (question.isConditional && !question.isQuestion) {
         sections.push(question);
@@ -373,19 +379,19 @@ class Survey extends Component {
           section.questions.push(conditional);
         }
       }
-    }
+    }*/
 
-    const publish = [...main, ...sections];
+   // const publish = [...main, ...sections];
 
-    for (let survey of publish) {
+    for (let survey of surveys) {
       delete survey.asset.assetFile;
       formData.append('survey_questions', JSON.stringify(survey));
     }
 
     const backend = {};
 
-    backend.url = `https://stagingapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&payment=${this.props.survey.payment}`;
-    //backend.url = `https://stagingapp.murmurcars.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
+    backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&payment=${this.props.survey.payment}`;
+    //backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/update-survey/${survey_id}?paid=${this.props.survey.paid}&publish=${this.state.publish}`;
     backend.method = 'PUT';
     backend.payment = this.props.survey.payment;
     backend.paid = this.props.survey.paid;
@@ -393,7 +399,7 @@ class Survey extends Component {
 
     for await (let url of urls) {
       axios.post(
-        'https://stagingapp.murmurcars.com/api/v1/surveys/survey/delete-asset',
+        'https://backendapp.getinsightiq.com/api/v1/surveys/survey/delete-asset',
         { url },
       );
     }
@@ -405,11 +411,14 @@ class Survey extends Component {
     });
   };
 
+
+
+
   checkout = (survey_id) => {
     const { amount, budget } = this.state.form.survey_price_amount.survey;
 
     const backend = {};
-    backend.url = `https://stagingapp.murmurcars.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
+    backend.url = `https://backendapp.getinsightiq.com/api/v1/surveys/survey/handle-checkout/${survey_id}`;
     backend.method = 'POST';
     backend.payment = this.props.survey.payment;
     backend.publish = true; // couse it is checkout
@@ -417,7 +426,6 @@ class Survey extends Component {
       backend,
       data: {
         budget,
-        amount,
       },
       history: this.props.history,
     });
@@ -425,7 +433,7 @@ class Survey extends Component {
 
   //settings
 
-  handleReverseGeocode = ({ lat, lng }) => {
+  /*handleReverseGeocode = ({ lat, lng }) => {
     Geocode.fromLatLng(lat, lng).then(
       (response) => {
         const address = response.plus_code.compound_code;
@@ -455,9 +463,9 @@ class Survey extends Component {
         });
       },
     );
-  };
+  };*/
 
-  changeLocation = (location, country, city) => {
+ changeLocation = (location, country, city) => {
     Geocode.fromAddress(location)
       .then((response) => {
         const { lat, lng } = response.results[0].geometry.location;
@@ -471,9 +479,12 @@ class Survey extends Component {
         });
         this.props.fetch_map_position(
           `${country}, ${city}`,
-          country,
-          city,
           center,
+          {
+            country,
+            city,
+            location: 'all'
+            }
         );
       })
       .catch((err) => {});
@@ -701,7 +712,7 @@ class Survey extends Component {
 
     axios
       .post(
-        'https://stagingapp.murmurcars.com/api/v1/surveys/survey/upload-asset',
+        'https://backendapp.getinsightiq.com/api/v1/surveys/survey/upload-asset',
         form,
       )
       .then((response) => {
@@ -756,49 +767,52 @@ class Survey extends Component {
     }));
   };
 
-  getUserInput = (e, segment, type) => {
+  getUserInput = (e, type, input) => {
     let value = e.target.value;
     let rate = 0.5;
-    if (segment === 'survey_price_amount') {
+    if (type === 'survey_price_amount') {
       value = Number.parseInt(value.trim());
     }
 
-    if (Number.isNaN(value) && segment === 'survey_price_amount') {
+    if (Number.isNaN(value) && type === 'survey_price_amount') {
       value = '';
     }
 
-    const input = {
-      [type]: value,
+    const newState = {
+      [input]: value,
     };
 
-    if (segment === 'survey_price_amount') {
-      input.price = rate;
-      input.budget = +Number(rate * value).toFixed(2);
+    if (type === 'survey_price_amount') {
+      newState.price = rate;
+      newState.budget = rate * value;
     }
 
     if (
       this.props.subscription != null &&
       this.props.subscription.paymentStatus === 'active'
     ) {
-      input.budget =
-        input.budget - input.budget * this.props.subscription.discount;
+      newState.budget =
+        newState.budget - newState.budget * this.props.subscription.discount;
     }
 
+    if (type === 'survey_price_amount') {
+      newState.budget = Number.parseFloat(newState.budget.toFixed(2));
+    }
     this.setState({
       ...this.state,
       form: {
         ...this.state.form,
-        [segment]: {
-          ...this.state.form[segment],
+        [type]: {
+          ...this.state.form[type],
           survey: {
-            ...this.state.form[segment].survey,
-            ...input,
+            ...this.state.form[type].survey,
+            ...newState,
           },
         },
       },
     });
   };
-  addNewOptionToCreatedQuetion = (i) => {
+  addNewOptionToCreatedQuetion = (index) => {
     const value =
       this.new_option.current != null && this.new_option.current.value
         ? this.new_option.current.value
@@ -807,10 +821,10 @@ class Survey extends Component {
     const { surveys } = this.state.form.survey_answers_questions;
 
     const Surveys = [...surveys];
-    const left = Surveys.slice(0, i);
-    const right = Surveys.slice(i + 1, Surveys.length);
+    const left = Surveys.slice(0, index);
+    const right = Surveys.slice(index + 1, Surveys.length);
 
-    const selectedSurvey = Surveys.at(i);
+    const selectedSurvey = Surveys.at(index);
     selectedSurvey.answers.push(value);
     this.setState((state) => ({
       ...state,
@@ -1321,8 +1335,12 @@ class Survey extends Component {
         ) : (
           <div className={classes.dash_right}>
             <WarningFeedback
-              showFeedback={this.state.warningFeedback}
-              feedback={this.state.warning}
+              showFeedback={this.state.warning}
+              feedback={this.state.warningFeedback}
+            />
+            <ErrorFeedback
+              showFeedback={this.state.error}
+              feedback={this.state.errorFeedback}
             />
             <header className={`${classes.header} ${classes.main}`}>
               <div className={classes.mur_contain}>
@@ -1421,7 +1439,7 @@ class Survey extends Component {
                       ></span>
                     </div>
                   ) : null}
-                           {this.props.survey.hasAwsReports ? (
+                  {this.props.survey.hasAwsReports ? (
                     <div className={classes.button_containers}>
                       <button
                         onClick={() => this.togleMenuItem('aws-reports')}
@@ -1429,11 +1447,13 @@ class Survey extends Component {
                           menu_item === 'aws-reports' ? classes.active : null
                         }`}
                       >
-                        AWS Reports
+                        Sentiment Analysis
                       </button>
                       <span
                         className={`${
-                          menu_item === 'aws-reports' ? classes.border_active : null
+                          menu_item === 'aws-reports'
+                            ? classes.border_active
+                            : null
                         }`}
                       ></span>
                     </div>
@@ -2626,7 +2646,7 @@ class Survey extends Component {
                                                       }
                                                     />
                                                   </div>
-                                                  <div
+                                                  {/*<div
                                                     className={`${classes.question_answer_setting} ml-4`}
                                                   >
                                                     <div>
@@ -2656,7 +2676,7 @@ class Survey extends Component {
                                                         ></div>
                                                       </label>
                                                     </div>
-                                                  </div>
+                                                  </div>*/}
                                                 </div>
                                               </>
                                             ) : null}
@@ -2820,6 +2840,7 @@ class Survey extends Component {
                               ) : expamle_asset.assetType.includes('video') ? (
                                 <video
                                   controls
+                                  key={expamle_asset.assetUrl}
                                   className={` ${classes.survey_img} ${
                                     expamle_asset.status
                                       ? classes.uploading
@@ -3056,9 +3077,9 @@ class Survey extends Component {
                           >
                             <img src={RecordVideo} alt="" /> Record video
                           </button>
-                          <div>
+                          {/*} <div>
                             {/*<img src={Copy} alt="comment icon" />
-                   <img src={Trash} alt="delete icon" />*/}
+                   <img src={Trash} alt="delete icon" />
                             <p>Important</p>
                             <label
                               className={classes.switch}
@@ -3074,7 +3095,7 @@ class Survey extends Component {
                                 className={`${classes.slider} ${classes.round}`}
                               ></div>
                             </label>
-                          </div>
+                          </div>*/}
                         </div>
                       </div>
                     </div>
@@ -3179,7 +3200,7 @@ class Survey extends Component {
                 )}
               </div>
             )}
-            {!preview_mode && menu_item === 'settings' && (
+            {!preview_mode && menu_item === 'settings' ? (
               <SurveySettings
                 active={survey.survey_active}
                 survey_specific={survey.survey_specific}
@@ -3197,16 +3218,18 @@ class Survey extends Component {
                   }));
                 }}
               />
-            )}
-            {!preview_mode && menu_item === 'analytics' && (
+            ) : null}
+            {!preview_mode && menu_item === 'analytics' ? (
               <SurveyAnalytics
                 id={survey._id}
                 layoutTheme={this.props.layoutTheme}
                 districts={supportedCountry.districts}
                 user_professions={supportedCountry.user_professions}
+                answersCount={survey.answersCount}
+                surveyTitle={survey.survey_title}
               />
-            )}
-            {!preview_mode && menu_item === 'answers' && (
+            ) : null}
+            {!preview_mode && menu_item === 'answers' ? (
               <SurveyAnswers
                 analytics={analytics}
                 survey_questions={survey.survey_questions}
@@ -3214,9 +3237,11 @@ class Survey extends Component {
                 layoutTheme={this.props.layoutTheme}
                 districts={supportedCountry.districts}
                 user_professions={supportedCountry.user_professions}
+                answersCount={survey.answersCount}
+                surveyTitle={survey.survey_title}
               />
-            )}
-                        {!preview_mode && menu_item === 'aws-reports' && (
+            ) : null}
+            {!preview_mode && menu_item === 'aws-reports' ? (
               <SurveyAWSReport
                 analytics={analytics}
                 survey_questions={survey.survey_questions}
@@ -3225,7 +3250,7 @@ class Survey extends Component {
                 districts={supportedCountry.districts}
                 user_professions={supportedCountry.user_professions}
               />
-            )}
+            ) : null}
 
             {!preview_mode && menu_item === 'participants' && (
               <div className={classes.surveys_container}>
@@ -3288,9 +3313,12 @@ class Survey extends Component {
               });
               this.props.fetch_map_position(
                 `${country}, ${city}`,
+                { lat: 41.8781, lng: -87.6298 },
+                {
                 country,
                 city,
-                { lat: 41.8781, lng: -87.6298 },
+                location: 'all'
+                }
               );
               return;
             }
@@ -3313,29 +3341,44 @@ class Survey extends Component {
           }
           layoutTheme={this.props.layoutTheme}
           uploadVideo={(blob, videoUrl) => {
-            {
-              const asset = {
-                assetName: videoUrl.substring(0, 25) + '.mp4',
-                assetFile: blob,
-                assetUrl: videoUrl,
-                assetType: 'video/mp4',
-              };
+            const asset = {
+              assetName: videoUrl.substring(0, 25) + '.mp4',
+              assetFile: blob,
+              assetUrl: videoUrl,
+              assetType: 'video/mp4',
+            };
 
-              this.setState({
-                ...this.state,
-                recordVideoModal: false,
-                form: {
-                  ...this.state.form,
-                  survey_answers_questions: {
-                    ...this.state.form.survey_answers_questions,
-                    survey: {
-                      ...this.state.form.survey_answers_questions.survey,
-                      asset,
-                    },
+            this.setState({
+              ...this.state,
+              recordVideoModal: false,
+              form: {
+                ...this.state.form,
+                survey_answers_questions: {
+                  ...this.state.form.survey_answers_questions,
+                  survey: {
+                    ...this.state.form.survey_answers_questions.survey,
+                    asset,
                   },
                 },
-              });
-            }
+              },
+            });
+          }}
+          exitWebcam={() => {
+            this.setState({
+              ...this.state,
+              recordVideoModal: false,
+              error: true,
+              errorFeedback: "You don't have  available camera",
+            });
+
+            setTimeout(() => {
+              this.setState((state) => ({
+                ...state,
+                error: false,
+              }));
+            }, 3000);
+
+          
           }}
         />
       </Fragment>

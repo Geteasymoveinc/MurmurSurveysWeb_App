@@ -34,7 +34,7 @@ class SurveyAnalytics extends Component {
 
     axios
       .post(
-        `https://stagingapp.murmurcars.com/api/v1/admin/users-analytics/${id}`,
+        `https://backendapp.getinsightiq.com/api/v1/admin/users-analytics/${id}`,
         {
           districts,
           user_professions,
@@ -59,6 +59,8 @@ class SurveyAnalytics extends Component {
   render() {
     const { location, gender, age, interest, income, loading, hasAnalytics } =
       this.state;
+    const {answersCount, surveyTitle} = this.props
+    
     return (
       <Fragment>
         {loading ? (
@@ -92,7 +94,7 @@ class SurveyAnalytics extends Component {
                   }));
                   axios
                     .get(
-                      `https://stagingapp.murmurcars.com/api/v1/admin/pdf?surveyTitle=${survey}&id=${id}&page=survey`,
+                      `https://backendapp.getinsightiq.com/api/v1/admin/pdf?surveyTitle=${survey}&id=${id}&page=survey`,
                     )
                     .then((response) => {
                       const { link } = response.data;
@@ -146,6 +148,85 @@ class SurveyAnalytics extends Component {
                   </g>
                 </svg>
               </button>
+              <button
+                  className="bg-transparent border-0 mr-3 ml-3"
+                  onClick={() => {
+                    axios
+                      .post(
+                        'https://backendapp.getinsightiq.com/api/v1/admin/generate-pptx',
+                        {
+                          analyticsCategory: 'analytics',
+                          totalAnswers: answersCount,
+                          slideTitles: [
+                            'Gender',
+                            'Age',
+                            'Location',
+                            'Interest',
+                            'Income',
+                          ],
+                          analytics: [gender, age, location, interest, income],
+                          title: surveyTitle,
+                        },
+                      )
+                      .then((res) => {
+                        const { file } = res.data;
+
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = file;
+                        // the filename you want
+                        a.download = `${surveyTitle}.pptx`;
+                        document.body.appendChild(a);
+                        a.click();
+                      })
+                      .catch((err) => {
+                      
+                      });
+                  }}
+                >
+                  <svg
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                    strokeLinejoin="round"
+                    strokeMiterlimit="1.41421"
+                    viewBox="180 100 210 200"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="60"
+                    height="60"
+                  >
+                    <g fillRule="nonzero">
+                      <path
+                        d="m293.75 103.75c-52.743.154-96.096 43.507-96.25 96.25l121.942 25.692z"
+                        fill="#ed6c47"
+                      />
+                      <path
+                        d="m293.75 103.75c52.743.154 96.096 43.507 96.25 96.25l-48.125 32.711-48.125-32.711z"
+                        fill="#ff8f6b"
+                      />
+                      <path
+                        d="m293.75 296.25c52.743-.154 96.096-43.507 96.25-96.25h-192.5c.154 52.743 43.507 96.096 96.25 96.25z"
+                        fill="#d35230"
+                      />
+                      <path
+                        d="m284.579 138.125h-64.357c-32.429 38.213-29.609 95.765 6.4 130.625h57.964c5.021-.015 9.149-4.143 9.164-9.164v-112.29c-.015-5.022-4.143-9.149-9.164-9.164z"
+                        fillOpacity=".098039"
+                      />
+                      <path
+                        d="m277.704 145h-62.755c-29.264 41.526-20.581 99.496 19.566 130.625h43.189c5.022-.015 9.149-4.143 9.164-9.164v-112.29c-.015-5.022-4.142-9.149-9.164-9.164zm0 0h-62.755c-25.028 35.485-22.851 83.785 5.266 116.875h57.482c5.021-.015 9.149-4.143 9.164-9.164v-98.54c-.015-5.022-4.143-9.149-9.164-9.164zm-6.875 0h-55.88c-25.028 35.485-22.851 83.785 5.266 116.875h50.607c5.021-.015 9.149-4.143 9.164-9.164v-98.54c-.015-5.022-4.143-9.149-9.164-9.164z"
+                        fillOpacity=".2"
+                      />
+                      <path
+                        d="m179.164 145h91.665c5.027 0 9.164 4.137 9.164 9.164v91.665c0 5.027-4.137 9.164-9.164 9.164h-91.665c-5.027 0-9.164-4.137-9.164-9.164v-91.665c0-5.027 4.137-9.164 9.164-9.164z"
+                        fill="#c43e1c"
+                      />
+                      <path
+                        d="m224.979 165.625c6.768-.455 13.483 1.506 18.941 5.534 4.533 4.046 6.96 9.962 6.572 16.026.074 3.885-1.062 7.699-3.251 10.911-2.229 3.553-5.438 6.388-9.24 8.16-4.347 2.016-9.097 3.01-13.888 2.908h-13.138v25.204h-13.475v-68.75zm-14.004 32.196h11.598c3.674.268 7.322-.818 10.251-3.053 2.368-1.523 3.704-4.241 3.465-7.047 0-7.603-4.428-11.405-13.283-11.405h-12.031z"
+                        fill="#f9f7f7"
+                      />
+                    </g>
+                    <path d="m170 90h220v220h-220z" fill="none" />
+                  </svg>
+                </button>
             </div>
             <div className={` ${classes.flexbox} ml-0 mr-0`}>
               <div className={classes.rows}>

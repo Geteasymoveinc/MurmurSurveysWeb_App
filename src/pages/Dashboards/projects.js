@@ -33,9 +33,8 @@ class Projects extends Component {
 
   componentDidMount() {
 
-    
     queryForEmail(
-      `https://stagingapp.murmurcars.com/api/v1/surveys/customer/checkEmail`,
+      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/checkEmail`,
       {
         email: sessionStorage.getItem("authUser")
       }
@@ -45,21 +44,21 @@ class Projects extends Component {
 
        
         if (subscription == null) {
-          this.setState({
-            ...this.state,
+          this.setState( state => ({
+            ...state,
             user_id: _id,
             loading: false,
             //create_edit_survey_mode: true,
             
             subscription: null,
             company,
-          });
+          }));
 
           return;
         }
         
         axios
-          .get(`https://stagingapp.murmurcars.com/api/v1/surveys/customer/subscriptions/${_id}`)
+          .get(`https://backendapp.getinsightiq.com/api/v1/surveys/customer/subscriptions/${_id}`)
           .then((response) => {
             const { subscriptions } = response.data;
 
@@ -80,7 +79,7 @@ class Projects extends Component {
             });
            
 
-            setTimeout(() => {
+        setTimeout(() => {
               this.setState(state => ({
 
                 ...state,
@@ -107,6 +106,9 @@ class Projects extends Component {
         })
       );
   }
+
+
+
 
   toggleToCreateSurveyMode = () => {
     this.props.history.push("/");
@@ -285,7 +287,8 @@ const mapPropsToState = (state) => {
     _id,
     researcherContacts,
     paid,
-    hasAwsReports
+    hasAwsReports,
+    answersCount
   } = state.Survey;
 
   return {
@@ -313,7 +316,8 @@ const mapPropsToState = (state) => {
       _id,
       researcherContacts,
       paid,
-      hasAwsReports
+      hasAwsReports,
+      answersCount
     },
     ...state.Layout,
   };

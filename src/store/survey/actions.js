@@ -88,11 +88,11 @@ const fetch_survey_failed= (err) => {
 }
 
 
-const fetch_map_position = (address,country,city, center) => {
+const fetch_map_position = (address,center, settings ) => {
 
   return {
     type:FETCHINGMAPLOCATIONANDADDRESS,
-    payload: {address,country,city, center}
+    payload: {address, center, settings}
   }
 }
 

@@ -27,7 +27,7 @@ class PaymentFailed extends React.Component {
                     <div className={classes.menu_self_flex}></div>
                     <div className={classes.dash_relative}>
                       <div className={classes.search_box_flex_end}>
-                        <Profile scope="survey" />
+                      <Profile scope="global" />
                       </div>
                     </div>
                   </header>

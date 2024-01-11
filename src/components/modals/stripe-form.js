@@ -147,7 +147,7 @@ function CheckoutForm({
       // call the backend to create subscription
       // create a payment method
 
-      console.log(elements.getElement(CardNumberElement))
+ 
       let paymentMethod = await stripe?.createPaymentMethod({
         type: "card",
         card: elements.getElement(CardNumberElement),
@@ -163,7 +163,7 @@ function CheckoutForm({
       if (stripeCustomerId) {
      
         customer = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/update-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
           {
             user_id,
             customerId: stripeCustomerId,
@@ -172,7 +172,7 @@ function CheckoutForm({
         );
       } else {
         customer = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/create-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-customer",
           {
             user_id,
             customer: { email, name, phone },
@@ -195,7 +195,7 @@ function CheckoutForm({
 
       if (subscribed) {
         response = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/change-subscription",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/change-subscription",
           {
             subscriptionId,
             priceId,
@@ -208,7 +208,7 @@ function CheckoutForm({
       } else {
       
         response = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/create-subscription",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-subscription",
           {
             customerId: id,
             priceId,
@@ -226,7 +226,7 @@ function CheckoutForm({
         setLoading(false);
       } else {
         response = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/confirm-payment",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/confirm-payment",
           {
             subscriptionId: response.data.subscriptionId,
             user_id
@@ -257,7 +257,7 @@ function CheckoutForm({
       let customer;
       if (stripeCustomerId) {
         customer = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/update-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
           {
             user_id,
             customerId: stripeCustomerId,
@@ -266,7 +266,7 @@ function CheckoutForm({
         );
       } else {
         customer = await axios.post(
-          "https://stagingapp.murmurcars.com/api/v1/surveys/customer/create-customer",
+          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-customer",
           {
             user_id,
             customer: { email, name, phone },

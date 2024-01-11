@@ -109,6 +109,7 @@ class LocationModal extends React.Component {
                   onClick={() => {
                     closeModal(false);
                   }}
+                  className="mr-4"
                 >
                   Cansel
                 </button>

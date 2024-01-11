@@ -41,7 +41,7 @@ class Register extends Component {
   
     this.props.registerUser(values, this.props.history);
     // axios
-    //   .post("https://stagingapp.murmurcars.com/api/v1/users/signup", this.state)
+    //   .post("https://backendapp.getinsightiq.com/api/v1/users/signup", this.state)
     //   .then((res) => console.log({ res }))
     //   .catch((err) => console.log({ err }));
   }
