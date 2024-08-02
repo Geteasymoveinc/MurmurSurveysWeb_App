@@ -30,9 +30,9 @@ function* loginUser({ payload: { user, history } }) {
         }
       );
   
-      
-      const image = response.resp.at(-1).profilePhoto;
-      sessionStorage.setItem("authUser", response.resp.at(-1).email);
+      console.log(response)
+      const image = response.resp.profilePhoto;
+      sessionStorage.setItem("authUser", response.resp.email);
       if (image) {
         sessionStorage.setItem("profileImage", image);
       }

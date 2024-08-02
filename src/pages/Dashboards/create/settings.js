@@ -111,18 +111,10 @@ class SurveySettings extends Component {
 
   toggleSurveyImportance = (e) => {
     let active = e.target.checked;
-    /*his.setState({
-      ...this.state,
-      survey_settings: {
-        ...this.state.survey_settings,
-        active: active,
-      },
-    });*/
-
     this.props.add_settings({
       active,
-      survey_specific: this.props.survey_specific,
-      settings: {}
+      //survey_specific: this.props.survey_specific,
+      //settings: {}
     });
   };
 
@@ -140,8 +132,8 @@ class SurveySettings extends Component {
     });*/
 
     this.props.add_settings({
-      active: this.props.active,
-      survey_specific: this.props.survey_specific,
+     // active: this.props.active,
+     // survey_specific: this.props.survey_specific,
       settings: {
         [type]: value,
       },
@@ -207,7 +199,7 @@ class SurveySettings extends Component {
     const user_professions = Object.keys(supportedCountry.user_professions);
     const districts = Object.keys(supportedCountry.districts);
 
-  
+  console.log(active)
     return (
       <div className={`${classes.container_center} ${classes[layoutTheme]}`}>
         <div
@@ -270,7 +262,7 @@ class SurveySettings extends Component {
                       city: !targetSpecificAudience ? 'all' : city,
                     };
                     this.props.add_settings({
-                      active: this.props.active,
+                    //  active: this.props.active,
                       survey_specific: targetSpecificAudience,
                       settings,
                     });
@@ -626,8 +618,8 @@ class SurveySettings extends Component {
                     });*/
 
                     this.props.add_settings({
-                      active,
-                      survey_specific,
+                    //  active,
+                    //  survey_specific,
                       settings: {
                         income: { min: value[0], max: value[1] }
                       },

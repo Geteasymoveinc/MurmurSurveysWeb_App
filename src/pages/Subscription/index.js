@@ -25,7 +25,7 @@ import { Elements } from "@stripe/react-stripe-js";
 
 
 
-const stripe = loadStripe(process.env.REACT_APP_LIVE_STRIPEKEY);
+const stripe = loadStripe(process.env.REACT_APP_TEST_STRIPEKEY);
 
 class Subscription extends Component {
   constructor(props) {
@@ -457,31 +457,14 @@ class Subscription extends Component {
               subscribe={true}
               stripeCustomerId={this.state.stripeCustomerId}
               subscribed={subscribed}
-              closeModal={(submit, state) => {
-                if (submit && state) {
+              submit={async (paymentMethod) => {
+
+                if(paymentMethod == null){
                   this.setState((state) => ({
                     ...state,
-                    addCardModal: false,
-                    selectPaymentMethodModal: false,
-                    subscribedSuccesefulyFeedback: true,
-                  }));
-
-                  setTimeout(() => {
-                    this.setState((state) => ({
-                      ...state,
-                      subscribedSuccesefulyFeedback: false,
-                    }));
-                  }, 3000);
-
-                  setTimeout(() => {
-                    this.props.history.push("/");
-                  }, 3500);
-                } else if (!state) {
-                  this.setState((state) => ({
-                    ...state,
-                    addCardModal: false,
                     selectPaymentMethodModal: false,
                     subscribeErrorFeedback: true,
+                    subscribeWithDefaultCardLoading: false,
                   }));
 
                   setTimeout(() => {
@@ -490,113 +473,67 @@ class Subscription extends Component {
                       subscribeErrorFeedback: false,
                     }));
                   }, 3000);
-                } else {
-                  this.setState((state) => ({
-                    ...state,
-                    addCardModal: false,
-                    selectPaymentMethodModal: true,
-                    subscription: {},
-                  }));
+                  return 
                 }
-              }}
-              layoutTheme={this.props.layoutTheme}
-              priceId={priceId}
-              subscriptionId={subscriptionId}
-            />
-          </Elements>
-        ) : null}
-        {this.state.selectPaymentMethodModal ? (
-          <ChangeDefaultCard
-            modalStatus={this.state.selectPaymentMethodModal}
-            //user_id={profile?.id}
-            //name={profile?.fullName}
-            //email={profile?.email}
-            subscribe={true}
-            loading={this.state.subscribeWithDefaultCardLoading}
-            closeModal={async (modalState, paymentMethod) => {
-              window.scrollTo({ top: 0, left: 0 });
-              if (paymentMethod === "add card") {
-                //checking if customer want to add a new card
-                setTimeout(() => {
-                  this.setState((state) => ({
-                    ...state,
-                    addCardModal: true,
-                  }));
-                }, 200);
-              } else if (modalState === true) {
                 //else checking if customer clicks subscribe btn
                 let response = {};
                 this.setState((state) => ({
                   ...state,
                   subscribeWithDefaultCardLoading: true,
                 }));
+      
                 try {
-                  const customer = await axios.post(
+                  let customer;
+                  if(this.state.stripeCustomerId){
+                   customer = await axios.post(
                     "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
                     {
-                      user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
-                      paymentMethod,
+                      paymentMethod: paymentMethod?.paymentMethod?.id,
                     }
                   );
+                }else{
+                  customer = await axios.post(
+                    "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-customer",
+                    {
+                      customer: { email:profile?.email, name:profile?.fullName, phone:profile?.phone_number },
+                      paymentMethod: paymentMethod?.paymentMethod?.id,
+                    }
+                  );
+                }
 
                   if (subscribed) {
                     //if already subscribed and want to upgrade or downgrade package
 
                     response = await axios.post(
-                      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/change-subscription",
+                      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/change-subscription/${profile?.id}`,
                       {
-                        user_id: profile?.id,
                         subscriptionId,
                         priceId,
+                        subscription
                       }
                     );
-
-                    // setLoading(false);
-                    this.setState((state) => ({
-                      ...state,
-
-                      subscribedSuccesefulyFeedback: true,
-                      selectPaymentMethodModal: false,
-                      subscribeWithDefaultCardLoading: false,
-                    }));
-
-                    setTimeout(() => {
-                      this.setState((state) => ({
-                        ...state,
-                        subscribedSuccesefulyFeedback: false,
-                      }));
-                    }, 3000);
-
-                    setTimeout(() => {
-                      this.props.history.push("/");
-                    }, 3500);
-                    return;
                   } else {
                     //creating new subscription
                     response = await axios.post(
-                      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-subscription",
+                      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-subscription/${profile?.id}`,
                       {
-                        user_id: profile?.id,
                         customerId: this.state.stripeCustomerId,
                         priceId,
                       }
                     );
                   }
 
-                  const { subscription } = response.data;
+                  const { client_secret } = response.data;
 
-                  const { client_secret } =
-                    subscription.latest_invoice.payment_intent;
-
-                  const result = await stripe?.value?.confirmCardPayment(
-                    client_secret
-                  );
+                  const result =
+                    client_secret != null
+                      ? await stripe?.value?.confirmCardPayment(client_secret)
+                      : null;
 
                   if (result?.error) {
                     this.setState((state) => ({
                       ...state,
-
                       selectPaymentMethodModal: false,
                       subscribeErrorFeedback: true,
                       subscribeWithDefaultCardLoading: false,
@@ -644,7 +581,8 @@ class Subscription extends Component {
                     }));
                   }, 3000);
                 }
-              } else {
+              }}
+              closeModal={ () => {
                 //if closes modal
                 this.setState((state) => ({
                   ...state,
@@ -652,7 +590,137 @@ class Subscription extends Component {
                   subscribeWithDefaultCardLoading: false,
                   subscription: {},
                 }));
+              }}
+
+              layoutTheme={this.props.layoutTheme}
+              priceId={priceId}
+              subscriptionId={subscriptionId}
+            />
+          </Elements>
+        ) : null}
+        {this.state.selectPaymentMethodModal ? (
+          <ChangeDefaultCard
+            modalStatus={this.state.selectPaymentMethodModal}
+            //user_id={profile?.id}
+            //name={profile?.fullName}
+            //email={profile?.email}
+            subscribe={true}
+            loading={this.state.subscribeWithDefaultCardLoading}
+            submit={async (paymentMethod) => {
+              //else checking if customer clicks subscribe btn
+              let response = {};
+              this.setState((state) => ({
+                ...state,
+                subscribeWithDefaultCardLoading: true,
+              }));
+              try {
+                const customer = await axios.post(
+                  "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
+                  {
+                    customerId: this.state.stripeCustomerId,
+                    paymentMethod,
+                    user_id:profile?.id
+                  }
+                );
+
+                if (subscribed) {
+                  //if already subscribed and want to upgrade or downgrade package
+
+                  response = await axios.post(
+                    `https://backendapp.getinsightiq.com/api/v1/surveys/customer/change-subscription/${profile?.id}`,
+                    {
+                      subscriptionId,
+                      priceId,
+                      subscription
+                    }
+                  );
+                } else {
+                  //creating new subscription
+                  response = await axios.post(
+                    `https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-subscription/${profile?.id}`,
+                    {
+                      customerId: this.state.stripeCustomerId,
+                      priceId,
+                    }
+                  );
+                }
+
+                const { client_secret } = response.data;
+
+                const result =
+                  client_secret != null
+                    ? await stripe?.value?.confirmCardPayment(client_secret)
+                    : null;
+
+                if (result?.error) {
+                  this.setState((state) => ({
+                    ...state,
+                    selectPaymentMethodModal: false,
+                    subscribeErrorFeedback: true,
+                    subscribeWithDefaultCardLoading: false,
+                  }));
+
+                  setTimeout(() => {
+                    this.setState((state) => ({
+                      ...state,
+                      subscribeErrorFeedback: false,
+                    }));
+                  }, 3000);
+                } else {
+                  // setLoading(false);
+
+                  this.setState((state) => ({
+                    ...state,
+                    selectPaymentMethodModal: false,
+                    subscribedSuccesefulyFeedback: true,
+                    subscribeWithDefaultCardLoading: false,
+                  }));
+
+                  setTimeout(() => {
+                    this.setState((state) => ({
+                      ...state,
+                      subscribedSuccesefulyFeedback: false,
+                    }));
+                  }, 3000);
+
+                  setTimeout(() => {
+                    this.props.history.push("/");
+                  }, 3500);
+                }
+              } catch (err) {
+                this.setState((state) => ({
+                  ...state,
+                  selectPaymentMethodModal: false,
+                  subscribeErrorFeedback: true,
+                  subscribeWithDefaultCardLoading: false,
+                }));
+
+                setTimeout(() => {
+                  this.setState((state) => ({
+                    ...state,
+                    subscribeErrorFeedback: false,
+                  }));
+                }, 3000);
               }
+            }}
+            closeModal={ () => {
+              //if closes modal
+              this.setState((state) => ({
+                ...state,
+                selectPaymentMethodModal: false,
+                subscribeWithDefaultCardLoading: false,
+                subscription: {},
+              }));
+            }}
+            addNewCard={() => {
+              window.scrollTo({ top: 0, left: 0 });
+              //checking if customer want to add a new card
+              setTimeout(() => {
+                this.setState((state) => ({
+                  ...state,
+                  addCardModal: true,
+                }));
+              }, 200);
             }}
             //subscribe={true}
             layoutTheme={this.props.layoutTheme}

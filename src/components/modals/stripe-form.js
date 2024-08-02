@@ -52,14 +52,12 @@ const completed = {
 }
 function CheckoutForm({
   user_id,
-  priceId,
-  subscribed,
   modalStatus,
   closeModal,
+  submit,
   layoutTheme,
   subscribe,
   stripeCustomerId,
-  subscriptionId,
   email,
   phone,
 }) {
@@ -141,13 +139,10 @@ function CheckoutForm({
       },
     });*/
   // main function
+
   const createSubscription = async () => {
     setLoading(true);
     try {
-      // call the backend to create subscription
-      // create a payment method
-
- 
       let paymentMethod = await stripe?.createPaymentMethod({
         type: "card",
         card: elements.getElement(CardNumberElement),
@@ -157,86 +152,10 @@ function CheckoutForm({
           phone,
         },
       });
-
-      let customer = {};
-
-      if (stripeCustomerId) {
-     
-        customer = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
-          {
-            user_id,
-            customerId: stripeCustomerId,
-            paymentMethod: paymentMethod?.paymentMethod?.id,
-          }
-        );
-      } else {
-        customer = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-customer",
-          {
-            user_id,
-            customer: { email, name, phone },
-            paymentMethod: paymentMethod?.paymentMethod?.id,
-          }
-        );
-        /*.then((response) => {
-          const {resp} = response.data
-          //setProfile(resp)
-          
-        })
-        .catch((err) => {})*/
-      }
-
+      submit(paymentMethod)
    
-      const id = stripeCustomerId ? stripeCustomerId : customer.data.id;
-
- 
-      let response = {};
-
-      if (subscribed) {
-        response = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/change-subscription",
-          {
-            subscriptionId,
-            priceId,
-          }
-        );
-
-        closeModal(true, true);
-        setLoading(false);
-        return;
-      } else {
-      
-        response = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-subscription",
-          {
-            customerId: id,
-            priceId,
-          }
-        );
-      }
-      const { client_secret } = response.data;
- 
-      //const { client_secret } = subscription.latest_invoice.payment_intent;
- 
-      const result = await stripe?.confirmCardPayment(client_secret);
-
-      if (result?.error) {
-        closeModal(true, false);
-        setLoading(false);
-      } else {
-        response = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/confirm-payment",
-          {
-            subscriptionId: response.data.subscriptionId,
-            user_id
-          }
-        );
-        closeModal(true, true);
-        setLoading(false);
-      }
     } catch (error) {
-      closeModal(true, false);
+      submit(null);
       setLoading(false);
     }
   };
@@ -244,7 +163,7 @@ function CheckoutForm({
   const addNewPaymentMethod = async () => {
     setLoading(true);
     try {
-      const paymentMethod = await stripe?.createPaymentMethod({
+      let paymentMethod = await stripe?.createPaymentMethod({
         type: "card",
         card: elements.getElement(CardNumberElement),
         billing_details: {
@@ -253,31 +172,10 @@ function CheckoutForm({
           phone,
         },
       });
-
-      let customer;
-      if (stripeCustomerId) {
-        customer = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
-          {
-            user_id,
-            customerId: stripeCustomerId,
-            paymentMethod: paymentMethod?.paymentMethod?.id,
-          }
-        );
-      } else {
-        customer = await axios.post(
-          "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-customer",
-          {
-            user_id,
-            customer: { email, name, phone },
-            paymentMethod: paymentMethod?.paymentMethod?.id,
-          }
-        );
-      }
-      closeModal(true, true);
-      setLoading(false);
-    } catch (err) {
-      closeModal(true, false);
+      submit(paymentMethod)
+   
+    } catch (error) {
+      submit(null);
       setLoading(false);
     }
   };
@@ -332,7 +230,7 @@ function CheckoutForm({
         >
           <label htmlFor="new card">
             <div className={classes["card__input-container"]}>
-              <input type="radio" id="new card" checked={true} />
+              <input type="radio" id="new card" defaultChecked={true} />
               <div className={`${classes["card__input"]}`} />
             </div>
             <div className={classes["card__card-img"]}>

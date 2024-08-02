@@ -22,7 +22,7 @@ import { ErrorFeedback, SuccessFeedback } from '../../components/feedbacks';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 
-const stripe = loadStripe(process.env.REACT_APP_LIVE_STRIPEKEY);
+const stripe = loadStripe(process.env.REACT_APP_TEST_STRIPEKEY);
 
 const appearance = {
   theme: 'stripe',
@@ -588,45 +588,18 @@ class BillingHistory extends Component {
               phone={profile?.phone_number}
               subscribe={false}
               stripeCustomerId={this.state.stripeCustomerId}
-              closeModal={(submit, state) => {
-                if (submit && state) {
-                  axios
-                    .get(
-                      `https://backendapp.getinsightiq.com/api/v1/surveys/customer/default-payment-method/${profile?.id}`,
-                    ) //fetch default payment method
-                    .then((response) => {
-                      const { paymentMethod } = response.data;
-
-                      this.setState((state) => ({
-                        ...state,
-                        defaultPaymentMethod: paymentMethod,
-                        addCardModal: false,
-                        changeDefaultPaymentMethodModal: false,
-                        changeDefaultCardSuccess: true,
-                      }));
-
-                      setTimeout(() => {
-                        this.setState((state) => ({
-                          ...state,
-                          changeDefaultCardSuccess: false,
-                        }));
-                      }, 3000);
-                    })
-                    .catch((err) => {
-                      this.setState((state) => ({
-                        ...state,
-                        addCardModal: false,
-                        changeDefaultPaymentMethodModal: false,
-                        changeDefaultCardError: true,
-                      }));
-                      setTimeout(() => {
-                        this.setState((state) => ({
-                          ...state,
-                          changeDefaultCardError: false,
-                        }));
-                      }, 3000);
-                    });
-                } else if (!state) {
+              closeModal={() => {
+                //if closes modal
+                this.setState((state) => ({
+                  ...state,
+                  selectPaymentMethodModal: false,
+                  subscribeWithDefaultCardLoading: false,
+                  subscription: {},
+                }));
+              }}
+              submit={async (newPaymentMethod) => {
+  
+                if (newPaymentMethod == null) {
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
@@ -640,12 +613,58 @@ class BillingHistory extends Component {
                       changeDefaultCardError: false,
                     }));
                   }, 3000);
-                } else {
+                  return;
+                }
+                try {
+              
+                  if (this.state.stripeCustomerId) {
+                     await axios.post(
+                      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer",
+                      {
+                        customerId: this.state.stripeCustomerId,
+                        paymentMethod: newPaymentMethod?.paymentMethod?.id,
+                        user_id:profile?.id
+                      }
+                    );
+                  } else {
+                     await axios.post(
+                      "https://backendapp.getinsightiq.com/api/v1/surveys/customer/create-customer",
+                      {
+                        customer: { email:profile?.email, name:profile?.name, phone:profile?.phone },
+                        paymentMethod: newPaymentMethod?.paymentMethod?.id,
+                        user_id:profile?.id
+                      }
+                    );
+                  }
+
+
+                  this.setState((state) => ({
+                    ...state,
+                    defaultPaymentMethod: newPaymentMethod?.paymentMethod,
+                    addCardModal: false,
+                    changeDefaultPaymentMethodModal: false,
+                    changeDefaultCardSuccess: true,
+                  }));
+
+                  setTimeout(() => {
+                    this.setState((state) => ({
+                      ...state,
+                      changeDefaultCardSuccess: false,
+                    }));
+                  }, 3000);
+                } catch(err) {
                   this.setState((state) => ({
                     ...state,
                     addCardModal: false,
-                    changeDefaultPaymentMethodModal: true,
+                    changeDefaultPaymentMethodModal: false,
+                    changeDefaultCardError: true,
                   }));
+                  setTimeout(() => {
+                    this.setState((state) => ({
+                      ...state,
+                      changeDefaultCardError: false,
+                    }));
+                  }, 3000);
                 }
               }}
               layoutTheme={this.props.layoutTheme}
@@ -659,26 +678,22 @@ class BillingHistory extends Component {
             name={profile?.fullName}
             email={profile?.email}
             loading={this.state.changeDefaultCardLoading}
-            closeModal={async (modalState, paymentMethod) => {
-              if (paymentMethod === 'add card') {
-                setTimeout(() => {
-                  this.setState((state) => ({
-                    ...state,
-                    addCardModal: true,
-                  }));
-                }, 200);
-              } else if (modalState) {
-                this.setState((state) => ({
-                  ...state,
-                  changeDefaultCardLoading: true,
-                }));
+            closeModal={ () => {
+              //if closes modal
+              this.setState((state) => ({
+                ...state,
+                changeDefaultCardLoading: false,
+              }));
+            }}
+            submit={async (paymentMethodId) => {
+ 
                 try {
                   const customer = await axios.post(
-                    'https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer',
+                    `https://backendapp.getinsightiq.com/api/v1/surveys/customer/update-customer`,
                     {
                       user_id: profile?.id,
                       customerId: this.state.stripeCustomerId,
-                      paymentMethod,
+                      paymentMethod:paymentMethodId,
                     },
                   );
                   axios
@@ -732,13 +747,18 @@ class BillingHistory extends Component {
                     }));
                   }, 3000);
                 }
-              } else {
-                this.setState((state) => ({
-                  ...state,
-                  changeDefaultPaymentMethodModal: false,
-                }));
-              }
+      
             }}
+            addNewCard={
+              () =>{
+                setTimeout(() => {
+                  this.setState((state) => ({
+                    ...state,
+                    addCardModal: true,
+                  }));
+                }, 200);
+              }
+            }
             layoutTheme={this.props.layoutTheme}
             defaultPaymentMethod={this.state.defaultPaymentMethod?.id}
             stripeCustomerId={this.state.stripeCustomerId}

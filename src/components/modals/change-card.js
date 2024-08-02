@@ -69,8 +69,9 @@ class ChangeDefaultCard extends React.Component {
       );
   }
 
+ 
   render() {
-    const { modalStatus, closeModal, layoutTheme } = this.props;
+    const { modalStatus, closeModal, layoutTheme,addNewCard,submit} = this.props;
     const { loading } = this.state;
 
     return (
@@ -82,7 +83,7 @@ class ChangeDefaultCard extends React.Component {
         <ModalHeader>
           <div className={classes.modal_header}>
             <h3>Choose payment method</h3>
-            <button onClick={() => closeModal(false, null)}>
+            <button onClick={() => closeModal()}>
               <svg
                 width="24"
                 height="24"
@@ -116,8 +117,8 @@ class ChangeDefaultCard extends React.Component {
                   <div className="chase-dot"></div>
                 </div>
               </div>
-            ) : null}
-            {this.state.paymentMethods.map((card, i) => {
+            ) :
+            this.state.paymentMethods.map((card, i) => {
               let cardImage =
                 card.brand === "visa"
                   ? Visa
@@ -155,7 +156,7 @@ class ChangeDefaultCard extends React.Component {
                   </div>
                   <div className={classes["card__owner"]}>
                     <span>Name on card:</span>
-                    <span>{card.name.toUpperCase()}</span>
+                    <span>{card.name?.toUpperCase()}</span>
                   </div>
                   <div className={classes["card__details"]}>
                     <span>**** **** **** {card.last4}</span>
@@ -172,11 +173,11 @@ class ChangeDefaultCard extends React.Component {
                 <input
                   type="radio"
                   id="new-card"
-                  checked={this.state.defaultPaymentMethod === "add card"}
+                  checked={this.state.defaultPaymentMethod == 'add' }
                   onChange={() =>
                     this.setState((state) => ({
                       ...state,
-                      defaultPaymentMethod: "add card",
+                      defaultPaymentMethod: 'add',
                     }))
                   }
                 />
@@ -193,7 +194,7 @@ class ChangeDefaultCard extends React.Component {
             <button
               type="button"
               onClick={() => {
-                closeModal(false, null);
+                closeModal();
               }}
             >
               Cancel
@@ -203,7 +204,7 @@ class ChangeDefaultCard extends React.Component {
               type="submit"
               form="myform"
               value={
-                this.state.defaultPaymentMethod === "add card"
+                this.state.defaultPaymentMethod === "add"
                   ? "Next"
                   : !this.props.subscribe
                   ? "Save"
@@ -224,7 +225,8 @@ class ChangeDefaultCard extends React.Component {
                   !this.props.subscribe)
               }
               onClick={() => {
-                closeModal(true, this.state.defaultPaymentMethod);
+                this.state.defaultPaymentMethod == 'add' ? addNewCard() :
+                submit(this.state.defaultPaymentMethod);
               }}
             />
           </div>

@@ -117,11 +117,12 @@ const Survey = (state = initial_surveys, actions) => {
       };
       break;
     case ADDSETTINGS:
+      console.log(actions.payload)
       state = {
         ...state,
-        target_audience: actions.payload.settings,
-        survey_active: actions.payload.active,
-        survey_specific: actions.payload.survey_specific,
+        target_audience: actions.payload.hasOwnProperty('settings')? {...state.target_audience,...actions.payload.settings} : state.target_audience,
+        survey_active: actions.payload.hasOwnProperty('active')? actions.payload.active : state.survey_active,
+        survey_specific: actions.payload.hasOwnProperty('survey_specific')? actions.payload.survey_specific : state.survey_specific,
       };
       break;
     case FETCHSURVEYFROMBACKEND:
