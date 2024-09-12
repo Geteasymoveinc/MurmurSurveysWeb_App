@@ -588,7 +588,7 @@ class Subscription extends Component {
                   ...state,
                   selectPaymentMethodModal: false,
                   subscribeWithDefaultCardLoading: false,
-                  subscription: {},
+                 addCardModal:false,
                 }));
               }}
 

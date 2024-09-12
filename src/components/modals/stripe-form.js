@@ -191,7 +191,7 @@ function CheckoutForm({
       <ModalHeader>
         <div className={classes.modal_header}>
           <h3>Choose payment method</h3>
-          <button onClick={() => closeModal(false)}>
+          <button onClick={() => closeModal()}>
             <svg
               width="24"
               height="24"
